@@ -1,0 +1,8 @@
+An include folder containing the include headers.
+
+Add this folder to Library Directories:
+Right click project -> Properties -> VC++ Directories -> Library Directories -> Edit -> New Line (Hover over buttons to see tooltip) -> Paste the following: $(SolutionDir)Dependencies\dependency1\include 
+
+Note: If this folder is not called include, then you should also change the "include" part in the path above.
+
+Note: Make sure you are in the correct configuration, otherwise you will get linking errors! (Right click project -> Properties -> Make sure Configuration (top-left corner) is set to "Debug"/"Active(Debug)" while developing.)

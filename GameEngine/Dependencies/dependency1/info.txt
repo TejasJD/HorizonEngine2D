@@ -1,0 +1,3 @@
+This folder contains 2 folders:
+ - A libs folder for the .lib and .dll files;
+ - An include folder containing the include headers.
