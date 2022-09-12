@@ -622,7 +622,7 @@
       <AdditionalDependencies>box2d.lib;fmodL_vc.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)GameEngine\dependencies\FMOD\lib\*.dll" "$(TargetDir)" /y /d</Command>
+      <Command>xcopy "$(SolutionDir)GameEngine\dependencies\FMOD\lib\*.dll" "$(TargetDir)" /s /y /d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
