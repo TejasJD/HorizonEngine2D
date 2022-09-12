@@ -570,13 +570,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)GameEngine\dependencies\Box2D\include;$(SolutionDir)GameEngine\dependencies\FMOD\inc;$(SolutionDir)GameEngine\dependencies\imgui;$(SolutionDir)GameEngine\dependencies\GLFW\include;$(SolutionDir)GameEngine\dependencies\glm\;$(IncludePath);</IncludePath>
-    <LibraryPath>$(SolutionDir)GameEngine\dependencies\Box2D\lib;$(SolutionDir)GameEngine\dependencies\FMOD\lib;$(SolutionDir)GameEngine\dependencies\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)GameEngine\dependencies\Box2D\include;$(SolutionDir)GameEngine\dependencies\FMOD\inc;$(SolutionDir)GameEngine\dependencies\imgui;$(SolutionDir)GameEngine\dependencies\GLFW\include;$(SolutionDir)GameEngine\dependencies\glm\;$(IncludePath);</IncludePath>
-    <LibraryPath>$(SolutionDir)GameEngine\dependencies\Box2D\lib;$(SolutionDir)GameEngine\dependencies\FMOD\lib;$(SolutionDir)GameEngine\dependencies\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -612,14 +612,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameEngine\dependencies\Box2D\include;$(SolutionDir)GameEngine\dependencies\FMOD\inc;$(SolutionDir)GameEngine\dependencies\imgui;$(SolutionDir)GameEngine\dependencies\GLFW\include;$(SolutionDir)GameEngine\dependencies\glm\;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>box2d.lib;fmodL_vc.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)GameEngine\dependencies\Box2D\lib;$(SolutionDir)GameEngine\dependencies\FMOD\lib;$(SolutionDir)GameEngine\dependencies\GLFW\lib-vc2022;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)GameEngine\dependencies\FMOD\lib\*.dll" "$(TargetDir)" /s /y /d</Command>
@@ -633,6 +633,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameEngine\dependencies\Box2D\include;$(SolutionDir)GameEngine\dependencies\FMOD\inc;$(SolutionDir)GameEngine\dependencies\imgui;$(SolutionDir)GameEngine\dependencies\GLFW\include;$(SolutionDir)GameEngine\dependencies\glm\;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -640,6 +641,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>box2d.lib;fmodL_vc.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)GameEngine\dependencies\Box2D\lib;$(SolutionDir)GameEngine\dependencies\FMOD\lib;$(SolutionDir)GameEngine\dependencies\GLFW\lib-vc2022;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)GameEngine\dependencies\FMOD\lib\*.dll" "$(TargetDir)" /s /y /d</Command>
