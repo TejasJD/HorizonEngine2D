@@ -575,8 +575,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)GameEngine\dependencies\FMOD\inc;$(SolutionDir)GameEngine\dependencies\imgui;$(SolutionDir)GameEngine\dependencies\GLFW\include;$(SolutionDir)GameEngine\dependencies\glm\;$(IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(SolutionDir)GameEngine\dependencies\FMOD\lib\x64;$(SolutionDir)GameEngine\dependencies\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)GameEngine\dependencies\Box2D\include;$(SolutionDir)GameEngine\dependencies\FMOD\inc;$(SolutionDir)GameEngine\dependencies\imgui;$(SolutionDir)GameEngine\dependencies\GLFW\include;$(SolutionDir)GameEngine\dependencies\glm\;$(IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)GameEngine\dependencies\Box2D\lib;$(SolutionDir)GameEngine\dependencies\FMOD\lib;$(SolutionDir)GameEngine\dependencies\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -639,8 +639,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>box2d.lib;fmodL_vc.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)GameEngine\dependencies\FMOD\lib\*.dll" "$(TargetDir)" /s /y /d</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
