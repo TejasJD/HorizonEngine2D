@@ -1,0 +1,6 @@
+[submodule "HorizonEngine/vendor/GLFW"]
+	path = HorizonEngine/vendor/GLFW
+	url = https://github.com/glfw/glfw
+[submodule "HorizonEngine/vendor/spdlog"]
+	path = HorizonEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog
