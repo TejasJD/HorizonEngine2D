@@ -1,21 +1,14 @@
-﻿// HorizonEngine.cpp : Defines the entry point for the application.
-//
+﻿#include "HorizonEngine/Window.h";
 
-#include <memory>
-#include "HorizonEngine.h"
-#include "GLFW/glfw3.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+int main() {
 
-int main()
-{
-	// Test CMake.
-	std::cout << "Hello CMake." << std::endl;
+	Window window("Game Engine", 1920, 1080);
+	glClearColor(0.36f, 0.36f, 0.36f, 1.f);
 
-	// Test GLFW
-	std::cout << (glfwInit() ? "success" : "failure") << std::endl;
+	while (!window.closed()) {
+		window.clear();
+		window.update();
+	}
 
-	// Test spdlog
-	spdlog::info("Welcome to spdlog!");
 	return 0;
 }

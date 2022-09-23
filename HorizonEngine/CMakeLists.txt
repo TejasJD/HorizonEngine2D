@@ -3,22 +3,33 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-# Add dependencies related to Horizon Engine
+# Add source to this project's executable.
+add_executable (HorizonEngine "HorizonEngine.cpp" "HorizonEngine.h" "HorizonEngine/Window.cpp" "HorizonEngine/Window.h")
 
-# glfw
-add_subdirectory(vendor/GLFW)
+# find packages that might exist on the system
+find_package(OpenGL REQUIRED)
+
+# ---------- SUBPROJECTS ----------
+# add subprojects in this section
+
+# glm
+add_subdirectory(extern/glm)
 
 # spdlog logging library
-add_subdirectory(vendor/spdlog)
+add_subdirectory(extern/spdlog)
 
-# Add source to this project's executable.
-add_executable (HorizonEngine "HorizonEngine.cpp" "HorizonEngine.h")
+# imgui directory
+add_subdirectory(extern/imgui)
+# ----------------------------------
 
-# linking libraries
-target_link_libraries(HorizonEngine 
+# ---------- DEPENDENCIES ----------
+target_link_libraries(HorizonEngine
 	PRIVATE 
-		glfw
 		spdlog::spdlog
+		imgui 
+		glm::glm 
+		${OPENGL_gl_LIBRARY}
 )
+# ----------------------------------
 
 # TODO: Add tests and install targets if needed.
