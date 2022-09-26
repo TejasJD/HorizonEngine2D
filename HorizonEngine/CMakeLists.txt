@@ -30,6 +30,9 @@ target_include_directories(HorizonEngine
 	PUBLIC . src
 )
 
+# precompiled headers to target 'HorizonEngine'
+target_precompile_headers(HorizonEngine PUBLIC pch.h)
+
 # external libraries linked to 'HorizonEngine' target
 target_link_libraries(HorizonEngine
 	PUBLIC

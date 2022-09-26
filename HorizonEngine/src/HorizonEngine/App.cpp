@@ -1,7 +1,5 @@
 #include "App.h"
 
-#include <iostream>
-
 namespace Hzn
 {
 	void App::run()
