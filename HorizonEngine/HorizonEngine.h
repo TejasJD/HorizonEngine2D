@@ -6,3 +6,6 @@
 #include <iostream>
 
 // TODO: Reference additional headers your program requires here.
+#include "src/HorizonEngine/APIMacros.h"
+#include "src/HorizonEngine/App.h"
+#include "src/HorizonEngine/EntryPoint.h"
