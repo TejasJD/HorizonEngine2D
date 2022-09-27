@@ -98,8 +98,10 @@ float Math::moveTowardsAngle(float start, float end, float maxDelta) {
 	return fmodf(moveTowards(start, end, maxDelta), 360.0f);
 }
 
-float Math::pingPong(float value, float power) {
-	return 0;
+float Math::pingPong(float value, float max) {
+	int n = (int)(value / max);
+	if (n % 2 == 0) return fmodf(value, max);
+	return max - fmodf(value, max);
 }
 
 float Math::pow(float f, float power) {
