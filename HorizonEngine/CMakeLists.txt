@@ -36,11 +36,30 @@ target_precompile_headers(HorizonEngine PUBLIC pch.h)
 # external libraries linked to 'HorizonEngine' target
 target_link_libraries(HorizonEngine
 	PUBLIC
-		spdlog::spdlog
+		spdlog::spdlog_header_only
 		imgui 
 		glm::glm 
 		opengl32.lib
 )
+
+# Add the test executables here.
+# For every new 'test file' add into the three sections below
+
+# add a test executable using 'add_executable' command
+add_executable (SampleTest
+	"tests/SampleTest.cpp"
+)
+add_executable(SampleTest2
+	"tests/SampleTest2.cpp"
+)
+
+# link the 'test targets' to the test library (gtest_main)
+target_link_libraries(SampleTest gtest_main)
+target_link_libraries(SampleTest2 gtest_main)
+
+# add the new test executable fo
+gtest_discover_tests(SampleTest)
+gtest_discover_tests(SampleTest2)
 
 # post build commands to copy resources from source to build directories for the HorizonEngine target
 add_custom_command(

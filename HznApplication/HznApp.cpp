@@ -1,6 +1,5 @@
+#include "pch.h"
 #include "HznApp.h"
-
-#include <memory>
 
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
