@@ -9,8 +9,7 @@
             "installDir": "${sourceDir}/bin/install/${presetName}",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "BUILD_SHARED_LIBS": true
+                "CMAKE_CXX_COMPILER": "cl.exe"
             },
             "condition": {
                 "type": "equals",
