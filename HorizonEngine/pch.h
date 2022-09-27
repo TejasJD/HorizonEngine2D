@@ -4,11 +4,13 @@
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <cstdlib>
 
 // standard library data-structure
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <climits>
 #include <string>
 #include <array>
 #include <set>

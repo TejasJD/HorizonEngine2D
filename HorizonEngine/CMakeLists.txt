@@ -5,8 +5,12 @@ cmake_minimum_required (VERSION 3.8)
 
 project(HorizonEngine)
 
-set(HZN_SRC_FILES
+set(HZN_SRC_FILES 
 	"src/HorizonEngine/App.cpp"
+	"src/HorizonEngine/gameObject.cpp"
+	"src/HorizonEngine/Utils/time.cpp"
+	"src/HorizonEngine/Utils/math.cpp"
+	"src/HorizonEngine/Components/transform.cpp"
 )
 
 # Add source to this project's executable.

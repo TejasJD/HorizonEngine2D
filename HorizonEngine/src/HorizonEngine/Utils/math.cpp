@@ -1,131 +1,133 @@
-#include "math.h";
+#include "pch.h" 
+#include "math.h"
 
-static float Math::abs(float f) {
+
+float Math::abs(float f) {
 	return fabs(f);
 }
 
-static float Math::acos(float f) {
+float Math::acos(float f) {
 	return acosf(f);
 }
 
-static float Math::asin(float f) {
+float Math::asin(float f) {
 	return asinf(f);
 }
 
-static float Math::atan(float f) {
+float Math::atan(float f) {
 	return atanf(f);
 }
 
-static float Math::atan2(float f) {
-	return atan2f(f);
+float Math::atan2(float x, float y) {
+	return atan2f(x, y);
 }
 
-static float Math::ceil(float f) {
+float Math::ceil(float f) {
 	return ceilf(f);
 }
 
-static int Math::ceilToInt(float f) {
+int Math::ceilToInt(float f) {
 	return (int)ceilf(f);
 }
 
-static float Math::clamp(float f, float min, float max) {
+float Math::clamp(float f, float min, float max) {
 	if (f < min) return min;
 	if (f > max) return max;
 	return f;
 }
 
-static float Math::clamp01(float f) {
+float Math::clamp01(float f) {
 	return clamp(f, 0.0f, 1.0f);
 }
 
-static float Math::cos(float f) {
+float Math::cos(float f) {
 	return cosf(f);
 }
 
-static float Math::deltaAngle(float current, float target) {
+float Math::deltaAngle(float current, float target) {
 	current = fmodf(current, 360.0f) + 360.0f;
 	target = fmodf(target, 360.0f) + 360.0f;
-	return Math.abs(current - target);
+	return abs(current - target);
 }
 
-static float Math::exp(float power) {
+float Math::exp(float power) {
 	return expf(power);
 }
 
-static float Math::floor(float f) {
+float Math::floor(float f) {
 	return floorf(f);
 }
 
-static int Math::floorToInt(float f) {
+int Math::floorToInt(float f) {
 	return (int)floorf(f);
 }
 
-static float Math::inverseLerp(float start, float end, float f) {
+float Math::inverseLerp(float start, float end, float f) {
 	return (f - start) / (end - start);
 }
 
-static float Math::lerp(float start, float end, float f) {
+float Math::lerp(float start, float end, float f) {
 	if (f <= 0.0f) return start;
 	if (f >= 1.0f) return end;
 
 	return start + (end - start) * f;
 }
 
-static float Math::lerpAngle(float start, float end, float f) {
-	return fmodf(Math.lerp(start, end, f), 360.0);
+float Math::lerpAngle(float start, float end, float f) {
+	return fmodf(lerp(start, end, f), 360.0);
 }
 
-static float Math::lerpUnclamped(float start, float end, float f) {
+float Math::lerpUnclamped(float start, float end, float f) {
 	return start + (end - start) * f;
 }
 
-static float Math::max(float a, float b) {
+float Math::fMax(float a, float b) {
 	return fmaxf(a, b);
 }
 
-static float Math::min(float a, float b) {
+float Math::fMin(float a, float b) {
 	return fminf(a, b);
 }
 
-static float Math::moveTowards(float start, float end, float maxDelta) {
+float Math::moveTowards(float start, float end, float maxDelta) {
 	if (end - start >= maxDelta) return start + maxDelta;
 	return end;
 }
 
-static float Math::moveTowardsAngle(float start, float end, float maxDelta) {
+float Math::moveTowardsAngle(float start, float end, float maxDelta) {
 	return fmodf(moveTowards(start, end, maxDelta), 360.0f);
 }
 
-static float Math::pingPong(float value, float power) {
-
+float Math::pingPong(float value, float power) {
+	return 0;
 }
 
-static float Math::pow(float f, float power) {
+float Math::pow(float f, float power) {
 	return powf(f, power);
 }
 
-static float Math::round(float f) {
+float Math::round(float f) {
 	return roundf(f);
 }
 
-static int Math::roundToInt(float f) {
+int Math::roundToInt(float f) {
 	return (int)roundf(f);
 }
 
-static int Math::sign(float f) {
+int Math::sign(float f) {
 	if (f > 0) return 1;
 	if (f < 0) return -1;
 	return 0;
 }
 
-static float Math::sin(float f) {
+float Math::sin(float f) {
 	return sinf(f);
 }
 
-static float Math::sqrt(float f) {
+float Math::sqrt(float f) {
 	return sqrtf(f);
 }
 
-static float Math::tan(float f) {
+float Math::tan(float f) {
 	return tanf(f);
 }

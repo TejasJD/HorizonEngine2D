@@ -3,7 +3,8 @@
 #define _transform_h
 
 #include "component.h"
-#include "../gameObjects/gameObject.h"
+#include "../gameObject.h"
+#include "../Utils/time.h"
 
 #include <vector>
 #include <cmath>
@@ -16,7 +17,7 @@ class Transform;
 
 class Transform : public Component {
 public:
-	GameObject* gameObject = NULL;
+	GameObject* gameObject = nullptr;
 
 	glm::vec2 localPosition = glm::vec2(0, 0);
 	float localRotation = 0;
@@ -29,8 +30,8 @@ public:
 	glm::vec2 right = glm::vec2(1, 0);
 	glm::vec2 up = glm::vec2(0, 1);
 
-	Transform* parent = NULL;
-	Transform* root = NULL;
+	Transform* parent = nullptr;
+	Transform* root = nullptr;
 	int siblingIndex = 0;
 	int childCount = 0;
 

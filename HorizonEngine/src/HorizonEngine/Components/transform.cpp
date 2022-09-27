@@ -1,7 +1,5 @@
 #include "transform.h"
 
-#include "../time/time.h"
-
 Transform::Transform() {
 	// TODO: Attach awake, start update and fixedUpdate 
 	// to main game loop
