@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HorizonEngine/Events/Event.hpp"
+#include "HorizonEngine/Events/Event.h"
 
 namespace HorizonEngine {
 

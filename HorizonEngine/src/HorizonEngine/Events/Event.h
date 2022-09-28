@@ -22,7 +22,10 @@ namespace HorizonEngine {
 		KeyPressed, KeyReleased, KeyTyped,
 		
 		// Mouse Events
-		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
+
+		// Application Events
+		AppTick, AppUpdate, AppRender
 	};
 
 	enum EventCategory

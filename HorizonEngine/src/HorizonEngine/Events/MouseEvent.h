@@ -1,7 +1,7 @@
 #pragma once 
 
-#include "HorizonEngine/Events/Event.hpp"
-#inlcude "HorionEngine/Core/MouseCodes.hpp"
+#include "HorizonEngine/Events/Event.h"
+#inlcude "HorionEngine/Core/MouseCodes.h"
 
 namespace HorizonEngine {
 	

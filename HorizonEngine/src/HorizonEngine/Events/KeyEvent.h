@@ -1,10 +1,10 @@
 #pragma once 
 
-#include "Event.hpp"
+#include "Event.h"
 
 #include <pch.h>
 
-#inlcude "HorionEngine/Core/KeyboardCodes.hpp"
+#inlcude "HorionEngine/Core/KeyboardCodes.h"
 
 namespace HorizonEngine {
 
