@@ -14,7 +14,7 @@ set(HZN_SRC_FILES
 )
 
 # Add source to this project's executable.
-add_library (HorizonEngine ${HZN_SRC_FILES})
+add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 
 # subdirectories to external dependencies
 add_subdirectory(extern/glm)
@@ -22,12 +22,20 @@ add_subdirectory(extern/spdlog)
 add_subdirectory(extern/box2d)
 
 # compile definitions for 'HorizonEngine' target
-target_compile_definitions(HorizonEngine PUBLIC HZN_PLATFORM_WINDOWS HZN_BUILD)
+target_compile_definitions(HorizonEngine
+	PUBLIC
+		HZN_PLATFORM_WINDOWS
+		HZN_BUILD
+)
 
 
 # directories on include search path for 'HorizonEngine' target
 target_include_directories(HorizonEngine
-	PUBLIC . src
+	PUBLIC
+	.
+	src
+	src/HorizonEngine
+	platform
 )
 
 # precompiled headers to target 'HorizonEngine'
@@ -41,7 +49,7 @@ target_link_libraries(HorizonEngine
 		glad
 		imgui
 		sajson
-		glm::glm 
+		glm::glm
 		opengl32.lib
 )
 
