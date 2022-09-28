@@ -22,12 +22,16 @@ target_link_libraries(HznApplication PUBLIC HorizonEngine)
 add_executable (AnotherTest
 	"tests/AnotherTest.cpp"
 )
+add_executable (AnotherTest2
+	"tests/AnotherTest2.cpp"
+)
 
 # link the 'test targets' to the test library (gtest_main)
 target_link_libraries(AnotherTest gtest_main)
-
+target_link_libraries(AnotherTest2 gtest_main)
 # add the new test executable fo
 gtest_discover_tests(AnotherTest)
+gtest_discover_tests(AnotherTest2)
 
 # post build command for copying DLL files related to 'HorizonEngine'
 # to 'HznApplication'

@@ -4,6 +4,6 @@ namespace Hzn
 {
 	TEST(SampleTest2, FalseTest)
 	{
-		EXPECT_TRUE(false);
+		EXPECT_TRUE(true);
 	}
 }
