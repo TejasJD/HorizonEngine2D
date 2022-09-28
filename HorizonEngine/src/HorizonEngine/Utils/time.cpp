@@ -2,37 +2,40 @@
 
 using namespace std::chrono;
 
-float Time::deltaTime;
-float Time::fixedDeltaTime;
+namespace Hzn {
 
-duration<float> Time::deltaTimeDuration;
-duration<float> Time::fixedDeltaTimeDuration;
-high_resolution_clock::time_point Time::lastUpdateTime;
-high_resolution_clock::time_point Time::lastFixedUpdateTime;
+	float Time::deltaTime;
+	float Time::fixedDeltaTime;
 
-Time::Time() {
-	// TODO: Attach awake, start update and fixedUpdate 
-	// to main game loop
-}
+	duration<float> Time::deltaTimeDuration;
+	duration<float> Time::fixedDeltaTimeDuration;
+	high_resolution_clock::time_point Time::lastUpdateTime;
+	high_resolution_clock::time_point Time::lastFixedUpdateTime;
 
-void Time::awake() {
-	// May do this in the constructor instead?
-	lastUpdateTime = high_resolution_clock::now();
-	lastFixedUpdateTime = lastUpdateTime;
-}
+	Time::Time() {
+		// TODO: Attach awake, start update and fixedUpdate 
+		// to main game loop
+	}
 
-void Time::start() { }
+	void Time::awake() {
+		// May do this in the constructor instead?
+		lastUpdateTime = high_resolution_clock::now();
+		lastFixedUpdateTime = lastUpdateTime;
+	}
 
-void Time::update() {
-	high_resolution_clock::time_point currentUpdateTime = high_resolution_clock::now();
-	deltaTimeDuration = currentUpdateTime - lastUpdateTime;
-	deltaTime = deltaTimeDuration.count();
-	lastUpdateTime = currentUpdateTime;
-}
+	void Time::start() { }
 
-void Time::fixedUpdate() {
-	high_resolution_clock::time_point currentFixedUpdateTime = high_resolution_clock::now();
-	fixedDeltaTimeDuration = currentFixedUpdateTime - lastFixedUpdateTime;
-	fixedDeltaTime = fixedDeltaTimeDuration.count();
-	lastFixedUpdateTime = currentFixedUpdateTime;
+	void Time::update() {
+		high_resolution_clock::time_point currentUpdateTime = high_resolution_clock::now();
+		deltaTimeDuration = currentUpdateTime - lastUpdateTime;
+		deltaTime = deltaTimeDuration.count();
+		lastUpdateTime = currentUpdateTime;
+	}
+
+	void Time::fixedUpdate() {
+		high_resolution_clock::time_point currentFixedUpdateTime = high_resolution_clock::now();
+		fixedDeltaTimeDuration = currentFixedUpdateTime - lastFixedUpdateTime;
+		fixedDeltaTime = fixedDeltaTimeDuration.count();
+		lastFixedUpdateTime = currentFixedUpdateTime;
+	}
 }
