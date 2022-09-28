@@ -2,6 +2,14 @@
 
 #include "HorizonEngine/Core.h"
 
+/* 
+Events are currently utilising blocking. 
+A new iteration may involve using the observer pattern
+https://refactoring.guru/design-patterns/observer
+Code that could be used can be found open source: 
+https://github.com/dquist/EventBus
+*/
+
 namespace HorizonEngine {
 
 	enum class TypeOfEvent
