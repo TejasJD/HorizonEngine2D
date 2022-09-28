@@ -14,6 +14,7 @@
 #include <functional>
 #include <utility>
 #include <cstdlib>
+#include <chrono>
 
 // standard library data-structure
 #include <sstream>

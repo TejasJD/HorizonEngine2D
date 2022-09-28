@@ -2,15 +2,10 @@
 #ifndef _transform_h
 #define _transform_h
 
-#include "component.h"
-#include "../gameObject.h"
-#include "../Utils/time.h"
-
-#include <vector>
-#include <cmath>
-#include <iostream>
-
-#include <glm/vec2.hpp>
+#include "Component.h"
+#include "HorizonEngine/GameObject.h"
+#include "HorizonEngine/Utils/Time.h"
+#include "glm/vec2.hpp"
 
 namespace Hzn {
 

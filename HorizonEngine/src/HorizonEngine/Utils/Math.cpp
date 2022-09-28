@@ -1,5 +1,5 @@
 #include "pch.h" 
-#include "math.h"
+#include "Math.h"
 
 namespace Hzn {
 

@@ -3,9 +3,7 @@
 #ifndef _time_h
 #define _time_h
 
-#include "../components/component.h"
-
-#include <chrono>
+#include "HorizonEngine/Components/Component.h"
 
 namespace Hzn {
 	class Time : public Component {

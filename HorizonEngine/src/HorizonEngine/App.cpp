@@ -8,7 +8,7 @@ namespace Hzn
 	void App::run()
 	{
 		std::cout << "Welcome to HorizonEngine!" << std::endl;
-		Window* w = new MSWindow(1366, 768, "Hello");
+		Window* w = new MSWindow(1366, 768, "HorizonEngine");
 		while (!w->shouldClose())
 		{
 			w->update();

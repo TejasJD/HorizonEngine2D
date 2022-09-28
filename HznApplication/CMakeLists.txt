@@ -5,20 +5,24 @@ cmake_minimum_required (VERSION 3.8)
 
 project(HznApplication)
 
-set(HZAPP_SRC_FILES
+set(HZAPP_SOURCE_FILES
 	"HznApp.cpp"
- "HznApp.h")
+)
 
-# 'HznApplication' target which would generate an executable
-add_executable(HznApplication ${HZAPP_SRC_FILES} "HznApp.h")
+set(HZAPP_HEADER_FILES
+	"HznApp.h"
+)
 
-# libraries linked to HorizonEngine
+# 'HznApplication' target which would generate an executable.
+add_executable(HznApplication ${HZAPP_SOURCE_FILES} ${HZN_HEADER_FILES})
+
+# libraries linked to HorizonEngine.
 target_link_libraries(HznApplication PUBLIC HorizonEngine)
 
 # Add the test executables here.
-# For every new 'test file' add into the three sections below
+# For every new 'test file' add into the three sections below.
 
-# add a test executable using 'add_executable' command
+# add a test executable using 'add_executable' command.
 add_executable (AnotherTest
 	"tests/AnotherTest.cpp"
 )
@@ -26,15 +30,16 @@ add_executable (AnotherTest2
 	"tests/AnotherTest2.cpp"
 )
 
-# link the 'test targets' to the test library (gtest_main)
+# link the 'test targets' to the test library (gtest_main).
 target_link_libraries(AnotherTest gtest_main)
 target_link_libraries(AnotherTest2 gtest_main)
-# add the new test executable fo
+
+# add the new test executable to be configured and discovered.
 gtest_discover_tests(AnotherTest)
 gtest_discover_tests(AnotherTest2)
 
 # post build command for copying DLL files related to 'HorizonEngine'
-# to 'HznApplication'
+# to 'HznApplication'.
 add_custom_command(
 	TARGET HznApplication
 	POST_BUILD

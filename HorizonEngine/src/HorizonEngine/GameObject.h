@@ -1,8 +1,6 @@
 #pragma once
-#include <vector>
-
-#include "./Components/transform.h"
-#include "./Components/component.h"
+#include "HorizonEngine/Components/Transform.h"
+#include "HorizonEngine/Components/Component.h"
 
 namespace Hzn {
 	class Component;

@@ -19,6 +19,7 @@ namespace Hzn
 
 	private:
 	};
+
 	// to be defined by the application that implements this function
 	HZN_API std::shared_ptr<App> createApp();
 }

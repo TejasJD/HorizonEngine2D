@@ -5,12 +5,30 @@ cmake_minimum_required (VERSION 3.8)
 
 project(HorizonEngine)
 
-set(HZN_SRC_FILES 
+set(HZN_SOURCE_FILES
 	"src/HorizonEngine/App.cpp"
-	"src/HorizonEngine/gameObject.cpp"
+	"src/HorizonEngine/Window.cpp"
+	"src/HorizonEngine/GameObject.cpp"
 	"src/HorizonEngine/Utils/time.cpp"
-	"src/HorizonEngine/Utils/math.cpp"
-	"src/HorizonEngine/Components/transform.cpp"
+	"src/HorizonEngine/Utils/Math.cpp"
+	"src/HorizonEngine/Components/Transform.cpp"
+	"platform/windows/MSWindow.cpp"
+)
+
+set(HZN_HEADER_FILES
+	"HorizonEngine.h"
+	"pch.h"
+	"src/HorizonEngine/APIMacros.h"
+	"src/HorizonEngine/App.h"
+	"src/HorizonEngine/EntryPoint.h"
+	"src/HorizonEngine/Window.h"
+	"src/HorizonEngine/GameObject.h"
+	"src/HorizonEngine/Utils/Math.h"
+	"src/HorizonEngine/Utils/Time.h"
+	"src/HorizonEngine/Physics2D/RigidBody2D.h"
+	"src/HorizonEngine/Components/Component.h"
+	"src/HorizonEngine/Components/Transform.h"
+	"platform/windows/MSWindow.h"
 )
 
 # Add source to this project's executable.
