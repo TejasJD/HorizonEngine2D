@@ -5,6 +5,7 @@
 #include "src/HorizonEngine/App.h"
 #include "src/HorizonEngine/Log.h"
 #include "src/HorizonEngine/Logging/Logging.h"
+#include "src/HorizonEngine/Logging/LogMessage.h"
 
 // Entry point header.
 #include "src/HorizonEngine/EntryPoint.h"

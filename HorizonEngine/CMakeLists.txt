@@ -7,7 +7,9 @@ project(HorizonEngine)
 
 set(HZN_SRC_FILES
 	"src/HorizonEngine/App.cpp"
-	"src/HorIzonEngine/Logging/Logging.cpp"
+	"src/HorizonEngine/Logging/Logging.cpp"
+	"src/HorizonEngine/Logging/LogMessage.cpp"
+	
 )
 
 # Add source to this project's executable.
