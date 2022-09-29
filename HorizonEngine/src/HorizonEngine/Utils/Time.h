@@ -6,7 +6,7 @@
 #include "HorizonEngine/Components/Component.h"
 
 namespace Hzn {
-	class Time : public Component {
+	class Time {
 	public:
 		static float deltaTime;
 		static float fixedDeltaTime;

@@ -62,7 +62,7 @@ namespace Hzn {
 		float lengthRight = std::sqrtf((right.x * right.x + right.y * right.y));
 		float lengthTraget = std::sqrtf((targetPosition.x * targetPosition.x + targetPosition.y * targetPosition.y));
 		float cos = (up.x * targetPosition.x + up.y * targetPosition.y) / (lengthRight * lengthTraget);
-		float angle = std::acosf(cos) * 180 / 3.1415;
+		float angle = std::acosf(cos) * 180.0f / Math::PI;
 		rotate(angle);
 	}
 
@@ -88,8 +88,8 @@ namespace Hzn {
 
 	bool Transform::isChildOf(char* name) {
 		Transform* currentTransform = this;
-		while (currentTransform->parent != NULL) {
-			if (strcmp(currentTransform->parent->gameObject->name, name) == 0) {
+		while (currentTransform->parent.lock() != NULL) {
+			if (strcmp(currentTransform->parent.lock()->gameObject->name, name) == 0) {
 				return true;
 			}
 		}
@@ -98,22 +98,22 @@ namespace Hzn {
 	}
 
 	void Transform::setAsFirstSibling() {
-		if (parent != NULL) {
-			parent->children->erase(parent->children->begin() + siblingIndex);
-			parent->children->insert(parent->children->begin(), this);
+		if (parent.lock() != NULL) {
+			parent.lock()->children->erase(parent.lock()->children->begin() + siblingIndex);
+			parent.lock()->children->insert(parent.lock()->children->begin(), this);
 			siblingIndex = 0;
 		}
 	}
 
 	void Transform::setAsLastSibling() {
-		parent->children->erase(parent->children->begin() + siblingIndex);
-		parent->children->push_back(this);
-		siblingIndex = parent->children->size();
+		parent.lock()->children->erase(parent.lock()->children->begin() + siblingIndex);
+		parent.lock()->children->push_back(this);
+		siblingIndex = parent.lock()->children->size();
 	}
 
 	void Transform::setSiblingIndex(int newSiblingIndex) {
-		parent->children->erase(parent->children->begin() + siblingIndex);
-		parent->children->insert(parent->children->begin() + newSiblingIndex, this);
+		parent.lock()->children->erase(parent.lock()->children->begin() + siblingIndex);
+		parent.lock()->children->insert(parent.lock()->children->begin() + newSiblingIndex, this);
 		siblingIndex = newSiblingIndex;
 	}
 }

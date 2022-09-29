@@ -12,6 +12,9 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
+	"src/HorizonEngine/Physics2D/BoxCollider2D.cpp"
+	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
+	"src/HorizonEngine/Physics2D/Rigidbody2D.cpp"
 	"platform/windows/MSWindow.cpp"
 )
 
