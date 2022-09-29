@@ -5,29 +5,61 @@ cmake_minimum_required (VERSION 3.8)
 
 project(HorizonEngine)
 
-set(HZN_SRC_FILES
+set(HZN_SOURCE_FILES
 	"src/HorizonEngine/App.cpp"
+	"src/HorizonEngine/Window.cpp"
+	"src/HorizonEngine/GameObject.cpp"
+	"src/HorizonEngine/Utils/time.cpp"
+	"src/HorizonEngine/Utils/Math.cpp"
+	"src/HorizonEngine/Components/Transform.cpp"
+	"platform/windows/MSWindow.cpp"
+)
+
+set(HZN_HEADER_FILES
+	"HorizonEngine.h"
+	"pch.h"
+	"src/HorizonEngine/APIMacros.h"
+	"src/HorizonEngine/App.h"
+	"src/HorizonEngine/EntryPoint.h"
+	"src/HorizonEngine/Window.h"
+	"src/HorizonEngine/GameObject.h"
+	"src/HorizonEngine/Utils/Math.h"
+	"src/HorizonEngine/Utils/Time.h"
+	"src/HorizonEngine/Physics2D/RigidBody2D.h"
+	"src/HorizonEngine/Components/Component.h"
+	"src/HorizonEngine/Components/Transform.h"
+	"platform/windows/MSWindow.h"
 )
 
 # Add source to this project's executable.
+<<<<<<< HEAD
 add_library (HorizonEngine ${HZN_SRC_FILES} "src/HorizonEngine/FileManager.cpp")
+||||||| 2d7941e
+add_library (HorizonEngine ${HZN_SRC_FILES})
+=======
+add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
+>>>>>>> a6980150c6be44d6737179244c16d5129214d425
 
-# glm
+# subdirectories to external dependencies
 add_subdirectory(extern/glm)
-
-# spdlog logging library
 add_subdirectory(extern/spdlog)
-
-# imgui directory
-add_subdirectory(extern/imgui)
+add_subdirectory(extern/box2d)
 
 # compile definitions for 'HorizonEngine' target
-target_compile_definitions(HorizonEngine PUBLIC HZN_PLATFORM_WINDOWS HZN_BUILD)
+target_compile_definitions(HorizonEngine
+	PUBLIC
+		HZN_PLATFORM_WINDOWS
+		HZN_BUILD
+)
 
 
 # directories on include search path for 'HorizonEngine' target
 target_include_directories(HorizonEngine
-	PUBLIC . src
+	PUBLIC
+	.
+	src
+	src/HorizonEngine
+	platform
 )
 
 # precompiled headers to target 'HorizonEngine'
@@ -36,9 +68,12 @@ target_precompile_headers(HorizonEngine PUBLIC pch.h)
 # external libraries linked to 'HorizonEngine' target
 target_link_libraries(HorizonEngine
 	PUBLIC
-		spdlog::spdlog_header_only
-		imgui 
-		glm::glm 
+		box2d
+		glfw
+		glad
+		imgui
+		sajson
+		glm::glm
 		opengl32.lib
 )
 

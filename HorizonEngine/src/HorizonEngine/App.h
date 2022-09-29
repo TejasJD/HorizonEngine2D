@@ -1,7 +1,6 @@
 #pragma once
 
 #include "APIMacros.h"
-#include "pch.h"
 
 namespace Hzn
 {
@@ -19,8 +18,8 @@ namespace Hzn
 		void run();
 
 	private:
-
 	};
+
 	// to be defined by the application that implements this function
 	HZN_API std::shared_ptr<App> createApp();
 }

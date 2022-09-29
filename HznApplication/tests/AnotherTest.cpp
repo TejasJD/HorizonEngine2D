@@ -2,7 +2,7 @@
 
 namespace HznApplication
 {
-	TEST(AnotherTest, falseTest)
+	TEST(AnotherTest, merryTest)
 	{
 		EXPECT_EQ(7 * 6, 42);
 	}
