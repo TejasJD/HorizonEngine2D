@@ -1,37 +1,38 @@
 #pragma once 
 
+#include <pch.h>
+
 #include "HorizonEngine/Events/Event.h"
-#inlcude "HorionEngine/Core/MouseCodes.h"
+#include "HorizonEngine/Core/MouseCodes.h"
 
 namespace HorizonEngine {
-	
-	class MoveMouseEvent : public Event
+
+	class MouseMovedEvent : public Event
 	{
 	public:
-		MoveMouseEvent(const float x, const float y) : m_MouseX(x), m_MouseY(y) {}
+		MouseMovedEvent(const float x, const float y)
+			: m_MouseX(x), m_MouseY(y) {}
 
 		float GetX() const { return m_MouseX; }
 		float GetY() const { return m_MouseY; }
 
-		std::string ToString() const overrride
+		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MoveMouseEvent: " << m_MouseX << ", " << m_MouseY;
+			ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
 			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(MouseMoved)
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
-
+			EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	private:
 		float m_MouseX, m_MouseY;
 	};
 
-
-	class ScrollMouseEvent : public Event
+	class MouseScrolledEvent : public Event
 	{
 	public:
-		ScrollMouseEvent(const float xOffset, const float yOffset)
+		MouseScrolledEvent(const float xOffset, const float yOffset)
 			: m_XOffset(xOffset), m_YOffset(yOffset) {}
 
 		float GetXOffset() const { return m_XOffset; }
@@ -40,13 +41,12 @@ namespace HorizonEngine {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "ScrollMouseEvent: " << GetXOffset() << ", " << GetYOffset();
+			ss << "MouseScrolledEvent: " << GetXOffset() << ", " << GetYOffset();
 			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(MouseScrolled)
-		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
-
+			EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	private:
 		float m_XOffset, m_YOffset;
 	};

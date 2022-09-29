@@ -70,7 +70,7 @@ namespace HorizonEngine {
 		{
 		}
 
-		// F will be deduced by the compiler
+		// F deduced by the compiler
 		template<typename T, typename F>
 		bool Dispatch(const F& func)
 		{

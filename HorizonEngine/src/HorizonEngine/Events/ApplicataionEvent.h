@@ -1,5 +1,6 @@
 #pragma once
 
+#include <pch.h>
 #include "HorizonEngine/Events/Event.h"
 
 namespace HorizonEngine {
