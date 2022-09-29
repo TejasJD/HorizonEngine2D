@@ -10,7 +10,7 @@ set(HZN_SRC_FILES
 )
 
 # Add source to this project's executable.
-add_library (HorizonEngine ${HZN_SRC_FILES})
+add_library (HorizonEngine ${HZN_SRC_FILES} "src/HorizonEngine/FileManager.cpp")
 
 # glm
 add_subdirectory(extern/glm)
@@ -48,10 +48,10 @@ target_link_libraries(HorizonEngine
 # add a test executable using 'add_executable' command
 add_executable (SampleTest
 	"tests/SampleTest.cpp"
-)
+ "src/HorizonEngine/FileManager.cpp")
 add_executable(SampleTest2
 	"tests/SampleTest2.cpp"
-)
+ "src/HorizonEngine/FileManager.cpp")
 
 # link the 'test targets' to the test library (gtest_main)
 target_link_libraries(SampleTest gtest_main)
