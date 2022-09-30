@@ -4,6 +4,6 @@ namespace HznApplication
 {
 	TEST(AnotherTest2, betterTest)
 	{
-		EXPECT_EQ(7 * 6, 42);
+		EXPECT_EQ(7 * 5, 42);
 	}
 }

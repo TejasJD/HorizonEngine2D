@@ -42,7 +42,7 @@ namespace Hzn
 
 		glfwMakeContextCurrent(m_Window);
 
-		int gladSuccess = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
+		int gladSuccess = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 		assert(gladSuccess != 0);
 	}

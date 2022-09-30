@@ -1,10 +1,6 @@
 #pragma once
 
 #include "HorizonEngine/Window.h"
-
-#include "glad/gl.h"
-#include "GLFW/glfw3.h"
-
 // Implementation of the Window class with OpenGL as the rendering API
 namespace Hzn
 {

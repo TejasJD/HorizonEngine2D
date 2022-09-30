@@ -34,11 +34,6 @@ set(HZN_HEADER_FILES
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 
-# subdirectories to external dependencies
-add_subdirectory(extern/glm)
-add_subdirectory(extern/spdlog)
-add_subdirectory(extern/box2d)
-
 # compile definitions for 'HorizonEngine' target
 target_compile_definitions(HorizonEngine
 	PUBLIC
@@ -59,34 +54,30 @@ target_include_directories(HorizonEngine
 # precompiled headers to target 'HorizonEngine'
 target_precompile_headers(HorizonEngine PUBLIC pch.h)
 
-# external libraries linked to 'HorizonEngine' target
-target_link_libraries(HorizonEngine
-	PUBLIC
-		box2d
-		glfw
-		glad
-		imgui
-		sajson
-		glm::glm
-		opengl32.lib
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(box2d CONFIG REQUIRED)
+
+target_link_libraries(HorizonEngine 
+	PUBLIC 
+	glfw
+	glm::glm
+	glad::glad
+	imgui::imgui
+	spdlog::spdlog_header_only
+	box2d::box2d
 )
 
-# Add the test executables here.
-# For every new 'test file' add into the three sections below
+#testing
+add_executable(SampleTest "tests/SampleTest.cpp")
+add_executable(SampleTest2 "tests/SampleTest2.cpp")
 
-# add a test executable using 'add_executable' command
-add_executable (SampleTest
-	"tests/SampleTest.cpp"
-)
-add_executable(SampleTest2
-	"tests/SampleTest2.cpp"
-)
+target_link_libraries(SampleTest PUBLIC GTest::gtest_main)
+target_link_libraries(SampleTest2 PUBLIC GTest::gtest_main)
 
-# link the 'test targets' to the test library (gtest_main)
-target_link_libraries(SampleTest gtest_main)
-target_link_libraries(SampleTest2 gtest_main)
-
-# add the new test executable fo
 gtest_discover_tests(SampleTest)
 gtest_discover_tests(SampleTest2)
 

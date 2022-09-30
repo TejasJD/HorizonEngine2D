@@ -19,22 +19,13 @@ add_executable(HznApplication ${HZAPP_SOURCE_FILES} ${HZN_HEADER_FILES})
 # libraries linked to HorizonEngine.
 target_link_libraries(HznApplication PUBLIC HorizonEngine)
 
-# Add the test executables here.
-# For every new 'test file' add into the three sections below.
+# testing
+add_executable(AnotherTest "tests/AnotherTest.cpp")
+add_executable(AnotherTest2 "tests/AnotherTest2.cpp")
 
-# add a test executable using 'add_executable' command.
-add_executable (AnotherTest
-	"tests/AnotherTest.cpp"
-)
-add_executable (AnotherTest2
-	"tests/AnotherTest2.cpp"
-)
+target_link_libraries(AnotherTest PUBLIC GTest::gtest_main)
+target_link_libraries(AnotherTest2 PUBLIC GTest::gtest_main)
 
-# link the 'test targets' to the test library (gtest_main).
-target_link_libraries(AnotherTest gtest_main)
-target_link_libraries(AnotherTest2 gtest_main)
-
-# add the new test executable to be configured and discovered.
 gtest_discover_tests(AnotherTest)
 gtest_discover_tests(AnotherTest2)
 
