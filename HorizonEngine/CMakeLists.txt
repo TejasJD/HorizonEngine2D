@@ -11,6 +11,10 @@ set(HZN_SRC_FILES
 	"src/HorizonEngine/Utils/time.cpp"
 	"src/HorizonEngine/Utils/math.cpp"
 	"src/HorizonEngine/Components/transform.cpp"
+	"src/HorizonEngine/Events/Event.h"
+	"src/HorizonEngine/Events/KeyEvent.h"
+	"src/HorizonEngine/Events/MouseEvent.h"
+	"src/HorizonEngine/Events/ApplicationEvent.h"
 )
 
 # Add source to this project's executable.

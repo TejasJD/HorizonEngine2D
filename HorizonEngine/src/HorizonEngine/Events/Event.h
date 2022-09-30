@@ -1,6 +1,7 @@
 #pragma once 
 
-#include "HorizonEngine/Core.h"
+#include "HorizonEngine/APIMacros.h"
+#include <pch.h>
 
 /* 
 Events are currently utilising blocking. 
@@ -10,7 +11,7 @@ Code that could be used can be found open source:
 https://github.com/dquist/EventBus
 */
 
-namespace HorizonEngine {
+namespace Hzn{
 
 	enum class TypeOfEvent
 	{
