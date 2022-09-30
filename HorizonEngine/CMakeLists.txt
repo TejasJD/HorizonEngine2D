@@ -13,7 +13,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
 	"platform/windows/MSWindow.cpp"
-)
+ "src/HorizonEngine/Logging/Logging.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -29,7 +29,8 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Components/Component.h"
 	"src/HorizonEngine/Components/Transform.h"
 	"platform/windows/MSWindow.h"
-)
+	"src/HorizonEngine/Logging/Logging.h"
+ "src/HorizonEngine/Events/Event.h" "src/HorizonEngine/Events/MouseEvent.h" "src/HorizonEngine/Events/KeyEvent.h" "src/HorizonEngine/Events/ApplicationEvent.h" "src/HorizonEngine/Codes/MouseCodes.h" "src/HorizonEngine/Codes/KeyboardCodes.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -60,6 +61,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
+find_package(unofficial-sajson CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC 
@@ -69,11 +71,27 @@ target_link_libraries(HorizonEngine
 	imgui::imgui
 	spdlog::spdlog_header_only
 	box2d::box2d
+	unofficial::sajson::sajson
 )
 
 #testing
 add_executable(SampleTest "tests/SampleTest.cpp")
+target_include_directories(SampleTest
+	PUBLIC
+	.
+	src
+	src/HorizonEngine
+	platform
+)
+
 add_executable(SampleTest2 "tests/SampleTest2.cpp")
+target_include_directories(SampleTest2
+	PUBLIC
+	.
+	src
+	src/HorizonEngine
+	platform
+)
 
 target_link_libraries(SampleTest PUBLIC GTest::gtest_main)
 target_link_libraries(SampleTest2 PUBLIC GTest::gtest_main)

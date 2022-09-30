@@ -1,11 +1,15 @@
 #pragma once
 
-#ifndef _component_h
-#define _component_h
+#ifndef HZN_COMPONENT_H
+#define HZN_COMPONENT_H
+
+#include "componentType.h"
 
 namespace Hzn {
 	class Component {
-	private:
+	public:
+		std::vector<ComponentType> componentTypes;
+	protected:
 		virtual void awake() = 0;
 		virtual void start() = 0;
 		virtual void update() = 0;
@@ -13,4 +17,4 @@ namespace Hzn {
 	};
 }
 
-#endif // !_component_h
+#endif // !HZN_COMPONENT_H

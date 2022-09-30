@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _math_h
-#define _math_h
+#ifndef HZN_MATH_H
+#define HZN_MATH_H
 
 namespace Hzn {
 	class Math {
@@ -50,4 +50,4 @@ namespace Hzn {
 	constexpr float Math::infinity;
 	constexpr float Math::negativeInfinity;
 }
-#endif // !_math_h
+#endif // !HZN_MATH_H

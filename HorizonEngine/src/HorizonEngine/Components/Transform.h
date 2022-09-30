@@ -1,20 +1,22 @@
 #pragma once
-#ifndef _transform_h
-#define _transform_h
+#ifndef HZN_TRANSFORM_H
+#define HZN_TRANSFORM_H
 
 #include "Component.h"
 #include "HorizonEngine/GameObject.h"
 #include "HorizonEngine/Utils/Time.h"
+#include "HorizonEngine/Utils/Math.h"
 #include "glm/vec2.hpp"
 
 namespace Hzn {
 
-	class GameObject;
 	class Transform;
+	class GameObject;
 
 	class Transform : public Component {
 	public:
-		GameObject* gameObject = nullptr;
+		std::vector<ComponentType> componentTypes{ ComponentType::C_Transform };
+		GameObject* gameObject;
 
 		glm::vec2 localPosition = glm::vec2(0, 0);
 		float localRotation = 0;
@@ -27,8 +29,8 @@ namespace Hzn {
 		glm::vec2 right = glm::vec2(1, 0);
 		glm::vec2 up = glm::vec2(0, 1);
 
-		Transform* parent = nullptr;
-		Transform* root = nullptr;
+		std::weak_ptr<Transform> parent;
+		std::weak_ptr<Transform> root;
 		int siblingIndex = 0;
 		int childCount = 0;
 

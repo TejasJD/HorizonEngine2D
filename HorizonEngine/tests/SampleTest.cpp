@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "HorizonEngine/Physics2D/RigidBody2D.h"
 
 namespace Hzn
 {

@@ -1,12 +1,12 @@
 #pragma once
 
-#ifndef _time_h
-#define _time_h
+#ifndef HZN_TIME_H
+#define HZN_TIME_H
 
 #include "HorizonEngine/Components/Component.h"
 
 namespace Hzn {
-	class Time : public Component {
+	class Time {
 	public:
 		static float deltaTime;
 		static float fixedDeltaTime;
