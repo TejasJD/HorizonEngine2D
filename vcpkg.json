@@ -5,7 +5,13 @@
     "glfw3",
     "glm",
     "glad",
-    "imgui",
+    {
+      "name": "imgui",
+      "default-features": false,
+      "features": [
+        "opengl3-binding"
+      ]
+    },
     "spdlog",
     "box2d",
     "gtest",
