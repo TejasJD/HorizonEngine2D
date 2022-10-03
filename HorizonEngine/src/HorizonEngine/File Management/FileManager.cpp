@@ -5,8 +5,8 @@
 
 
 namespace Hzn {
-
-	void ProjectFile::NewFile() {
+	/* THIS SHOULD NOT BE HERE
+	void ProjectFile::newFile() {
 		
 		std::string fileName;
 		std::cout << "Enter new file name" << std::endl;
@@ -201,7 +201,7 @@ namespace Hzn {
 
 	bool getBool() {
 		return true;
-	}
+	}*/
 
 }
 

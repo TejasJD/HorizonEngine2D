@@ -19,16 +19,20 @@
 namespace Hzn {
 	namespace Physics2D {
 		class Rigidbody2D : public Component {
+		public:
+			std::vector<ComponentType> componentTypes{ ComponentType::C_Rigidbody2D };
+			std::weak_ptr<Transform> transform;
 		private:
 			b2Body* body;
 			BodyType type;
 			glm::vec2 size;
 			glm::vec2 offset;
 		public:
-			std::vector<ComponentType> componentTypes{ ComponentType::C_Rigidbody2D };
-			std::weak_ptr<Transform> transform;
 			Rigidbody2D();
 			~Rigidbody2D();
+
+			void setPosition(glm::vec2 position);
+			void setRotation(float rotation);
 		private:
 			void init();
 			void awake() override {}

@@ -11,6 +11,16 @@ namespace Hzn {
 			PhysicsWorld2D::world->DestroyBody(body);
 		}
 
+
+		void Rigidbody2D::setPosition(glm::vec2 position) {
+			body->SetTransform(b2Vec2(position.x, position.y), transform.lock().get()->rotation);
+		}
+
+		void Rigidbody2D::setRotation(float rotation) {
+			glm::vec2 position = transform.lock().get()->position;
+			body->SetTransform(b2Vec2(position.x, position.y), rotation);
+		}
+
 		void Rigidbody2D::init() {
 			b2BodyDef bodyDef;
 			switch (type)
@@ -63,6 +73,12 @@ namespace Hzn {
 
 			// Sets the body's initial position and rotation
 			body->SetTransform(b2Vec2(transform.lock()->position.x, transform.lock()->position.y), transform.lock()->rotation * Math::deg2rad);
+		}
+
+		void Rigidbody2D::update() {
+			b2Transform t = body->GetTransform();
+			transform.lock().get()->position = b2Vec2(t.p.x, t.p.y);
+			transform.lock().get()->rotation = t.q.GetAngle();
 		}
 	}
 }
