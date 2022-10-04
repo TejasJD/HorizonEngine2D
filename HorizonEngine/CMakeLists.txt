@@ -11,7 +11,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
-	"platform/windows/MSWindow.cpp"
+	"Platform/Windows/MSWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
@@ -30,7 +30,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Physics2D/RigidBody2D.h"
 	"src/HorizonEngine/Components/Component.h"
 	"src/HorizonEngine/Components/Transform.h"
-	"platform/windows/MSWindow.h"
+	"Platform/Windows/MSWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
 	"src/HorizonEngine/Events/Event.h"
 	"src/HorizonEngine/Events/MouseEvent.h"
@@ -41,7 +41,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/LayerStack.h"
 	"src/HorizonEngine/Layer.h"
 	"src/HorizonEngine/Core/Core.h"
-	"src/HorizonEngine/Imgui/ImguiLayer.h")
+	"src/HorizonEngine/Imgui/ImguiLayer.h" "src/HorizonEngine/Input.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
