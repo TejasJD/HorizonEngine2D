@@ -3,12 +3,12 @@
 #ifndef HZN_APPLICATION_EVENT_H
 #define HZN_APPLICATION_EVENT_H
 
-#include <pch.h>
+#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Events/Event.h"
 
-namespace HorizonEngine {
+namespace Hzn {
 
-	class WindowResizeEvent : public Event
+	class HZN_API WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
@@ -30,7 +30,7 @@ namespace HorizonEngine {
 		unsigned int m_Width, m_Height;
 	};
 
-	class WindowCloseEvent : public Event
+	class HZN_API WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent() = default;
@@ -39,7 +39,7 @@ namespace HorizonEngine {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class AppTickEvent : public Event
+	class HZN_API AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent() = default;
@@ -48,7 +48,7 @@ namespace HorizonEngine {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class AppUpdateEvent : public Event
+	class HZN_API AppUpdateEvent : public Event
 	{
 	public:
 		AppUpdateEvent() = default;
@@ -57,7 +57,7 @@ namespace HorizonEngine {
 			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class AppRenderEvent : public Event
+	class HZN_API AppRenderEvent : public Event
 	{
 	public:
 		AppRenderEvent() = default;

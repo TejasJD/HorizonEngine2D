@@ -1,24 +1,24 @@
 ﻿# CMakeList.txt : CMake project for HorizonEngine, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.15)
 
 project(HorizonEngine)
 
 set(HZN_SOURCE_FILES
 	"src/HorizonEngine/App.cpp"
-	"src/HorizonEngine/Window.cpp"
 	"src/HorizonEngine/GameObject.cpp"
 	"src/HorizonEngine/Utils/time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
 	"platform/windows/MSWindow.cpp"
- "src/HorizonEngine/Logging/Logging.cpp")
+	"src/HorizonEngine/Logging/Logging.cpp"
+	"src/HorizonEngine/LayerStack.cpp"
+	"src/HorizonEngine/Layer.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
 	"pch.h"
-	"src/HorizonEngine/APIMacros.h"
 	"src/HorizonEngine/App.h"
 	"src/HorizonEngine/EntryPoint.h"
 	"src/HorizonEngine/Window.h"
@@ -30,7 +30,16 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Components/Transform.h"
 	"platform/windows/MSWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
- "src/HorizonEngine/Events/Event.h" "src/HorizonEngine/Events/MouseEvent.h" "src/HorizonEngine/Events/KeyEvent.h" "src/HorizonEngine/Events/ApplicationEvent.h" "src/HorizonEngine/Codes/MouseCodes.h" "src/HorizonEngine/Codes/KeyboardCodes.h")
+	"src/HorizonEngine/Events/Event.h"
+	"src/HorizonEngine/Events/MouseEvent.h"
+	"src/HorizonEngine/Events/KeyEvent.h"
+	"src/HorizonEngine/Events/ApplicationEvent.h"
+	"src/HorizonEngine/Codes/MouseCodes.h"
+	"src/HorizonEngine/Codes/KeyboardCodes.h"
+	"src/HorizonEngine/LayerStack.h"
+	"src/HorizonEngine/Layer.h"
+	"src/HorizonEngine/Core/Core.h"
+)
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -39,6 +48,7 @@ add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 target_compile_definitions(HorizonEngine
 	PUBLIC
 		HZN_PLATFORM_WINDOWS
+	PRIVATE
 		HZN_BUILD
 )
 
@@ -64,12 +74,13 @@ find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
-	PUBLIC 
+	PUBLIC
+	fmt::fmt-header-only
 	glfw
 	glm::glm
 	glad::glad
 	imgui::imgui
-	spdlog::spdlog_header_only
+	spdlog::spdlog
 	box2d::box2d
 	unofficial::sajson::sajson
 )

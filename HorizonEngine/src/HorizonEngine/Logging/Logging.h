@@ -3,12 +3,10 @@
 #ifndef HZN_LOGGING_H
 #define HZN_LOGGING_H
 
-#include "HorizonEngine/APIMacros.h"
-#include "pch.h"
-
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/spdlog.h>
+#include "HorizonEngine/Core/Core.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 namespace Hzn
 {

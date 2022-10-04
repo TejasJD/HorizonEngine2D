@@ -1,27 +1,40 @@
 #pragma once
 
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+
+#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Window.h"
 // Implementation of the Window class with OpenGL as the rendering API
 namespace Hzn
 {
-	class MSWindow : public Window
+
+	class HZN_API MSWindow : public Window
 	{
 	public:
 		// Constructor creates window and initializes the object
-		MSWindow(const std::size_t& width, const std::size_t& height, const char* const& title);
+		MSWindow(const unsigned int& width, const unsigned int& height, const char* const& title);
+		~MSWindow();
 
-
-		virtual ~MSWindow();
-
-		// declarations of virtual methods of the window class
-		virtual void update() override;
-		virtual void render() override;
-		virtual bool shouldClose() const override;
+		// Inherited via Window
+		virtual void onUpdate() override;
+		virtual unsigned int getHeight() override { return m_Data.height; };
+		virtual unsigned int getWidth() override { return m_Data.width; }
+		virtual void setEventCallback(const EventCallbackFn& callback) override { m_Data.callback = callback; }
 
 	private:
-		virtual void init() override;
-		virtual void destroy() override;
+		void init();
+		void destroy();
 
+		struct WindowData
+		{
+			unsigned int width;
+			unsigned int height;
+			const char* title;
+			EventCallbackFn callback;
+		};
+
+		WindowData m_Data;
 		GLFWwindow* m_Window;
 	};
 }

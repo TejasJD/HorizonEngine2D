@@ -35,7 +35,7 @@ namespace Hzn {
 		int childCount = 0;
 
 		std::vector<Transform*>* children{};
-	public:
+
 		Transform();
 		~Transform();
 	private:

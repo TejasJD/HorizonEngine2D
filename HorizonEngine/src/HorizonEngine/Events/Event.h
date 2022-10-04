@@ -2,9 +2,6 @@
 
 #ifndef HZN_EVENT_H
 #define HZN_EVENT_H
-
-#include "HorizonEngine/APIMacros.h"
-
 /*
 Events are currently utilising blocking.
 A new iteration may involve using the observer pattern
@@ -13,11 +10,13 @@ Code that could be used can be found open source:
 https://github.com/dquist/EventBus
 */
 
+#include "HorizonEngine/Core/Core.h"
+
 #define BIT(x) (1 << (x))
 
 namespace Hzn {
 
-	enum class TypeOfEvent
+	enum class HZN_API TypeOfEvent
 	{
 		None = 0,
 		// Window Events 
@@ -33,14 +32,14 @@ namespace Hzn {
 		AppTick, AppUpdate, AppRender
 	};
 
-	enum EventCategory
+	enum HZN_API EventCategory
 	{
 		None = 0,
-		EventCategoryApplication = BIT(0),
-		EventCategoryInput = BIT(1),
-		EventCategoryKeyboard = BIT(2),
-		EventCategoryMouse = BIT(3),
-		EventCategoryMouseButton = BIT(4)
+		EventCategoryApplication = BIT(0), // 1 0000001
+		EventCategoryInput = BIT(1), // 2 0000010
+		EventCategoryKeyboard = BIT(2), // 4 0000100 Key
+		EventCategoryMouse = BIT(3), // 8
+		EventCategoryMouseButton = BIT(4) // 16
 	};
 
 #define EVENT_CLASS_TYPE(type) static TypeOfEvent GetStaticType() { return TypeOfEvent::type; }\
@@ -49,7 +48,7 @@ namespace Hzn {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	class Event
+	class HZN_API Event
 	{
 	public:
 		virtual ~Event() = default;
@@ -67,7 +66,7 @@ namespace Hzn {
 		}
 	};
 
-	class EventDispatcher
+	class HZN_API EventDispatcher
 	{
 	public:
 		EventDispatcher(Event& event)
@@ -90,7 +89,7 @@ namespace Hzn {
 		Event& m_Event;
 	};
 
-	inline std::ostream& operator<<(std::ostream& os, const Event& e)
+	HZN_API inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
 		return os << e.ToString();
 	}

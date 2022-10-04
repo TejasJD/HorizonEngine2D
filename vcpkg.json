@@ -2,6 +2,7 @@
   "name": "groupproject",
   "version-string": "0.1.0",
   "dependencies": [
+    "fmt",
     "glfw3",
     "glm",
     "glad",
