@@ -40,7 +40,7 @@ namespace Hzn
 	}
 	void ImguiLayer::onUpdate()
 	{
-		HZN_CORE_TRACE("Imgui Layer Update!");
+		/*HZN_CORE_TRACE("Imgui Layer Update!");*/
 		ImGuiIO& io = ImGui::GetIO();
 		App& app = App::getApp();
 

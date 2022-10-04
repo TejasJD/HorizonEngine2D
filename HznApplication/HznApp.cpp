@@ -18,11 +18,10 @@ void SampleLayer::onDetach()
 
 void SampleLayer::onUpdate()
 {
-	HZN_TRACE("Sample Layer Update!");
+	/*HZN_TRACE("Sample Layer Update!");*/
 }
 
 void SampleLayer::onEvent(Hzn::Event& event)
 {
-	HZN_TRACE("Sample Layer Event");
-	HZN_TRACE(event.ToString());
+	HZN_INFO(event.ToString());
 }

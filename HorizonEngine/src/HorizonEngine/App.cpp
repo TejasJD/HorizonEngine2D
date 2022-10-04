@@ -7,7 +7,7 @@ namespace Hzn
 	//! App class constructor, initializes the application
 	App::App(): m_Running(true)
 	{
-		assert(m_Instance == nullptr, "application already initialized");
+		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
 		m_AppWindow = std::unique_ptr<Window>(Window::create());
 		m_AppWindow->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));

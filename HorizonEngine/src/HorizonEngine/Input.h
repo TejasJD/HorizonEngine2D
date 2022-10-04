@@ -3,12 +3,15 @@
 #ifndef HZN_INPUT_H
 #define HZN_INPUT_H
 
-class Input
+namespace Hzn
 {
-public:
+	class Input
+	{
+	public:
 
-private:
+	private:
 
-};
+	};
+}
 
 #endif
