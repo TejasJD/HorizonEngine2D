@@ -22,6 +22,7 @@ public:
 	HznApp() 
 	{
 		addLayer(new SampleLayer());
+		addOverlay(new Hzn::ImguiLayer());
 	}
 	~HznApp() {}
 };

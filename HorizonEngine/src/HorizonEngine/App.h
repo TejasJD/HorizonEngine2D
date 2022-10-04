@@ -23,11 +23,16 @@ namespace Hzn
 		void run();
 		bool onWindowClose(WindowCloseEvent& e);
 		void onEvent(Event& e);
+		
+		static App& getApp() { return *m_Instance; }
+		Window& getAppWindow() { return *m_AppWindow; }
 
 	private:
 		std::unique_ptr<Window> m_AppWindow;
 		bool m_Running;
 		LayerStack m_Layers;
+		
+		static App* m_Instance;
 	};
 
 	// to be defined by the application that implements this function

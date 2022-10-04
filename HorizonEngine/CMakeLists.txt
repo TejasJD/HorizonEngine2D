@@ -14,7 +14,9 @@ set(HZN_SOURCE_FILES
 	"platform/windows/MSWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"src/HorizonEngine/LayerStack.cpp"
-	"src/HorizonEngine/Layer.cpp")
+	"src/HorizonEngine/Layer.cpp"
+	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
+)
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -39,7 +41,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/LayerStack.h"
 	"src/HorizonEngine/Layer.h"
 	"src/HorizonEngine/Core/Core.h"
-)
+	"src/HorizonEngine/Imgui/ImguiLayer.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
