@@ -45,7 +45,7 @@ namespace Hzn
 		// different function that might need to handle such event
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&App::onWindowClose, this, std::placeholders::_1));
-		HZN_CORE_TRACE(e.ToString());
+		HZN_CORE_TRACE(e);
 
 		//! update the added layers in the application, in reverse order.
 		//! this means we would go through all the overlays and then the layers.
