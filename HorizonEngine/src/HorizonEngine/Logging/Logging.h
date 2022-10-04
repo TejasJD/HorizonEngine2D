@@ -8,6 +8,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/fmt/fmt.h"
+#include "fmt/ostream.h"
 
 #include "HorizonEngine/Events/Event.h"
 
@@ -26,21 +27,6 @@ namespace Hzn
 	};
 
 }
-
-template<>
-struct fmt::formatter<Hzn::Event> {
-	constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) {
-		return ctx.end();
-	}
-	
-
-	template <typename FormatContext>
-	auto format(const Hzn::Event& input, FormatContext& ctx) -> decltype(ctx.out()) {
-		return format_to(ctx.out(),
-			"{}",
-			input.ToString());
-	}
-};
 
 #define HZN_CORE_TRACE(...)      ::Hzn::Logging::GetCoreLogger()->trace(__VA_ARGS__)
 #define HZN_CORE_INFO(...)       ::Hzn::Logging::GetCoreLogger()->info(__VA_ARGS__)
