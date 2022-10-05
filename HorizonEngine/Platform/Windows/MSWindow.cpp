@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Events/MouseEvent.h"
 #include "HorizonEngine/Events/KeyEvent.h"
@@ -6,8 +7,12 @@
 
 namespace Hzn
 {
+	void errorCallback (int error_code, const char* description)
+	{
+		HZN_CORE_CRITICAL("{0}: {1}", error_code, description);
+	}
 	//! implements window creation for windows platform
-	HZN_API Window* Window::create(const unsigned int& width, const unsigned int& height, const char* const& title)
+	HZN_API Window* Window::createInstance(const unsigned int& width, const unsigned int& height, const char* const& title)
 	{
 		return new MSWindow(width, height, title);
 	}
@@ -115,6 +120,15 @@ namespace Hzn
 					data.callback(k);
 				}
 			});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint)
+			{
+				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent event(codepoint);
+				data.callback(event);
+			});
+
+		glfwSetErrorCallback(errorCallback);
 	}
 
 	void MSWindow::destroy()

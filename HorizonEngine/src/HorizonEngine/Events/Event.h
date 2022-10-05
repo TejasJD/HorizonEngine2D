@@ -11,11 +11,11 @@ https://github.com/dquist/EventBus
 */
 
 #include "HorizonEngine/Core/Core.h"
+#include "fmt/ostream.h"
 
 #define BIT(x) (1 << (x))
 
 namespace Hzn {
-
 	enum class HZN_API TypeOfEvent
 	{
 		None = 0,
@@ -88,6 +88,8 @@ namespace Hzn {
 	private:
 		Event& m_Event;
 	};
+	
+
 
 	HZN_API inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
@@ -95,4 +97,8 @@ namespace Hzn {
 	}
 
 }
+
+template<>
+struct fmt::formatter<Hzn::Event> : fmt::ostream_formatter {};
+
 #endif // !HZN_APPLICATION_EVENT_H

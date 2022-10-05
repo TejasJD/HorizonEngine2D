@@ -22,6 +22,7 @@ set(HZN_SOURCE_FILES
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
 	"pch.h"
+	"src/HorizonEngine/Core/Core.h"
 	"src/HorizonEngine/App.h"
 	"src/HorizonEngine/EntryPoint.h"
 	"src/HorizonEngine/Window.h"
@@ -41,7 +42,6 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Codes/KeyboardCodes.h"
 	"src/HorizonEngine/LayerStack.h"
 	"src/HorizonEngine/Layer.h"
-	"src/HorizonEngine/Core/Core.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
 	"Platform/Windows/MSInput.h"
@@ -53,9 +53,9 @@ add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 # compile definitions for 'HorizonEngine' target
 target_compile_definitions(HorizonEngine
 	PUBLIC
-		HZN_PLATFORM_WINDOWS
+	HZN_PLATFORM_WINDOWS
 	PRIVATE
-		HZN_BUILD
+	HZN_BUILD
 )
 
 
@@ -81,7 +81,6 @@ find_package(unofficial-sajson CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
-	fmt::fmt-header-only
 	glfw
 	glm::glm
 	glad::glad

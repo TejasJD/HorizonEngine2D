@@ -7,6 +7,7 @@
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/LayerStack.h"
+#include "HorizonEngine/Input.h"
 
 namespace Hzn
 {
@@ -29,6 +30,7 @@ namespace Hzn
 
 	private:
 		std::unique_ptr<Window> m_AppWindow;
+		std::unique_ptr<Input> m_Input;
 		bool m_Running;
 		LayerStack m_Layers;
 		

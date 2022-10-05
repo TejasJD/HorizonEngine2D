@@ -19,9 +19,19 @@ void SampleLayer::onDetach()
 void SampleLayer::onUpdate()
 {
 	/*HZN_TRACE("Sample Layer Update!");*/
+
+	/*if (Hzn::Input::keyPressed(Hzn::Key::Tab)) 
+	{
+		HZN_INFO("Tab pressed!");
+	}*/
 }
 
 void SampleLayer::onEvent(Hzn::Event& event)
 {
-	HZN_INFO(event.ToString());
+	if (event.GetTypeOfEvent() == Hzn::TypeOfEvent::KeyPressed)
+	{
+		Hzn::KeyPressedEvent& e = (Hzn::KeyPressedEvent&)event;
+		auto key = (char)e.GetKeyCode();
+		HZN_INFO("{0}", key);
+	}
 }
