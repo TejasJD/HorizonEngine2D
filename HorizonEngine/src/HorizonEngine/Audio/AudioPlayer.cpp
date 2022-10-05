@@ -16,8 +16,6 @@ namespace Hzn
 
 		std::wstring open = L"open \"" + std::wstring(path.begin(), path.end()) + L"\" type MPEGVideo alias currentMusic";
 
-		std::wcout << open << std::endl;
-
 		bool result = mciSendStringW(
 			open.c_str(),
 			NULL,
@@ -25,7 +23,6 @@ namespace Hzn
 			NULL
 		);
 
-		std::cout << result << std::endl;
 		return result;
 	}
 
