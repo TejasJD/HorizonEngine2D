@@ -10,7 +10,8 @@
       "default-features": false,
       "features": [
         "opengl3-binding",
-        "glfw-binding"
+        "glfw-binding",
+        "docking-experimental"
       ]
     },
     "spdlog",

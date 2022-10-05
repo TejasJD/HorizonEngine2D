@@ -14,19 +14,9 @@ namespace Hzn
 		~ImguiLayer();
 		virtual void onAttach() override;
 		virtual void onDetach() override;
-		virtual void onUpdate() override;
-		virtual void onEvent(Event& event) override;
-		bool onMouseMoved(MouseMovedEvent& event);
-        bool onMousePressed(MouseButtonPressedEvent& event);
-        bool onMouseReleased(MouseButtonReleasedEvent& event);
-        bool onMouseScroll(MouseScrolledEvent& event);
-        bool onCursorPos(MouseMovedEvent& event);
-        bool onKeyPressed(KeyPressedEvent& event);
-        bool onKeyRepeat(KeyPressedEvent& event);
-        bool onKeyReleased(KeyReleasedEvent& event);
-		bool onKeyTyped(KeyTypedEvent& event);
-		bool onWindowResize(WindowResizeEvent& event);
-		void setTime(float time) { m_Time = time; }
+		virtual void onRenderImgui() override;
+		void imguiBegin();
+		void imguiEnd();
 
 	private:
 		float m_Time;

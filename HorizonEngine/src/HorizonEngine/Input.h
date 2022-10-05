@@ -11,7 +11,7 @@ namespace Hzn
 		virtual ~Input() {}
 		static Input* createInstance();
 		inline static bool keyPressed(int key) { return m_Instance->keyPressedUtil(key); }
-		inline static bool mouseButtonPresssed(int button) { return m_Instance->mouseButtonPresssed(button); }
+		inline static bool mouseButtonPresssed(int button) { return m_Instance->mouseButtonPressedUtil(button); }
 		inline static std::pair<double, double> getMousePos() { return m_Instance->getMousePosUtil(); }
 		inline static double getMouseX() { return m_Instance->getMouseXUtil(); }
 		inline static double getMouseY() { return m_Instance->getMouseYUtil(); }
