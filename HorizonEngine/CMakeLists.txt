@@ -16,6 +16,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
+	"src/HorizonEngine/FileManagement/ProjectFile.cpp"
 )
 
 set(HZN_HEADER_FILES
@@ -41,7 +42,9 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/LayerStack.h"
 	"src/HorizonEngine/Layer.h"
 	"src/HorizonEngine/Core/Core.h"
-	"src/HorizonEngine/Imgui/ImguiLayer.h")
+	"src/HorizonEngine/Imgui/ImguiLayer.h"
+	"src/HorizonEngine/FileManagement/ProjectFile.h"
+)
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

@@ -7,6 +7,7 @@
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/LayerStack.h"
+#include "HorizonEngine/FileManagement/ProjectFile.h"
 
 namespace Hzn
 {
