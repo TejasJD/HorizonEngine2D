@@ -16,6 +16,8 @@
     "spdlog",
     "box2d",
     "gtest",
-    "sajson"
+    "sajson",
+    "openal-soft",
+    "sndfile"
   ]
 }

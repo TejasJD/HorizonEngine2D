@@ -16,8 +16,8 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
-	"src/HorizonEngine/Audio/AudioPlayer.cpp"
-)
+	
+ "src/HorizonEngine/Audio/SoundDevice.cpp" "src/HorizonEngine/Audio/SoundBuffer.cpp" "src/HorizonEngine/Audio/SoundSource.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -42,7 +42,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/LayerStack.h"
 	"src/HorizonEngine/Layer.h"
 	"src/HorizonEngine/Core/Core.h"
-	"src/HorizonEngine/Imgui/ImguiLayer.h" "src/HorizonEngine/Audio/AudioPlayer.h")
+	"src/HorizonEngine/Imgui/ImguiLayer.h"  "src/HorizonEngine/Audio/SoundDevice.h" "src/HorizonEngine/Audio/SoundBuffer.h" "src/HorizonEngine/Audio/SoundSource.cpp")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -75,6 +75,8 @@ find_package(imgui CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
+find_package(openal CONFIG REQUIRED)
+find_package(Sndfile CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
@@ -86,6 +88,8 @@ target_link_libraries(HorizonEngine
 	spdlog::spdlog
 	box2d::box2d
 	unofficial::sajson::sajson
+	OpenAL::OpenAL
+	SndFile::sndfile
 )
 
 #testing
