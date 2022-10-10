@@ -96,6 +96,6 @@ namespace Hzn
 		/*auto val = ImGui::GetCurrentContext();
 		std::cout << (val == nullptr) << std::endl;*/
 		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		//ImGui::ShowDemoWindow(&show);
 	}
 }

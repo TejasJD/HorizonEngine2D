@@ -10,6 +10,8 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 	return std::make_shared<HznApp>();
 }
 
+// *********** SAMPLE LAYER **********
+
 SampleLayer::SampleLayer(const std::string& name) : Layer(name) {}
 
 void SampleLayer::onAttach()
@@ -38,6 +40,78 @@ void SampleLayer::onRenderImgui()
 void SampleLayer::onDetach() {}
 
 void SampleLayer::onEvent(Hzn::Event& event)
+{
+	if (event.GetTypeOfEvent() == Hzn::TypeOfEvent::KeyPressed)
+	{
+		Hzn::KeyPressedEvent& e = (Hzn::KeyPressedEvent&)event;
+		auto key = (char)e.GetKeyCode();
+		HZN_INFO("{0}", key);
+	}
+}
+
+// ********************
+
+// *********** EDITOR LAYER **********
+EditorLayer::EditorLayer(const std::string& name) : Layer(name) {}
+
+void EditorLayer::onAttach()
+{
+	HZN_INFO("Sample Layer Attached!");
+}
+
+void EditorLayer::onRenderImgui()
+{
+	static bool my_tool_active = true;
+	ImGui::Begin("From Editor Layer", &my_tool_active, ImGuiWindowFlags_MenuBar);
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
+			if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
+			if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Copy", "Ctrl+C")) { /* Do Stuff */ }
+			if (ImGui::MenuItem("Cut", "Ctrl+X")) { /* Do Stuff */ }
+			if (ImGui::MenuItem("Paste", "Ctrl+P")) { /* Do Stuff */ }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Assets"))
+		{
+			if (ImGui::MenuItem("Asset Sub Menu 1", "Ctrl+A")) { /* Do Stuff */ }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Game Objects"))
+		{
+			if (ImGui::MenuItem("Game Objects Sub Menu 1", "Ctrl+A")) { /* Do Stuff */ }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Component"))
+		{
+			if (ImGui::MenuItem("Asset Sub Menu 1", "Ctrl+A")) { /* Do Stuff */ }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Window"))
+		{
+			if (ImGui::MenuItem("Window Sub Menu 1", "Ctrl+A")) { /* Do Stuff */ }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::MenuItem("Help Sub Menu 1", "Ctrl+A")) { /* Do Stuff */ }
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+	ImGui::End();
+}
+
+void EditorLayer::onDetach() {}
+
+void EditorLayer::onEvent(Hzn::Event& event)
 {
 	if (event.GetTypeOfEvent() == Hzn::TypeOfEvent::KeyPressed)
 	{
