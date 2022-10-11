@@ -16,6 +16,7 @@ https://github.com/dquist/EventBus
 #define BIT(x) (1 << (x))
 
 namespace Hzn {
+
 	enum class TypeOfEvent
 	{
 		None = 0,
