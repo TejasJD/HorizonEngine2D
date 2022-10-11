@@ -17,7 +17,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
 	
- "src/HorizonEngine/Audio/SoundDevice.cpp" "src/HorizonEngine/Audio/SoundBuffer.cpp" "src/HorizonEngine/Audio/SoundSource.cpp")
+ "src/HorizonEngine/Audio/SoundDevice.cpp" "src/HorizonEngine/Audio/SoundBuffer.cpp" "src/HorizonEngine/Audio/SoundPlayer.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -42,7 +42,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/LayerStack.h"
 	"src/HorizonEngine/Layer.h"
 	"src/HorizonEngine/Core/Core.h"
-	"src/HorizonEngine/Imgui/ImguiLayer.h"  "src/HorizonEngine/Audio/SoundDevice.h" "src/HorizonEngine/Audio/SoundBuffer.h" "src/HorizonEngine/Audio/SoundSource.cpp")
+	"src/HorizonEngine/Imgui/ImguiLayer.h"  "src/HorizonEngine/Audio/SoundDevice.h" "src/HorizonEngine/Audio/SoundBuffer.h" "src/HorizonEngine/Audio/SoundPlayer.cpp")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

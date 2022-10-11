@@ -5,13 +5,16 @@
 
 #include "HorizonEngine/Core/Core.h"
 #include <AL/alc.h>
+#include <AL/al.h>
+
+#include <Logging/Logging.h>
 
 namespace Hzn
 {
 	class HZN_API SoundDevice
 	{
 	public:
-		static SoundDevice* get();
+		static SoundDevice* Init();
 
 	private:
 		SoundDevice();

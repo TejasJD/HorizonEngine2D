@@ -4,16 +4,21 @@
 #include "HorizonEngine/Core/Core.h"
 
 #include <AL/al.h>
-#include <vector>
+#include "pch.h"
+
+#include <sndfile.h>
+
+#include <AL/alext.h>
+#include <Logging/Logging.h>
+
 namespace Hzn
 {
 	class HZN_API SoundBuffer
 	{
 	public:
-		static SoundBuffer* get();
+		static SoundBuffer* Init();
 
-		ALuint addSound(const char* filename);
-		bool removeSound(const ALuint& buffer);
+		ALuint LoadSound(const char* filename);
 
 	private:
 		SoundBuffer();

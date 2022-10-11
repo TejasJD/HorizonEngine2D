@@ -1,12 +1,10 @@
 #include "SoundDevice.h"
-#include <AL/al.h>
 
-#include <stdio.h>
-#include <Logging/Logging.h>
 
 namespace Hzn
 {
-	SoundDevice* SoundDevice::get()
+	//Initialize the sound play device
+	SoundDevice* SoundDevice::Init()
 	{
 		static SoundDevice* snd_device = new SoundDevice();
 		return snd_device;
@@ -14,7 +12,7 @@ namespace Hzn
 
 	SoundDevice::SoundDevice()
 	{
-		//get default device
+		//set nullptr to get system default sound play device
 		p_ALCDevice = alcOpenDevice(nullptr); 
 		if (!p_ALCDevice)
 		{
@@ -35,6 +33,7 @@ namespace Hzn
 			HZN_CORE_ERROR("Failed to make context current");
 		}
 
+
 		const ALCchar* name = nullptr;
 		if (alcIsExtensionPresent(p_ALCDevice, "ALC_ENUMERATE_ALL_EXT"))
 			name = alcGetString(p_ALCDevice, ALC_ALL_DEVICES_SPECIFIER);
@@ -43,24 +42,15 @@ namespace Hzn
 		
 	}
 
+
+	//close the sound play device
 	SoundDevice::~SoundDevice()
 	{
-		if (!alcMakeContextCurrent(nullptr))
-		{
-			HZN_CORE_ERROR("Failed to set context to nullptr");
-		}
 
+		alcMakeContextCurrent(nullptr);
 		alcDestroyContext(p_ALCContext);
-		if (p_ALCContext)
-		{
-			HZN_CORE_ERROR("Failed to unset during close");
-		}
-			
-
-		if (!alcCloseDevice(p_ALCDevice))
-		{
-			HZN_CORE_ERROR("Failed to close sound device");
-		}
+		alcCloseDevice(p_ALCDevice);
+		
 	}
 
 }
