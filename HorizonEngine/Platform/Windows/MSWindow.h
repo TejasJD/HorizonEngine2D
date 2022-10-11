@@ -9,7 +9,7 @@
 namespace Hzn
 {
 
-	class HZN_API MSWindow : public Window
+	class MSWindow : public Window
 	{
 	public:
 		// Constructor creates window and initializes the object

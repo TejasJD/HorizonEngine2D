@@ -54,6 +54,7 @@ add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 target_compile_definitions(HorizonEngine
 	PUBLIC
 	HZN_PLATFORM_WINDOWS
+	HZN_ASSERTS_ON
 	PRIVATE
 	HZN_BUILD
 )

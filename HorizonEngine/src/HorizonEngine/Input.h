@@ -5,7 +5,7 @@
 
 namespace Hzn
 {
-	class HZN_API Input
+	class Input
 	{
 	public:
 		virtual ~Input() {}

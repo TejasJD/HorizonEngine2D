@@ -14,7 +14,7 @@
 
 namespace Hzn
 {
-	class HZN_API App
+	class App
 	{
 	public:
 		App();
@@ -54,5 +54,5 @@ namespace Hzn
 	};
 
 	// to be defined by the application that implements this function
-	HZN_API std::shared_ptr<App> createApp();
+	std::shared_ptr<App> createApp();
 }
