@@ -127,7 +127,7 @@ void EditorLayer::onRenderImgui()
 					if (ImGui::MenuItem("Components Submenu_1")) { /* Do Something */ }
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Window"))
+				if (ImGui::BeginMenu("Window"))
 				{
 					if (ImGui::MenuItem("Window Submenu_1")) { /* Do Something */ }
 					ImGui::EndMenu();
