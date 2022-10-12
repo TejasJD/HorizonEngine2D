@@ -5,11 +5,10 @@
 namespace Hzn {
 	//open a file and load the contents to a vector string
 	std::vector<std::string> ProjectFile::openFile(std::string filePath) {
-		std::vector<std::string> content;
 		std::string line;
 
 		//open the file here
-		in.open(getPath(), std::ios::out | std::ios::app);
+		in.open(getPath(), std::ios::in);
 
 		//Check error handling
 		in_check();
@@ -22,46 +21,43 @@ namespace Hzn {
 		in.close();
 
 		setContent(content);
-		//return getContent()
+
+		//return reference to content
 		return content;
 	}
 
 
 	//Write the contents to a file and save
-	void ProjectFile::saveToFile(std::string filePath, std::vector<std::string> content) {
-
+	void ProjectFile::saveToFile(std::string filePath, std::vector<std::string> contentIntoFile) {
+			content = contentIntoFile;
 			out.open(getPath(), std::ios::out | std::ios::app);
 
 			//check error handling
 			out_check();
 
-			for (int i = 0; i < content.size(); i++) {
-				out << content[i];
+			for (int i = 0; i < contentIntoFile.size(); i++) {
+				out << contentIntoFile[i];
 			}
 			std::cout << "file written to " << getPath() << std::endl;
 			out.close();
-		
 	}
 
 
 	//File manipulation method treat the lines as index 0
 	//return a specific line from content vec
-	std::string ProjectFile::getALine(int row, std::vector<std::string> content) {
-		
+	std::string ProjectFile::getALine(int row) {
 		return content[row];
 	}
 
 
 	//return next char from content vec
-	char ProjectFile::nextChar(int row, int colNum, std::vector<std::string> content) {
-
+	char ProjectFile::nextChar(int row, int colNum) {
 		return content[row][colNum];
-
 	}
 
 
 	//return next n chars from content vec
-	std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters, std::vector<std::string> content) {
+	std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters) {
 		std::vector<std::string> vecOfChars;
 		std::string line;
 
@@ -81,15 +77,14 @@ namespace Hzn {
 
 
 	//return next line from content vec
-	std::string ProjectFile::nextLine(int row, std::vector<std::string> content) {
-
+	std::string ProjectFile::nextLine(int row) {
 		return content[row];
 	}
 
 
 
 	//return next n lines from content vec
-	std::vector<std::string> ProjectFile::nextLines(int row, int numberOfLines, std::vector<std::string> content) {
+	std::vector<std::string> ProjectFile::nextLines(int row, int numberOfLines) {
 
 		std::vector<std::string> vecOfLines;
 		std::string line;
@@ -103,7 +98,7 @@ namespace Hzn {
 
 
 	//Save the contents of content vec to a new file
-	void ProjectFile::saveAs(std::string newPath, std::vector<std::string> content) {
+	void ProjectFile::saveAs(std::string newPath, std::vector<std::string> contentIntoFile) {
 
 		//As of now we assume all physical paths exist
 		setPath(newPath);

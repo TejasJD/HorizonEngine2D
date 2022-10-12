@@ -28,6 +28,9 @@ namespace Hzn
 			m_AppWindow->onUpdate();
 		}
 
+
+		
+
 	}
 
 	//! terminates the App run loop

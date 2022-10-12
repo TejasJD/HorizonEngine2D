@@ -65,7 +65,7 @@ namespace Hzn {
 		std::string getPath() { return path; }
 		std::string getName() { return name; }
 		std::string getFullPath() { return fullPath; }
-		std::vector<std::string> getContent() { return content; };
+		std::vector<std::string> getContent() { return content;}
 
 
 		//Setters path and name
@@ -79,24 +79,24 @@ namespace Hzn {
 		//open file
 		std::vector<std::string> openFile(std::string filePath);
 		//Save, saveAs
-		void saveToFile(std::string filePath, std::vector<std::string> content);
+		void saveToFile(std::string filePath, std::vector<std::string> contentIntoFile);
 		//void saveAs(std::string newFullPath);
-		void ProjectFile::saveAs(std::string newPath, std::vector<std::string> content);
+		void ProjectFile::saveAs(std::string newPath, std::vector<std::string> contentIntoFile);
 		//delete a file
 		void deleteFile(std::string filePathForDelete); // Deletes the file on the user's device
 
 
 		//Manipulating text from the content vector
 		//Get a specific line from a file 
-		std::string getALine(int lineNumber, std::vector<std::string> content);
+		std::string getALine(int lineNumber);
 		//Get the next char
-		char nextChar(int row, int colNum, std::vector<std::string> content);
+		char nextChar(int row, int colNum);
 		//Get the next n number of chars
-		std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters, std::vector<std::string> content);
+		std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters);
 		//Get the next line
-		std::string nextLine(int row, std::vector<std::string> content);
+		std::string nextLine(int row);
 		// get the next n quantity of lines
-		std::vector<std::string> nextLines(int row, int numberOfLines, std::vector<std::string> content);
+		std::vector<std::string> nextLines(int row, int numberOfLines);
 		
 
 		//Create and delete a folder
