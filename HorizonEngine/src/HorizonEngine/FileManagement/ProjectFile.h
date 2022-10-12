@@ -92,7 +92,7 @@ namespace Hzn {
 		//Get the next char
 		char nextChar(int row, int colNum, std::vector<std::string> content);
 		//Get the next n number of chars
-		//std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters, std::vector<std::string> content);
+		std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters, std::vector<std::string> content);
 		//Get the next line
 		std::string nextLine(int row, std::vector<std::string> content);
 		// get the next n quantity of lines

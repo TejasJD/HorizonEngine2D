@@ -61,19 +61,22 @@ namespace Hzn {
 
 
 	//return next n chars from content vec
-	//std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters, std::vector<std::string> content) {
-	//	std::vector<std::string> vecOfChars;
-	//	std::string line;
+	std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters, std::vector<std::string> content) {
+		std::vector<std::string> vecOfChars;
+		std::string line;
 
-	//	for (int i = colNum; i <= numberOfCharacters; i++) {
-	//		if (content[row][i] == " ") {
-
-	//		}
-	//		line = content[row][i];
-	//		vecOfChars.push_back(line);
-	//	}
-	//	return vecOfChars;
-	//}
+		for (int i = 0, j = colNum; i < numberOfCharacters; i++, j++) {
+			if (content[row][j] == ' ') {
+				line = content[row][j];
+				vecOfChars.push_back(line);
+			}
+			else {
+				line = content[row][j];
+				vecOfChars.push_back(line);
+			}
+		}
+		return vecOfChars;
+	}
 
 
 
