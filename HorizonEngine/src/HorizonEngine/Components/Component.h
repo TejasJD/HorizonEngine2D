@@ -3,12 +3,19 @@
 #ifndef HZN_COMPONENT_H
 #define HZN_COMPONENT_H
 
-#include "componentType.h"
+#include <vector>
+#include <string>
+#include <any>
 
 namespace Hzn {
 	class Component {
 	public:
-		std::vector<ComponentType> componentTypes;
+		std::map<std::string, std::any>* values;
+	public:
+		virtual std::string getComponentType() = 0;
+		virtual void setField(std::string k, std::any v) = 0;
+		virtual std::any getField(std::string k) = 0;
+		virtual std::vector<std::string>* stringify() = 0;
 	protected:
 		virtual void awake() = 0;
 		virtual void start() = 0;

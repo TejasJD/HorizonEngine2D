@@ -4,13 +4,11 @@
 #define HZN_PHYSICS_MATERIAL_H
 
 namespace Hzn {
-	namespace Physics2D {
-		class PhysicsMaterial {
-		public:
-			float bounciness;
-			float friction;
-		};
-	}
+	class PhysicsMaterial {
+	public:
+		float bounciness;
+		float friction;
+	};
 }
 
 #endif

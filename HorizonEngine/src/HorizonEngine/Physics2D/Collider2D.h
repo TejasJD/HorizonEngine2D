@@ -14,25 +14,25 @@
 #include "ColliderType.h"
 
 namespace Hzn {
-	namespace Physics2D {
-		class Collider2D : public Component {
-		public:
-			std::vector<ComponentType> componentTypes;
-			std::weak_ptr<Transform> transform;
+	class Collider2D : public Component {
+	public:
+		std::map<std::string, std::any>* values;
+		/*std::shared_ptr<Transform> transform;
 
-			glm::vec2 size;
-			glm::vec2 offset;
-			std::weak_ptr<PhysicsMaterial> material;
-			const ColliderType type;
-		public:
-			virtual std::vector<b2PolygonShape>* generateCollider() = 0;
-		private:
-			virtual void awake() = 0;
-			virtual void start() = 0;
-			virtual void update() = 0;
-			virtual void fixedUpdate() = 0;
-		};
-	}
+		glm::vec2 size;
+		glm::vec2 offset;*/
+	public:
+		virtual std::string getComponentType() = 0;
+		virtual void setField(std::string k, std::any v);
+		virtual std::any getField(std::string k);
+		virtual std::vector<std::string>* stringify();
+		virtual std::vector<b2PolygonShape>* generateCollider() = 0;
+	private:
+		virtual void awake() = 0;
+		virtual void start() = 0;
+		virtual void update() = 0;
+		virtual void fixedUpdate() = 0;
+	};
 }
 
 #endif

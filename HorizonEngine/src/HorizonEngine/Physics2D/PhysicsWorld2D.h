@@ -6,13 +6,11 @@
 #include <box2d/b2_world.h>
 
 namespace Hzn {
-	namespace Physics2D {
-		class PhysicsWorld2D {
-		public:
-			static constexpr float gravity = 9.81f;
-			static b2World* world;
-		};
-	}
+	class PhysicsWorld2D {
+	public:
+		static constexpr float gravity = 9.81f;
+		static b2World* world;
+	};
 }
 
 #endif // !_physics_world_2d_h

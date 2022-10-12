@@ -12,8 +12,12 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
+	"src/HorizonEngine/Scene Management/Scene.cpp"
+	"src/HorizonEngine/Physics2D/BoxCollider2D.cpp"
+	"src/HorizonEngine/Physics2D/Rigidbody2D.cpp"
+	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
 	"platform/windows/MSWindow.cpp"
- "src/HorizonEngine/Logging/Logging.cpp")
+	"src/HorizonEngine/Logging/Logging.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -25,9 +29,19 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/GameObject.h"
 	"src/HorizonEngine/Utils/Math.h"
 	"src/HorizonEngine/Utils/Time.h"
+	"src/HorizonEngine/File Management/ProjectFile.h"
+	"src/HorizonEngine/Scene Management/Scene.h"
 	"src/HorizonEngine/Physics2D/RigidBody2D.h"
 	"src/HorizonEngine/Components/Component.h"
 	"src/HorizonEngine/Components/Transform.h"
+	"src/HorizonEngine/Components/ComponentFactory.h"
+	"src/HorizonEngine/Physics2D/BodyType.h"
+	"src/HorizonEngine/Physics2D/ColliderType.h"
+	"src/HorizonEngine/Physics2D/PhysicsMaterial.h"
+	"src/HorizonEngine/Physics2D/Collider2D.h"
+	"src/HorizonEngine/Physics2D/BoxCollider2D.h"
+	"src/HorizonEngine/Physics2D/Rigidbody2D.h"
+	"src/HorizonEngine/Physics2D/PhysicsWorld2D.h"
 	"platform/windows/MSWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
  "src/HorizonEngine/Events/Event.h" "src/HorizonEngine/Events/MouseEvent.h" "src/HorizonEngine/Events/KeyEvent.h" "src/HorizonEngine/Events/ApplicationEvent.h" "src/HorizonEngine/Codes/MouseCodes.h" "src/HorizonEngine/Codes/KeyboardCodes.h")

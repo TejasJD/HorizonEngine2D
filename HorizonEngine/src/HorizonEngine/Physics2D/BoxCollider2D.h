@@ -10,25 +10,31 @@
 #include <glm/vec2.hpp>
 
 namespace Hzn {
-	namespace Physics2D {
-		class BoxCollider2D : public Collider2D {
-		public:
-			std::vector<ComponentType> componentTypes{ ComponentType::C_Collider2D, ComponentType::C_BoxCollider2D };
-			std::weak_ptr<Transform> transform;
+	class BoxCollider2D : public Component {
+	public:
+		std::map<std::string, std::any>* values;
+		/*std::shared_ptr<Transform> transform;
 
-			glm::vec2 size;
-			glm::vec2 offset;
-			std::weak_ptr<PhysicsMaterial> material;
-			const ColliderType type;
-		public:
-			std::vector<b2PolygonShape>* generateCollider();
-		private:
-			void awake();
-			void start();
-			void update();
-			void fixedUpdate();
-		};
-	}
+		glm::vec2 size;
+		glm::vec2 offset;
+		*/
+	public:
+		BoxCollider2D();
+		~BoxCollider2D();
+
+		std::vector<b2PolygonShape>* generateCollider();
+		void setField(std::string k, std::any v) override;
+		std::any getField(std::string k) override;
+		std::string getComponentType() override {
+			return "BoxCollider2D";
+		}
+		std::vector<std::string>* stringify() override;
+	private:
+		void awake() override {}
+		void start() override {}
+		void update() override {}
+		void fixedUpdate() override {}
+	};
 }
 
 #endif
