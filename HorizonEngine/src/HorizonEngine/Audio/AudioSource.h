@@ -1,28 +1,30 @@
 #pragma once
 
-#ifndef HZN_SOUNDSOURCE_H
-#define HZN_SOUNDSOURCE_H
+#ifndef HZN_AUDIOSOURCE_H
+#define HZN_AUDIOSOURCE_H
 
 #include "HorizonEngine/Core/Core.h"
-#include "pch.h"
-#include "Logging/Logging.h"
-#include <AL/al.h>
+#include "HorizonEngine/Components/Component.h"
+#include <Audio/SoundBuffer.h>
+#include <Audio/SoundPlayer.h>
 
 namespace Hzn
 {
-	class HZN_API SoundPlayer
+	class HZN_API AudioSource : public Component
 	{
 	public:
-
-		SoundPlayer();
-
-		bool Play(uint32_t buffer);
+		AudioSource();
+		~AudioSource();
+		void init(const char* filename);
+		virtual void awake() override{};
+		virtual void start() override{};
+		virtual void update() override{};
+		virtual void fixedUpdate() override{};
+		bool Play();
 		bool Stop();
 		bool Pause();
 		bool isPlaying();
-
 	private:
-		
 		float p_Pitch = 1.f;
 		float p_Gain = 1.f;
 		//the current location of the source
@@ -37,5 +39,5 @@ namespace Hzn
 	};
 }
 
-#endif // !HZN_SOUNDSOURCE_H
 
+#endif
