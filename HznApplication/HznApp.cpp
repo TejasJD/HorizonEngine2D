@@ -62,18 +62,13 @@ void EditorLayer::onAttach()
 
 void EditorLayer::onRenderImgui()
 {
-	// ImGuiStyle& style = ImGui::GetStyle();
-	// style.Colors[ImGuiCol_WindowBg] = ImVec4(255, 0, 0, 255); // RGB Values 
-
-	// static bool my_tool_active = true;
-	// ImGui::Begin("From Editor Layer", &my_tool_active, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-	// ImGui::SetNextWindowSize(ImVec2(50,500));
-
 	ImVec2 vWindowSize = ImGui::GetMainViewport()->Size;
 	ImVec2 vPos0 = ImGui::GetMainViewport()->Pos;
 
 	ImGui::SetNextWindowPos(ImVec2((float)vPos0.x, (float)vPos0.y), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2((float)vWindowSize.x, (float)vWindowSize.y));
+
+	static bool my_tool_active = true;
 
 	if (ImGui::Begin(
 		"From Editor Layer",
@@ -97,19 +92,19 @@ void EditorLayer::onRenderImgui()
 			{
 				if (ImGui::BeginMenu("File"))
 				{
-					if (ImGui::MenuItem("Open")){ /* Do Something */ }
-					if (ImGui::MenuItem("Save")){ /* Do Something */ }
-					if (ImGui::MenuItem("Close")){ /* Do Something */ }
+					if (ImGui::MenuItem("Open", "Ctrl+O")) { /* Do Something */ }
+					if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do Something */ }
+					if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Edit"))
 				{
-					if(ImGui::MenuItem("Undo")){ /* Do Something */ }
-					if(ImGui::MenuItem("Redo")){ /* Do Something */ }
+					if(ImGui::MenuItem("Undo", "Ctrl+Z")) { /* Do Something */ }
+					if(ImGui::MenuItem("Redo", "Ctrl+Y")) { /* Do Something */ }
 
-					if(ImGui::MenuItem("Cut")){ /*Do Something*/ }
-					if (ImGui::MenuItem("Copy")) { /*Do Something*/ }
-					if (ImGui::MenuItem("Paste")) { /*Do Something*/ }
+					if(ImGui::MenuItem("Cut", "Ctrl+X")){ /*Do Something*/ }
+					if (ImGui::MenuItem("Copy", "Ctrl+C")) { /*Do Something*/ }
+					if (ImGui::MenuItem("Paste", "Ctrl+V")) { /*Do Something*/ }
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Assets"))
