@@ -3,16 +3,18 @@
 #ifndef HZN_LOGGING_H
 #define HZN_LOGGING_H
 
-#include "HorizonEngine/APIMacros.h"
-#include "pch.h"
+#include "HorizonEngine/Core/Core.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/fmt/fmt.h"
+#include "fmt/ostream.h"
 
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/spdlog.h>
+#include "HorizonEngine/Events/Event.h"
 
 namespace Hzn
 {
-	class HZN_API Logging
+	class Logging
 	{
 	public:
 		static void Init();

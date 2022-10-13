@@ -6,4 +6,5 @@ namespace HznApplication
 	{
 		EXPECT_EQ(7 * 6, 42);
 	}
+
 }

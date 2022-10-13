@@ -5,7 +5,7 @@
 #include "Event.h"
 #include "HorizonEngine/Codes/KeyboardCodes.h"
 
-namespace HorizonEngine {
+namespace Hzn {
 
 	class KeyEvent : public Event
 	{

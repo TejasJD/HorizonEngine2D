@@ -1,7 +1,7 @@
 # CMakeList.txt : CMake project for HznApplication, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.15)
 
 project(HznApplication)
 
@@ -31,20 +31,20 @@ gtest_discover_tests(AnotherTest2)
 
 # post build command for copying DLL files related to 'HorizonEngine'
 # to 'HznApplication'.
-add_custom_command(
-	TARGET HznApplication
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy_directory
-	${CMAKE_BINARY_DIR}/HorizonEngine/$<CONFIG>
-	$<TARGET_FILE_DIR:HznApplication>
-)
-
 # add_custom_command(
 # 	TARGET HznApplication
 # 	POST_BUILD
 # 	COMMAND ${CMAKE_COMMAND}
 # 	ARGS -E copy_directory
-# 	${CMAKE_CURRENT_LIST_DIR}/resources
-# 	$<TARGET_FILE_DIR:HznApplication>/resources
+# 	${CMAKE_BINARY_DIR}/HorizonEngine/$<CONFIG>
+# 	$<TARGET_FILE_DIR:HznApplication>
 # )
+
+add_custom_command(
+	TARGET HznApplication
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	$<TARGET_FILE_DIR:HorizonEngine>/resources
+	$<TARGET_FILE_DIR:HznApplication>/resources
+)

@@ -3,10 +3,10 @@
 #ifndef HZN_APPLICATION_EVENT_H
 #define HZN_APPLICATION_EVENT_H
 
-#include <pch.h>
+#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Events/Event.h"
 
-namespace HorizonEngine {
+namespace Hzn {
 
 	class WindowResizeEvent : public Event
 	{

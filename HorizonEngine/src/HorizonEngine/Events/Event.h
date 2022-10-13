@@ -2,9 +2,6 @@
 
 #ifndef HZN_EVENT_H
 #define HZN_EVENT_H
-
-#include "HorizonEngine/APIMacros.h"
-
 /*
 Events are currently utilising blocking.
 A new iteration may involve using the observer pattern
@@ -12,6 +9,9 @@ https://refactoring.guru/design-patterns/observer
 Code that could be used can be found open source:
 https://github.com/dquist/EventBus
 */
+
+#include "HorizonEngine/Core/Core.h"
+#include "fmt/ostream.h"
 
 #define BIT(x) (1 << (x))
 
@@ -36,11 +36,11 @@ namespace Hzn {
 	enum EventCategory
 	{
 		None = 0,
-		EventCategoryApplication = BIT(0),
-		EventCategoryInput = BIT(1),
-		EventCategoryKeyboard = BIT(2),
-		EventCategoryMouse = BIT(3),
-		EventCategoryMouseButton = BIT(4)
+		EventCategoryApplication = BIT(0), // 1 0000001
+		EventCategoryInput = BIT(1), // 2 0000010
+		EventCategoryKeyboard = BIT(2), // 4 0000100 Key
+		EventCategoryMouse = BIT(3), // 8
+		EventCategoryMouseButton = BIT(4) // 16
 	};
 
 #define EVENT_CLASS_TYPE(type) static TypeOfEvent GetStaticType() { return TypeOfEvent::type; }\
@@ -89,6 +89,8 @@ namespace Hzn {
 	private:
 		Event& m_Event;
 	};
+	
+
 
 	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
@@ -96,4 +98,8 @@ namespace Hzn {
 	}
 
 }
+
+template<>
+struct fmt::formatter<Hzn::Event> : fmt::ostream_formatter {};
+
 #endif // !HZN_APPLICATION_EVENT_H
