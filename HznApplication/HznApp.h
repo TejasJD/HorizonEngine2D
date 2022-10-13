@@ -1,5 +1,7 @@
 #pragma once
 
+// ********** Sample Layer **********
+
 class SampleLayer : public Hzn::Layer 
 {
 public:
@@ -16,12 +18,30 @@ public:
 
 };
 
+// ********** Edior Layer **********
+
+class EditorLayer : public Hzn::Layer
+{
+public:
+	EditorLayer(const std::string& name = "Editor Layer");
+
+	virtual void onAttach() override;
+
+	virtual void onDetach() override;
+
+	virtual void onRenderImgui() override;
+
+	virtual void onEvent(Hzn::Event& event) override;
+};
+
+
 class HznApp : public Hzn::App
 {
 public:
 	HznApp() 
 	{
-		addLayer(new SampleLayer());
+		// addLayer(new SampleLayer());
+		addLayer(new EditorLayer());
 	}
 	~HznApp() {}
 };
