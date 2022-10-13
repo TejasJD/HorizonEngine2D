@@ -9,6 +9,7 @@
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/LayerStack.h"
+#include "HorizonEngine/FileManagement/ProjectFile.h"
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/ImGui/ImGuiLayer.h"
 
