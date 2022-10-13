@@ -1,3 +1,0 @@
-This folder ("module1") will contain .h/.hpp and .cpp files for the module called "module1".
-
-Note: "module1" will be something like "graphics" or "physics" or ...
