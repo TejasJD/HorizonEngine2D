@@ -43,6 +43,7 @@ namespace Hzn
 
 	private:
 		std::list<Layer*> m_Layers;
+		LayerIterator m_TopLayer;
 	};
 }
 #endif // !HZN_LAYER_STACK_H

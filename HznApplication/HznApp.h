@@ -3,14 +3,14 @@
 class SampleLayer : public Hzn::Layer 
 {
 public:
-	SampleLayer(const std::string& name = "Sample Layer") : Layer(name) {}
+	SampleLayer(const std::string& name = "Sample Layer");
 
 	// Inherited via Layer
 	virtual void onAttach() override;
 
 	virtual void onDetach() override;
 
-	virtual void onUpdate() override;
+	virtual void onRenderImgui() override;
 
 	virtual void onEvent(Hzn::Event& event) override;
 
@@ -22,7 +22,6 @@ public:
 	HznApp() 
 	{
 		addLayer(new SampleLayer());
-		addOverlay(new Hzn::ImguiLayer());
 	}
 	~HznApp() {}
 };
