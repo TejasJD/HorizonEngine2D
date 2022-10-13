@@ -63,6 +63,20 @@ namespace Hzn
 			return false;
 		}
 	}
+	bool AudioSource::Resume()
+	{
+		HZN_CORE_INFO("resume sound :  {0}", p_Source);
+		alSourcePlay(p_Source);
+		
+		if (alGetError() == AL_NO_ERROR)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	bool AudioSource::isPlaying()
 	{
 		alGetSourcei(p_Source, AL_SOURCE_STATE, &playState);

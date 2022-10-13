@@ -22,6 +22,7 @@ namespace Hzn
 		bool Play();
 		bool Stop();
 		bool Pause();
+		bool Resume();
 		bool isPlaying();
 	private:
 		float p_Pitch = 1.f;
