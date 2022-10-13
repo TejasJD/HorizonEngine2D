@@ -21,7 +21,7 @@ namespace Hzn {
 		std::map<std::string, std::vector<std::shared_ptr<Component>>*>* componentGroups;
 		std::vector<std::shared_ptr<GameObject>>* gameObjects;
 	public:
-		Scene(ProjectFile* projectFile = new ProjectFile("./resources/SampleScene.scene"));
+		Scene(ProjectFile* projectFile = new ProjectFile("input.txt"));
 		~Scene();
 		void open();
 		void close();
