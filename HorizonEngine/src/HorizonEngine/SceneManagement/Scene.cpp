@@ -75,7 +75,7 @@ namespace Hzn {
 		for (int i = 0; i < content.size(); i++) {
 			if (content.at(i).find(":") != std::string::npos) {
 				std::string key = content.at(i).substr(0, content.at(i).find(":"));
-				std::string value = content.at(i).substr(content.at(i).find(":") + 1, content.at(i).size() - (key.size() + 2));
+				std::string value = content.at(i).substr(content.at(i).find(":") + 1, content.at(i).size() - (key.size() + 1));
 				// Set scene name
 				if (key.compare("name") == 0) {
 					name = value;
