@@ -1,42 +1,73 @@
 #include "GameObject.h"
+#include <memory>
 
 namespace Hzn 
 {
-	Component* GameObject::getComponent(ComponentType type) const {
+	GameObject::GameObject() {
+		components = new std::vector<std::shared_ptr<Component>>();
+		name = "GameObject";
+	}
+
+	GameObject::GameObject(std::string s) {
+		components = new std::vector<std::shared_ptr<Component>>();
+		name = s;
+	}
+
+	/*GameObject::GameObject(GameObject* gameObject) {
+		name = gameObject->name;
+		transform = gameObject->transform;
+		active = gameObject->isActive();
+		components = gameObject->getComponents();
+	}*/
+
+	GameObject::GameObject(std::shared_ptr<GameObject> gameObject) {
+		name = gameObject->name;
+		transform = gameObject->transform;
+		active = gameObject->isActive();
+		components = gameObject->getComponents();
+	}
+
+	GameObject::~GameObject() {
+
+	}
+
+	std::shared_ptr<Component> GameObject::getComponent(std::string type) const {
 		for (int i = 0; i < components->size(); i++) {
-			for (int j = 0; j < components->at(i)->componentTypes.size(); j++) {
-				if (components->at(i)->componentTypes[j] == type) {
-					return components->at(i);
-				}
+			if (components->at(i)->getComponentType().compare(type) == 0) {
+				return components->at(i);
 			}
 		}
 
 		return NULL;
 	}
 
-	std::vector<Component*>* GameObject::getComponents(ComponentType type) const {
-		std::vector<Component*>* comps = nullptr;
+	std::vector<std::shared_ptr<Component>>* GameObject::getComponents() const {
+		return components;
+	}
+
+	std::vector<std::shared_ptr<Component>>* GameObject::getComponents(std::string type) const {
+		std::vector<std::shared_ptr<Component>>* comps;
 		for (int i = 0; i < components->size(); i++) {
-			for (int j = 0; j < components->at(i)->componentTypes.size(); j++) {
-				if (components->at(i)->componentTypes[j] == type) {
-					comps->push_back(components->at(i));
-				}
+			if (components->at(i)->getComponentType() == type) {
+				comps->push_back(components->at(i));
 			}
 		}
 
 		return comps;
 	}
 
-	std::vector<Component*>* GameObject::getComponentsInChildren(ComponentType type) const {
-		if (transform->children->size() == 0) return getComponents(type);
+	std::vector<std::shared_ptr<Component>>* GameObject::getComponentsInChildren(std::string type) const {
+		std::vector<std::shared_ptr<Transform>>* children = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(transform->getField("children"));
+		if (children->size() == 0) return getComponents(type);
 
-		std::vector<Component*>* comps = nullptr;
-		std::vector<Component*>* tempComps = getComponents(type);
+		std::vector<std::shared_ptr<Component>>* comps{};
+		std::vector<std::shared_ptr<Component>>* tempComps = getComponents(type);
 		for (int i = 0; i < tempComps->size(); i++)
 			comps->push_back(tempComps->at(i));
 
-		for (int i = 0; i < transform->children->size(); i++) {
-			tempComps = transform->children->at(i)->gameObject->getComponentsInChildren(type);
+		for (int i = 0; i < children->size(); i++) {
+			std::shared_ptr gameObject = std::any_cast<std::shared_ptr<GameObject>>(children->at(i)->getField("gameObject"));
+			tempComps = gameObject->getComponentsInChildren(type);
 			for (int j = 0; j < tempComps->size(); j++) {
 				comps->push_back(tempComps->at(j));
 			}
@@ -45,26 +76,29 @@ namespace Hzn
 		return comps;
 	}
 
-	void GameObject::addComponent(Component* component) {
+	void GameObject::addComponent(std::shared_ptr<Component> component) {
 		//components.push_back(std::shared_ptr<Component>(component));
-		components->push_back(component);
-		// TODO: add reference to the this object if the component is a transform
-		if (typeid(component) == typeid(Transform*)) {
-			Transform* t = dynamic_cast<Transform*>(component);
+		components->push_back(std::shared_ptr<Component>(component));
+
+		if (component->getComponentType().compare("Transform") == 0) {
+			std::shared_ptr<Transform> t = std::dynamic_pointer_cast<Transform>(std::shared_ptr<Component>(component));
 			if (t) {
 				transform = t;
-				t->gameObject = this;
+				t->setField("gameObject", shared_from_this());
 			}
+		}
+		else {
+			component->setField("transform", std::shared_ptr<Component>(transform));
 		}
 	}
 
-	void GameObject::removeComponent(ComponentType type) {
+	void GameObject::removeComponent(std::string type) {
+		if (type.compare("Transform") == 0) return;
+
 		for (int i = 0; i < components->size(); i++) {
-			for (int j = 0; j < components->at(i)->componentTypes.size(); j++) {
-				if (components->at(i)->componentTypes[j] == type) {
-					components->erase(std::next(components->begin(), i));
-					return;
-				}
+			if (components->at(i)->getComponentType().compare(type) == 0) {
+				components->erase(std::next(components->begin(), i));
+				return;
 			}
 		}
 	}

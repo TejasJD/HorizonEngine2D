@@ -10,32 +10,36 @@ namespace Hzn {
 	class Transform;
 	class Component;
 
-	class GameObject {
+	class GameObject : public std::enable_shared_from_this<GameObject> {
 	public:
-		char* name;
-		Transform* transform;
+		std::string name;
+		std::shared_ptr<Transform> transform;
 	private:
 		bool active;
-		std::vector<Component*>* components;
+		std::vector<std::shared_ptr<Component>>* components;
 	public:
-		Component* getComponent(ComponentType type) const;
+		GameObject();
+		~GameObject();
+		GameObject(std::string s);
+		GameObject(std::shared_ptr<GameObject> gameObject);
+		GameObject(GameObject* go);
 
-		std::vector<Component*>* getComponents(ComponentType type) const;
+		std::shared_ptr<Component> getComponent(std::string type) const;
 
-		std::vector<Component*>* getComponentsInChildren(ComponentType type) const;
+		std::vector<std::shared_ptr<Component>>* getComponents() const;
 
-		void addComponent(Component* component);
+		std::vector<std::shared_ptr<Component>>* getComponents(std::string type) const;
 
-		void removeComponent(ComponentType type);
+		std::vector<std::shared_ptr<Component>>* getComponentsInChildren(std::string type) const;
+
+		void addComponent(std::shared_ptr<Component> component);
+
+		void removeComponent(std::string type);
 		bool isActive() const {
 			return active;
 		};
 		void setActive(bool active) {
 			this->active = active;
-		}
-
-		~GameObject() {
-
 		}
 	};
 }

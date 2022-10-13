@@ -10,7 +10,8 @@ namespace Hzn {
 		C_BoxCollider2D,
 		C_CapsuleCollider2D,
 		C_CircleCollider2D,
-		C_Rigidbody2D
+		C_Rigidbody2D,
+		C_CustomComponent
 	};
 }
 
