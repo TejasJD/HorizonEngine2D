@@ -11,17 +11,21 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
-	"platform/windows/MSWindow.cpp"
+	"Platform/Windows/MSWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
 	"src/HorizonEngine/FileManagement/ProjectFile.cpp"
-)
+  "Platform/Windows/MSInput.cpp"
+  "src/HorizonEngine/Audio/SoundDevice.cpp"
+  "src/HorizonEngine/Audio/SoundBuffer.cpp"
+  "src/HorizonEngine/Audio/AudioSource.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
 	"pch.h"
+	"src/HorizonEngine/Core/Core.h"
 	"src/HorizonEngine/App.h"
 	"src/HorizonEngine/EntryPoint.h"
 	"src/HorizonEngine/Window.h"
@@ -31,7 +35,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Physics2D/RigidBody2D.h"
 	"src/HorizonEngine/Components/Component.h"
 	"src/HorizonEngine/Components/Transform.h"
-	"platform/windows/MSWindow.h"
+	"Platform/Windows/MSWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
 	"src/HorizonEngine/Events/Event.h"
 	"src/HorizonEngine/Events/MouseEvent.h"
@@ -44,7 +48,12 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Core/Core.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/FileManagement/ProjectFile.h"
-)
+  "src/HorizonEngine/Audio/SoundDevice.h"
+  "src/HorizonEngine/Audio/SoundBuffer.h"
+  "src/HorizonEngine/Audio/AudioSource.h"
+	"src/HorizonEngine/Imgui/ImguiLayer.h"
+	"src/HorizonEngine/Input.h"
+	"Platform/Windows/MSInput.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -52,9 +61,10 @@ add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 # compile definitions for 'HorizonEngine' target
 target_compile_definitions(HorizonEngine
 	PUBLIC
-		HZN_PLATFORM_WINDOWS
+	HZN_PLATFORM_WINDOWS
+	HZN_ASSERTS_ON
 	PRIVATE
-		HZN_BUILD
+	HZN_BUILD
 )
 
 
@@ -77,17 +87,20 @@ find_package(imgui CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
+find_package(openal CONFIG REQUIRED)
+find_package(Sndfile CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
-	fmt::fmt-header-only
 	glfw
 	glm::glm
 	glad::glad
 	imgui::imgui
-	spdlog::spdlog
+	spdlog::spdlog_header_only
 	box2d::box2d
 	unofficial::sajson::sajson
+	OpenAL::OpenAL
+	SndFile::sndfile
 )
 
 #testing
