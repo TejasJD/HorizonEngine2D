@@ -4,6 +4,18 @@
 #include "GLFW/glfw3.h"
 #include "imgui.h"
 
+
+
+#include "HorizonEngine/GameObject.h"
+#include "HorizonEngine/Components/ComponentFactory.h"
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Components/Transform.h"
+#include "HorizonEngine/Physics2D/BoxCollider2D.h"
+#include "HorizonEngine/Physics2D/Rigidbody2D.h"
+#include "HorizonEngine/SceneManagement/Scene.h"
+
+
+
 #include "App.h"
 namespace Hzn
 {
@@ -26,6 +38,21 @@ namespace Hzn
 	//! different layers
 	void App::run()
 	{
+		// Component Factory test
+		REGISTER(Component, Transform);
+		REGISTER(Component, BoxCollider2D);
+		//std::shared_ptr<Component> t(FACTORY(Component).create("Transform"));
+		// std::shared_ptr<Transform> t2 = std::dynamic_pointer_cast<Transform>(t);
+
+		ProjectFile* p = new ProjectFile("input.txt");
+
+		Scene* s = new Scene();
+		s->open();
+		std::cout << "Found objects: " << s->getObjects()->size() << std::endl;
+		s->save();
+
+
+
 		for (auto layers : m_Layers)
 		{
 			std::cout << layers->getName() << std::endl;

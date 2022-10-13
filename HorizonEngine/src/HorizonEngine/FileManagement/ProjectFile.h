@@ -53,8 +53,8 @@ namespace Hzn {
 		}
 
 		//Custom constructor, use "constructor intitialiser list" to set path pass in a string vector var for the file content
-		ProjectFile(std::string path, std::vector<std::string> var) : path(path) {
-			saveToFile(path, var);
+		ProjectFile(std::string path) : path(path) {
+			openFile(path);
 		}
 
 		
@@ -65,14 +65,14 @@ namespace Hzn {
 		std::string getPath() { return path; }
 		std::string getName() { return name; }
 		std::string getFullPath() { return fullPath; }
-		std::vector<std::string> getContent() { return content;}
+		std::vector<std::string> getContent() { return content; }
 
 
 		//Setters path and name
 		void setPath(std::string newPath) { path = newPath; }
 		void setName(std::string newName) { name = newName; }
 		void setFullPath() { fullPath = getPath() + "/" + getName(); }
-		std::vector<std::string> setContent(std::vector<std::string> newContent) { return content = newContent; };
+		void setContent(std::vector<std::string> newContent) { content = newContent; };
 
 
 		//file functions
