@@ -6,7 +6,6 @@
 #include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Components/Component.h"
 #include <Audio/SoundBuffer.h>
-#include <Audio/SoundPlayer.h>
 
 namespace Hzn
 {
