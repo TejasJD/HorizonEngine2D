@@ -8,7 +8,7 @@
 
 namespace Hzn
 {
-	class HZN_API Layer
+	class Layer
 	{
 	public:
 		Layer(const std::string& name = "Layer") : m_Name(name) {}
@@ -16,10 +16,11 @@ namespace Hzn
 
 		inline const std::string& getName() { return m_Name; }
 
-		virtual void onAttach() = 0;
-		virtual void onDetach() = 0;
-		virtual void onUpdate() = 0;
-		virtual void onEvent(Event& event) = 0;
+		virtual void onAttach() {}
+		virtual void onDetach() {}
+		virtual void onUpdate() {}
+		virtual void onEvent(Event& event) {}
+		virtual void onRenderImgui() {}
 
 	protected:
 		std::string m_Name;

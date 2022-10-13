@@ -9,7 +9,7 @@
 namespace Hzn
 {
 
-	class HZN_API MSWindow : public Window
+	class MSWindow : public Window
 	{
 	public:
 		// Constructor creates window and initializes the object
@@ -21,6 +21,7 @@ namespace Hzn
 		virtual unsigned int getHeight() override { return m_Data.height; };
 		virtual unsigned int getWidth() override { return m_Data.width; }
 		virtual void setEventCallback(const EventCallbackFn& callback) override { m_Data.callback = callback; }
+		virtual void* getPlatformRawWindow() { return m_Window; }
 
 	private:
 		void init();

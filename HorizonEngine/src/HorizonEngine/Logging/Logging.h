@@ -14,7 +14,7 @@
 
 namespace Hzn
 {
-	class HZN_API Logging
+	class Logging
 	{
 	public:
 		static void Init();

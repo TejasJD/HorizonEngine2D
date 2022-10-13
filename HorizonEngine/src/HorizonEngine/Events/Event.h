@@ -17,8 +17,7 @@ https://github.com/dquist/EventBus
 
 namespace Hzn {
 
-
-	enum class HZN_API TypeOfEvent
+	enum class TypeOfEvent
 	{
 		None = 0,
 		// Window Events 
@@ -34,7 +33,7 @@ namespace Hzn {
 		AppTick, AppUpdate, AppRender
 	};
 
-	enum HZN_API EventCategory
+	enum EventCategory
 	{
 		None = 0,
 		EventCategoryApplication = BIT(0), // 1 0000001
@@ -50,7 +49,7 @@ namespace Hzn {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	class HZN_API Event
+	class Event
 	{
 	public:
 		virtual ~Event() = default;
@@ -68,7 +67,7 @@ namespace Hzn {
 		}
 	};
 
-	class HZN_API EventDispatcher
+	class EventDispatcher
 	{
 	public:
 		EventDispatcher(Event& event)
@@ -90,8 +89,10 @@ namespace Hzn {
 	private:
 		Event& m_Event;
 	};
+	
 
-	HZN_API inline std::ostream& operator<<(std::ostream& os, const Event& e)
+
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
 		return os << e.ToString();
 	}
@@ -100,4 +101,5 @@ namespace Hzn {
 
 template<>
 struct fmt::formatter<Hzn::Event> : fmt::ostream_formatter {};
+
 #endif // !HZN_APPLICATION_EVENT_H
