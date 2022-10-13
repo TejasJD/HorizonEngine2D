@@ -1,9 +1,6 @@
 # groupProject
 
-Github repository for the Msc, ASD group project. 
-This branch adds support for the **[vcpkg](https://vcpkg.io/en/index.html)**.
-It's a cross-platform C++ package manager for acquiring and
-managing libraries. Refer to the link for more information on the tool.
+Github repository for the Msc, ASD group project.
 
 ## Prerequisites
 1. [Visual studio 2022](https://visualstudio.microsoft.com/) (Follow the *Setup for Development -> Windows* section
@@ -20,7 +17,6 @@ and can be primarily accessed through **Developer Command Prompt for VS 2022 / D
 ```
 git clone https://github.com/alex-mulkerrins/groupProject.git
 cd groupProject
-git checkout API_vcpkgupdate
 git submodule init
 git submodule update
 ```
