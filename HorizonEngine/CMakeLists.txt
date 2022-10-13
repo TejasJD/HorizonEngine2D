@@ -16,8 +16,10 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
-	"Platform/Windows/MSInput.cpp"
- )
+  "Platform/Windows/MSInput.cpp"
+  "src/HorizonEngine/Audio/SoundDevice.cpp"
+  "src/HorizonEngine/Audio/SoundBuffer.cpp"
+  "src/HorizonEngine/Audio/AudioSource.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -40,12 +42,16 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Events/ApplicationEvent.h"
 	"src/HorizonEngine/Codes/MouseCodes.h"
 	"src/HorizonEngine/Codes/KeyboardCodes.h"
-	"src/HorizonEngine/LayerStack.h"
-	"src/HorizonEngine/Layer.h"
+  "src/HorizonEngine/LayerStack.h"
+  "src/HorizonEngine/Layer.h"
+  "src/HorizonEngine/Core/Core.h"
+	"src/HorizonEngine/Imgui/ImguiLayer.h"
+  "src/HorizonEngine/Audio/SoundDevice.h"
+  "src/HorizonEngine/Audio/SoundBuffer.h"
+  "src/HorizonEngine/Audio/AudioSource.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
-	"Platform/Windows/MSInput.h"
- )
+	"Platform/Windows/MSInput.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -79,6 +85,8 @@ find_package(imgui CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
+find_package(openal CONFIG REQUIRED)
+find_package(Sndfile CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
@@ -89,6 +97,8 @@ target_link_libraries(HorizonEngine
 	spdlog::spdlog_header_only
 	box2d::box2d
 	unofficial::sajson::sajson
+	OpenAL::OpenAL
+	SndFile::sndfile
 )
 
 #testing
