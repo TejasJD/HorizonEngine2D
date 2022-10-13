@@ -7,9 +7,14 @@ namespace Hzn {
 	std::vector<std::string> ProjectFile::openFile(std::string filePath) {
 		std::string line;
 
-		//open the file here
-		in.open(getPath(), std::ios::in);
+		// Create file if not exisiting
+		out.open(filePath, std::ios::app);
+		out_check();
+		out.close();
 
+		//open the file here
+		in.open(filePath);
+		
 		//Check error handling
 		in_check();
 
@@ -19,8 +24,6 @@ namespace Hzn {
 		}
 
 		in.close();
-
-		setContent(content);
 
 		//return reference to content
 		return content;

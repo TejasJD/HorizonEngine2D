@@ -12,46 +12,47 @@ namespace Hzn {
 	}
 
 	void Scene::open() {
-		/*std::shared_ptr<std::vector<std::string>> content = std::make_shared<std::vector<std::string>>(); // file->getContent();
-		content->push_back("name:Test Name\n");
-		content->push_back("gameObject:GO Name\n");
-		content->push_back("component:Transform\n");
-		content->push_back("values:[\n");
-		content->push_back("\tposition:vec2:0.000000,0.000000\n");
-		content->push_back("\trotation:float:0.000000\n");
-		content->push_back("\tscale:vec2:1.000000,1.000000\n");
-		content->push_back("\tright:vec2:1.000000,0.000000\n");
-		content->push_back("\tup:vec2:0.000000,1.000000\n");
-		content->push_back("\tparent:Transform:Test GO\n");
-		content->push_back("\troot:Transform:Test GO\n");
-		content->push_back("\tsiblingIndex:int:0\n");
-		content->push_back("\tchildrenCount:int:0\n");
-		content->push_back("]\n");
-		content->push_back("component:BoxCollider2D\n");
-		content->push_back("values:[\n");
-		content->push_back("\ttransform:Transform:GO Name\n");
-		content->push_back("\tsize:vec2:1.000000,1.000000\n");
-		content->push_back("\toffset:vec2:0.000000,0.000000\n");
-		content->push_back("]\n");
-		content->push_back("gameObject:Test GO\n");
-		content->push_back("component:Transform\n");
-		content->push_back("values:[\n");
-		content->push_back("\tposition:vec2:0.000000,0.000000\n");
-		content->push_back("\trotation:float:0.000000\n");
-		content->push_back("\tscale:vec2:1.000000,1.000000\n");
-		content->push_back("\tright:vec2:1.000000,0.000000\n");
-		content->push_back("\tup:vec2:0.000000,1.000000\n");
-		content->push_back("\tparent:Transform:NULL\n");
-		content->push_back("\troot:Transform:NULL\n");
-		content->push_back("\tsiblingIndex:int:0\n");
-		content->push_back("\tchildrenCount:int:0\n");
-		content->push_back("]\n");
-		content->push_back("component:BoxCollider2D\n");
-		content->push_back("values:[\n");
-		content->push_back("\ttransform:Transform:Test GO\n");
-		content->push_back("\tsize:vec2:1.000000,1.000000\n");
-		content->push_back("\toffset:vec2:0.000000,0.000000\n");
-		content->push_back("]\n");
+		/*
+		std::vector<std::string> content = std::vector<std::string>(); // file->getContent();
+		content.push_back("name:Test Name\n");
+		content.push_back("gameObject:GO Name\n");
+		content.push_back("component:Transform\n");
+		content.push_back("values:[\n");
+		content.push_back("\tposition:vec2:0.000000,0.000000\n");
+		content.push_back("\trotation:float:0.000000\n");
+		content.push_back("\tscale:vec2:1.000000,1.000000\n");
+		content.push_back("\tright:vec2:1.000000,0.000000\n");
+		content.push_back("\tup:vec2:0.000000,1.000000\n");
+		content.push_back("\tparent:Transform:Test GO\n");
+		content.push_back("\troot:Transform:Test GO\n");
+		content.push_back("\tsiblingIndex:int:0\n");
+		content.push_back("\tchildrenCount:int:0\n");
+		content.push_back("]\n");
+		content.push_back("component:BoxCollider2D\n");
+		content.push_back("values:[\n");
+		content.push_back("\ttransform:Transform:GO Name\n");
+		content.push_back("\tsize:vec2:1.000000,1.000000\n");
+		content.push_back("\toffset:vec2:0.000000,0.000000\n");
+		content.push_back("]\n");
+		content.push_back("gameObject:Test GO\n");
+		content.push_back("component:Transform\n");
+		content.push_back("values:[\n");
+		content.push_back("\tposition:vec2:0.000000,0.000000\n");
+		content.push_back("\trotation:float:0.000000\n");
+		content.push_back("\tscale:vec2:1.000000,1.000000\n");
+		content.push_back("\tright:vec2:1.000000,0.000000\n");
+		content.push_back("\tup:vec2:0.000000,1.000000\n");
+		content.push_back("\tparent:Transform:NULL\n");
+		content.push_back("\troot:Transform:NULL\n");
+		content.push_back("\tsiblingIndex:int:0\n");
+		content.push_back("\tchildrenCount:int:0\n");
+		content.push_back("]\n");
+		content.push_back("component:BoxCollider2D\n");
+		content.push_back("values:[\n");
+		content.push_back("\ttransform:Transform:Test GO\n");
+		content.push_back("\tsize:vec2:1.000000,1.000000\n");
+		content.push_back("\toffset:vec2:0.000000,0.000000\n");
+		content.push_back("]\n");
 		*/
 
 		// Each line in the file is one of the following:
@@ -61,7 +62,7 @@ namespace Hzn {
 		// fieldName:fieldType:fieldValue
 
 		// Get the content from the file
-		std::shared_ptr<std::vector<std::string>> content = file->getContent();
+		std::vector<std::string> content = file->getContent();
 
 		// Create a map where the key is a component and the value is a vector of
 		// strings, each representing a value in the component
@@ -71,10 +72,10 @@ namespace Hzn {
 		std::shared_ptr<GameObject> currentGameObject = NULL;
 		std::shared_ptr<Component> currentComponent;
 		bool addingValues = false;
-		for (int i = 0; i < content->size(); i++) {
-			if (content->at(i).find(":") != std::string::npos) {
-				std::string key = content->at(i).substr(0, content->at(i).find(":"));
-				std::string value = content->at(i).substr(content->at(i).find(":") + 1, content->at(i).size() - (key.size() + 2));
+		for (int i = 0; i < content.size(); i++) {
+			if (content.at(i).find(":") != std::string::npos) {
+				std::string key = content.at(i).substr(0, content.at(i).find(":"));
+				std::string value = content.at(i).substr(content.at(i).find(":") + 1, content.at(i).size() - (key.size() + 2));
 				// Set scene name
 				if (key.compare("name") == 0) {
 					name = value;
@@ -122,7 +123,8 @@ namespace Hzn {
 		}
 
 		// Add the last game object to the scene
-		addGameObject(std::make_shared<GameObject>(currentGameObject));
+		if (currentGameObject != NULL)
+			addGameObject(std::make_shared<GameObject>(currentGameObject));
 		
 		// Loop through the map and set components' values
 		for (std::map<std::shared_ptr<Component>, std::shared_ptr<std::vector<std::string>>>::iterator it = valuesMap->begin(); it != valuesMap->end(); it++)
@@ -196,26 +198,26 @@ namespace Hzn {
 	}
 
 	void Scene::save() {
-		std::shared_ptr<std::vector<std::string>> content = std::make_shared<std::vector<std::string>>();
-		content->push_back("name:" + name + "\n");
+		std::vector<std::string> content = std::vector<std::string>();
+		content.push_back("name:" + name + "\n");
 		for (int i = 0; i < gameObjects->size(); i++) {
 			std::shared_ptr<GameObject> gameObject = gameObjects->at(i);
-			content->push_back("gameObject:" + gameObject->name + "\n");
+			content.push_back("gameObject:" + gameObject->name + "\n");
 			std::vector<std::shared_ptr<Component>>* components = gameObject->getComponents();
 			for (int j = 0; j < components->size(); j++) {
 				std::vector<std::string>* componentString = components->at(j)->stringify();
 				for (int k = 0; k < componentString->size(); k++) {
-					content->push_back(componentString->at(k));
+					content.push_back(componentString->at(k));
 				}
 			}
 		}
 
-		file->setContent(std::shared_ptr<std::vector<std::string>>(content));
+		file->setContent(content);
 
 		// Test
 		/*
-		for (int i = 0; i < content->size(); i++) {
-			std::cout << content->at(i);
+		for (int i = 0; i < content.size(); i++) {
+			std::cout << content.at(i);
 		}
 		*/
 	}

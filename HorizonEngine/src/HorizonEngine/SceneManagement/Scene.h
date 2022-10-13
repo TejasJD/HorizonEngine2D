@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-#include "../File Management/ProjectFile.h"
+#include "../FileManagement/ProjectFile.h"
 #include "../Components/ComponentType.h"
 #include "../GameObject.h"
 
@@ -21,7 +21,7 @@ namespace Hzn {
 		std::map<std::string, std::vector<std::shared_ptr<Component>>*>* componentGroups;
 		std::vector<std::shared_ptr<GameObject>>* gameObjects;
 	public:
-		Scene(ProjectFile* projectFile);
+		Scene(ProjectFile* projectFile = new ProjectFile("./resources/SampleScene.scene"));
 		~Scene();
 		void open();
 		void close();
