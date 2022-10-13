@@ -20,7 +20,7 @@ namespace Hzn
 {
 	ImguiLayer::ImguiLayer() : Layer("ImGui Layer")
 	{
-
+		HZN_CORE_INFO("Imgui Layer Attached!");
 	}
 
 	ImguiLayer::~ImguiLayer()

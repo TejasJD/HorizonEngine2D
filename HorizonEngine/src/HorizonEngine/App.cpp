@@ -26,19 +26,9 @@ namespace Hzn
 	//! different layers
 	void App::run()
 	{
-		for (auto layers : m_Layers)
-		{
-			std::cout << layers->getName() << std::endl;
-		}
-
+		HZN_CORE_WARN("App started running...");
 		while (m_Running)
 		{
-			// we go through all the layers
-			// and update each of them
-			/*m_AppWindow->onUpdate();*/
-			glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
 			for (auto& layer : m_Layers)
 			{
 				layer->onUpdate();
@@ -51,14 +41,8 @@ namespace Hzn
 				layer->onRenderImgui();
 			}
 			m_ImguiLayer->imguiEnd();
-
-
 			m_AppWindow->onUpdate();
 		}
-
-
-		
-
 	}
 
 	//! terminates the App run loop

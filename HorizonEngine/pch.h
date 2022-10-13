@@ -31,6 +31,9 @@
 #include <unordered_map>
 #include <chrono>
 
+#include "HorizonEngine/Logging/Logging.h"
+#include "HorizonEngine/Core/Core.h"
+
 #ifdef HZN_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif
