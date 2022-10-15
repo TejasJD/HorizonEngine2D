@@ -1,19 +1,14 @@
 #include "pch.h"
+#include "GLContext.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-
-#include "GLContext.h"
 
 //template<>
 //struct fmt::formatter<const GLubyte*> : fmt::ostream_formatter {};
 
 namespace Hzn
 {
-	RenderContext* RenderContext::create(void* const& windowHandle)
-	{
-		return new GLContext((GLFWwindow*)windowHandle);
-	}
 
 	GLContext::GLContext(GLFWwindow *const& handle) : m_Handle(handle)
 	{

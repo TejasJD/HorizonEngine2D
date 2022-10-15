@@ -14,9 +14,6 @@ namespace Hzn
 		virtual void swapBuffers() = 0;
 
 		static RenderContext* create(void *const& windowHandle);
-
-	protected:
-		RenderContext() {}
 	};
 }
 

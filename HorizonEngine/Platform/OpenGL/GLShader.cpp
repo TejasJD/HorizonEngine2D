@@ -7,10 +7,6 @@
 
 namespace Hzn
 {
-	Shader* Shader::create(const std::string& vertexSource, const std::string& fragmentSource)
-	{
-		return new GLShader(vertexSource, fragmentSource);
-	}
 	// reference: https://www.khronos.org/opengl/wiki/Shader_Compilation
 	GLShader::GLShader(const std::string& vertexSource, const std::string& fragmentSource)
 	{
@@ -130,8 +126,13 @@ namespace Hzn
 	}
 
 	//! calling this member function uses the shader.
-	void GLShader::use() const
+	void GLShader::bind() const
 	{
 		glUseProgram(m_ProgramId);
+	}
+
+	void GLShader::unbind() const
+	{
+
 	}
 }

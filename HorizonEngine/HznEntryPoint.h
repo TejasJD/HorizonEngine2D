@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef HZN_ENTRY_POINT_H
+#define HZN_ENTRY_POINT_H
+
 extern std::shared_ptr<Hzn::App> Hzn::createApp();
 
 int main()
@@ -9,3 +12,5 @@ int main()
 	app->run();
 	return 0;
 }
+
+#endif // !HZN_ENTRY_POINT_H

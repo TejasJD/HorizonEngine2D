@@ -11,10 +11,10 @@ namespace Hzn
 	{
 	public:
 		virtual ~VertexBuffer() {};
-		virtual void bind() = 0;
-		virtual void unbind() = 0;
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
 
-		static VertexBuffer* create(const unsigned int& size, float* const& vertices);
+		static VertexBuffer* create(const unsigned int& sizeInBytes, float* const& vertices);
 
 	protected:
 		VertexBuffer() {}
@@ -27,10 +27,11 @@ namespace Hzn
 	{
 	public:
 		virtual ~ElementBuffer() {};
-		virtual void bind() = 0;
-		virtual void unbind() = 0;
+		virtual void bind() const = 0;
+		virtual void unbind() const = 0;
+		virtual unsigned int size() const = 0;
 
-		static ElementBuffer* create(const unsigned int& size, unsigned int* const& indices);
+		static ElementBuffer* create(const unsigned int& elementCount, unsigned int* const& indices);
 
 	protected:
 		ElementBuffer() {}

@@ -4,20 +4,18 @@
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Events/MouseEvent.h"
 #include "HorizonEngine/Events/KeyEvent.h"
-#include "GLContext.h"
 
+#include "GLContext.h"
 #include "GLWindow.h"
+
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
 
 namespace Hzn
 {
 	void errorCallback (int error_code, const char* description)
 	{
 		HZN_CORE_CRITICAL("{0}: {1}", error_code, description);
-	}
-	//! implements window creation for windows platform
-	HZN_API Window* Window::create(const unsigned int& width, const unsigned int& height, const char* const& title)
-	{
-		return new GLWindow(width, height, title);
 	}
 
 	GLWindow::GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title)

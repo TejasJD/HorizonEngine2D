@@ -14,7 +14,8 @@ namespace Hzn
 		~GLShader();
 
 		// Inherited via Shader
-		virtual void use() const override;
+		virtual void bind() const override;
+		virtual void unbind() const override;
 
 	private:
 		unsigned int m_ProgramId;

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef HZNAPP_HZNAPP_H
+#define HZNAPP_HZNAPP_H
+
 // ********** Sample Layer **********
 
 class SampleLayer : public Hzn::Layer
@@ -45,3 +48,5 @@ public:
 	}
 	~HznApp() {}
 };
+
+#endif // !HZNAPP_HZNAPP_H

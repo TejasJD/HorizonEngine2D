@@ -47,12 +47,7 @@ namespace Hzn
 		m_Shader = std::unique_ptr<Shader>(Shader::create(vertexShader, fragmentShader));
 	}
 
-	App::~App()
-	{
-		glDeleteVertexArrays(1, &m_VertexArray);
-		glDeleteBuffers(1, &m_VertexBuffer);
-		glDeleteBuffers(1, &m_ElementBuffer);
-	}
+	App::~App() {}
 
 	//! the main App run loop. This loop keeps the application running and updates and renders
 	//! different layers
@@ -60,40 +55,34 @@ namespace Hzn
 	{
 		HZN_CORE_WARN("App started running...");
 
-		float vertices[9] = {
+		std::vector<float> vertices = {
 			0.0f, 0.5f, 0.0f,
 			0.5f, -0.5f, 0.0f,
 			-0.5f, -0.5f, 0.0f
 		};
 
-		unsigned int indices[3] = {
+		std::vector<unsigned int> indices = {
 			0, 1, 2
 		};
 
-		glGenVertexArrays(1, &m_VertexArray);
-		glGenBuffers(1, &m_VertexBuffer);
-		glGenBuffers(1, &m_ElementBuffer);
-
-		glBindVertexArray(m_VertexArray);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		/*glGenVertexArrays(1, &m_VertexArray);
+		glBindVertexArray(m_VertexArray);*/
+		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::create());
+		m_VertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::create(vertices.size() * sizeof(float), &vertices[0]));
+		m_ElementBuffer = std::unique_ptr<ElementBuffer>(ElementBuffer::create(indices.size(), &indices[0]));
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 		glEnableVertexAttribArray(0);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ElementBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
 		while (m_Running)
 		{
-			m_Shader->use();
-			glBindVertexArray(m_VertexArray);
+			m_Shader->bind();
+			m_VertexArray->bind();
 
-			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, m_ElementBuffer->size(), GL_UNSIGNED_INT, nullptr);
 
 			//! general layer update
 			for (auto& layer : m_Layers)

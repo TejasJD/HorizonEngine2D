@@ -10,6 +10,8 @@
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/ImGui/ImGuiLayer.h"
 #include "HorizonEngine/Renderer/Shader.h"
+#include "HorizonEngine/Renderer/Buffer.h"
+#include "HorizonEngine/Renderer/VertexArray.h"
 
 namespace Hzn
 {
@@ -47,13 +49,16 @@ namespace Hzn
 		std::unique_ptr<Window> m_Window;
 		std::unique_ptr<Input> m_Input;
 		std::unique_ptr<Shader> m_Shader;
+		std::unique_ptr<VertexArray> m_VertexArray;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
+		std::unique_ptr<ElementBuffer> m_ElementBuffer;
 
 		ImguiLayer* m_ImguiLayer;
 		LayerStack m_Layers;
 		
-		unsigned int m_VertexArray = 0;
-		unsigned int m_VertexBuffer = 0;
-		unsigned int m_ElementBuffer = 0;
+		/*unsigned int m_VertexArray = 0;*/
+		//unsigned int m_VertexBufferId = 0;
+		//unsigned int m_ElementBufferId = 0;
 	};
 
 	// to be defined by the application that implements this function

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
 #include "HorizonEngine/Window.h"
 #include "HorizonEngine/Renderer/RenderContext.h"
 // Implementation of the Window class with OpenGL as the rendering API
+
+struct GLFWwindow;
+
 namespace Hzn
 {
 
