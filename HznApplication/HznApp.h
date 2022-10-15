@@ -40,8 +40,8 @@ class HznApp : public Hzn::App
 public:
 	HznApp() 
 	{
-		// addLayer(new SampleLayer());
-		addLayer(new EditorLayer());
+		 addLayer(new SampleLayer());
+		/*addLayer(new EditorLayer());*/
 	}
 	~HznApp() {}
 };

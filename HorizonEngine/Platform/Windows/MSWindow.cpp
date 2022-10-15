@@ -1,8 +1,11 @@
 #include "pch.h"
+
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Events/MouseEvent.h"
 #include "HorizonEngine/Events/KeyEvent.h"
+#include "GLContext.h"
+
 #include "MSWindow.h"
 
 namespace Hzn
@@ -26,7 +29,7 @@ namespace Hzn
 	void MSWindow::onUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->swapBuffers();
 	}
 
 	MSWindow::~MSWindow()
@@ -37,18 +40,11 @@ namespace Hzn
 	void MSWindow::init()
 	{
 		int glfwSuccess = glfwInit();
-
-		assert(glfwSuccess != 0);
+		HZN_CORE_ASSERT(glfwSuccess, "Failed to initialize GLFW!");
 
 		m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title, nullptr, nullptr);
-
-		assert(m_Window != nullptr);
-
-		glfwMakeContextCurrent(m_Window);
-
-		int gladSuccess = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-		assert(gladSuccess != 0);
+		m_Context = new GLContext(m_Window);
+		m_Context->init();
 
 		//! set the glfwWindowUserPointer to hold additional data.
 		//! This data holds the dimensions, the title and the callback function as well.
@@ -68,6 +64,7 @@ namespace Hzn
 				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
 				WindowResizeEvent eventObj(width, height);
 				data.callback(eventObj);
+				glViewport(0, 0, width, height);
 			});
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y)

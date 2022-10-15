@@ -2,7 +2,7 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "HorizonEngine/Core/Core.h"
+
 #include "HorizonEngine/Events/Event.h"
 
 namespace Hzn

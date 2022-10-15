@@ -1,8 +1,5 @@
 #pragma once
 
-#include "imgui.h"
-
-#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Window.h"
 #include "HorizonEngine/Events/Event.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
@@ -12,6 +9,7 @@
 #include "HorizonEngine/FileManagement/ProjectFile.h"
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/ImGui/ImGuiLayer.h"
+#include "HorizonEngine/Renderer/Shader.h"
 
 namespace Hzn
 {
@@ -36,22 +34,23 @@ namespace Hzn
 		void run();
 		bool onWindowClose(WindowCloseEvent& e);
 		void onEvent(Event& e);
-
-		ImGuiContext* getImGuiAppContext() { return g; }
-		
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_AppWindow; }
-	protected:
+
 	private:
-		ImGuiContext* g;
+		static App* m_Instance;
+		bool m_Running;
+
 		std::unique_ptr<Window> m_AppWindow;
 		std::unique_ptr<Input> m_Input;
-		// UI layer provided by the game engine to the client application
+		std::unique_ptr<Shader> m_Shader;
+
 		ImguiLayer* m_ImguiLayer;
-		bool m_Running;
 		LayerStack m_Layers;
 		
-		static App* m_Instance;
+		unsigned int m_VertexArray = 0;
+		unsigned int m_VertexBuffer = 0;
+		unsigned int m_ElementBuffer = 0;
 	};
 
 	// to be defined by the application that implements this function

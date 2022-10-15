@@ -3,7 +3,6 @@
 #ifndef HZN_LAYER_H
 #define HZN_LAYER_H
 
-#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Events/Event.h"
 
 namespace Hzn

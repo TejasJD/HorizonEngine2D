@@ -3,8 +3,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Window.h"
+#include "HorizonEngine/Renderer/RenderContext.h"
 // Implementation of the Window class with OpenGL as the rendering API
 namespace Hzn
 {
@@ -37,5 +37,6 @@ namespace Hzn
 
 		WindowData m_Data;
 		GLFWwindow* m_Window;
+		RenderContext* m_Context;
 	};
 }
