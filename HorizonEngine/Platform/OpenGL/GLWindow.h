@@ -9,12 +9,12 @@
 namespace Hzn
 {
 
-	class MSWindow : public Window
+	class GLWindow : public Window
 	{
 	public:
 		// Constructor creates window and initializes the object
-		MSWindow(const unsigned int& width, const unsigned int& height, const char* const& title);
-		~MSWindow();
+		GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title);
+		~GLWindow();
 
 		// Inherited via Window
 		virtual void onUpdate() override;
@@ -37,6 +37,7 @@ namespace Hzn
 
 		WindowData m_Data;
 		GLFWwindow* m_Window;
-		RenderContext* m_Context;
+
+		std::unique_ptr<RenderContext> m_Context;
 	};
 }

@@ -3,7 +3,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "Platform/Windows/GLShader.h"
+#include "Platform/OpenGL/GLShader.h"
 
 #include "App.h"
 
@@ -16,12 +16,42 @@ namespace Hzn
 	{
 		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
-		m_Input = std::unique_ptr<Input>(Input::createInstance());
-		m_AppWindow = std::unique_ptr<Window>(Window::createInstance(1600, 900, "HorizonEngine"));
-		m_AppWindow->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
+		m_Input = std::unique_ptr<Input>(Input::create());
+		m_Window = std::unique_ptr<Window>(Window::create(800, 600, "HorizonEngine"));
+		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);
+
+		std::string vertexShader = R"(
+			#version 420 core
+			layout(location = 0) in vec3 pos;
+			out vec3 posCol;
+			void main()
+			{
+				gl_Position = vec4(pos, 1.0f);
+				posCol = pos;
+			}
+		)";
+		
+		std::string fragmentShader = R"(
+			#version 420 core
+			in vec3 posCol;
+			out vec4 color;
+			void main()
+			{
+				color = vec4((posCol + 1.0) * 0.5, 1.0f);
+			}
+		)";
+
+		m_Shader = std::unique_ptr<Shader>(Shader::create(vertexShader, fragmentShader));
+	}
+
+	App::~App()
+	{
+		glDeleteVertexArrays(1, &m_VertexArray);
+		glDeleteBuffers(1, &m_VertexBuffer);
+		glDeleteBuffers(1, &m_ElementBuffer);
 	}
 
 	//! the main App run loop. This loop keeps the application running and updates and renders
@@ -57,6 +87,7 @@ namespace Hzn
 
 		while (m_Running)
 		{
+			m_Shader->use();
 			glBindVertexArray(m_VertexArray);
 
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -78,7 +109,7 @@ namespace Hzn
 			}
 			m_ImguiLayer->imguiEnd();
 
-			m_AppWindow->onUpdate();
+			m_Window->onUpdate();
 		}
 	}
 

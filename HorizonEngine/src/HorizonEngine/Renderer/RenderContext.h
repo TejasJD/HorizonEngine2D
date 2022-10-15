@@ -8,11 +8,15 @@ namespace Hzn
 	class RenderContext
 	{
 	public:
-		RenderContext() {}
 		virtual ~RenderContext() {}
 
 		virtual void init() = 0;
 		virtual void swapBuffers() = 0;
+
+		static RenderContext* create(void *const& windowHandle);
+
+	protected:
+		RenderContext() {}
 	};
 }
 

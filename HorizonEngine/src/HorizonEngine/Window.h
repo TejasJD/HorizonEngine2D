@@ -21,7 +21,7 @@ namespace Hzn
 		virtual void* getPlatformRawWindow() = 0;
 		
 		//! Window creation implemented by the source files based on the active platform
-		static Window* createInstance(const unsigned int&
+		static Window* create(const unsigned int&
 			width = 1366, const unsigned int& height = 768, const char *const& title = "Window");
 	};
 }

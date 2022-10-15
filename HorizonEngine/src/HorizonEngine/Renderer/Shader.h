@@ -9,10 +9,14 @@ namespace Hzn
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexSource, const std::string& fragmentSource) {}
 		virtual ~Shader() {}
 
 		virtual void use() const = 0;
+
+		static Shader* create(const std::string& vertexSource, const std::string& fragmentSource);
+
+	protected:
+		Shader() {}
 	};
 }
 

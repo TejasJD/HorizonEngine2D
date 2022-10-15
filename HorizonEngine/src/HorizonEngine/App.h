@@ -18,13 +18,14 @@ namespace Hzn
 	public:
 		App();
 
-		virtual ~App() {}
+		virtual ~App();
 
 		void addLayer(Layer* layer) 
 		{
 			m_Layers.addLayer(layer);
 			layer->onAttach();
 		}
+
 		void addOverlay(Layer* layer)
 		{ 
 			m_Layers.addOverlay(layer);
@@ -35,13 +36,15 @@ namespace Hzn
 		bool onWindowClose(WindowCloseEvent& e);
 		void onEvent(Event& e);
 		static App& getApp() { return *m_Instance; }
-		Window& getAppWindow() { return *m_AppWindow; }
+		Window& getAppWindow() { return *m_Window; }
+
+	protected:
+		static App* m_Instance;
 
 	private:
-		static App* m_Instance;
 		bool m_Running;
 
-		std::unique_ptr<Window> m_AppWindow;
+		std::unique_ptr<Window> m_Window;
 		std::unique_ptr<Input> m_Input;
 		std::unique_ptr<Shader> m_Shader;
 

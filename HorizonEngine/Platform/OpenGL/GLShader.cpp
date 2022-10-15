@@ -7,9 +7,12 @@
 
 namespace Hzn
 {
+	Shader* Shader::create(const std::string& vertexSource, const std::string& fragmentSource)
+	{
+		return new GLShader(vertexSource, fragmentSource);
+	}
 	// reference: https://www.khronos.org/opengl/wiki/Shader_Compilation
 	GLShader::GLShader(const std::string& vertexSource, const std::string& fragmentSource)
-		: Shader(vertexSource, fragmentSource)
 	{
 		// Create an empty vertex shader handle
 		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -126,6 +129,7 @@ namespace Hzn
 		glDeleteProgram(m_ProgramId);
 	}
 
+	//! calling this member function uses the shader.
 	void GLShader::use() const
 	{
 		glUseProgram(m_ProgramId);

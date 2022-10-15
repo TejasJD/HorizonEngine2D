@@ -10,6 +10,11 @@
 
 namespace Hzn
 {
+	RenderContext* RenderContext::create(void* const& windowHandle)
+	{
+		return new GLContext((GLFWwindow*)windowHandle);
+	}
+
 	GLContext::GLContext(GLFWwindow *const& handle) : m_Handle(handle)
 	{
 		HZN_CORE_ASSERT(m_Handle, "Handle is NULL");

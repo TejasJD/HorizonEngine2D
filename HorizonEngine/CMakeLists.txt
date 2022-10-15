@@ -11,13 +11,13 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/Time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
-	"Platform/Windows/MSWindow.cpp"
+	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
 	"src/HorizonEngine/FileManagement/ProjectFile.cpp"
-	"Platform/Windows/MSInput.cpp"
+	"Platform/OpenGL/GLInput.cpp"
 	"src/HorizonEngine/Audio/SoundDevice.cpp"
 	"src/HorizonEngine/Audio/SoundBuffer.cpp"
 	"src/HorizonEngine/Audio/AudioSource.cpp"
@@ -25,10 +25,10 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Physics2D/BoxCollider2D.cpp"
 	"src/HorizonEngine/Physics2D/Rigidbody2D.cpp"
 	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
-	"platform/windows/MSWindow.cpp"
+	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
-	"Platform/Windows/GLContext.cpp"
-	"Platform/Windows/GLShader.cpp")
+	"Platform/OpenGL/GLContext.cpp"
+	"Platform/OpenGL/GLShader.cpp" "Platform/OpenGL/GLBuffer.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -51,7 +51,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Physics2D/Collider2D.h"
 	"src/HorizonEngine/Physics2D/BoxCollider2D.h"
 	"src/HorizonEngine/Physics2D/PhysicsWorld2D.h"
-	"platform/windows/MSWindow.h"
+	"Platform/OpenGL/GLWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
 	"src/HorizonEngine/Events/Event.h"
 	"src/HorizonEngine/Events/MouseEvent.h"
@@ -69,10 +69,12 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Audio/AudioSource.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
-	"Platform/Windows/MSInput.h"
-	"Platform/Windows/GLContext.h"
+	"Platform/OpenGL/GLInput.h"
+	"Platform/OpenGL/GLContext.h"
 	"src/HorizonEngine/Renderer/Shader.h"
-	"Platform/Windows/GLShader.h")
+	"Platform/OpenGL/GLShader.h"
+	"src/HorizonEngine/Renderer/Buffer.h"
+	"Platform/OpenGL/GLBuffer.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

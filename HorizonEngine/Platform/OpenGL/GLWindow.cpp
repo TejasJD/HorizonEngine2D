@@ -6,7 +6,7 @@
 #include "HorizonEngine/Events/KeyEvent.h"
 #include "GLContext.h"
 
-#include "MSWindow.h"
+#include "GLWindow.h"
 
 namespace Hzn
 {
@@ -15,35 +15,35 @@ namespace Hzn
 		HZN_CORE_CRITICAL("{0}: {1}", error_code, description);
 	}
 	//! implements window creation for windows platform
-	HZN_API Window* Window::createInstance(const unsigned int& width, const unsigned int& height, const char* const& title)
+	HZN_API Window* Window::create(const unsigned int& width, const unsigned int& height, const char* const& title)
 	{
-		return new MSWindow(width, height, title);
+		return new GLWindow(width, height, title);
 	}
 
-	MSWindow::MSWindow(const unsigned int& width, const unsigned int& height, const char* const& title)
+	GLWindow::GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title)
 		: m_Data{ width, height, title }
 	{
 		init();
 	}
 
-	void MSWindow::onUpdate()
+	void GLWindow::onUpdate()
 	{
 		glfwPollEvents();
 		m_Context->swapBuffers();
 	}
 
-	MSWindow::~MSWindow()
+	GLWindow::~GLWindow()
 	{
 		destroy();
 	}
 
-	void MSWindow::init()
+	void GLWindow::init()
 	{
 		int glfwSuccess = glfwInit();
 		HZN_CORE_ASSERT(glfwSuccess, "Failed to initialize GLFW!");
 
 		m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title, nullptr, nullptr);
-		m_Context = new GLContext(m_Window);
+		m_Context = std::unique_ptr<RenderContext>(RenderContext::create(m_Window));
 		m_Context->init();
 
 		//! set the glfwWindowUserPointer to hold additional data.
@@ -128,7 +128,7 @@ namespace Hzn
 		glfwSetErrorCallback(errorCallback);
 	}
 
-	void MSWindow::destroy()
+	void GLWindow::destroy()
 	{
 		glfwDestroyWindow(m_Window);
 	}

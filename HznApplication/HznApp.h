@@ -2,7 +2,7 @@
 
 // ********** Sample Layer **********
 
-class SampleLayer : public Hzn::Layer 
+class SampleLayer : public Hzn::Layer
 {
 public:
 	SampleLayer(const std::string& name = "Sample Layer");
@@ -38,9 +38,9 @@ public:
 class HznApp : public Hzn::App
 {
 public:
-	HznApp() 
+	HznApp()
 	{
-		 addLayer(new SampleLayer());
+		/*addLayer(new SampleLayer());*/
 		/*addLayer(new EditorLayer());*/
 	}
 	~HznApp() {}
