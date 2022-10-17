@@ -3,5 +3,18 @@
 
 namespace Hzn
 {
-	RendererAPI Renderer::m_API = RendererAPI::OpenGL;
+	void Renderer::beginScene()
+	{
+	}
+
+	void Renderer::endScene()
+	{
+
+	}
+
+	void Renderer::render(const std::shared_ptr<VertexArray>& vertexArray)
+	{
+		vertexArray->bind();
+		RenderCall::drawElements(vertexArray);
+	}
 }

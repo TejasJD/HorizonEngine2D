@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "Renderer.h"
+#include "RendererAPI.h"
 #include "Shader.h"
 
 #include "Platform/OpenGL/GLShader.h"
@@ -9,12 +9,12 @@ namespace Hzn
 {
 	Shader* Shader::create(const std::string& vertexSource, const std::string& fragmentSource)
 	{
-		switch (Renderer::getAPI())
+		switch (RendererAPI::getAPI())
 		{
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new GLShader(vertexSource, fragmentSource);
 		}
 

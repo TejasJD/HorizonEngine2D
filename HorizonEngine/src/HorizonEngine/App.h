@@ -12,6 +12,7 @@
 #include "HorizonEngine/Renderer/Shader.h"
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/VertexArray.h"
+#include "HorizonEngine/Renderer/Renderer.h"
 
 namespace Hzn
 {
@@ -46,10 +47,10 @@ namespace Hzn
 	private:
 		bool m_Running;
 
-		std::unique_ptr<Window> m_Window;
-		std::unique_ptr<Input> m_Input;
-		std::unique_ptr<Shader> m_Shader;
-		std::unique_ptr<VertexArray> m_VertexArray;
+		std::shared_ptr<Window> m_Window;
+		std::shared_ptr<Input> m_Input;
+		std::shared_ptr<Shader> m_Shader;
+		std::shared_ptr<VertexArray> m_VertexArray;
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		std::shared_ptr<ElementBuffer> m_ElementBuffer;
 

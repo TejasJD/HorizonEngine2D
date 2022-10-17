@@ -1,8 +1,4 @@
 #include "pch.h"
-
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
 #include "App.h"
 
 namespace Hzn
@@ -22,23 +18,23 @@ namespace Hzn
 
 		std::string vertexShader = R"(
 			#version 420 core
-			layout(location = 0) in vec3 pos_in;
-			layout(location = 1) in vec4 color_in;
-			out vec4 color_out;
+			layout(location = 0) in vec3 inv_Pos;
+			layout(location = 1) in vec4 inv_Col;
+			out vec4 outv_Col;
 			void main()
 			{
-				gl_Position = vec4(pos_in, 1.0f);
-				color_out = color_in;
+				gl_Position = vec4(inv_Pos, 1.0f);
+				outv_Col = inv_Col;
 			}
 		)";
 
 		std::string fragmentShader = R"(
 			#version 420 core
-			in vec4 color_out;
-			out vec4 color;
+			in vec4 outv_Col;
+			out vec4 outf_Col;
 			void main()
 			{
-				color = color_out;
+				outf_Col = outv_Col;
 			}
 		)";
 
@@ -54,18 +50,26 @@ namespace Hzn
 		HZN_CORE_WARN("App started running...");
 
 		std::vector<float> vertices = {
-			0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
+			0.0f, 0.4f, 0.0f,    1.0f, 0.0f, 1.0f, 1.0f,
+			0.4f, -0.4f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,
+			-0.4f, -0.4f, 0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
+			0.5f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 1.0f,
+			-0.5f, 0.5f, 0.0f,   0.0f, 1.0f, 1.0f, 1.0f,
+			-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
+			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 1.0f, 1.0f,
 		};
 
-		std::vector<unsigned int> indices = {
+		std::vector<unsigned int> indicesSquare = {
+			3, 5, 6,
+			3, 4, 5,
+		};
+
+		std::vector<unsigned int> indicesTriangle = {
 			0, 1, 2
 		};
 
 		m_VertexBuffer = std::shared_ptr<VertexBuffer>(VertexBuffer::create(vertices));
-		m_ElementBuffer = std::shared_ptr<ElementBuffer>(ElementBuffer::create(indices));
-
+		m_ElementBuffer = std::shared_ptr<ElementBuffer>(ElementBuffer::create(indicesTriangle));
 		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::create());
 
 		BufferLayout layout =
@@ -75,19 +79,27 @@ namespace Hzn
 		};
 
 		m_VertexBuffer->setBufferLayout(layout);
-		
 		m_VertexArray->addVertexBuffer(m_VertexBuffer);
 		m_VertexArray->setElementBuffer(m_ElementBuffer);
 
+		std::shared_ptr<VertexArray> va2 = std::shared_ptr<VertexArray>(VertexArray::create());
+		va2->addVertexBuffer(m_VertexBuffer);
+
+		std::shared_ptr<ElementBuffer> eb = std::shared_ptr<ElementBuffer>(ElementBuffer::create(indicesSquare));
+		va2->setElementBuffer(eb);
+
 		while (m_Running)
 		{
+			RenderCall::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+			RenderCall::submitClear();
+
+			Renderer::beginScene();
+
 			m_Shader->bind();
-			m_VertexArray->bind();
+			Renderer::render(va2);
+			Renderer::render(m_VertexArray);
 
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			glDrawElements(GL_TRIANGLES, m_ElementBuffer->size(), GL_UNSIGNED_INT, nullptr);
+			Renderer::endScene();
 
 			//! general layer update
 			for (auto& layer : m_Layers)

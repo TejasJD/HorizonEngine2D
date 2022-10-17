@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "Renderer.h"
+#include "RendererAPI.h"
 #include "RenderContext.h"
 
 #include "Platform/OpenGL/GLContext.h"
@@ -9,12 +9,12 @@ namespace Hzn
 {
 	RenderContext* RenderContext::create(void* const& windowHandle)
 	{
-		switch (Renderer::getAPI())
+		switch (RendererAPI::getAPI())
 		{
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new GLContext((GLFWwindow*)windowHandle);
 		}
 

@@ -13,7 +13,7 @@ namespace Hzn
 		Layer(const std::string& name = "Layer") : m_Name(name) {}
 		virtual ~Layer() {}
 
-		inline const std::string& getName() { return m_Name; }
+		const std::string& getName() { return m_Name; }
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}

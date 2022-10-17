@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "Renderer.h"
+#include "RendererAPI.h"
 
 #include "Buffer.h"
 
@@ -10,12 +10,12 @@ namespace Hzn
 {
 	VertexBuffer* VertexBuffer::create(std::vector<float> vertices)
 	{
-		switch (Renderer::getAPI())
+		switch (RendererAPI::getAPI())
 		{
-		case RendererAPI::None: 
+		case RendererAPI::API::None: 
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
-		case RendererAPI::OpenGL: 
+		case RendererAPI::API::OpenGL: 
 			return new GLVertexBuffer(vertices.size() * sizeof(float), &vertices[0]);
 		}
 
@@ -25,12 +25,12 @@ namespace Hzn
 
 	ElementBuffer* ElementBuffer::create(std::vector<unsigned int> indices)
 	{
-		switch (Renderer::getAPI())
+		switch (RendererAPI::getAPI())
 		{
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new GLElementBuffer(indices.size(), &indices[0]);
 		}
 

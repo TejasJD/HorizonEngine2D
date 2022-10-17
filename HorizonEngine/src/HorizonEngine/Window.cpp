@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Renderer/RendererAPI.h"
 #include "Window.h"
 
 #include "Platform/OpenGL/GLWindow.h"
@@ -9,12 +9,12 @@ namespace Hzn
 {
 	Window* Window::create(const unsigned int& width, const unsigned int& height, const char* const& title)
 	{
-		switch (Renderer::getAPI())
+		switch (RendererAPI::getAPI())
 		{
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new GLWindow(width, height, title);
 		}
 
