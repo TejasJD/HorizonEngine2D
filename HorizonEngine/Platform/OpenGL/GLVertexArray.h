@@ -16,9 +16,13 @@ namespace Hzn
 		virtual void bind() const override;
 		virtual void unbind() const override;
 
+		virtual void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) override;
+		virtual void setElementBuffer(const std::shared_ptr<ElementBuffer>& elementBuffer) override;
+
 	private:
 		unsigned int m_VertexArrayId = 0;
-
+		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
+		std::shared_ptr<ElementBuffer> m_ElementBuffer;
 	};
 }
 

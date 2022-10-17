@@ -8,7 +8,7 @@
 
 namespace Hzn
 {
-	VertexBuffer* VertexBuffer::create(const unsigned int& size, float* const& vertices)
+	VertexBuffer* VertexBuffer::create(std::vector<float> vertices)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -16,14 +16,14 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::OpenGL: 
-			return new GLVertexBuffer(size, vertices);
+			return new GLVertexBuffer(vertices.size() * sizeof(float), &vertices[0]);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");
 		return nullptr;
 	}
 
-	ElementBuffer* ElementBuffer::create(const unsigned int& elementCount, unsigned int* const& indices)
+	ElementBuffer* ElementBuffer::create(std::vector<unsigned int> indices)
 	{
 		switch (Renderer::getAPI())
 		{
@@ -31,7 +31,7 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::OpenGL:
-			return new GLElementBuffer(elementCount, indices);
+			return new GLElementBuffer(indices.size(), &indices[0]);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");

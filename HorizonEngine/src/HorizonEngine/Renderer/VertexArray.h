@@ -3,6 +3,8 @@
 #ifndef HZN_VERTEX_ARRAY_H
 #define HZN_VERTEX_ARRAY_H
 
+#include "Buffer.h"
+
 namespace Hzn
 {
 	class VertexArray
@@ -12,6 +14,9 @@ namespace Hzn
 
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
+
+		virtual void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) = 0;
+		virtual void setElementBuffer(const std::shared_ptr<ElementBuffer>& elementBuffer) = 0;
 
 		static VertexArray* create();
 	};

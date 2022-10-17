@@ -3,13 +3,10 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include "Platform/OpenGL/GLShader.h"
-
 #include "App.h"
 
 namespace Hzn
 {
-
 	App* App::m_Instance = nullptr;
 	//! App class constructor, initializes the application
 	App::App() : m_Running(true)
@@ -25,22 +22,23 @@ namespace Hzn
 
 		std::string vertexShader = R"(
 			#version 420 core
-			layout(location = 0) in vec3 pos;
-			out vec3 posCol;
+			layout(location = 0) in vec3 pos_in;
+			layout(location = 1) in vec4 color_in;
+			out vec4 color_out;
 			void main()
 			{
-				gl_Position = vec4(pos, 1.0f);
-				posCol = pos;
+				gl_Position = vec4(pos_in, 1.0f);
+				color_out = color_in;
 			}
 		)";
-		
+
 		std::string fragmentShader = R"(
 			#version 420 core
-			in vec3 posCol;
+			in vec4 color_out;
 			out vec4 color;
 			void main()
 			{
-				color = vec4((posCol + 1.0) * 0.5, 1.0f);
+				color = color_out;
 			}
 		)";
 
@@ -56,23 +54,30 @@ namespace Hzn
 		HZN_CORE_WARN("App started running...");
 
 		std::vector<float> vertices = {
-			0.0f, 0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f
+			0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
 
 		std::vector<unsigned int> indices = {
 			0, 1, 2
 		};
 
-		/*glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);*/
-		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::create());
-		m_VertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::create(vertices.size() * sizeof(float), &vertices[0]));
-		m_ElementBuffer = std::unique_ptr<ElementBuffer>(ElementBuffer::create(indices.size(), &indices[0]));
+		m_VertexBuffer = std::shared_ptr<VertexBuffer>(VertexBuffer::create(vertices));
+		m_ElementBuffer = std::shared_ptr<ElementBuffer>(ElementBuffer::create(indices));
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-		glEnableVertexAttribArray(0);
+		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::create());
+
+		BufferLayout layout =
+		{
+			{ ShaderDataType::Vec3f, "position"},
+			{ ShaderDataType::Vec4f, "color"},
+		};
+
+		m_VertexBuffer->setBufferLayout(layout);
+		
+		m_VertexArray->addVertexBuffer(m_VertexBuffer);
+		m_VertexArray->setElementBuffer(m_ElementBuffer);
 
 		while (m_Running)
 		{
@@ -89,7 +94,7 @@ namespace Hzn
 			{
 				layer->onUpdate();
 			}
-			
+
 			//! updates UI components on any layers
 			m_ImguiLayer->imguiBegin();
 			for (auto& layer : m_Layers)

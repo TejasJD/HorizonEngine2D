@@ -7,6 +7,7 @@
 
 namespace Hzn
 {
+
 	class GLVertexBuffer : public VertexBuffer 
 	{
 	public:
@@ -15,9 +16,12 @@ namespace Hzn
 
 		virtual void bind() const override;
 		virtual void unbind() const override;
+		virtual void setBufferLayout(const BufferLayout& layout) override { m_Layout = layout; }
+		virtual BufferLayout getBufferLayout() const override { return m_Layout; }
 
 	private:
 		unsigned int m_VertexBufferId = 0;
+		BufferLayout m_Layout;
 	};
 
 	class GLElementBuffer : public ElementBuffer
