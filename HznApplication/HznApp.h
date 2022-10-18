@@ -26,6 +26,7 @@ class EditorLayer : public Hzn::Layer
 private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
+	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 
 public:
 	EditorLayer(const std::string& name = "Editor Layer");

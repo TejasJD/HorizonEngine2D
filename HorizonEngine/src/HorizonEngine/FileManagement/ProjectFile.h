@@ -79,7 +79,7 @@ namespace Hzn {
 		//open file
 		std::vector<std::string> openFile(std::string filePath);
 		//Save, saveAs
-		void saveToFile(std::string filePath, std::vector<std::string> contentIntoFile);
+		void saveToFile();
 		//void saveAs(std::string newFullPath);
 		void ProjectFile::saveAs(std::string newPath, std::vector<std::string> contentIntoFile);
 		//delete a file

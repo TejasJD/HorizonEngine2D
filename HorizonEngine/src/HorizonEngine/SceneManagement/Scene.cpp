@@ -13,46 +13,103 @@ namespace Hzn {
 
 	void Scene::open() {
 		
-		std::vector<std::string> content = std::vector<std::string>(); // file->getContent();
-		content.push_back("name:Test Name");
-		content.push_back("gameObject:GO Name");
-		content.push_back("component:Transform");
-		content.push_back("values:[");
-		content.push_back("\tposition:vec2:0.000000,0.000000");
-		content.push_back("\trotation:float:0.000000");
-		content.push_back("\tscale:vec2:1.000000,1.000000");
-		content.push_back("\tright:vec2:1.000000,0.000000");
-		content.push_back("\tup:vec2:0.000000,1.000000");
-		content.push_back("\tparent:Transform:Test GO");
-		content.push_back("\troot:Transform:Test GO");
-		content.push_back("\tsiblingIndex:int:0");
-		content.push_back("\tchildrenCount:int:0");
-		content.push_back("]");
-		content.push_back("component:BoxCollider2D");
-		content.push_back("values:[");
-		content.push_back("\ttransform:Transform:GO Name");
-		content.push_back("\tsize:vec2:1.000000,1.000000");
-		content.push_back("\toffset:vec2:0.000000,0.000000");
-		content.push_back("]");
-		content.push_back("gameObject:Test GO");
-		content.push_back("component:Transform");
-		content.push_back("values:[");
-		content.push_back("\tposition:vec2:0.000000,0.000000");
-		content.push_back("\trotation:float:0.000000");
-		content.push_back("\tscale:vec2:1.000000,1.000000");
-		content.push_back("\tright:vec2:1.000000,0.000000");
-		content.push_back("\tup:vec2:0.000000,1.000000");
-		content.push_back("\tparent:Transform:NULL");
-		content.push_back("\troot:Transform:NULL");
-		content.push_back("\tsiblingIndex:int:0");
-		content.push_back("\tchildrenCount:int:0");
-		content.push_back("]");
-		content.push_back("component:BoxCollider2D");
-		content.push_back("values:[");
-		content.push_back("\ttransform:Transform:Test GO");
-		content.push_back("\tsize:vec2:1.000000,1.000000");
-		content.push_back("\toffset:vec2:0.000000,0.000000");
-		content.push_back("]");
+		//std::vector<std::string> content = std::vector<std::string>(); // file->getContent();
+		//content.push_back("name:Test Name");
+		//content.push_back("gameObject:GO Name");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:Test GO");
+		//content.push_back("\troot:Transform:Test GO");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:GO Name");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:GO Name 2");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:Test GO");
+		//content.push_back("\troot:Transform:Test GO");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:GO Name 2");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:Test GO");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:NULL");
+		//content.push_back("\troot:Transform:NULL");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:Test GO");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:Test GO 2");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:NULL");
+		//content.push_back("\troot:Transform:NULL");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:Test GO 2");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:GO Name 3");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:Test GO 2");
+		//content.push_back("\troot:Transform:Test GO 2");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:GO Name 3");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
 		
 
 		// Each line in the file is one of the following:
@@ -62,7 +119,7 @@ namespace Hzn {
 		// fieldName:fieldType:fieldValue
 
 		// Get the content from the file
-		//std::vector<std::string> content = file->getContent();
+		std::vector<std::string> content = file->getContent();
 
 		// Create a map where the key is a component and the value is a vector of
 		// strings, each representing a value in the component
@@ -187,6 +244,10 @@ namespace Hzn {
 				else { // If we get to here, then it's a component
 					if (value.compare("NULL") != 0) {
 						it->first->setField(name, findGameObject(value)->getComponent(typeName));
+
+						if (name == "parent" && typeName == "Transform") {
+							std::any_cast<std::vector<std::shared_ptr<Transform>>*>(findGameObject(value)->transform->getField("children"))->push_back(std::dynamic_pointer_cast<Transform>(it->first));
+						}
 					}
 				}
 			}
@@ -213,6 +274,7 @@ namespace Hzn {
 		}
 
 		file->setContent(content);
+		file->saveToFile();
 
 		// Test
 		/*
@@ -298,7 +360,6 @@ namespace Hzn {
 
 				// TreeNode<std::string>* temp = new TreeNode<std::string>(n);
 				std::shared_ptr<TreeNode<std::string>> node = std::make_shared<TreeNode<std::string>>();
-				std::cout << go->name << ", " << node << std::endl;
 				node->item = go->name;
 				node->level = 0;
 				
@@ -311,19 +372,19 @@ namespace Hzn {
 	}
 
 	void Scene::getChildren(std::shared_ptr<Component> transform, std::shared_ptr<TreeNode<std::string>> node) {
-		std::vector<std::shared_ptr<Component>> children = std::any_cast<std::vector<std::shared_ptr<Component>>>(transform->getField("children"));
-		if (children.size() == 0) {
+		std::vector<std::shared_ptr<Transform>>* children = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(transform->getField("children"));
+		if (children->size() == 0) {
 			return;
 		}
 
-		for (int i = 0; i < children.size(); i++) {
-			std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(children.at(i)->getField("gameObject"));
-			std::shared_ptr<TreeNode<std::string>> child = std::shared_ptr<TreeNode<std::string>>(); // std::make_shared<TreeNode<std::string>>(node->level + 1, go->name);
+		for (int i = 0; i < children->size(); i++) {
+			std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(children->at(i)->getField("gameObject"));
+			std::shared_ptr<TreeNode<std::string>> child = std::make_shared<TreeNode<std::string>>(); // std::make_shared<TreeNode<std::string>>(node->level + 1, go->name);
 			child->item = go->name;
 			child->level = node->level + 1;
 
-			getChildren(children.at(i), child);
-			//node->add(child);
+			getChildren(children->at(i), child);
+			node->add(child);
 		}
 	}
 }

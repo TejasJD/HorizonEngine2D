@@ -62,6 +62,8 @@ void EditorLayer::onAttach()
 
 	openScene = new Hzn::Scene();
 	openScene->open();
+	nodes = openScene->getHierarchy();
+	openScene->save();
 }
 
 void EditorLayer::onRenderImgui()
@@ -404,16 +406,27 @@ void EditorLayer::drawObjectBehaviour() {
 }
 
 void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node) {
-	ImGui::Text(node->item.c_str());
+	//ImGui::Text(text.c_str());
+
+	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+
+	if (node->nextNodes.size() == 0)
+		base_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+	bool open = ImGui::TreeNodeEx(node->item.c_str(), base_flags);
+
+	if (open)
 	for (int i = 0; i < node->nextNodes.size(); i++) {
 		drawHierarchyNode(node->nextNodes.at(i));
 	}
+
+	if (open && node->nextNodes.size() != 0)
+		ImGui::TreePop();
 }
 
 void EditorLayer::drawHierarchy() {
 	ImGui::Begin("Hierarchy");
 
-	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes = openScene->getHierarchy();
 	for (int i = 0; i < nodes.size(); i++) {
 		drawHierarchyNode(nodes.at(i));
 	}

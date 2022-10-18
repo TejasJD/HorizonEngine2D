@@ -31,18 +31,16 @@ namespace Hzn {
 
 
 	//Write the contents to a file and save
-	void ProjectFile::saveToFile(std::string filePath, std::vector<std::string> contentIntoFile) {
-			content = contentIntoFile;
-			out.open(getPath(), std::ios::out | std::ios::app);
+	void ProjectFile::saveToFile() {
+		out.open(getPath(), std::ios::out);
 
-			//check error handling
-			out_check();
+		//check error handling
+		out_check();
 
-			for (int i = 0; i < contentIntoFile.size(); i++) {
-				out << contentIntoFile[i];
-			}
-			std::cout << "file written to " << getPath() << std::endl;
-			out.close();
+		for (int i = 0; i < content.size(); i++) {
+			out << content[i];
+		}
+		out.close();
 	}
 
 
