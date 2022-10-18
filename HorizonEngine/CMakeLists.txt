@@ -27,8 +27,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
 	"platform/windows/MSWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
-	
-	"Platform/Windows/FDWindows.cpp")
+	"Platform/Windows/FDWindows.cpp" )
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"

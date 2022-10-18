@@ -18,6 +18,7 @@
 
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h"
+#include "Platform/Windows/FDWindows.h"
 
 // Entry point header.
 #include "src/HorizonEngine/EntryPoint.h"

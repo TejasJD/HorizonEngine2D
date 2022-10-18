@@ -8,11 +8,9 @@
 namespace Hzn
 {
 	class FileDialogs {
-
-
 	public:
-	static std::string	openFile();
-	static std::string	saveFile();
+	static std::string openFile();
+	static std::string saveFile();
 
 	};
 }

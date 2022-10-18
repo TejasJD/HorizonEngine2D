@@ -11,10 +11,8 @@
 
 
 namespace Hzn {
-	class FileDialogs {
 
-	public:
-		std::string	openFile()
+		std::string	FileDialogs::openFile()
 		{
 
 			/*The following codeis the win32 file dialog API (hickeys, 2021), it is used to implement a windows file dialog
@@ -51,7 +49,7 @@ namespace Hzn {
 		}
 
 
-		std::string	saveFile() {
+		std::string	FileDialogs::saveFile() {
 
 
 			/*The following codeis the win32 file dialog API (hickeys, 2021), it is used to implement a windows file dialog
@@ -85,8 +83,5 @@ namespace Hzn {
 			}
 
 			return std::string();
-		
-		};
-
-	};
+		}
 }
