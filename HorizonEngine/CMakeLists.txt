@@ -26,7 +26,9 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Physics2D/Rigidbody2D.cpp"
 	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
 	"platform/windows/MSWindow.cpp"
-	"src/HorizonEngine/Logging/Logging.cpp")
+	"src/HorizonEngine/Logging/Logging.cpp"
+	
+	"Platform/Windows/FDWindows.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -67,7 +69,10 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Audio/AudioSource.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
-	"Platform/Windows/MSInput.h")
+	"Platform/Windows/MSInput.h"
+	
+	"Platform/Windows/FDWindows.h"
+)
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

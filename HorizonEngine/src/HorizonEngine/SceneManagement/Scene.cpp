@@ -64,6 +64,12 @@ namespace Hzn {
 		// Get the content from the file
 		std::vector<std::string> content = file->getContent();
 
+
+		std::cout << "NOW printing from App.cpp\n";
+		for (int i = 0; i < content.size(); i++) {
+			std::cout << content[i] << std::endl;
+		}
+
 		// Create a map where the key is a component and the value is a vector of
 		// strings, each representing a value in the component
 		std::map<std::shared_ptr<Component>, std::shared_ptr<std::vector<std::string>>>* valuesMap = new std::map<std::shared_ptr<Component>, std::shared_ptr<std::vector<std::string>>>();
@@ -197,6 +203,11 @@ namespace Hzn {
 
 	}
 
+	//void Scene::addToFile(std::string a) {
+	//	std::vector<std::string> content = std::vector<std::string>();
+	//	content.push_back(a);
+	//}
+
 	void Scene::save() {
 		std::vector<std::string> content = std::vector<std::string>();
 		content.push_back("name:" + name + "\n");
@@ -213,6 +224,7 @@ namespace Hzn {
 		}
 
 		file->setContent(content);
+		file->saveToFile();
 
 		// Test
 		/*
