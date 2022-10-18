@@ -13,6 +13,12 @@
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/ImGui/ImGuiLayer.h"
 
+#include "HorizonEngine/Components/ComponentFactory.h"
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Components/Transform.h"
+#include "HorizonEngine/Physics2D/BoxCollider2D.h"
+#include "HorizonEngine/Physics2D/Rigidbody2D.h"
+
 namespace Hzn
 {
 	class App
@@ -41,6 +47,8 @@ namespace Hzn
 		
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_AppWindow; }
+
+		void registerComponents();
 	protected:
 	private:
 		ImGuiContext* g;

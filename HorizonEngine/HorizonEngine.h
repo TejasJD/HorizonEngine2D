@@ -15,9 +15,12 @@
 #include "HorizonEngine/Codes/MouseCodes.h"
 #include "HorizonEngine/Codes/KeyboardCodes.h"
 
-
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h"
+
+#include "HorizonEngine/SceneManagement/Scene.h"
+
+#include "HorizonEngine/FileManagement/ProjectFile.h"
 
 // Entry point header.
 #include "src/HorizonEngine/EntryPoint.h"

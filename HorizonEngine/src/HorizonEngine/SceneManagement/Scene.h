@@ -11,6 +11,8 @@
 #include "../Components/ComponentType.h"
 #include "../GameObject.h"
 
+#include "Utils/TreeNode.h"
+
 namespace Hzn {
 	class Scene {
 	public:
@@ -30,6 +32,9 @@ namespace Hzn {
 		void removeGameObject(std::shared_ptr<GameObject> gameobject);
 		std::shared_ptr<GameObject> findGameObject(std::string name);
 		std::vector<std::shared_ptr<GameObject>>* getObjects();
+		std::vector<std::shared_ptr<TreeNode<std::string>>> getHierarchy();
+	private:
+		void getChildren(std::shared_ptr<Component> transform, std::shared_ptr<TreeNode<std::string>> node);
 	};
 }
 

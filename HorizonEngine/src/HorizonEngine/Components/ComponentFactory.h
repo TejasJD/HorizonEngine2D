@@ -19,6 +19,8 @@ public:
     template<class T>
     void registerClass(const std::string& name) {
         s_creators.insert({ name, []() -> B* { return new T(); } });
+
+        HZN_CORE_INFO("Registered component: " + name);
     }
 
     B* create(const std::string& name) {
