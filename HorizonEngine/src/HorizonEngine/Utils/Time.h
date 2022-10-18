@@ -17,7 +17,7 @@ namespace Hzn {
 		static std::chrono::high_resolution_clock::time_point lastFixedUpdateTime;
 	public:
 		Time();
-		~Time();
+		~Time() {}
 	private:
 		void awake();
 		void start();

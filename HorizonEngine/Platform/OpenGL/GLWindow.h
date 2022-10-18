@@ -1,20 +1,20 @@
 #pragma once
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
-#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Window.h"
+#include "HorizonEngine/Renderer/RenderContext.h"
 // Implementation of the Window class with OpenGL as the rendering API
+
+struct GLFWwindow;
+
 namespace Hzn
 {
 
-	class MSWindow : public Window
+	class GLWindow : public Window
 	{
 	public:
 		// Constructor creates window and initializes the object
-		MSWindow(const unsigned int& width, const unsigned int& height, const char* const& title);
-		~MSWindow();
+		GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title);
+		~GLWindow();
 
 		// Inherited via Window
 		virtual void onUpdate() override;
@@ -37,5 +37,7 @@ namespace Hzn
 
 		WindowData m_Data;
 		GLFWwindow* m_Window;
+
+		std::unique_ptr<RenderContext> m_Context;
 	};
 }

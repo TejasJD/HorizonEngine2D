@@ -3,8 +3,6 @@
 #ifndef HZN_IMGUI_LAYER_H
 #define HZN_IMGUI_LAYER_H
 
-#include "HorizonEngine/Core/Core.h"
-
 namespace Hzn
 {
 	class ImguiLayer : public Layer
