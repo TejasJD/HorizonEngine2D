@@ -1,9 +1,15 @@
 #include "pch.h"
+
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Events/MouseEvent.h"
 #include "HorizonEngine/Events/KeyEvent.h"
-#include "MSWindow.h"
+
+#include "GLContext.h"
+#include "GLWindow.h"
+
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
 
 namespace Hzn
 {
@@ -11,44 +17,32 @@ namespace Hzn
 	{
 		HZN_CORE_CRITICAL("{0}: {1}", error_code, description);
 	}
-	//! implements window creation for windows platform
-	HZN_API Window* Window::createInstance(const unsigned int& width, const unsigned int& height, const char* const& title)
-	{
-		return new MSWindow(width, height, title);
-	}
 
-	MSWindow::MSWindow(const unsigned int& width, const unsigned int& height, const char* const& title)
+	GLWindow::GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title)
 		: m_Data{ width, height, title }
 	{
 		init();
 	}
 
-	void MSWindow::onUpdate()
+	void GLWindow::onUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->swapBuffers();
 	}
 
-	MSWindow::~MSWindow()
+	GLWindow::~GLWindow()
 	{
 		destroy();
 	}
 
-	void MSWindow::init()
+	void GLWindow::init()
 	{
 		int glfwSuccess = glfwInit();
-
-		assert(glfwSuccess != 0);
+		HZN_CORE_ASSERT(glfwSuccess, "Failed to initialize GLFW!");
 
 		m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title, nullptr, nullptr);
-
-		assert(m_Window != nullptr);
-
-		glfwMakeContextCurrent(m_Window);
-
-		int gladSuccess = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-		assert(gladSuccess != 0);
+		m_Context = std::unique_ptr<RenderContext>(RenderContext::create(m_Window));
+		m_Context->init();
 
 		//! set the glfwWindowUserPointer to hold additional data.
 		//! This data holds the dimensions, the title and the callback function as well.
@@ -68,6 +62,7 @@ namespace Hzn
 				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
 				WindowResizeEvent eventObj(width, height);
 				data.callback(eventObj);
+				glViewport(0, 0, width, height);
 			});
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y)
@@ -131,7 +126,7 @@ namespace Hzn
 		glfwSetErrorCallback(errorCallback);
 	}
 
-	void MSWindow::destroy()
+	void GLWindow::destroy()
 	{
 		glfwDestroyWindow(m_Window);
 	}

@@ -7,7 +7,7 @@
 
 namespace Hzn
 {
-	class MSInput : public Input
+	class GLInput : public Input
 	{
 	protected:
 		virtual bool keyPressedUtil(int key) const override;

@@ -1,11 +1,10 @@
 #include "pch.h"
-#include "imgui.h"
-#include <imgui_internal.h>
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "HorizonEngine.h"
+
+#include <HorizonEngine.h>
+#include <HznEntryPoint.h>
+
 #include "HznApp.h"
-#include "Window.h"
+
 
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
@@ -23,20 +22,8 @@ void SampleLayer::onAttach()
 
 void SampleLayer::onRenderImgui()
 {
-	static bool my_tool_active = true;
-	ImGui::Begin("From Sample Layer", &my_tool_active, ImGuiWindowFlags_MenuBar);
-	if (ImGui::BeginMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-			if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
-			if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
-	}
-	ImGui::End();
+	static bool show = true;
+	ImGui::ShowDemoWindow(&show);
 }
 
 void SampleLayer::onDetach() {}

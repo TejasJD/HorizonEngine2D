@@ -1,9 +1,12 @@
 #pragma once
 #include "HorizonEngine.h"
 
+#ifndef HZNAPP_HZNAPP_H
+#define HZNAPP_HZNAPP_H
+
 // ********** Sample Layer **********
 
-class SampleLayer : public Hzn::Layer 
+class SampleLayer : public Hzn::Layer
 {
 public:
 	SampleLayer(const std::string& name = "Sample Layer");
@@ -56,10 +59,12 @@ private:
 class HznApp : public Hzn::App
 {
 public:
-	HznApp() 
+	HznApp()
 	{
-		// addLayer(new SampleLayer());
+		/*addLayer(new SampleLayer());*/
 		addLayer(new EditorLayer());
 	}
 	~HznApp() {}
 };
+
+#endif // !HZNAPP_HZNAPP_H

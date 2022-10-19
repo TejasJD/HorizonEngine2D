@@ -9,7 +9,7 @@ namespace Hzn
 	{
 	public:
 		virtual ~Input() {}
-		static Input* createInstance();
+		static Input* create();
 		inline static bool keyPressed(int key) { return m_Instance->keyPressedUtil(key); }
 		inline static bool mouseButtonPresssed(int button) { return m_Instance->mouseButtonPressedUtil(button); }
 		inline static std::pair<double, double> getMousePos() { return m_Instance->getMousePosUtil(); }
