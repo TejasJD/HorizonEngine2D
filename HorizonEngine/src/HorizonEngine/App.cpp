@@ -7,6 +7,7 @@ namespace Hzn
 	//! App class constructor, initializes the application
 	App::App() : m_Running(true)
 	{
+		registerComponents();
 		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
 		m_Input = std::unique_ptr<Input>(Input::create());
@@ -144,5 +145,11 @@ namespace Hzn
 				break;
 			}
 		}
+	}
+
+	void App::registerComponents() {
+		REGISTER(Component, Transform);
+		REGISTER(Component, BoxCollider2D);
+		REGISTER(Component, Rigidbody2D);
 	}
 }
