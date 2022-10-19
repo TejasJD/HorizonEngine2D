@@ -11,13 +11,13 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Utils/Time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Components/Transform.cpp"
-	"Platform/Windows/MSWindow.cpp"
+	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"src/HorizonEngine/LayerStack.cpp"
 	"src/HorizonEngine/Layer.cpp"
 	"src/HorizonEngine/Imgui/ImguiLayer.cpp"
 	"src/HorizonEngine/FileManagement/ProjectFile.cpp"
-	"Platform/Windows/MSInput.cpp"
+	"Platform/OpenGL/GLInput.cpp"
 	"src/HorizonEngine/Audio/SoundDevice.cpp"
 	"src/HorizonEngine/Audio/SoundBuffer.cpp"
 	"src/HorizonEngine/Audio/AudioSource.cpp"
@@ -25,16 +25,28 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Physics2D/BoxCollider2D.cpp"
 	"src/HorizonEngine/Physics2D/Rigidbody2D.cpp"
 	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
-	"platform/windows/MSWindow.cpp"
+	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
-	"Platform/Windows/FDWindows.cpp" )
+	"Platform/OpenGL/GLContext.cpp"
+	"Platform/OpenGL/GLShader.cpp"
+	"Platform/OpenGL/GLBuffer.cpp"
+	"src/HorizonEngine/Renderer/Buffer.cpp"
+	"src/HorizonEngine/Renderer/Shader.cpp"
+	"src/HorizonEngine/Renderer/RendererAPI.cpp"
+	"src/HorizonEngine/Window.cpp"
+	"src/HorizonEngine/Renderer/RenderContext.cpp"
+	"Platform/OpenGL/GLVertexArray.cpp"
+	"src/HorizonEngine/Renderer/VertexArray.cpp"
+	"src/HorizonEngine/Renderer/Renderer.cpp"
+	"src/HorizonEngine/Renderer/RenderCall.cpp"
+	"Platform/OpenGL/GLRendererAPI.cpp"
+	"Platform/OpenGL/FDWindows.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
 	"pch.h"
 	"src/HorizonEngine/Core/Core.h"
 	"src/HorizonEngine/App.h"
-	"src/HorizonEngine/EntryPoint.h"
 	"src/HorizonEngine/Window.h"
 	"src/HorizonEngine/GameObject.h"
 	"src/HorizonEngine/Utils/Math.h"
@@ -50,7 +62,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Physics2D/Collider2D.h"
 	"src/HorizonEngine/Physics2D/BoxCollider2D.h"
 	"src/HorizonEngine/Physics2D/PhysicsWorld2D.h"
-	"platform/windows/MSWindow.h"
+	"Platform/OpenGL/GLWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
 	"src/HorizonEngine/Events/Event.h"
 	"src/HorizonEngine/Events/MouseEvent.h"
@@ -68,10 +80,22 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Audio/AudioSource.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
-	"Platform/Windows/MSInput.h"
-	
-	"Platform/Windows/FDWindows.h"
-)
+	"Platform/OpenGL/GLInput.h"
+	"src/HorizonEngine/Renderer/RenderContext.h"
+	"Platform/OpenGL/GLContext.h"
+	"src/HorizonEngine/Renderer/Shader.h"
+	"Platform/OpenGL/GLShader.h"
+	"src/HorizonEngine/Renderer/Buffer.h"
+	"Platform/OpenGL/GLBuffer.h"
+	"src/HorizonEngine/Renderer/Renderer.h"
+	"Platform/OpenGL/GLRenderer.h"
+	"src/HorizonEngine/Renderer/VertexArray.h"
+	"Platform/OpenGL/GLVertexArray.h"
+	"HznEntryPoint.h"
+	"src/HorizonEngine/Renderer/RendererAPI.h"
+	"src/HorizonEngine/Renderer/RenderCall.h"
+	"Platform/OpenGL/GLRendererAPI.h"
+	"Platform/OpenGL/FDWindows.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -81,8 +105,6 @@ target_compile_definitions(HorizonEngine
 	PUBLIC
 	HZN_PLATFORM_WINDOWS
 	HZN_ASSERTS_ON
-	PRIVATE
-	HZN_BUILD
 )
 
 

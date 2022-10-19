@@ -3,7 +3,6 @@
 #ifndef HZN_LAYER_H
 #define HZN_LAYER_H
 
-#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Events/Event.h"
 
 namespace Hzn
@@ -14,7 +13,7 @@ namespace Hzn
 		Layer(const std::string& name = "Layer") : m_Name(name) {}
 		virtual ~Layer() {}
 
-		inline const std::string& getName() { return m_Name; }
+		const std::string& getName() { return m_Name; }
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}

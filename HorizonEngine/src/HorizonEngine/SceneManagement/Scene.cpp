@@ -65,10 +65,10 @@ namespace Hzn {
 		std::vector<std::string> content = file->getContent();
 
 
-		std::cout << "NOW printing from App.cpp\n";
+		/*std::cout << "NOW printing from open() in Scene.cpp\n";
 		for (int i = 0; i < content.size(); i++) {
 			std::cout << content[i] << std::endl;
-		}
+		}*/
 
 		// Create a map where the key is a component and the value is a vector of
 		// strings, each representing a value in the component

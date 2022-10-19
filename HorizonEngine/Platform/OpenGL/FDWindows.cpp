@@ -7,7 +7,12 @@
 #include <string>
 
 #include "FDWindows.h"
-//#include "../../HznApplication/HznApp.h"
+#include "App.h"
+
+
+#include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
 
 
 namespace Hzn {
@@ -20,12 +25,13 @@ namespace Hzn {
 
 			OPENFILENAME ofn;				// common dialog box structure (ASCII version)
 			char szFile[260] = { 0 };       // buffer for file name
-			HWND hwnd = NULL;              // owner window
+			//HWND hwnd = NULL;              // owner window
 
 			// Initialize OPENFILENAME
 			ZeroMemory(&ofn, sizeof(OPENFILENAME));
 			ofn.lStructSize = sizeof(OPENFILENAME);
-			ofn.hwndOwner = hwnd;
+			//ofn.hwndOwner = hwnd;
+			ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow());
 			ofn.lpstrFile = szFile;
 			// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
 			// use the contents of szFile to initialize itself.
@@ -40,7 +46,7 @@ namespace Hzn {
 
 			// Display the Open dialog box. 
 
-			if (GetSaveFileName(&ofn) == TRUE) {
+			if (GetOpenFileName(&ofn) == TRUE) {
 
 				return ofn.lpstrFile;
 			}
@@ -57,12 +63,13 @@ namespace Hzn {
 
 			OPENFILENAME ofn;       // common dialog box structure (ASCII version)
 			char szFile[260] = { 0 };       // buffer for file name
-			HWND hwnd = NULL;              // owner window
+			//HWND hwnd = NULL;              // owner window
 
 			// Initialize OPENFILENAME
 			ZeroMemory(&ofn, sizeof(OPENFILENAME));
 			ofn.lStructSize = sizeof(OPENFILENAME);
-			ofn.hwndOwner = hwnd;
+			//ofn.hwndOwner = hwnd;
+			ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow());
 			ofn.lpstrFile = szFile;
 			// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
 			// use the contents of szFile to initialize itself.
