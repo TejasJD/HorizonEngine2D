@@ -92,3 +92,14 @@ namespace Hzn {
 			return std::string();
 		}
 }
+
+
+/*
+REFERENCES:
+
+hickeys. (2021, September 21). Using Common Dialog Boxes - Win32 apps. Microsoft.com.
+		https://learn.microsoft.com/en-us/windows/win32/dlgbox/using-common-dialog-boxes#opening-a-file
+
+The Cherno. (2020). Open/Save File Dialogs | Game Engine series [YouTube Video]. In YouTube.
+		https://www.youtube.com/watch?v=zn7N7zHgCcs&t=505s&ab_channel=TheCherno
+*/
