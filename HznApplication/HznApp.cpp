@@ -95,11 +95,6 @@ void EditorLayer::onRenderImgui()
 				{
 					if (ImGui::MenuItem("New Scene", "Ctrl+N", false)) {
 
-						std::string filePathfromdialog;
-						Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
-						Hzn::Scene* s = new Hzn::Scene(p);
-						s->save();
-
 					}
 
 
@@ -109,7 +104,8 @@ void EditorLayer::onRenderImgui()
 						std::string filePathfromdialog = Hzn::FileDialogs::openFile();
 						
 						//Check if the dtring returns empty or not
-						if (filePathfromdialog != "") {
+						if (filePathfromdialog != " ") {
+							
 
 							Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
 							Hzn::Scene* s = new Hzn::Scene(p);
@@ -127,16 +123,10 @@ void EditorLayer::onRenderImgui()
 
 					if (ImGui::MenuItem("Save", "Ctrl+S", false)) {
 
-
-					};
-
-
-					if (ImGui::MenuItem("Save As", "Ctrl+Shift+S", false)) {
-
 						std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
 
 						//Check if the dtring returns empty or not
-						if (filePathfromdialog != "") {
+						if (filePathfromdialog != " ") {
 							Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
 							Hzn::Scene* s = new Hzn::Scene(p);
 							s->save();
@@ -144,6 +134,12 @@ void EditorLayer::onRenderImgui()
 						else {
 							//create new scene here
 						}
+
+
+					};
+
+					if (ImGui::MenuItem("Save As", "Ctrl+Shift+S", false)) {
+
 						
 					};
 

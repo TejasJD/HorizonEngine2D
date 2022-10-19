@@ -51,7 +51,7 @@ namespace Hzn {
 				return ofn.lpstrFile;
 			}
 
-			return "";
+			return std::string();
 		}
 
 
@@ -89,6 +89,6 @@ namespace Hzn {
 				return ofn.lpstrFile;
 			}
 
-			return "";
+			return std::string();
 		}
 }
