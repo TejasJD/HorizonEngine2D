@@ -50,8 +50,10 @@ namespace Hzn {
 
 				return ofn.lpstrFile;
 			}
-
-			return std::string();
+			else {
+				return std::string();
+			}
+			
 		}
 
 
@@ -88,8 +90,9 @@ namespace Hzn {
 
 				return ofn.lpstrFile;
 			}
-
-			return std::string();
+			else {
+				return std::string();
+			}
 		}
 }
 

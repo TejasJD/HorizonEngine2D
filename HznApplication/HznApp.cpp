@@ -104,7 +104,7 @@ void EditorLayer::onRenderImgui()
 						std::string filePathfromdialog = Hzn::FileDialogs::openFile();
 						
 						//Check if the dtring returns empty or not
-						if (filePathfromdialog != " ") {
+						if (filePathfromdialog != "") {
 							
 
 							Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
@@ -126,7 +126,7 @@ void EditorLayer::onRenderImgui()
 						std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
 
 						//Check if the dtring returns empty or not
-						if (filePathfromdialog != " ") {
+						if (filePathfromdialog != "") {
 							Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
 							Hzn::Scene* s = new Hzn::Scene(p);
 							s->save();
