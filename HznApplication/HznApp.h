@@ -30,7 +30,8 @@ private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
-
+	std::string contextObject = "";
+	bool openContext = false;
 public:
 	EditorLayer(const std::string& name = "Editor Layer");
 

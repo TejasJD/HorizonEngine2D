@@ -400,11 +400,30 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 	if (node->nextNodes.size() == 0)
 		base_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
+	if (node->item == contextObject) {
+		base_flags |= ImGuiTreeNodeFlags_Selected;
+	}
+
 	bool open = ImGui::TreeNodeEx(node->item.c_str(), base_flags);
 
-	if (open)
-	for (int i = 0; i < node->nextNodes.size(); i++) {
-		drawHierarchyNode(node->nextNodes.at(i));
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+		contextObject = node->item;
+	}
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		contextObject = node->item;
+
+		ImGui::OpenPopup("contextObject");
+	}
+
+	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
+	HZN_CORE_DEBUG(s + ": " + node->item);
+	openContext |= ImGui::IsPopupOpen("contextObject");
+
+	if (open) {
+		for (int i = 0; i < node->nextNodes.size(); i++) {
+			drawHierarchyNode(node->nextNodes.at(i));
+		}
 	}
 
 	if (open && node->nextNodes.size() != 0)
@@ -414,23 +433,21 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 void EditorLayer::drawHierarchy() {
 	ImGui::Begin("Hierarchy");
 
+	openContext = false;
+
 	for (int i = 0; i < nodes.size(); i++) {
 		drawHierarchyNode(nodes.at(i));
 	}
 
-	// Right-click
-	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
-	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
-	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
-	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-	const bool is_active = ImGui::IsItemActive();   // Held
-	// Context menu (under default mouse threshold)
-	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
-		ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
-	}
-	if (ImGui::BeginPopup("contextHierarchy")) {
+	if (openContext) {
+		if (ImGui::IsPopupOpen("contextObject")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::OpenPopup("contextObject");
+
+		ImGui::BeginPopup("contextObject");
+		//HZN_CORE_DEBUG("Object: " + contextObject);
+
 		if (ImGui::MenuItem("Cut", NULL, false)) {
 			// Do stuff here
 		}
@@ -450,6 +467,28 @@ void EditorLayer::drawHierarchy() {
 			// Do stuff here 
 		}
 		ImGui::Separator();
+
+		if (ImGui::MenuItem("Create Empty", NULL, false)) {
+			// Do stuff here 
+		}
+
+		ImGui::EndPopup();
+	}
+
+	// Right-click
+	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+	const bool is_active = ImGui::IsItemActive();   // Held
+	// Context menu (under default mouse threshold)
+	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+		ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+	}
+	if (ImGui::BeginPopup("contextHierarchy")) {
+		contextObject = "";
 
 		if (ImGui::MenuItem("Create Empty", NULL, false)) {
 			// Do stuff here 
