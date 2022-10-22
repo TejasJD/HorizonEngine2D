@@ -16,6 +16,9 @@ namespace Hzn
 		// Inherited via Shader
 		virtual void bind() const override;
 		virtual void unbind() const override;
+		virtual unsigned int getId() const override { return m_ProgramId; }
+		
+		virtual void setUniform(const std::string& s, const glm::mat4& mat) override;
 
 	private:
 		unsigned int m_ProgramId;

@@ -36,7 +36,11 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Window.cpp"
 	"src/HorizonEngine/Renderer/RenderContext.cpp"
 	"Platform/OpenGL/GLVertexArray.cpp"
-	"src/HorizonEngine/Renderer/VertexArray.cpp" "src/HorizonEngine/Renderer/Renderer.cpp" "src/HorizonEngine/Renderer/RenderCall.cpp" "Platform/OpenGL/GLRendererAPI.cpp")
+	"src/HorizonEngine/Renderer/VertexArray.cpp"
+	"src/HorizonEngine/Renderer/Renderer.cpp"
+	"src/HorizonEngine/Camera.h"
+	"src/HorizonEngine/Renderer/RenderCall.cpp"
+	"Platform/OpenGL/GLRendererAPI.cpp" "src/HorizonEngine/Camera.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"

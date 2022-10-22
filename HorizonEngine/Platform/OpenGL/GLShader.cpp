@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "GLShader.h"
 
@@ -134,5 +135,11 @@ namespace Hzn
 	void GLShader::unbind() const
 	{
 
+	}
+
+	void GLShader::setUniform(const std::string& s, const glm::mat4& mat)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat));
 	}
 }
