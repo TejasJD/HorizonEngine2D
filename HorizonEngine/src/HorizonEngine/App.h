@@ -14,6 +14,13 @@
 #include "HorizonEngine/Renderer/VertexArray.h"
 #include "HorizonEngine/Renderer/Renderer.h"
 
+
+#include "HorizonEngine/Components/ComponentFactory.h"
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Components/Transform.h"
+#include "HorizonEngine/Physics2D/BoxCollider2D.h"
+#include "HorizonEngine/Physics2D/Rigidbody2D.h"
+
 namespace Hzn
 {
 	class App
@@ -40,6 +47,7 @@ namespace Hzn
 		void onEvent(Event& e);
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_Window; }
+		void registerComponents();
 
 	protected:
 		static App* m_Instance;

@@ -44,7 +44,7 @@ public:
 	HznApp()
 	{
 		/*addLayer(new SampleLayer());*/
-		/*addLayer(new EditorLayer());*/
+		addLayer(new EditorLayer());
 	}
 	~HznApp() {}
 };

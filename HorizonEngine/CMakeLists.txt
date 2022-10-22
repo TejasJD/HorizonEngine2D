@@ -36,7 +36,11 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Window.cpp"
 	"src/HorizonEngine/Renderer/RenderContext.cpp"
 	"Platform/OpenGL/GLVertexArray.cpp"
-	"src/HorizonEngine/Renderer/VertexArray.cpp" "src/HorizonEngine/Renderer/Renderer.cpp" "src/HorizonEngine/Renderer/RenderCall.cpp" "Platform/OpenGL/GLRendererAPI.cpp")
+	"src/HorizonEngine/Renderer/VertexArray.cpp"
+	"src/HorizonEngine/Renderer/Renderer.cpp"
+	"src/HorizonEngine/Renderer/RenderCall.cpp"
+	"Platform/OpenGL/GLRendererAPI.cpp"
+	"Platform/OpenGL/FDWindows.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -88,7 +92,10 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Renderer/VertexArray.h"
 	"Platform/OpenGL/GLVertexArray.h"
 	"HznEntryPoint.h"
-	"src/HorizonEngine/Renderer/RendererAPI.h" "src/HorizonEngine/Renderer/RenderCall.h" "Platform/OpenGL/GLRendererAPI.h")
+	"src/HorizonEngine/Renderer/RendererAPI.h"
+	"src/HorizonEngine/Renderer/RenderCall.h"
+	"Platform/OpenGL/GLRendererAPI.h"
+	"Platform/OpenGL/FDWindows.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

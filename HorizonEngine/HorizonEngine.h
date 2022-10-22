@@ -23,5 +23,6 @@
 
 
 #include "HorizonEngine/Layer.h"
+#include "Platform/OpenGL/FDWindows.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 
 #endif // !HZN_HORIZONENGINE_H
