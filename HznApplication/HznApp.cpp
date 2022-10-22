@@ -6,6 +6,19 @@
 #include "HznApp.h"
 
 
+
+
+//open & save file dependencies for win32 API
+
+#include <commdlg.h>
+#include "FileManagement/ProjectFile.h"
+#include "SceneManagement/Scene.h"
+
+
+
+
+
+
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	return std::make_shared<HznApp>();
@@ -80,11 +93,77 @@ void EditorLayer::onRenderImgui()
 			{
 				if (ImGui::BeginMenu("File"))
 				{
-					if (ImGui::MenuItem("Open", "Ctrl+O")) { /* Do Something */ }
-					if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do Something */ }
-					if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
+					if (ImGui::MenuItem("New Scene", "Ctrl+N", false)) {
+
+					}
+
+
+
+					if (ImGui::MenuItem("Open Scene", "Ctrl+O", false)) {
+
+						std::string filePathfromdialog = Hzn::FileDialogs::openFile();
+						
+						//Check if the dtring returns empty or not
+						if (filePathfromdialog != "") {
+							
+
+							Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
+							Hzn::Scene* s = new Hzn::Scene(p);
+							s->open();
+						}
+						else {
+							//create new scene here
+						}
+					};
+
+
+					ImGui::Separator();
+
+
+
+					if (ImGui::MenuItem("Save", "Ctrl+S", false)) {
+
+						std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
+
+						//Check if the dtring returns empty or not
+						if (filePathfromdialog != "") {
+							Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
+							Hzn::Scene* s = new Hzn::Scene(p);
+							s->save();
+						}
+						else {
+							//create new scene here
+						}
+
+
+					};
+
+					if (ImGui::MenuItem("Save As", "Ctrl+Shift+S", false)) {
+
+						
+					};
+
+					ImGui::Separator();
+
+
+
+					ImGui::MenuItem("New Project", "Ctrl+Shift+N", false);
+					ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false);
+					ImGui::Separator();
+
+
+
+					ImGui::MenuItem("Build Settings", NULL, false);
+					ImGui::MenuItem("Build and Run", NULL, false);
+					ImGui::Separator();
+
+
+
+					//if (ImGui::MenuItem("Exit", NULL, false, pOpen != NULL))
+					//*pOpen = false;
 					ImGui::EndMenu();
 				}
+			
 				if (ImGui::BeginMenu("Edit"))
 				{
 					if(ImGui::MenuItem("Undo", "Ctrl+Z")) { /* Do Something */ }
