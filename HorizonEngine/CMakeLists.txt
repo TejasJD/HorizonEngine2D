@@ -97,7 +97,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Renderer/RendererAPI.h"
 	"src/HorizonEngine/Renderer/RenderCall.h"
 	"Platform/OpenGL/GLRendererAPI.h"
-	"Platform/OpenGL/FDWindows.h")
+	"Platform/OpenGL/FDWindows.h" "src/HorizonEngine/Core/TimeStep.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

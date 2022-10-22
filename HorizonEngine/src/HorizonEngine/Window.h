@@ -16,6 +16,8 @@ namespace Hzn
 		virtual unsigned int getHeight() = 0;
 		virtual unsigned int getWidth() = 0;
 		virtual void setEventCallback(const EventCallbackFn& callback) = 0;
+		virtual void setVsync(bool vsync) = 0;
+		virtual bool getVsync() const = 0;
 
 		//! returns a void pointer which can be casted to concrete window, based on the active platform.
 		virtual void* getPlatformRawWindow() = 0;

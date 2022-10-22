@@ -27,6 +27,7 @@ namespace Hzn
 	void GLWindow::onUpdate()
 	{
 		glfwPollEvents();
+		glfwSwapInterval(getVsync() ? 1 : 0);
 		m_Context->swapBuffers();
 	}
 
@@ -125,6 +126,8 @@ namespace Hzn
 
 		glfwSetErrorCallback(errorCallback);
 	}
+
+	
 
 	void GLWindow::destroy()
 	{

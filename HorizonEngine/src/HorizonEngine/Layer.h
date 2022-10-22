@@ -3,6 +3,7 @@
 #ifndef HZN_LAYER_H
 #define HZN_LAYER_H
 
+#include "HorizonEngine/Core/TimeStep.h"
 #include "HorizonEngine/Events/Event.h"
 
 namespace Hzn
@@ -17,7 +18,7 @@ namespace Hzn
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}
-		virtual void onUpdate() {}
+		virtual void onUpdate(TimeStep deltaTime) {}
 		virtual void onEvent(Event& event) {}
 		virtual void onRenderImgui() {}
 

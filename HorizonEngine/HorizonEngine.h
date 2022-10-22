@@ -10,8 +10,7 @@
 
 #include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Logging/Logging.h"
-#include "HorizonEngine/App.h"
-
+#include "HorizonEngine/Core/TimeStep.h"
 #include "HorizonEngine/Events/Event.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Events/KeyEvent.h"
@@ -23,6 +22,13 @@
 
 
 #include "HorizonEngine/Layer.h"
+#include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Renderer/RenderCall.h"
+#include "HorizonEngine/Renderer/Buffer.h"
+#include "HorizonEngine/Renderer/Shader.h"
+#include "HorizonEngine/Renderer/VertexArray.h"
+#include "HorizonEngine/Camera.h"
 #include "Platform/OpenGL/FDWindows.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 
+#include "HorizonEngine/App.h"
 #endif // !HZN_HORIZONENGINE_H
