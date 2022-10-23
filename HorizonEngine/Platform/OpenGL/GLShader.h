@@ -19,6 +19,10 @@ namespace Hzn
 		virtual unsigned int getId() const override { return m_ProgramId; }
 		
 		virtual void setUniform(const std::string& s, const glm::mat4& mat) override;
+		virtual void setUniform(const std::string& s, const glm::mat3& mat3) override;
+		virtual void setUniform(const std::string& s, const glm::vec4& vec4) override;
+		virtual void setUniform(const std::string& s, const glm::vec3& vec3) override;
+		virtual void setUniform(const std::string& s, const glm::vec2& vec2) override;
 
 	private:
 		unsigned int m_ProgramId;

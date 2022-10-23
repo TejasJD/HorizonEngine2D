@@ -24,6 +24,7 @@ namespace Hzn
 		virtual void* getPlatformRawWindow() { return m_Window; }
 		virtual void setVsync(bool vsync) override { m_Vsync = vsync; }
 		virtual bool getVsync() const override { return m_Vsync;  }
+		virtual void setCursorMode(CursorMode mode) override;
 
 	private:
 		void init();

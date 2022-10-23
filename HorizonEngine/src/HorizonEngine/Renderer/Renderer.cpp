@@ -15,7 +15,8 @@ namespace Hzn
 
 	}
 
-	void Renderer::render(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::render(const std::shared_ptr<Shader>& shader, 
+		const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& modelTransform)
 	{
 		if (!m_Camera)
 		{
@@ -25,6 +26,7 @@ namespace Hzn
 		shader->bind();
 		shader->setUniform("view", m_Camera->getViewMatrix());
 		shader->setUniform("projection", m_Camera->getPerspectiveProjectionMatrix(0.1f, 100.0f));
+		shader->setUniform("model", modelTransform);
 
 		vertexArray->bind();
 		RenderCall::drawElements(vertexArray);

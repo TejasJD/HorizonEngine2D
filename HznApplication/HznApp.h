@@ -21,24 +21,36 @@ public:
 
 	virtual void onEvent(Hzn::Event& event) override;
 
-	bool onKeyPressedEvent(Hzn::KeyPressedEvent& event)
-	{
-		return false;
-	}
+	void mouseMovementCamera(Hzn::TimeStep deltaTime);
+
+	bool onMouseScroll(Hzn::MouseScrolledEvent& event);
 
 private:
 	std::shared_ptr<Hzn::VertexArray> m_VertexArray;
+	std::shared_ptr<Hzn::VertexArray> lightVertexArray;
 	std::shared_ptr<Hzn::VertexBuffer> m_VertexBuffer;
 	std::shared_ptr<Hzn::ElementBuffer> m_ElementBuffer;
-	std::shared_ptr<Hzn::Shader> m_Shader;
+	std::shared_ptr<Hzn::Shader> lightSourceShader;
+	std::shared_ptr<Hzn::Shader> lightShader;
 	std::shared_ptr<Hzn::Camera> camera;
 	std::vector<glm::vec3> cubePositions;
 
-	float deltaTime = 0.0f;	// Time between current frame and last frame
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::vec3 lightSource = { 1.0f, 1.0f, 1.0f }; // color of the light source.
+
 	float lastFrame = 0.0f; // Time of last frame
-	float previousSecond = 0.0f; // Keeps track of previous second
-	float frameCount = 0.0f;
-	float fps = 0;
+	float previousSecond = 0.0f; // indicates the start of previous second.
+	float frameCount = 0.0f; // Keeps track of the number of frames (reset every second).
+	float fps = 0.0f; // number that indicates frames per second.
+	float pitch = 0.0f; // angle for rotation along x-axis.
+	float yaw = 0.0f; // angle for rotation along y-axis.
+	float fov = 0.0f; // field of view (for the case of perspective projection).
+
+
+	float lastX = Hzn::App::getApp().getAppWindow().getWidth() / 2; // keeps track of last X position of mouse.
+	float lastY = Hzn::App::getApp().getAppWindow().getHeight() / 2; // keeps track of last Y position of mouse.
+
+	bool firstFrame = true; // simple bool for utility purposes, true only for the first frame.
 };
 
 // ********** Edior Layer **********

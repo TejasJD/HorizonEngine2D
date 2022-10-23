@@ -16,7 +16,8 @@ namespace Hzn
 		static void beginScene(const std::shared_ptr<Camera>& camera);
 		static void endScene();
 
-		static void render(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray);
+		static void render(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray,
+			const glm::mat4& modelTransform = glm::mat4(1.0f));
 
 		inline static RendererAPI::API getAPI() { return RendererAPI::getAPI(); }
 

@@ -30,7 +30,12 @@ namespace Hzn
 		float getAspectRatio() const { return m_AspectRatio; }
 
 		void setPosition(const glm::vec3& position) { m_Position = position; }
-		void setFront(const glm::vec3& front) { m_Front = front; }
+		void setFront(const glm::vec3& front) 
+		{ 
+			m_Front = front;
+			glm::vec3 right = glm::normalize(glm::cross(m_Front, glm::vec3(0.0f, 1.0f, 0.0f)));
+			setUp(glm::normalize(glm::cross(right, m_Front)));
+		}
 		void setUp(const glm::vec3& up) { m_Up = up; }
 		void setFov(const float& fov) { m_Fov = fov; }
 		void setAspectRatio(const float& aspectRatio) { m_AspectRatio = aspectRatio; }

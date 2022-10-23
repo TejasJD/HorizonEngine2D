@@ -1,12 +1,11 @@
 #pragma once
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
+#include "HorizonEngine/Input.h"
 #include "HorizonEngine/Events/Event.h"
 
 namespace Hzn
 {
+
 	class Window
 	{
 	public:
@@ -18,6 +17,7 @@ namespace Hzn
 		virtual void setEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void setVsync(bool vsync) = 0;
 		virtual bool getVsync() const = 0;
+		virtual void setCursorMode(CursorMode mode) = 0;
 
 		//! returns a void pointer which can be casted to concrete window, based on the active platform.
 		virtual void* getPlatformRawWindow() = 0;
