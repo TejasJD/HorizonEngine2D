@@ -26,6 +26,11 @@ namespace Hzn
 			m_Api->drawElements(vertexArray);
 		}
 
+		inline static void drawTriangles(const std::shared_ptr<VertexArray>& vertexArray)
+		{
+			m_Api->drawTriangles(vertexArray);
+		}
+
 		static RendererAPI* init();
 
 	private:

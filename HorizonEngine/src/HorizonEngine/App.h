@@ -13,6 +13,7 @@
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/VertexArray.h"
 #include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Core/TimeStep.h"
 
 
 #include "HorizonEngine/Components/ComponentFactory.h"
@@ -64,6 +65,8 @@ namespace Hzn
 
 		ImguiLayer* m_ImguiLayer;
 		LayerStack m_Layers;
+		TimeStep m_TimeStep;
+		float lastFrameTime = 0.0f;
 		
 		/*unsigned int m_VertexArray = 0;*/
 		//unsigned int m_VertexBufferId = 0;

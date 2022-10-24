@@ -19,6 +19,7 @@
     "gtest",
     "sajson",
     "openal-soft",
-    "sndfile"
+    "sndfile",
+    "stb"
   ]
 }
