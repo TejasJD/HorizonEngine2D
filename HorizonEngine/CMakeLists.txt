@@ -42,7 +42,8 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Renderer/RenderCall.cpp"
 	"Platform/OpenGL/GLRendererAPI.cpp"
 	"src/HorizonEngine/Camera.cpp"
-	"Platform/OpenGL/FDWindows.cpp")
+	"Platform/OpenGL/FDWindows.cpp"
+	"src/HorizonEngine/Renderer/Texture.cpp" "Platform/OpenGL/GLTexture.cpp" "src/vendor/stb/stbimage.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -97,7 +98,10 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Renderer/RendererAPI.h"
 	"src/HorizonEngine/Renderer/RenderCall.h"
 	"Platform/OpenGL/GLRendererAPI.h"
-	"Platform/OpenGL/FDWindows.h" "src/HorizonEngine/Core/TimeStep.h")
+	"Platform/OpenGL/FDWindows.h"
+	"src/HorizonEngine/Core/TimeStep.h"
+	"Platform/OpenGL/GLTexture.h"
+	"src/HorizonEngine/Renderer/Texture.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -131,6 +135,7 @@ find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
 find_package(openal CONFIG REQUIRED)
 find_package(Sndfile CONFIG REQUIRED)
+find_path(STB_INCLUDE_DIRS "stb_image.h")
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
@@ -153,6 +158,7 @@ target_include_directories(SampleTest
 	src
 	src/HorizonEngine
 	platform
+	${STB_INCLUDE_DIRS}
 )
 
 add_executable(SampleTest2 "tests/SampleTest2.cpp")

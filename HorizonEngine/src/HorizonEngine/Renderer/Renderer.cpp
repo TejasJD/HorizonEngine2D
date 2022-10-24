@@ -25,7 +25,7 @@ namespace Hzn
 
 		shader->bind();
 		shader->setUniform("view", m_Camera->getViewMatrix());
-		shader->setUniform("projection", m_Camera->getPerspectiveProjectionMatrix(0.1f, 100.0f));
+		shader->setUniform("projection", m_Camera->getProjectionMatrix());
 		shader->setUniform("model", modelTransform);
 
 		vertexArray->bind();

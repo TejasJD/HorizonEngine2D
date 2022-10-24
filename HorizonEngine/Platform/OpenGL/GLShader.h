@@ -23,6 +23,8 @@ namespace Hzn
 		virtual void setUniform(const std::string& s, const glm::vec4& vec4) override;
 		virtual void setUniform(const std::string& s, const glm::vec3& vec3) override;
 		virtual void setUniform(const std::string& s, const glm::vec2& vec2) override;
+		virtual void setUniform(const std::string& s, int ui) override;
+		virtual void setUniform(const std::string& s, float uf) override;
 
 	private:
 		unsigned int m_ProgramId;

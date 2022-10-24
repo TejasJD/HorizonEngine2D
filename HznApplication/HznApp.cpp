@@ -19,117 +19,107 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 
 SampleLayer::SampleLayer(const std::string& name) : Layer(name)
 {
-	// Shader configurations.
-	std::string vertexShader = R"(
-			#version 420 core
-			layout(location = 0) in vec3 inv_Pos;
+	std::string gridVertexShader = R"(
+		#version 420 core
+		layout (location = 0) in vec3 a_Pos;
 
-			uniform mat4 model;
-			uniform mat4 view;
-			uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+		uniform mat4 projection;
+		
+		void main()
+		{
+			gl_Position = projection * view * model * vec4(a_Pos, 1.0f);
+		}
+	)";
 
-			void main()
-			{
-				gl_Position = projection * view * model * vec4(inv_Pos, 1.0f);
-			}
-		)";
+	std::string gridFragmentShader = R"(
+		# version 420 core
+		
+		uniform vec4 a_Color;
+		out vec4 fragmentColor;
 
-	std::string lightFragmentShader = R"(
-			#version 420 core
-			out vec4 fragmentColor;			
+		void main()
+		{
+			fragmentColor = a_Color;
+		}
+	)";
 
-			uniform vec3 lightColor;
-			uniform vec3 objectColor;
+	std::string textureVertexShader = R"(
+		#version 420 core
+		layout (location = 0) in vec3 a_Pos;
+		layout (location = 1) in vec2 a_TexCoord;
 
-			void main()
-			{
-				fragmentColor = vec4(lightColor * objectColor, 1.0f);
-			}
-		)";
+		uniform mat4 model;
+		uniform mat4 view;
+		uniform mat4 projection;
 
-	std::string fragmentShader = R"(
-			#version 420 core
-			out vec4 fragmentColor;
-			void main()
-			{
-				fragmentColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-			}
-		)";
+		out vec2 v_TexCoord;
+		
+		void main()
+		{
+			gl_Position = projection * view * model * vec4(a_Pos, 1.0f);
+			v_TexCoord = a_TexCoord;
+		}
+	)";
 
-	lightSourceShader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create(vertexShader, fragmentShader));
-	lightShader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create(vertexShader, lightFragmentShader));
+	std::string textureFragmentShader = R"(
+		# version 420 core
+		
+		in vec2 v_TexCoord;
+		out vec4 fragmentColor;
 
-	// Vertex Buffers, Arrays and Element Buffer configurations.
-	std::vector<float> cube = {
-			0.5f, 0.5f, 0.5f,
-			0.5f, -0.5f, 0.5f,
-			-0.5f, -0.5f, 0.5f,	  
-			-0.5f, 0.5f, 0.5f,
-			0.5f, 0.5f, -0.5f,
-			0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, 0.5f, -0.5f
-	};
+		uniform sampler2D f_Texture;
 
-	std::vector<uint32_t> cubeIndex = {
-		0, 1, 2, // front face
-		0, 2, 3,
-		4, 5, 6, // back face
-		4, 6, 7,
-		0, 3, 4, // top face
-		3, 7, 4,
-		1, 2, 5, // bottom face
-		2, 6, 5,
-		0, 1, 5, // left face
-		0, 4, 5,
-		1, 2, 6, // right face
-		1, 5, 6
-	};
-
-	m_VertexBuffer = std::shared_ptr<Hzn::VertexBuffer>(Hzn::VertexBuffer::create(cube));
-	m_ElementBuffer = std::shared_ptr<Hzn::ElementBuffer>(Hzn::ElementBuffer::create(cubeIndex));
-	m_VertexArray = std::unique_ptr<Hzn::VertexArray>(Hzn::VertexArray::create());
+		void main()
+		{
+			fragmentColor = texture(f_Texture, v_TexCoord);
+		}
+	)";
 
 	Hzn::BufferLayout layout =
 	{
-		{ Hzn::ShaderDataType::Vec3f, "position"}
+		{Hzn::ShaderDataType::Vec3f, "a_Pos"},
+		{Hzn::ShaderDataType::Vec2f, "a_TexCoord"}
 	};
 
-	// vertex array for rest of the models.
-	m_VertexBuffer->setBufferLayout(layout);
-	m_VertexArray->addVertexBuffer(m_VertexBuffer);
-	m_VertexArray->setElementBuffer(m_ElementBuffer);
+	std::vector<float> vertices = {
+		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+	};
 
-	/*cubePositions = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};*/
+	std::vector<uint32_t> indices = {
+		0, 1, 2,
+		0, 3, 2
+	};
 
-	// vertex array for the light source.
-	lightVertexArray = std::shared_ptr<Hzn::VertexArray>(Hzn::VertexArray::create());
-	lightVertexArray->addVertexBuffer(m_VertexBuffer);
-	lightVertexArray->setElementBuffer(m_ElementBuffer);
+	shader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create(gridVertexShader, gridFragmentShader));
+	textureShader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create(textureVertexShader, textureFragmentShader));
 
-	// camera settings.
-	glm::vec3 cameraPosition = { 0.0f, 0.0f, 3.0f };
-	glm::vec3 cameraFront = { 0.0f, 0.0f, -1.0f };
-	glm::vec3 cameraUp = { 0.0f, 1.0f, 0.0f };
-	camera = std::shared_ptr<Hzn::Camera>(new Hzn::Camera(cameraPosition, cameraFront, cameraUp));
-	camera->setFov(45.0f);
-	float windowWidth = Hzn::App::getApp().getAppWindow().getWidth();
-	float windowHeight = Hzn::App::getApp().getAppWindow().getHeight();
-	camera->setAspectRatio(windowWidth / windowHeight);
-	camera->setSpeed(2.5f);
+	texture = Hzn::Texture2D::create("assets/textures/Checkerboard.png");
 
-	Hzn::App::getApp().getAppWindow().setCursorMode(Hzn::CursorMode::Disabled);
+	textureShader->bind();
+	textureShader->setUniform("f_Texture", 0);
+
+	vertexBuffer = std::shared_ptr<Hzn::VertexBuffer>(Hzn::VertexBuffer::create(vertices));
+	vertexBuffer->setBufferLayout(layout);
+
+	elementBuffer = std::shared_ptr<Hzn::ElementBuffer>(Hzn::ElementBuffer::create(indices));
+
+	vertexArray = std::shared_ptr<Hzn::VertexArray>(Hzn::VertexArray::create());
+	vertexArray->addVertexBuffer(vertexBuffer);
+	vertexArray->setElementBuffer(elementBuffer);
+
+	camera = std::shared_ptr<Hzn::Camera>(new Hzn::OrthographicCamera(
+		-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 100.0f,
+		{ 0.0f, 0.0f, 3.0f },
+		{ 0.0f, 0.0f, -1.0f },
+		{ 0.0f, 1.0f, 0.0f }
+	));
+
+	camera->speed = 2.5f;
 }
 
 void SampleLayer::onAttach()
@@ -149,46 +139,57 @@ void SampleLayer::onUpdate(Hzn::TimeStep deltaTime)
 		frameCount = 0;
 	}
 
-	Hzn::RenderCall::setClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+	camera->deltaTime = deltaTime;
+
+	if (Hzn::Input::keyPressed(Hzn::Key::Up))
+	{
+		camera->position += (camera->speed * camera->deltaTime) * camera->up;
+	}
+	else if (Hzn::Input::keyPressed(Hzn::Key::Down))
+	{
+		camera->position -= (camera->speed * camera->deltaTime) * camera->up;
+	}
+	else if (Hzn::Input::keyPressed(Hzn::Key::Left))
+	{
+		camera->position -= (camera->speed * camera->deltaTime) * glm::vec3({ 1.0f, 0.0f, 0.0f });
+	}
+	else if (Hzn::Input::keyPressed(Hzn::Key::Right))
+	{
+		camera->position += (camera->speed * camera->deltaTime) * glm::vec3({ 1.0f, 0.0f, 0.0f });;
+	}
+	else if (Hzn::Input::keyPressed(Hzn::Key::J))
+	{
+		rotation -= 90.0f * camera->deltaTime;
+	}
+	else if (Hzn::Input::keyPressed(Hzn::Key::L))
+	{
+		rotation += 90.0f * camera->deltaTime;
+	}
+	auto y = sin(glm::radians(rotation));
+	auto x = cos(glm::radians(rotation));
+	camera->up = glm::vec3(x, y, 0.0f);
+
+	Hzn::RenderCall::setClearColor({0.1f, 0.1f, 0.1f, 0.1f});
 	Hzn::RenderCall::submitClear();
 
 	Hzn::Renderer::beginScene(camera);
 
-	camera->setDeltaTime(deltaTime);
+	texture->bind();
+	Hzn::Renderer::render(textureShader, vertexArray
+	, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
-	if (Hzn::Input::keyPressed(Hzn::Key::Up))
+	shader->bind();
+	for (int i = 0; i < 20; ++i)
 	{
-		camera->moveFront();
+		for (int j = 0; j < 20; ++j)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3((float)i * 0.11f , (float)j * 0.11f, 0));
+			shader->setUniform("a_Color", glm::vec4(gridColor, 1.0f));
+			model = glm::scale(model, glm::vec3(0.1f));
+			Hzn::Renderer::render(shader, vertexArray, model);
+		}
 	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::Down))
-	{
-		camera->moveBack();
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::Left))
-	{
-		camera->moveLeft();
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::Right))
-	{
-		camera->moveRight();
-	}
-	
-	mouseMovementCamera(deltaTime);
-
-	// render light source.
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, { 2.0f, 0.0f, -2.0f });
-	model = glm::scale(model, glm::vec3(0.5f));
-	Hzn::Renderer::render(lightSourceShader, lightVertexArray, model);
-	
-	// render every other object with the light shader.
-	lightShader->bind();
-	lightShader->setUniform("lightColor", lightSource);
-	lightShader->setUniform("objectColor", { 1.0f, 0.5f, 0.31f });
-	
-	model = glm::mat4(1.0f);
-	Hzn::Renderer::render(lightShader, m_VertexArray, model);
-
 
 	Hzn::Renderer::endScene();
 }
@@ -198,6 +199,10 @@ void SampleLayer::onRenderImgui()
 	static bool my_tool_active = true;
 	ImGui::Begin("FPS Counter", &my_tool_active);
 	ImGui::Text("Framerate: %.2f FPS", (float)fps);
+	ImGui::End();
+
+	ImGui::Begin("Color Picker");
+	ImGui::ColorEdit3("Grid Color", glm::value_ptr(gridColor), true);
 	ImGui::End();
 }
 
@@ -215,49 +220,11 @@ void SampleLayer::onDetach()
 void SampleLayer::mouseMovementCamera(Hzn::TimeStep deltaTime)
 {
 
-	auto [xPos, yPos] = Hzn::Input::getMousePos();
-	
-	// this adjust the first frame
-	if (firstFrame)
-	{
-		lastX = xPos;
-		lastY = yPos;
-		firstFrame = false;
-	}
-
-	auto xOff = lastX - xPos;
-	auto yOff = lastY - yPos; // when we move up we want positive offset
-
-	lastX = xPos;
-	lastY = yPos;
-
-	pitch += yOff * 0.1f;
-	yaw += xOff * 0.1f;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	else if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	if (yaw > 360.0f)
-		yaw = 0.0f;
-	if (yaw < -359.0f)
-		yaw = 0.0f;
-
-	auto x = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	auto y = sin(glm::radians(pitch));
-	auto z = -cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	camera->setFront(glm::vec3(x, y, z));
 }
 
 bool SampleLayer::onMouseScroll(Hzn::MouseScrolledEvent& event)
 {
 	/*HZN_INFO("(xOffset = {0}, yOffset = {1})", event.GetXOffset(), event.GetYOffset());*/
-	fov = camera->getFov();
-	fov += event.GetYOffset();
-	if (fov < 0.0f) fov = 0.0f;
-	if (fov > 65.0f) fov = 65.0f;
-	camera->setFov(fov);
 	return false;
 }
 

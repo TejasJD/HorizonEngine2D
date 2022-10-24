@@ -26,31 +26,20 @@ public:
 	bool onMouseScroll(Hzn::MouseScrolledEvent& event);
 
 private:
-	std::shared_ptr<Hzn::VertexArray> m_VertexArray;
-	std::shared_ptr<Hzn::VertexArray> lightVertexArray;
-	std::shared_ptr<Hzn::VertexBuffer> m_VertexBuffer;
-	std::shared_ptr<Hzn::ElementBuffer> m_ElementBuffer;
-	std::shared_ptr<Hzn::Shader> lightSourceShader;
-	std::shared_ptr<Hzn::Shader> lightShader;
+	std::shared_ptr<Hzn::VertexArray> vertexArray;
+	std::shared_ptr<Hzn::VertexBuffer> vertexBuffer;
+	std::shared_ptr<Hzn::ElementBuffer> elementBuffer;
+	std::shared_ptr<Hzn::Shader> shader, textureShader;
 	std::shared_ptr<Hzn::Camera> camera;
-	std::vector<glm::vec3> cubePositions;
 
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::vec3 lightSource = { 1.0f, 1.0f, 1.0f }; // color of the light source.
+	std::shared_ptr<Hzn::Texture> texture;
 
-	float lastFrame = 0.0f; // Time of last frame
-	float previousSecond = 0.0f; // indicates the start of previous second.
-	float frameCount = 0.0f; // Keeps track of the number of frames (reset every second).
-	float fps = 0.0f; // number that indicates frames per second.
-	float pitch = 0.0f; // angle for rotation along x-axis.
-	float yaw = 0.0f; // angle for rotation along y-axis.
-	float fov = 0.0f; // field of view (for the case of perspective projection).
+	glm::vec3 gridColor = { 0.2f, 0.0f, 0.5f };
 
-
-	float lastX = Hzn::App::getApp().getAppWindow().getWidth() / 2; // keeps track of last X position of mouse.
-	float lastY = Hzn::App::getApp().getAppWindow().getHeight() / 2; // keeps track of last Y position of mouse.
-
-	bool firstFrame = true; // simple bool for utility purposes, true only for the first frame.
+	float previousSecond = 0.0f;
+	float fps = 0.0f;
+	float frameCount = 0.0f;
+	float rotation = 90.0f;
 };
 
 // ********** Edior Layer **********

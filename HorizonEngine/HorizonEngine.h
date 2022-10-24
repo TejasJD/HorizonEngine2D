@@ -35,6 +35,7 @@
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/Shader.h"
 #include "HorizonEngine/Renderer/VertexArray.h"
+#include "HorizonEngine/Renderer/Texture.h"
 #include "HorizonEngine/Camera.h"
 #include "Platform/OpenGL/FDWindows.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 
