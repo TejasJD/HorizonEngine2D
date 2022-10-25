@@ -13,6 +13,14 @@
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/VertexArray.h"
 #include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Core/TimeStep.h"
+
+
+#include "HorizonEngine/Components/ComponentFactory.h"
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Components/Transform.h"
+#include "HorizonEngine/Physics2D/BoxCollider2D.h"
+#include "HorizonEngine/Physics2D/Rigidbody2D.h"
 
 #include "HorizonEngine/Components/ComponentFactory.h"
 #include "HorizonEngine/Components/Component.h"
@@ -46,6 +54,7 @@ namespace Hzn
 		void onEvent(Event& e);
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_Window; }
+		void registerComponents();
 
 		void registerComponents();
 	protected:
@@ -63,6 +72,8 @@ namespace Hzn
 
 		ImguiLayer* m_ImguiLayer;
 		LayerStack m_Layers;
+		TimeStep m_TimeStep;
+		float lastFrameTime = 0.0f;
 		
 		/*unsigned int m_VertexArray = 0;*/
 		//unsigned int m_VertexBufferId = 0;

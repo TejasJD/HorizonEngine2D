@@ -22,6 +22,9 @@ namespace Hzn
 		virtual unsigned int getWidth() override { return m_Data.width; }
 		virtual void setEventCallback(const EventCallbackFn& callback) override { m_Data.callback = callback; }
 		virtual void* getPlatformRawWindow() { return m_Window; }
+		virtual void setVsync(bool vsync) override { m_Vsync = vsync; }
+		virtual bool getVsync() const override { return m_Vsync;  }
+		virtual void setCursorMode(CursorMode mode) override;
 
 	private:
 		void init();
@@ -37,6 +40,7 @@ namespace Hzn
 
 		WindowData m_Data;
 		GLFWwindow* m_Window;
+		bool m_Vsync = false;
 
 		std::unique_ptr<RenderContext> m_Context;
 	};

@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "GLShader.h"
 
@@ -134,5 +135,43 @@ namespace Hzn
 	void GLShader::unbind() const
 	{
 
+	}
+
+	void GLShader::setUniform(const std::string& s, const glm::mat4& mat4)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat4));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::mat3& mat3)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniformMatrix3fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat3));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::vec4& vec4)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform4fv(uLoc, 1, glm::value_ptr(vec4));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::vec3& vec3)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform3fv(uLoc, 1, glm::value_ptr(vec3));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::vec2& vec2)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform2fv(uLoc, 1, glm::value_ptr(vec2));
+	}
+	
+	void GLShader::setUniform(const std::string& s, int ui)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform1i(uLoc, ui);
+	}
+	
+	void GLShader::setUniform(const std::string& s, float uf)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform1f(uLoc, uf);
 	}
 }
