@@ -52,7 +52,7 @@
 
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
-#include "HorizonEngine/Utils/TreeNode.h"
+//#include "HorizonEngine/Utils/TreeNode.h"
 
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/Renderer/Renderer.h"

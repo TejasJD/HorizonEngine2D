@@ -15,13 +15,6 @@
 #include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Core/TimeStep.h"
 
-
-#include "HorizonEngine/Components/ComponentFactory.h"
-#include "HorizonEngine/Components/Component.h"
-#include "HorizonEngine/Components/Transform.h"
-#include "HorizonEngine/Physics2D/BoxCollider2D.h"
-#include "HorizonEngine/Physics2D/Rigidbody2D.h"
-
 #include "HorizonEngine/Components/ComponentFactory.h"
 #include "HorizonEngine/Components/Component.h"
 #include "HorizonEngine/Components/Transform.h"
@@ -56,7 +49,6 @@ namespace Hzn
 		Window& getAppWindow() { return *m_Window; }
 		void registerComponents();
 
-		void registerComponents();
 	protected:
 		static App* m_Instance;
 

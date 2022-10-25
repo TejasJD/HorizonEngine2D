@@ -7,8 +7,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	app->addLayer(new SampleLayer());
-	//app->addLayer(new EditorLayer());
+	//app->addLayer(new SampleLayer());
+	app->addLayer(new EditorLayer());
 	return app;
 }
 
@@ -422,23 +422,19 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 }
 
 void EditorLayer::drawMenuBar(bool* pOpen) {
-	if (ImGui::BeginMainMenuBar())
+	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("New Scene", "Ctrl+N", false)) {
 
 			}
-
-
-
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O", false)) {
 
 				std::string filePathfromdialog = Hzn::FileDialogs::openFile();
 
 				//Check if the dtring returns empty or not
 				if (filePathfromdialog != "") {
-
 
 					Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
 					Hzn::Scene* s = new Hzn::Scene(p);
@@ -449,10 +445,7 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 				}
 			};
 
-
 			ImGui::Separator();
-
-
 
 			if (ImGui::MenuItem("Save", "Ctrl+S", false)) {
 
@@ -467,30 +460,21 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 				else {
 					//create new scene here
 				}
-
-
 			};
 
 			if (ImGui::MenuItem("Save As", "Ctrl+Shift+S", false)) {
 
-
 			};
 
 			ImGui::Separator();
-
-
 
 			ImGui::MenuItem("New Project", "Ctrl+Shift+N", false);
 			ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false);
 			ImGui::Separator();
 
-
-
 			ImGui::MenuItem("Build Settings", NULL, false);
 			ImGui::MenuItem("Build and Run", NULL, false);
 			ImGui::Separator();
-
-
 
 			//if (ImGui::MenuItem("Exit", NULL, false, pOpen != NULL))
 			//*pOpen = false;
@@ -614,8 +598,9 @@ void EditorLayer::drawScene() {
 				draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
 		}
 		draw_list->PopClipRect();
+
+		ImGui::End();
 	}
-	ImGui::End();
 }
 
 void EditorLayer::drawObjectBehaviour() {

@@ -97,10 +97,4 @@ namespace Hzn
 		REGISTER(Component, BoxCollider2D);
 		REGISTER(Component, Rigidbody2D);
 	}
-
-	void App::registerComponents() {
-		REGISTER(Component, Transform);
-		REGISTER(Component, BoxCollider2D);
-		REGISTER(Component, Rigidbody2D);
-	}
 }
