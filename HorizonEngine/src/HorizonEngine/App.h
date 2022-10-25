@@ -15,7 +15,6 @@
 #include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Core/TimeStep.h"
 
-
 #include "HorizonEngine/Components/ComponentFactory.h"
 #include "HorizonEngine/Components/Component.h"
 #include "HorizonEngine/Components/Transform.h"
