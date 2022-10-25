@@ -30,7 +30,6 @@ namespace Hzn
 
 	void GLContext::swapBuffers()
 	{
-		glfwSwapInterval(1);
 		glfwSwapBuffers(m_Handle);
 	}
 

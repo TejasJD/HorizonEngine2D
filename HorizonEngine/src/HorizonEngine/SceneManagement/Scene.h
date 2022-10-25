@@ -29,12 +29,15 @@ namespace Hzn {
 		void close();
 		void save();
 		void addGameObject(std::shared_ptr<GameObject> gameObject);
-		void removeGameObject(std::shared_ptr<GameObject> gameobject);
+		//void removeGameObject(std::string name);
 		std::shared_ptr<GameObject> findGameObject(std::string name);
 		std::vector<std::shared_ptr<GameObject>>* getObjects();
 		std::vector<std::shared_ptr<TreeNode<std::string>>> getHierarchy();
+		void createEmpty(std::string parentName = "");
 	private:
+		//void removeChildren(std::shared_ptr<GameObject> gameObject, std::string name, bool removeThis);
 		void getChildren(std::shared_ptr<Component> transform, std::shared_ptr<TreeNode<std::string>> node);
+		std::string generateRandomString(const int len);
 	};
 }
 

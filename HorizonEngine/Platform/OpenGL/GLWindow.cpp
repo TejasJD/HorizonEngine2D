@@ -1,5 +1,8 @@
 #include "pch.h"
 
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Events/MouseEvent.h"
@@ -7,9 +10,6 @@
 
 #include "GLContext.h"
 #include "GLWindow.h"
-
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
 
 namespace Hzn
 {
@@ -27,6 +27,7 @@ namespace Hzn
 	void GLWindow::onUpdate()
 	{
 		glfwPollEvents();
+		glfwSwapInterval(getVsync() ? 1 : 0);
 		m_Context->swapBuffers();
 	}
 
@@ -124,6 +125,23 @@ namespace Hzn
 			});
 
 		glfwSetErrorCallback(errorCallback);
+	}
+
+	void GLWindow::setCursorMode(CursorMode mode)
+	{
+		switch (mode)
+		{
+		case Hzn::CursorMode::Enabled:
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			return;
+		case Hzn::CursorMode::Disabled:
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			return;
+		case Hzn::CursorMode::Hidden:
+			glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			return;
+		}
+		HZN_CORE_ASSERT(false, "Unknown cursor mode!");
 	}
 
 	void GLWindow::destroy()

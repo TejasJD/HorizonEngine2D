@@ -2,13 +2,88 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "GLShader.h"
 
 namespace Hzn
 {
+	//! function which maps HorizonEngine Shader Type to GLShader Type.
+	GLenum GLShader::HznShaderTypeToGLShader(ShaderType type)
+	{
+		switch (type)
+		{
+		case Hzn::ShaderType::None:
+			HZN_CORE_ASSERT(false, "No Shader type provided.");
+			return GL_NONE;
+		case Hzn::ShaderType::VertexShader:
+			return GL_VERTEX_SHADER;
+		case Hzn::ShaderType::FragmentShader:
+			return GL_FRAGMENT_SHADER;
+		}
+
+		HZN_CORE_ASSERT(false, "Invalid shader");
+		return GL_NONE;
+	}
+
+	//! provide Shaders in terms of type and filepath. Only Vertex and Fragment Shaders supported for now!.
+	GLShader::GLShader(const std::initializer_list<std::pair<ShaderType, std::string>>& typeAndPath)
+	{
+		if (typeAndPath.size() != 2)
+		{
+			HZN_CORE_ERROR("Inapproriate Shader configuration provided, vertex and fragment shaders supported only!");
+			throw std::runtime_error("Vertex and Fragment shaders support only!");
+		}
+
+		std::string vertexSource, fragmentSource;
+
+		for (const auto& shader : typeAndPath)
+		{
+			if (shader.first == ShaderType::VertexShader)
+			{
+				vertexSource = readShaderFile(shader.second);
+			}
+			else if (shader.first == ShaderType::FragmentShader)
+			{
+				fragmentSource = readShaderFile(shader.second);
+			}
+		}
+		compileShaders(vertexSource, fragmentSource);
+	}
+
+	//! utility function that reads file the Shaderfile.
+	std::string GLShader::readShaderFile(const std::string& filepath)
+	{
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
+		if (!in)
+		{
+			throw std::runtime_error("Shader file not found!\n");
+		}
+		//! set file pointer to the end
+		in.seekg(0, std::ios::end);
+		//! get the position of the file pointer.
+		uint32_t contentSize = in.tellg();
+
+		// set the file pointer to the beginning again
+		in.seekg(0, std::ios::beg);
+
+		// allocate space for contents
+		std::string contents;
+		contents.resize(contentSize);
+
+		in.read(&contents[0], contents.size());
+		in.close();
+
+		return contents;
+	}
+
 	// reference: https://www.khronos.org/opengl/wiki/Shader_Compilation
 	GLShader::GLShader(const std::string& vertexSource, const std::string& fragmentSource)
+	{
+		compileShaders(vertexSource, fragmentSource);
+	}
+
+	void GLShader::compileShaders(const std::string& vertexSource, const std::string& fragmentSource)
 	{
 		// Create an empty vertex shader handle
 		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -134,5 +209,43 @@ namespace Hzn
 	void GLShader::unbind() const
 	{
 
+	}
+
+	void GLShader::setUniform(const std::string& s, const glm::mat4& mat4)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniformMatrix4fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat4));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::mat3& mat3)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniformMatrix3fv(uLoc, 1, GL_FALSE, glm::value_ptr(mat3));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::vec4& vec4)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform4fv(uLoc, 1, glm::value_ptr(vec4));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::vec3& vec3)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform3fv(uLoc, 1, glm::value_ptr(vec3));
+	}
+	void GLShader::setUniform(const std::string& s, const glm::vec2& vec2)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform2fv(uLoc, 1, glm::value_ptr(vec2));
+	}
+	
+	void GLShader::setUniform(const std::string& s, int ui)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform1i(uLoc, ui);
+	}
+	
+	void GLShader::setUniform(const std::string& s, float uf)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform1f(uLoc, uf);
 	}
 }

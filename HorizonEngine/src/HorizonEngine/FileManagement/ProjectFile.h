@@ -22,6 +22,7 @@ namespace Hzn {
 		std::vector<std::string> content;
 		std::ifstream in;
 		std::ofstream out;
+		int cursorRow, cursorCol;
 
 
 		//These methods check if the buffer stream has been opened and throw an error if not
@@ -43,8 +44,10 @@ namespace Hzn {
 
 		//Constructors
 		//Delete default constructor
-		ProjectFile(const ProjectFile& f) = delete;
-		ProjectFile& operator=(const ProjectFile& f) = delete;
+		/*ProjectFile(const ProjectFile& f) = delete;
+		ProjectFile& operator=(const ProjectFile& f) = delete;*/
+
+		ProjectFile();
 
 		//Destructor
 		~ProjectFile() {
@@ -53,7 +56,7 @@ namespace Hzn {
 		}
 
 		//Custom constructor, use "constructor intitialiser list" to set path pass in a string vector var for the file content
-		ProjectFile(std::string path) : path(path) {
+		ProjectFile::ProjectFile(std::string path) : path(path) {
 			openFile(path);
 		}
 

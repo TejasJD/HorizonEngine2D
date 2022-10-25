@@ -1,3 +1,4 @@
+
 #pragma once
 
 #ifndef HZN_INPUT_H
@@ -5,6 +6,13 @@
 
 namespace Hzn
 {
+	enum class CursorMode : uint8_t
+	{
+		Enabled = 0,
+		Disabled = 1,
+		Hidden = 2
+	};
+
 	class Input
 	{
 	public:
