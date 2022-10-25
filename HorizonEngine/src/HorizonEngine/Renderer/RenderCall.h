@@ -11,6 +11,11 @@ namespace Hzn
 	{
 	public:
 
+		inline static void init()
+		{
+			m_Api->init();
+		}
+
 		inline static void setClearColor(const glm::vec4& color)
 		{
 			m_Api->setClearColor(color);
@@ -31,7 +36,7 @@ namespace Hzn
 			m_Api->drawTriangles(vertexArray);
 		}
 
-		static RendererAPI* init();
+		static RendererAPI* create();
 
 	private:
 		static RendererAPI* m_Api;

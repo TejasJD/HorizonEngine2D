@@ -5,6 +5,11 @@ namespace Hzn
 {
 	std::shared_ptr<Camera> Renderer::m_Camera;
 
+	void Renderer::init()
+	{
+		RenderCall::init();
+	}
+
 	void Renderer::beginScene(const std::shared_ptr<Camera>& camera)
 	{
 		m_Camera = camera;
@@ -30,6 +35,5 @@ namespace Hzn
 
 		vertexArray->bind();
 		RenderCall::drawElements(vertexArray);
-		/*RenderCall::drawTriangles(vertexArray);*/
 	}
 }

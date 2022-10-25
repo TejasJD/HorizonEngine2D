@@ -20,6 +20,7 @@ namespace Hzn
 
 		inline static RendererAPI::API getAPI() { return m_Api; }
 		
+		virtual void init() = 0;
 		virtual void setClearColor(const glm::vec4& color) = 0;
 		virtual void submitClear() = 0;
 		virtual void drawElements(const std::shared_ptr<VertexArray>& vertexArray) = 0;

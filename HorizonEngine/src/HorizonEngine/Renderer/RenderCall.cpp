@@ -5,9 +5,9 @@
 
 namespace Hzn
 {
-	RendererAPI* RenderCall::m_Api = new GLRendererAPI();
+	RendererAPI* RenderCall::m_Api = RenderCall::create();
 
-	RendererAPI* RenderCall::init()
+	RendererAPI* RenderCall::create()
 	{
 		switch (RendererAPI::getAPI())
 		{

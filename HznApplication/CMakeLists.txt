@@ -45,8 +45,8 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy_directory
-	$<TARGET_FILE_DIR:HorizonEngine>/resources
-	$<TARGET_FILE_DIR:HznApplication>/resources
+	$<TARGET_FILE_DIR:HorizonEngine>/api_assets
+	$<TARGET_FILE_DIR:HznApplication>/api_assets
 )
 
 add_custom_command(

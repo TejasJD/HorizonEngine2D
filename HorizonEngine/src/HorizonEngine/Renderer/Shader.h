@@ -8,6 +8,11 @@
 
 namespace Hzn
 {
+	enum class ShaderType : uint8_t
+	{
+		None = 0, VertexShader, FragmentShader
+	};
+
 	class Shader
 	{
 	public:
@@ -24,6 +29,7 @@ namespace Hzn
 		virtual void setUniform(const std::string& s, int ui) = 0;
 		virtual void setUniform(const std::string& s, float uf) = 0;
 
+		static Shader* create(const std::initializer_list<std::pair<ShaderType, std::string>>& nameAndPath);
 		static Shader* create(const std::string& vertexSource, const std::string& fragmentSource);
 	};
 }

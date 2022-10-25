@@ -7,6 +7,7 @@
 
 namespace Hzn
 {
+	// function that allows you to create texture.
 	std::shared_ptr<Texture2D> Texture2D::create(const std::string& path)
 	{
 		switch (RendererAPI::getAPI())

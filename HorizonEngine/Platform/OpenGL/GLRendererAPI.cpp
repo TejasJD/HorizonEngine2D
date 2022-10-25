@@ -15,6 +15,12 @@ namespace Hzn
 
 	}
 
+	void GLRendererAPI::init()
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	void GLRendererAPI::setClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
@@ -22,7 +28,6 @@ namespace Hzn
 
 	void GLRendererAPI::submitClear()
 	{
-		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 

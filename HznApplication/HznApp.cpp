@@ -10,8 +10,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
+	/*app->addLayer(new EditorLayer());*/
 	app->addLayer(new SampleLayer());
-	//app->addLayer(new EditorLayer());
 	return app;
 }
 
@@ -19,64 +19,6 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 
 SampleLayer::SampleLayer(const std::string& name) : Layer(name)
 {
-	std::string gridVertexShader = R"(
-		#version 420 core
-		layout (location = 0) in vec3 a_Pos;
-
-		uniform mat4 model;
-		uniform mat4 view;
-		uniform mat4 projection;
-		
-		void main()
-		{
-			gl_Position = projection * view * model * vec4(a_Pos, 1.0f);
-		}
-	)";
-
-	std::string gridFragmentShader = R"(
-		# version 420 core
-		
-		uniform vec4 a_Color;
-		out vec4 fragmentColor;
-
-		void main()
-		{
-			fragmentColor = a_Color;
-		}
-	)";
-
-	std::string textureVertexShader = R"(
-		#version 420 core
-		layout (location = 0) in vec3 a_Pos;
-		layout (location = 1) in vec2 a_TexCoord;
-
-		uniform mat4 model;
-		uniform mat4 view;
-		uniform mat4 projection;
-
-		out vec2 v_TexCoord;
-		
-		void main()
-		{
-			gl_Position = projection * view * model * vec4(a_Pos, 1.0f);
-			v_TexCoord = a_TexCoord;
-		}
-	)";
-
-	std::string textureFragmentShader = R"(
-		# version 420 core
-		
-		in vec2 v_TexCoord;
-		out vec4 fragmentColor;
-
-		uniform sampler2D f_Texture;
-
-		void main()
-		{
-			fragmentColor = texture(f_Texture, v_TexCoord);
-		}
-	)";
-
 	Hzn::BufferLayout layout =
 	{
 		{Hzn::ShaderDataType::Vec3f, "a_Pos"},
@@ -95,10 +37,17 @@ SampleLayer::SampleLayer(const std::string& name) : Layer(name)
 		0, 3, 2
 	};
 
-	shader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create(gridVertexShader, gridFragmentShader));
-	textureShader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create(textureVertexShader, textureFragmentShader));
+	shader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create({
+		{Hzn::ShaderType::VertexShader, "assets/shaders/GridVertex.glsl"},
+		{Hzn::ShaderType::FragmentShader, "assets/shaders/GridFragment.glsl"}
+	}));
+	textureShader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create({
+		{Hzn::ShaderType::VertexShader, "assets/shaders/TextureVertex.glsl"},
+		{Hzn::ShaderType::FragmentShader, "assets/shaders/TextureFragment.glsl"}
+	}));
 
 	texture = Hzn::Texture2D::create("assets/textures/Checkerboard.png");
+	logoTexture = Hzn::Texture2D::create("assets/textures/someSky.png");
 
 	textureShader->bind();
 	textureShader->setUniform("f_Texture", 0);
@@ -174,10 +123,6 @@ void SampleLayer::onUpdate(Hzn::TimeStep deltaTime)
 
 	Hzn::Renderer::beginScene(camera);
 
-	texture->bind();
-	Hzn::Renderer::render(textureShader, vertexArray
-	, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
 	shader->bind();
 	for (int i = 0; i < 20; ++i)
 	{
@@ -190,6 +135,13 @@ void SampleLayer::onUpdate(Hzn::TimeStep deltaTime)
 			Hzn::Renderer::render(shader, vertexArray, model);
 		}
 	}
+
+	texture->bind();
+	Hzn::Renderer::render(textureShader, vertexArray
+		, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+	logoTexture->bind();
+	Hzn::Renderer::render(textureShader, vertexArray
+		, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 	Hzn::Renderer::endScene();
 }
