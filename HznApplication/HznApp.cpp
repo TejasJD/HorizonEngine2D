@@ -41,7 +41,10 @@ void SampleLayer::onEvent(Hzn::Event& event)
 // ************************************************************************
 
 // *********** EDITOR LAYER **********
-EditorLayer::EditorLayer(const std::string& name) : Layer(name) {}
+EditorLayer::EditorLayer(const std::string& name) : Layer(name) {
+	projectRootFolder = "E:\\code file\\groupProject";
+	projectPath = "Project(" + projectRootFolder + ")";
+}
 
 void EditorLayer::onAttach()
 {
@@ -137,7 +140,7 @@ void EditorLayer::onRenderImgui()
 	drawScene();
 	drawObjectBehaviour();
 	drawHierarchy();
-	drawProjectExplorer();
+	drawProjectExplorer(projectRootFolder);
 	drawConsole();
 }
 
@@ -225,7 +228,7 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 
 		ImGui::DockBuilderDockWindow("Scene", center);
 		ImGui::DockBuilderDockWindow("Object Behaviour", left);
-		ImGui::DockBuilderDockWindow("Project", rightUp);
+		ImGui::DockBuilderDockWindow(projectPath.c_str(), rightUp);
 		ImGui::DockBuilderDockWindow("Hierarchy", rightDown);
 		ImGui::DockBuilderDockWindow("Console", down);
 
@@ -412,12 +415,11 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		contextObject = node->item;
-
 		ImGui::OpenPopup("contextObject");
 	}
 
 	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
-	HZN_CORE_DEBUG(s + ": " + node->item);
+	//HZN_CORE_DEBUG(s + ": " + node->item);
 	openContext |= ImGui::IsPopupOpen("contextObject");
 
 	if (open) {
@@ -508,9 +510,126 @@ void EditorLayer::drawHierarchy() {
 	ImGui::End();
 }
 
-void EditorLayer::drawProjectExplorer() {
-	ImGui::Begin("Project");
-	ImGui::Text("Some text here");
+std::pair<bool, uint32_t> EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
+	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+
+	bool any_node_clicked = false;
+	uint32_t node_clicked = 0;
+
+	for (const auto& entry : std::filesystem::directory_iterator(path))
+	{
+		ImGuiTreeNodeFlags node_flags = base_flags;
+		
+		if (entry.path().string() == contextObject)
+			node_flags |= ImGuiTreeNodeFlags_Selected;
+
+		std::string name = entry.path().string();
+
+		auto lastSlash = name.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		name = name.substr(lastSlash, name.size() - lastSlash);
+
+		bool entryIsFile = !std::filesystem::is_directory(entry.path());
+		if (entryIsFile)
+			node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+		bool node_open = ImGui::TreeNodeEx(name.c_str(), node_flags);
+
+		if (!entryIsFile)
+		{
+			if (node_open)
+			{
+
+				auto clickState = drawProjectExplorerNode(entry.path());
+
+				if (!any_node_clicked)
+				{
+					any_node_clicked = clickState.first;
+					node_clicked = clickState.second;
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			contextObject = entry.path().string();
+		}
+
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			contextObject = entry.path().string();
+
+			ImGui::OpenPopup("contextObject");
+		}
+	}
+
+
+	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
+	openContext |= ImGui::IsPopupOpen("contextObject");
+
+	return { any_node_clicked, node_clicked };
+}
+
+void EditorLayer::drawProjectExplorer(std::string directoryPath){
+
+	openContext = false;
+	ImGui::Begin(projectPath.c_str());
+
+	uint32_t count = 0;
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))
+		count++;
+
+	static int selection_mask = 0;
+
+	auto clickState = drawProjectExplorerNode(directoryPath);
+
+
+	if (openContext) {
+		if (ImGui::IsPopupOpen("contextObject")) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::OpenPopup("contextObject");
+
+		ImGui::BeginPopup("contextObject");
+		//HZN_CORE_DEBUG("Object: " + contextObject);
+
+		if (ImGui::MenuItem("Cut", NULL, false)) {
+			// Do stuff here
+		}
+		if (ImGui::MenuItem("Copy", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Paste", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Duplicate", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Rename", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Delete", NULL, false)) {
+			Hzn::ProjectFile pf(contextObject);
+			pf.deleteFile(contextObject);
+		}
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Create file", NULL, false)) {
+			// Do stuff here 
+		}
+
+		ImGui::EndPopup();
+	}
+
+	// Right-click
+	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+	const bool is_active = ImGui::IsItemActive();   // Held
+
 	ImGui::End();
 }
 

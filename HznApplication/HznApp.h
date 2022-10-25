@@ -29,6 +29,7 @@ class EditorLayer : public Hzn::Layer
 private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
+	std::string projectPath;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
 	bool openContext = false;
@@ -50,7 +51,9 @@ private:
 	void drawScene();
 	void drawObjectBehaviour();
 	void drawHierarchy();
-	void drawProjectExplorer();
+	void drawProjectExplorer(std::string directoryPath);
+	std::pair<bool, uint32_t> drawProjectExplorerNode(const std::filesystem::path& path);
+
 	void drawConsole();
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
@@ -64,6 +67,8 @@ public:
 	{
 		/*addLayer(new SampleLayer());*/
 		addLayer(new EditorLayer());
+
+	
 	}
 	~HznApp() {}
 };
