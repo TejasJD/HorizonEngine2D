@@ -39,6 +39,7 @@ namespace Hzn
 		return 0U;
 	}
 
+	//! Represents an Attribute of a vertex in the Buffer.
 	struct BufferElements
 	{
 		std::string m_Name;
@@ -74,15 +75,18 @@ namespace Hzn
 		}
 	};
 
+	//! Create of layout for your vertex buffer which would be used by your shader.
 	class BufferLayout
 	{
 	public:
-		typedef std::vector<BufferElements>::iterator BufferLayoutIterator;
-		typedef std::vector<BufferElements>::const_iterator BufferLayoutConstIterator;
-		typedef std::vector<BufferElements>::reverse_iterator BufferLayoutRevIterator;
-		typedef std::vector<BufferElements>::const_reverse_iterator BufferLayoutConstRevIterator;
+		using BufferLayoutIterator = std::vector<BufferElements>::iterator;
+		using BufferLayoutConstIterator = std::vector<BufferElements>::const_iterator;
+		using BufferLayoutRevIterator = std::vector<BufferElements>::reverse_iterator;
+		using BufferLayoutConstRevIterator = std::vector<BufferElements>::const_reverse_iterator;
+		//! empty buffer layout
+		BufferLayout() = default;
 
-		BufferLayout() {}
+		//! create buffer layout with initializer lists. 
 		BufferLayout(const std::initializer_list<BufferElements>& layout)
 			: m_Layout(layout)
 		{
@@ -111,8 +115,10 @@ namespace Hzn
 		BufferLayoutConstRevIterator crbegin() const { return m_Layout.rbegin(); }
 		BufferLayoutConstRevIterator crend() const { return m_Layout.rend(); }
 
-
+		//! returns a list of Buffer Elements in your layout.
 		const std::vector<BufferElements>& getElements() const { return m_Layout; }
+		//! returns what would be the difference between any attribute of two consecutive vertices in your
+		//! vertex Buffer.
 		unsigned int getStride() const { return m_Stride; }
 
 	private:

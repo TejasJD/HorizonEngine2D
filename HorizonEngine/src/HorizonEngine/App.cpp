@@ -1,18 +1,7 @@
 #include "pch.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/ext/matrix_projection.hpp>
-
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
-
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
-#include "HorizonEngine/Camera.h"
 
 #include "App.h"
 
@@ -29,6 +18,8 @@ namespace Hzn
 		m_Window = std::unique_ptr<Window>(Window::create(800, 600, "HorizonEngine"));
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
 		m_Window->setVsync(true);
+
+		Renderer::init();
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);

@@ -184,8 +184,8 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy_directory
-	${CMAKE_CURRENT_LIST_DIR}/resources
-	$<TARGET_FILE_DIR:HorizonEngine>/resources
+	${CMAKE_CURRENT_LIST_DIR}/api_assets
+	$<TARGET_FILE_DIR:HorizonEngine>/api_assets
 )
 
 message(STATUS ${CMAKE_BINARY_DIR})

@@ -33,6 +33,7 @@ private:
 	std::shared_ptr<Hzn::Camera> camera;
 
 	std::shared_ptr<Hzn::Texture> texture;
+	std::shared_ptr<Hzn::Texture> logoTexture;
 
 	glm::vec3 gridColor = { 0.2f, 0.0f, 0.5f };
 

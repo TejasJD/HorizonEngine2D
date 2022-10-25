@@ -5,13 +5,16 @@
 
 #include "HorizonEngine/Renderer/Shader.h"
 
+typedef unsigned int GLenum;
+
 namespace Hzn
 {
 	class GLShader : public Shader
 	{
 	public:
 		GLShader(const std::string& vertexSource, const std::string& fragmentSource);
-		~GLShader();
+		GLShader(const std::initializer_list<std::pair<ShaderType, std::string>>& typeAndPath);
+		virtual ~GLShader();
 
 		// Inherited via Shader
 		virtual void bind() const override;
@@ -26,7 +29,11 @@ namespace Hzn
 		virtual void setUniform(const std::string& s, int ui) override;
 		virtual void setUniform(const std::string& s, float uf) override;
 
+		static GLenum HznShaderTypeToGLShader(ShaderType type);
+
 	private:
+		std::string readShaderFile(const std::string& filepath);
+		void compileShaders(const std::string& vertexSource, const std::string& fragmentSource);
 		unsigned int m_ProgramId;
 	};
 }
