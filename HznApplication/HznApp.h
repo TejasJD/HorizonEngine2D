@@ -32,6 +32,7 @@ private:
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
 	bool openContext = false;
+	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 public:
 	EditorLayer(const std::string& name = "Editor Layer");
 

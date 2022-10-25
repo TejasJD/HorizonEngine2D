@@ -50,7 +50,6 @@ void EditorLayer::onAttach()
 	openScene = new Hzn::Scene();
 	openScene->open();
 	nodes = openScene->getHierarchy();
-	openScene->save();
 }
 
 void EditorLayer::onRenderImgui()
@@ -417,7 +416,7 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 	}
 
 	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
-	HZN_CORE_DEBUG(s + ": " + node->item);
+	
 	openContext |= ImGui::IsPopupOpen("contextObject");
 
 	if (open) {
@@ -448,11 +447,8 @@ void EditorLayer::drawHierarchy() {
 		ImGui::BeginPopup("contextObject");
 		//HZN_CORE_DEBUG("Object: " + contextObject);
 
-		if (ImGui::MenuItem("Cut", NULL, false)) {
-			// Do stuff here
-		}
 		if (ImGui::MenuItem("Copy", NULL, false)) {
-			// Do stuff here 
+			/*copiedGameObject = openScene->findGameObject(contextObject);*/
 		}
 		if (ImGui::MenuItem("Paste", NULL, false)) {
 			// Do stuff here 
@@ -460,16 +456,15 @@ void EditorLayer::drawHierarchy() {
 		if (ImGui::MenuItem("Duplicate", NULL, false)) {
 			// Do stuff here 
 		}
-		if (ImGui::MenuItem("Rename", NULL, false)) {
-			// Do stuff here 
-		}
 		if (ImGui::MenuItem("Delete", NULL, false)) {
-			// Do stuff here 
+			/*openScene->removeGameObject(contextObject);
+			nodes = openScene->getHierarchy();*/
 		}
 		ImGui::Separator();
 
 		if (ImGui::MenuItem("Create Empty", NULL, false)) {
-			// Do stuff here 
+			openScene->createEmpty(contextObject);
+			nodes = openScene->getHierarchy();
 		}
 
 		ImGui::EndPopup();
@@ -491,7 +486,8 @@ void EditorLayer::drawHierarchy() {
 		contextObject = "";
 
 		if (ImGui::MenuItem("Create Empty", NULL, false)) {
-			// Do stuff here 
+			openScene->createEmpty();
+			nodes = openScene->getHierarchy();
 		}
 
 		ImGui::EndPopup();
