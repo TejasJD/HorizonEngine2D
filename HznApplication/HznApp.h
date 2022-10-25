@@ -55,8 +55,9 @@ private:
 	std::string contextObject = "";
 	bool openContext = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
+	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 public:
-	EditorLayer(const std::string& name = "Editor Layer");
+	EditorLayer(std::string directoryPath, const std::string& name = "Editor Layer");
 
 	virtual void onAttach() override;
 
@@ -80,6 +81,9 @@ private:
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
 	void drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node);
+
+	void drawAudio(std::string directoryPath);
+	void drawAudioNode(const std::filesystem::path& path);
 };
 
 class HznApp : public Hzn::App
@@ -87,10 +91,7 @@ class HznApp : public Hzn::App
 public:
 	HznApp()
 	{
-		/*addLayer(new SampleLayer());*/
-		addLayer(new EditorLayer());
 
-	
 	}
 	~HznApp() {}
 };

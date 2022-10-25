@@ -15,6 +15,10 @@ namespace Hzn
 		AudioSource();
 		~AudioSource();
 		void init(const char* filename);
+		virtual std::string getComponentType() override { return 0; };
+		virtual void setField(std::string k, std::any v) override{};
+		virtual std::any getField(std::string k) override{ return 0; };
+		virtual std::vector<std::string>* stringify() override{ return 0; };
 		virtual void awake() override{};
 		virtual void start() override{};
 		virtual void update() override{};
