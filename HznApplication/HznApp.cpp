@@ -510,11 +510,10 @@ void EditorLayer::drawHierarchy() {
 	ImGui::End();
 }
 
-std::pair<bool, uint32_t> EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
+void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
-	bool any_node_clicked = false;
-	uint32_t node_clicked = 0;
+	
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
@@ -539,14 +538,7 @@ std::pair<bool, uint32_t> EditorLayer::drawProjectExplorerNode(const std::filesy
 		{
 			if (node_open)
 			{
-
-				auto clickState = drawProjectExplorerNode(entry.path());
-
-				if (!any_node_clicked)
-				{
-					any_node_clicked = clickState.first;
-					node_clicked = clickState.second;
-				}
+				drawProjectExplorerNode(entry.path());
 
 				ImGui::TreePop();
 			}
@@ -567,7 +559,6 @@ std::pair<bool, uint32_t> EditorLayer::drawProjectExplorerNode(const std::filesy
 	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
 	openContext |= ImGui::IsPopupOpen("contextObject");
 
-	return { any_node_clicked, node_clicked };
 }
 
 void EditorLayer::drawProjectExplorer(std::string directoryPath){
@@ -581,7 +572,7 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 
 	static int selection_mask = 0;
 
-	auto clickState = drawProjectExplorerNode(directoryPath);
+	drawProjectExplorerNode(directoryPath);
 
 
 	if (openContext) {
