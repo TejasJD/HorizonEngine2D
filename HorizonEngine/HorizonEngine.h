@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#ifndef HZN_HORIZONENGINE_H
+#ifndef HZN_HORIZON_ENGINE_H
 #define HZN_HORIZON_ENGINE_H
 
 #include "glad/glad.h"
@@ -11,11 +11,11 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
 // Reference additional headers your program requires here.
-
 #include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Core/TimeStep.h"
@@ -24,10 +24,35 @@
 #include "HorizonEngine/Events/KeyEvent.h"
 #include "HorizonEngine/Events/MouseEvent.h"
 
+#include "HorizonEngine/Audio/AudioSource.h"
+#include "HorizonEngine/Audio/SoundBuffer.h"
+#include "HorizonEngine/Audio/SoundDevice.h"
+
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Components/ComponentType.h"
+#include "HorizonEngine/Components/ComponentFactory.h"
+#include "HorizonEngine/Components/Transform.h"
+
+#include "HorizonEngine/FileManagement/ProjectFile.h"
+
+#include "HorizonEngine/Physics2D/BodyType.h"
+#include "HorizonEngine/Physics2D/BoxCollider2D.h"
+#include "HorizonEngine/Physics2D/ColliderType.h"
+#include "HorizonEngine/Physics2D/PhysicsMaterial.h"
+#include "HorizonEngine/Physics2D/PhysicsWorld2D.h"
+#include "HorizonEngine/Physics2D/Rigidbody2D.h"
+
+#include "HorizonEngine/SceneManagement/Scene.h"
+
+#include "HorizonEngine/GameObject.h"
+
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/Codes/MouseCodes.h"
 #include "HorizonEngine/Codes/KeyboardCodes.h"
 
+#include "HorizonEngine/Utils/Math.h"
+#include "HorizonEngine/Utils/Time.h"
+//#include "HorizonEngine/Utils/TreeNode.h"
 
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/Renderer/Renderer.h"

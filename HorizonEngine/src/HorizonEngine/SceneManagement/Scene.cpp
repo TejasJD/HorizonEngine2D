@@ -12,48 +12,105 @@ namespace Hzn {
 	}
 
 	void Scene::open() {
-		/*
-		std::vector<std::string> content = std::vector<std::string>(); // file->getContent();
-		content.push_back("name:Test Name\n");
-		content.push_back("gameObject:GO Name\n");
-		content.push_back("component:Transform\n");
-		content.push_back("values:[\n");
-		content.push_back("\tposition:vec2:0.000000,0.000000\n");
-		content.push_back("\trotation:float:0.000000\n");
-		content.push_back("\tscale:vec2:1.000000,1.000000\n");
-		content.push_back("\tright:vec2:1.000000,0.000000\n");
-		content.push_back("\tup:vec2:0.000000,1.000000\n");
-		content.push_back("\tparent:Transform:Test GO\n");
-		content.push_back("\troot:Transform:Test GO\n");
-		content.push_back("\tsiblingIndex:int:0\n");
-		content.push_back("\tchildrenCount:int:0\n");
-		content.push_back("]\n");
-		content.push_back("component:BoxCollider2D\n");
-		content.push_back("values:[\n");
-		content.push_back("\ttransform:Transform:GO Name\n");
-		content.push_back("\tsize:vec2:1.000000,1.000000\n");
-		content.push_back("\toffset:vec2:0.000000,0.000000\n");
-		content.push_back("]\n");
-		content.push_back("gameObject:Test GO\n");
-		content.push_back("component:Transform\n");
-		content.push_back("values:[\n");
-		content.push_back("\tposition:vec2:0.000000,0.000000\n");
-		content.push_back("\trotation:float:0.000000\n");
-		content.push_back("\tscale:vec2:1.000000,1.000000\n");
-		content.push_back("\tright:vec2:1.000000,0.000000\n");
-		content.push_back("\tup:vec2:0.000000,1.000000\n");
-		content.push_back("\tparent:Transform:NULL\n");
-		content.push_back("\troot:Transform:NULL\n");
-		content.push_back("\tsiblingIndex:int:0\n");
-		content.push_back("\tchildrenCount:int:0\n");
-		content.push_back("]\n");
-		content.push_back("component:BoxCollider2D\n");
-		content.push_back("values:[\n");
-		content.push_back("\ttransform:Transform:Test GO\n");
-		content.push_back("\tsize:vec2:1.000000,1.000000\n");
-		content.push_back("\toffset:vec2:0.000000,0.000000\n");
-		content.push_back("]\n");
-		*/
+		
+		//std::vector<std::string> content = std::vector<std::string>(); // file->getContent();
+		//content.push_back("name:Test Name");
+		//content.push_back("gameObject:GO Name");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:Test GO");
+		//content.push_back("\troot:Transform:Test GO");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:GO Name");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:GO Name 2");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:Test GO");
+		//content.push_back("\troot:Transform:Test GO");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:GO Name 2");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:Test GO");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:NULL");
+		//content.push_back("\troot:Transform:NULL");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:Test GO");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:Test GO 2");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:NULL");
+		//content.push_back("\troot:Transform:NULL");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:Test GO 2");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		//content.push_back("gameObject:GO Name 3");
+		//content.push_back("component:Transform");
+		//content.push_back("values:[");
+		//content.push_back("\tposition:vec2:0.000000,0.000000");
+		//content.push_back("\trotation:float:0.000000");
+		//content.push_back("\tscale:vec2:1.000000,1.000000");
+		//content.push_back("\tright:vec2:1.000000,0.000000");
+		//content.push_back("\tup:vec2:0.000000,1.000000");
+		//content.push_back("\tparent:Transform:Test GO 2");
+		//content.push_back("\troot:Transform:Test GO 2");
+		//content.push_back("\tsiblingIndex:int:0");
+		//content.push_back("\tchildrenCount:int:0");
+		//content.push_back("]");
+		//content.push_back("component:BoxCollider2D");
+		//content.push_back("values:[");
+		//content.push_back("\ttransform:Transform:GO Name 3");
+		//content.push_back("\tsize:vec2:1.000000,1.000000");
+		//content.push_back("\toffset:vec2:0.000000,0.000000");
+		//content.push_back("]");
+		
 
 		// Each line in the file is one of the following:
 		// name:SceneName
@@ -193,6 +250,10 @@ namespace Hzn {
 				else { // If we get to here, then it's a component
 					if (value.compare("NULL") != 0) {
 						it->first->setField(name, findGameObject(value)->getComponent(typeName));
+
+						if (name == "parent" && typeName == "Transform") {
+							std::any_cast<std::vector<std::shared_ptr<Transform>>*>(findGameObject(value)->transform->getField("children"))->push_back(std::dynamic_pointer_cast<Transform>(it->first));
+						}
 					}
 				}
 			}
@@ -270,14 +331,90 @@ namespace Hzn {
 		}
 	}
 
-	void Scene::removeGameObject(std::shared_ptr<GameObject> gameObject) {
-		for (int i = 0; i < gameObjects->size(); i++) {
-			if (gameObjects->at(i)->name.compare(gameObject->name) == 0) {
-				gameObjects->erase(std::next(gameObjects->begin(), i));
-				return;
-			}
-		}
-	}
+	//void Scene::removeChildren(std::shared_ptr<GameObject> gameObject, std::string name, bool removeThis) {
+	//	std::vector<std::shared_ptr<Transform>>* children = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(gameObject->transform->getField("children"));
+
+	//	HZN_CORE_DEBUG(gameObject->name + "'s children: " + std::to_string(children->size()));
+
+	//	for (int i = 0; i < children->size(); i++) {
+	//		std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(children->at(i)->getField("gameObject"));
+
+	//		HZN_CORE_DEBUG(go->name);
+	//		
+	//		if (removeThis) removeChildren(go, name, true);
+	//		else removeChildren(go, name, go->name == name);
+
+	//		if (removeThis) {
+	//			std::vector<std::shared_ptr<Component>>* components = go->getComponents();
+	//			for (int j = 0; j < components->size(); j++) {
+
+	//				if (components->at(j)->getComponentType() == "Transform") {
+	//					std::shared_ptr<Component> parent;
+	//					try {
+	//						parent = std::any_cast<std::shared_ptr<Component>>(components->at(j)->getField("parent"));
+	//					}
+	//					catch (const std::bad_any_cast& e) {
+	//						parent = NULL;
+	//					}
+
+	//					if (parent != NULL) {
+	//						std::vector<std::shared_ptr<Transform>>* currentGameObjectParentChildren = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(parent->getField("children"));
+	//						for (int k = 0; k < currentGameObjectParentChildren->size(); k++) {
+	//							if (currentGameObjectParentChildren->at(k).get() == components->at(j).get()) {
+	//								currentGameObjectParentChildren->erase(currentGameObjectParentChildren->begin() + k);
+	//								break;
+	//							}
+	//						}
+	//					}
+	//				}
+
+	//				std::vector<std::shared_ptr<Component>>* componentGroup = componentGroups->find(components->at(i)->getComponentType())->second;
+	//				for (int k = 0; k < componentGroup->size(); k++) {
+	//					if (componentGroup->at(k).get() == components->at(j).get()) {
+	//						componentGroup->erase(componentGroup->begin() + k);
+	//						break;
+	//					}
+	//				}
+
+	//				go->removeComponent(components->at(j)->getComponentType());
+	//				j--;
+	//			}
+	//		}
+	//	}
+	//}
+
+	//void Scene::removeGameObject(std::string name) {
+	//	for (int i = 0; i < gameObjects->size(); i++) {
+	//		if (gameObjects->at(i)->name.compare(name) == 0) {
+
+	//			// Delete children of the game object
+	//			removeChildren(gameObjects->at(i), name, gameObjects->at(i)->name == name);
+
+	//			// Delete components of the game object
+	//			std::vector<std::shared_ptr<Component>>* components = gameObjects->at(i)->getComponents();
+	//			for (int j = 0; j < components->size(); j++) {
+
+	//				std::vector<std::shared_ptr<Component>>* componentGroup = componentGroups->find(components->at(i)->getComponentType())->second;
+	//				for (int k = 0; k < componentGroup->size(); k++) {
+	//					if (componentGroup->at(k).get() == components->at(j).get()) {
+	//						componentGroup->erase(componentGroup->begin() + k);
+	//						break;
+	//					}
+	//				}
+
+	//				gameObjects->at(i)->removeComponent(components->at(j)->getComponentType());
+	//				j--;
+	//			}
+
+	//			// Delete the game object from the scene
+	//			gameObjects->erase(std::next(gameObjects->begin(), i));
+	//			return;
+	//		}
+	//		else {
+	//			removeChildren(gameObjects->at(i), name, false);
+	//		}
+	//	}
+	//}
 
 	std::shared_ptr<GameObject> Scene::findGameObject(std::string name) {
 		for (int i = 0; i < gameObjects->size(); i++) {
@@ -291,5 +428,93 @@ namespace Hzn {
 
 	std::vector<std::shared_ptr<GameObject>>* Scene::getObjects() {
 		return gameObjects;
+	}
+
+	std::vector<std::shared_ptr<TreeNode<std::string>>> Scene::getHierarchy() {
+		std::vector<std::shared_ptr<Component>>* transforms = componentGroups->find("Transform")->second;
+
+		std::vector<std::shared_ptr<TreeNode<std::string>>> nodes = std::vector<std::shared_ptr<TreeNode<std::string>>>();
+		for (int i = 0; i < transforms->size(); i++) {
+			std::shared_ptr<Component> parent;
+			try {
+				parent = std::any_cast<std::shared_ptr<Component>>(transforms->at(i)->getField("parent"));
+			}
+			catch (const std::bad_any_cast& e) {
+				parent = NULL;
+			}
+			if (parent == NULL) {
+				std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(transforms->at(i)->getField("gameObject"));
+
+				// TreeNode<std::string>* temp = new TreeNode<std::string>(n);
+				std::shared_ptr<TreeNode<std::string>> node = std::make_shared<TreeNode<std::string>>();
+				node->item = go->name;
+				node->level = 0;
+				
+				getChildren(transforms->at(i), node);
+				nodes.push_back(node);
+			}
+		}
+
+		return nodes;
+	}
+
+	void Scene::getChildren(std::shared_ptr<Component> transform, std::shared_ptr<TreeNode<std::string>> node) {
+		std::vector<std::shared_ptr<Transform>>* children = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(transform->getField("children"));
+
+		for (int i = 0; i < children->size(); i++) {
+			std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(children->at(i)->getField("gameObject"));
+			std::shared_ptr<TreeNode<std::string>> child = std::make_shared<TreeNode<std::string>>(); // std::make_shared<TreeNode<std::string>>(node->level + 1, go->name);
+			child->item = go->name;
+			child->level = node->level + 1;
+
+			getChildren(children->at(i), child);
+			node->add(child);
+		}
+	}
+
+	std::string Scene::generateRandomString(const int len) {
+		static const char alphanum[] =
+			"0123456789"
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			"abcdefghijklmnopqrstuvwxyz";
+		std::string tmp_s;
+		tmp_s.reserve(len);
+
+		for (int i = 0; i < len; ++i) {
+			tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+		}
+
+		return tmp_s;
+	}
+
+	void Scene::createEmpty(std::string parentName) {
+		std::shared_ptr<GameObject> parent;
+		for (int i = 0; i < gameObjects->size(); i++) {
+			if (gameObjects->at(i)->name == parentName) {
+				parent = std::make_shared<GameObject>(gameObjects->at(i));
+			}
+		}
+
+		std::string name = generateRandomString(20);
+		std::shared_ptr<GameObject> newObject = std::make_shared<GameObject>(name);
+
+		std::shared_ptr<Component> c(FACTORY(Component).create("Transform"));
+		if (name != "" && parent) {
+			c->setField("parent", std::shared_ptr<Component>(parent->transform));
+			try {
+				c->setField("root", std::shared_ptr<Component>(std::any_cast<std::shared_ptr<Component>>(parent->transform->getField("root"))));
+			}
+			catch (const std::bad_any_cast& e) {
+				c->setField("root", NULL);
+			}
+			c->setField("position", parent->transform->getField("position"));
+
+			// Set this object as a child to its parent
+			std::any_cast<std::vector<std::shared_ptr<Transform>>*>(findGameObject(parentName)->transform->getField("children"))->push_back(std::dynamic_pointer_cast<Transform>(c));
+		}
+
+		newObject->addComponent(c);
+
+		addGameObject(newObject);
 	}
 }
