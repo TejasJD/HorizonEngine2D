@@ -7,7 +7,7 @@
 
 namespace Hzn
 {
-	Shader* Shader::create(const std::initializer_list<std::pair<ShaderType, std::string>>& nameAndPath)
+	std::shared_ptr<Shader> Shader::create(const std::initializer_list<std::pair<ShaderType, std::string>>& nameAndPath)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,14 +15,14 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new GLShader(nameAndPath);
+			return std::make_shared<GLShader>(nameAndPath);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");
 		return nullptr;
 	}
 
-	Shader* Shader::create(const std::string& vertexSource, const std::string& fragmentSource)
+	std::shared_ptr<Shader> Shader::create(const std::string& vertexSource, const std::string& fragmentSource)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -30,7 +30,7 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new GLShader(vertexSource, fragmentSource);
+			return std::make_shared<GLShader>(vertexSource, fragmentSource);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");

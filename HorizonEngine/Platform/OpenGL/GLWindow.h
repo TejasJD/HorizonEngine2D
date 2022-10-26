@@ -42,6 +42,6 @@ namespace Hzn
 		GLFWwindow* m_Window;
 		bool m_Vsync = false;
 
-		std::unique_ptr<RenderContext> m_Context;
+		std::shared_ptr<RenderContext> m_Context;
 	};
 }

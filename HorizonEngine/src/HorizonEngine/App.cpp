@@ -14,8 +14,8 @@ namespace Hzn
 		registerComponents();
 		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
-		m_Input = std::unique_ptr<Input>(Input::create());
-		m_Window = std::unique_ptr<Window>(Window::create(800, 600, "HorizonEngine"));
+		m_Input = Input::create();
+		m_Window = Window::create(800, 600, "HorizonEngine");
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
 		m_Window->setVsync(true);
 

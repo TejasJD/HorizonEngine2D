@@ -6,15 +6,6 @@
 
 namespace Hzn
 {
-	GLRendererAPI::GLRendererAPI()
-	{
-	}
-
-	GLRendererAPI::~GLRendererAPI()
-	{
-
-	}
-
 	void GLRendererAPI::init()
 	{
 		glEnable(GL_BLEND);
@@ -34,10 +25,5 @@ namespace Hzn
 	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->getElementBuffer()->size(), GL_UNSIGNED_INT, nullptr);
-	}
-
-	void GLRendererAPI::drawTriangles(const std::shared_ptr<VertexArray>& vertexArray)
-	{
-		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 }

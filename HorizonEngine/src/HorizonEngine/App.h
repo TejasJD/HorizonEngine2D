@@ -66,10 +66,6 @@ namespace Hzn
 		LayerStack m_Layers;
 		TimeStep m_TimeStep;
 		float lastFrameTime = 0.0f;
-		
-		/*unsigned int m_VertexArray = 0;*/
-		//unsigned int m_VertexBufferId = 0;
-		//unsigned int m_ElementBufferId = 0;
 	};
 
 	// to be defined by the application that implements this function

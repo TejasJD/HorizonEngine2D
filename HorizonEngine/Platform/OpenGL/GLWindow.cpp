@@ -42,7 +42,7 @@ namespace Hzn
 		HZN_CORE_ASSERT(glfwSuccess, "Failed to initialize GLFW!");
 
 		m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title, nullptr, nullptr);
-		m_Context = std::unique_ptr<RenderContext>(RenderContext::create(m_Window));
+		m_Context = RenderContext::create(m_Window);
 		m_Context->init();
 
 		//! set the glfwWindowUserPointer to hold additional data.

@@ -39,12 +39,12 @@ set(HZN_SOURCE_FILES
 	"Platform/OpenGL/GLVertexArray.cpp"
 	"src/HorizonEngine/Renderer/VertexArray.cpp"
 	"src/HorizonEngine/Renderer/Renderer.cpp"
-	"src/HorizonEngine/Camera.h"
+	"src/HorizonEngine/Camera/Camera.h"
 	"src/HorizonEngine/Renderer/RenderCall.cpp"
 	"Platform/OpenGL/GLRendererAPI.cpp"
-	"src/HorizonEngine/Camera.cpp"
+	"src/HorizonEngine/Camera/Camera.cpp"
 	"Platform/OpenGL/FDWindows.cpp"
-	"src/HorizonEngine/Renderer/Texture.cpp" "Platform/OpenGL/GLTexture.cpp" "src/vendor/stb/stbimage.cpp")
+	"src/HorizonEngine/Renderer/Texture.cpp" "Platform/OpenGL/GLTexture.cpp" "src/vendor/stb/stbimage.cpp" "src/HorizonEngine/Camera/CameraController.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -103,7 +103,7 @@ set(HZN_HEADER_FILES
 	"Platform/OpenGL/FDWindows.h"
 	"src/HorizonEngine/Core/TimeStep.h"
 	"Platform/OpenGL/GLTexture.h"
-	"src/HorizonEngine/Renderer/Texture.h")
+	"src/HorizonEngine/Renderer/Texture.h" "src/HorizonEngine/Camera/CameraController.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

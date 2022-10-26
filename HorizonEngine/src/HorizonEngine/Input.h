@@ -17,7 +17,7 @@ namespace Hzn
 	{
 	public:
 		virtual ~Input() {}
-		static Input* create();
+		static std::shared_ptr<Input> create();
 		inline static bool keyPressed(int key) { return m_Instance->keyPressedUtil(key); }
 		inline static bool mouseButtonPresssed(int button) { return m_Instance->mouseButtonPressedUtil(button); }
 		inline static std::pair<double, double> getMousePos() { return m_Instance->getMousePosUtil(); }
@@ -32,7 +32,7 @@ namespace Hzn
 		virtual double getMouseYUtil() const = 0;
 
 	private:
-		static Input* m_Instance;
+		static std::shared_ptr<Input> m_Instance;
 	};
 }
 

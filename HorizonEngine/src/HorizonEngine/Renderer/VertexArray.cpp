@@ -7,7 +7,7 @@
 
 namespace Hzn
 {
-	VertexArray* VertexArray::create()
+	std::shared_ptr<VertexArray> VertexArray::create()
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new GLVertexArray();
+			return std::make_shared<GLVertexArray>();
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");

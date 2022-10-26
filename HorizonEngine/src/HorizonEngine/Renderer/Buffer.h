@@ -137,7 +137,7 @@ namespace Hzn
 		virtual void setBufferLayout(const BufferLayout& layout) = 0;
 		virtual BufferLayout getBufferLayout() const = 0;
 
-		static VertexBuffer* create(std::vector<float> vertices);
+		static std::shared_ptr<VertexBuffer> create(std::vector<float> vertices);
 
 	protected:
 		VertexBuffer() {}
@@ -154,7 +154,7 @@ namespace Hzn
 		virtual void unbind() const = 0;
 		virtual unsigned int size() const = 0;
 
-		static ElementBuffer* create(std::vector<unsigned int> indices);
+		static std::shared_ptr<ElementBuffer> create(std::vector<unsigned int> indices);
 
 	protected:
 		ElementBuffer() {}
