@@ -7,8 +7,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	app->addLayer(new EditorLayer("E:\\code file\\groupProject"));
-	app->addLayer(new SampleLayer());
+	app->addLayer(new EditorLayer());
+	//app->addLayer(new SampleLayer());
 	return app;
 }
 
@@ -179,14 +179,12 @@ bool SampleLayer::onMouseScroll(Hzn::MouseScrolledEvent& event)
 }
 
 
-
 // ************************************************************************
 
 // *********** EDITOR LAYER **********
-EditorLayer::EditorLayer(std::string directoryPath, const std::string& name) : Layer(name) {
-	projectRootFolder = directoryPath;
-	projectPath = "Project(" + projectRootFolder + ")";
-
+EditorLayer::EditorLayer(const std::string& name) : Layer(name) {
+	
+	//Initialize the audio system and load the files under the audio folder
 	Hzn::SoundDevice::Init();
 
 	for (const auto& entry : std::filesystem::directory_iterator("assets/audios/"))
@@ -197,6 +195,8 @@ EditorLayer::EditorLayer(std::string directoryPath, const std::string& name) : L
 
 	}
 }
+
+
 
 void EditorLayer::onAttach()
 {
@@ -383,7 +383,8 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 
 		ImGui::DockBuilderDockWindow("Scene", center);
 		ImGui::DockBuilderDockWindow("Object Behaviour", left);
-		ImGui::DockBuilderDockWindow(projectPath.c_str(), rightUp);
+		//ImGui::DockBuilderDockWindow(projectPath.c_str(), rightUp);
+		//ImGui::DockBuilderDockWindow("Audio", rightUp);
 		ImGui::DockBuilderDockWindow("Hierarchy", rightDown);
 		ImGui::DockBuilderDockWindow("Console", down);
 
@@ -439,7 +440,18 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 			ImGui::Separator();
 
 			ImGui::MenuItem("New Project", "Ctrl+Shift+N", false);
-			ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false);
+
+			if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
+			{
+				std::string projectFilePath = Hzn::FileDialogs::openFile();
+
+				//Check if the dtring returns empty or not
+				if (projectFilePath != "") {
+					projectRootFolder = std::filesystem::path(projectFilePath).parent_path().string();
+					projectPath = "Project(" + projectRootFolder + ")";
+				}
+			}
+
 			ImGui::Separator();
 
 			ImGui::MenuItem("Build Settings", NULL, false);
@@ -700,7 +712,9 @@ void EditorLayer::drawHierarchy() {
 void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
-	
+	if (path.empty()) {
+		return ;
+	}
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
@@ -735,7 +749,13 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 			contextObject = entry.path().string();
 		}
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		if (!entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			contextObject = entry.path().string();
+
+			ImGui::OpenPopup("dirContextObject");
+		}
+
+		if (entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 			contextObject = entry.path().string();
 
 			ImGui::OpenPopup("contextObject");
@@ -743,18 +763,19 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 	}
 
 
-	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
 	openContext |= ImGui::IsPopupOpen("contextObject");
+	dirOpenContext |= ImGui::IsPopupOpen("dirContextObject");
+
 
 }
 
 void EditorLayer::drawProjectExplorer(std::string directoryPath){
 
 	openContext = false;
+	dirOpenContext = false;
 	ImGui::Begin(projectPath.c_str());
 
 	drawProjectExplorerNode(directoryPath);
-
 
 	if (openContext) {
 		if (ImGui::IsPopupOpen("contextObject")) {
@@ -764,7 +785,6 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		ImGui::OpenPopup("contextObject");
 
 		ImGui::BeginPopup("contextObject");
-		//HZN_CORE_DEBUG("Object: " + contextObject);
 
 		if (ImGui::MenuItem("Cut", NULL, false)) {
 			// Do stuff here
@@ -782,15 +802,58 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 			// Do stuff here 
 			
 		}
-		if (ImGui::MenuItem("Delete", NULL, false)) {
+		if (ImGui::MenuItem("Delete")) {
+			
 			Hzn::ProjectFile pf(contextObject);
 			pf.deleteFile(contextObject);
 		}
+	
+		ImGui::EndPopup();
+	}
+
+	if (dirOpenContext) {
+		if (ImGui::IsPopupOpen("dirContextObject")) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::OpenPopup("dirContextObject");
+
+		ImGui::BeginPopup("dirContextObject");
+		//HZN_CORE_DEBUG("Object: " + contextObject);
+
+		if (ImGui::MenuItem("Cut", NULL, false)) {
+			// Do stuff here
+		}
+		if (ImGui::MenuItem("Copy", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Paste", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Duplicate", NULL, false)) {
+			// Do stuff here 
+		}
+		if (ImGui::MenuItem("Rename", NULL, false)) {
+			// Do stuff here 
+
+		}
+		if (ImGui::MenuItem("Delete", NULL, false)) {
+			
+		}
+
 		ImGui::Separator();
 
 		if (ImGui::MenuItem("Create new file", NULL, false)) {
 			// Do stuff here 
-			
+
+			if (std::filesystem::exists(contextObject + "/new file"))
+			{
+				HZN_CRITICAL("new file already exists");
+			}
+			else {
+				std::ofstream(contextObject + "/new file");
+			}
+
 		}
 
 		ImGui::EndPopup();
@@ -803,6 +866,27 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 	const bool is_active = ImGui::IsItemActive();   // Held
+
+	// Context menu (under default mouse threshold)
+	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+		ImGui::OpenPopupOnItemClick("contextProject", ImGuiPopupFlags_MouseButtonRight);
+	}
+	if (ImGui::BeginPopup("contextProject")) {
+		
+
+		if (ImGui::MenuItem("Create new file", NULL, false)) {
+			if (std::filesystem::exists(projectRootFolder + "/new file"))
+			{
+				HZN_CRITICAL("new file already exists");
+			}
+			else {
+				std::ofstream(projectRootFolder + "/new file");
+			}
+		}
+
+		ImGui::EndPopup();
+	}
 
 	ImGui::End();
 }
@@ -874,7 +958,6 @@ void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 	}
 
 
-	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
 	openContext |= ImGui::IsPopupOpen("contextObject");
 
 }
@@ -883,8 +966,8 @@ void EditorLayer::drawAudio(std::string directoryPath) {
 	
 
 	openContext = false;
-	ImGui::Begin("Audio");
-
+	ImGui::Begin("Audios");
+	
 	drawAudioNode(directoryPath);
 
 	if (openContext) {
@@ -900,15 +983,12 @@ void EditorLayer::drawAudio(std::string directoryPath) {
 			audioFileMap.find(contextObject)->second->Play();
 		}
 		if (ImGui::MenuItem("Pause", NULL, false)) {
-			// Do stuff here 
 			audioFileMap.find(contextObject)->second->Pause();
 		}
 		if (ImGui::MenuItem("Resume", NULL, false)) {
-			// Do stuff here 
 			audioFileMap.find(contextObject)->second->Resume();
 		}
 		if (ImGui::MenuItem("Stop", NULL, false)) {
-			// Do stuff here 
 			audioFileMap.find(contextObject)->second->Stop();
 		}
 

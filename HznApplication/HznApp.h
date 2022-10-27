@@ -50,14 +50,15 @@ class EditorLayer : public Hzn::Layer
 private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
-	std::string projectPath;
+	std::string projectPath ="Project (No open project)";;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
 	bool openContext = false;
+	bool dirOpenContext = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 public:
-	EditorLayer(std::string directoryPath, const std::string& name = "Editor Layer");
+	EditorLayer(const std::string& name = "Editor Layer");
 
 	virtual void onAttach() override;
 
