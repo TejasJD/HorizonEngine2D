@@ -2,53 +2,6 @@
 
 #ifndef HZNAPP_HZNAPP_H
 #define HZNAPP_HZNAPP_H
-
-// ********** Sample Layer **********
-
-class SampleLayer : public Hzn::Layer
-{
-public:
-	SampleLayer(const std::string& name = "Sample Layer");
-
-	// Inherited via Layer
-	virtual void onUpdate(Hzn::TimeStep timestep) override;
-
-	virtual void onAttach() override;
-
-	virtual void onDetach() override;
-
-	virtual void onRenderImgui() override;
-
-	virtual void onEvent(Hzn::Event& event) override;
-
-	void mouseMovementCamera(Hzn::TimeStep deltaTime);
-
-	bool onMouseScroll(Hzn::MouseScrolledEvent& event);
-
-private:
-	glm::vec3 gridColor = { 0.2f, 0.0f, 0.5f };
-	glm::vec3 cameraPosition = { 0.0f, 0.0f, 0.0f };
-
-	glm::vec3 positonOfObject = { 0.0f, 0.0f, 0.0f };
-
-	float previousSecond = 0.0f;
-	float fps = 0.0f;
-	float frameCount = 0.0f;
-	float rotation = 90.0f;
-	float aspectRatio = 1.0f;
-	float zoom = 1.0f;
-	int quads = 10;
-
-	std::shared_ptr<Hzn::VertexArray> vertexArray;
-	std::shared_ptr<Hzn::VertexBuffer> vertexBuffer;
-	std::shared_ptr<Hzn::ElementBuffer> elementBuffer;
-	std::shared_ptr<Hzn::Shader> shader, textureShader;
-
-	std::shared_ptr<Hzn::Texture> texture;
-	std::shared_ptr<Hzn::Texture> logoTexture;
-	Hzn::OrthographicCameraController cameraController;
-};
-
 // ********** Edior Layer **********
 
 class EditorLayer : public Hzn::Layer
@@ -88,8 +41,14 @@ private:
 class HznApp : public Hzn::App
 {
 public:
-	HznApp() {}
-	~HznApp() {}
+	HznApp()
+	{
+		Hzn::Renderer2D::init();
+	}
+	~HznApp()
+	{
+		Hzn::Renderer2D::destroy();
+	}
 };
 
 #endif // !HZNAPP_HZNAPP_H

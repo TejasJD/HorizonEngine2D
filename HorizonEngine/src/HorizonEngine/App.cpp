@@ -39,9 +39,12 @@ namespace Hzn
 			TimeStep deltaTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
 			//! general layer update
-			for (auto& layer : m_Layers)
+			if (!m_Minimized) 
 			{
-				layer->onUpdate(deltaTime);
+				for (auto& layer : m_Layers)
+				{
+					layer->onUpdate(deltaTime);
+				}
 			}
 
 			//! updates UI components on any layers
@@ -64,11 +67,24 @@ namespace Hzn
 		return true;
 	}
 
+	bool App::onWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetHeight() == 0 || e.GetWidth() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		Renderer::onWindowResize(e.GetWidth(), e.GetHeight());
+		m_Minimized = false;
+		return false;
+	}
+
 	//! the onEvent function of application class that handles any events coming to the application
 	void App::onEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&App::onWindowClose, this, std::placeholders::_1));
+		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&App::onWindowResize, this, std::placeholders::_1));
 
 		/*auto val = Input::getMousePos();*/
 		/*HZN_CORE_TRACE("{0}, {0}", val.first, val.second);*/

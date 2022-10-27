@@ -34,10 +34,13 @@ namespace Hzn
 
 		virtual float getTranslationSpeed() const = 0;
 		virtual float getRotationSpeed() const = 0;
+		virtual void enableRotation(bool flag) = 0;
+		virtual void enableMouseDragMovement(bool flag) = 0;
 
 	private:
 		virtual bool onWindowResize(WindowResizeEvent& e) = 0;
 		virtual bool onMouseScrolled(MouseScrolledEvent& e) = 0;
+		virtual bool onMouseButtonPressed(MouseButtonPressedEvent& e) = 0;
 	};
 	
 	//! Orthographic Camera Controller. Usually used in 2D scenarios. Wrapper around an Orthographic Camera.
@@ -72,16 +75,26 @@ namespace Hzn
 		virtual float getTranslationSpeed() const override { return m_TranslationSpeed; }
 		virtual float getRotationSpeed() const override { return m_RotationSpeed; }
 
+		virtual void enableRotation(bool flag) override { m_CanRotate = flag; }
+
+		virtual void enableMouseDragMovement(bool flag) override { m_MouseDrag = flag; }
+
 	private:
 		virtual bool onWindowResize(WindowResizeEvent& e) override;
-
 		virtual bool onMouseScrolled(MouseScrolledEvent& e) override;
+		virtual bool onMouseButtonPressed(MouseButtonPressedEvent& e) override;
 
 		OrthographicCamera m_Camera;
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
 		float m_Rotation = 0.0f;
 		float m_TranslationSpeed = 2.5f;
 		float m_RotationSpeed = 4.0f;
+		float lastX = 0.0f;
+		float lastY = 0.0f;
+
+		bool mousePressed = false;
+		bool m_MouseDrag = false;
+		bool m_CanRotate = false;
 	};
 }
 

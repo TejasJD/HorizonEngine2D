@@ -8,7 +8,7 @@ project(HznApplication)
 set(HZAPP_SOURCE_FILES
 	"HznApp.cpp"
 	"Sandbox.cpp"
-)
+ )
 
 set(HZAPP_HEADER_FILES
 	"HznApp.h"

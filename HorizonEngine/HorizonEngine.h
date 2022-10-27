@@ -54,8 +54,11 @@
 #include "HorizonEngine/Utils/Time.h"
 
 #include "HorizonEngine/Layer.h"
-#include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Renderer/RenderCall.h"
+#include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Renderer/Renderer2D.h"
+#include "HorizonEngine/Renderer/Renderer3D.h"
+
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/Shader.h"
 #include "HorizonEngine/Renderer/VertexArray.h"

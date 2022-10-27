@@ -61,9 +61,10 @@ namespace Hzn
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				data.width = width;
+				data.height = height;
 				WindowResizeEvent eventObj(width, height);
 				data.callback(eventObj);
-				glViewport(0, 0, width, height);
 			});
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y)

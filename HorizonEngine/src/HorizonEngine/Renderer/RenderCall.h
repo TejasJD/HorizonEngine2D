@@ -14,6 +14,11 @@ namespace Hzn
 
 		inline static void init() { m_Api->init(); }
 
+		inline static void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+		{
+			m_Api->setViewport(0, 0, width, height);
+		}
+
 		inline static void setClearColor(const glm::vec4& color) { m_Api->setClearColor(color); }
 
 		inline static void submitClear() { m_Api->submitClear(); }

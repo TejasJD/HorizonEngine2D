@@ -44,6 +44,7 @@ namespace Hzn
 
 		void run();
 		bool onWindowClose(WindowCloseEvent& e);
+		bool onWindowResize(WindowResizeEvent& e);
 		void onEvent(Event& e);
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_Window; }
@@ -53,7 +54,8 @@ namespace Hzn
 		static App* m_Instance;
 
 	private:
-		bool m_Running;
+		bool m_Running = true;
+		bool m_Minimized = false;
 
 		std::shared_ptr<Window> m_Window;
 		std::shared_ptr<Input> m_Input;

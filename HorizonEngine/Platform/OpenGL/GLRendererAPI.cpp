@@ -8,6 +8,7 @@ namespace Hzn
 {
 	void GLRendererAPI::init()
 	{
+		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
@@ -25,5 +26,10 @@ namespace Hzn
 	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->getElementBuffer()->size(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void GLRendererAPI::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+	{
+		glViewport(x, y, width, height);
 	}
 }
