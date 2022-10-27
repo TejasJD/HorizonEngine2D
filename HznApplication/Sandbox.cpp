@@ -6,7 +6,8 @@ Sandbox::Sandbox(const std::string& name)
 	:cameraController(Hzn::OrthographicCameraController(
 		(float)Hzn::App::getApp().getAppWindow().getWidth() / (float)Hzn::App::getApp().getAppWindow().getHeight(), 1.0f))
 {
-	
+	/*cameraController.enableMouseDragMovement(true);
+	cameraController.enableRotation(true);*/
 }
 
 void Sandbox::onUpdate(Hzn::TimeStep deltaTime)
@@ -18,8 +19,9 @@ void Sandbox::onUpdate(Hzn::TimeStep deltaTime)
 
 	Hzn::Renderer2D::beginScene(dynamic_cast<const Hzn::OrthographicCamera&>(cameraController.getCamera()));
 
-	Hzn::Renderer2D::drawQuad(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.6f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	Hzn::Renderer2D::drawQuad(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.8f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+	Hzn::Renderer2D::drawQuad(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
+	Hzn::Renderer2D::drawQuad(glm::vec3(0.51f, 0.0f, 0.0f), glm::vec3(0.5f));
+	Hzn::Renderer2D::drawQuad(glm::vec3(1.02f, 0.0f, 0.0f), glm::vec3(0.5f));
 
 	Hzn::Renderer2D::endScene();
 }

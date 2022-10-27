@@ -44,7 +44,7 @@ namespace Hzn
 		/// <param name="position">: Where should the shape appear on the screen (x, y). </param>
 		/// <param name="size">: What should be the size of the shape.</param>
 		/// <param name="color">: What should be the color of the shape.</param>
-		static void drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color);
+		static void drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color = glm::vec4(1.0f));
 		/// <summary>
 		/// Render a quadrilateral (4-sided shape) on the screen. This method takes (x, y, z) for the position.
 		/// The z coordinates allows you to Render a shape in front of or behind other shape.
@@ -52,7 +52,7 @@ namespace Hzn
 		/// <param name="position">: Where should the shape appear on the screen (x, y, z).</param>
 		/// <param name="size">: What should be the size of the shape.</param>
 		/// <param name="color">: What should be the color of the shape.</param>
-		static void drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color);
+		static void drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color = glm::vec4(1.0f));
 		/// <summary>
 		/// Check if the renderer was initialized.
 		/// </summary>

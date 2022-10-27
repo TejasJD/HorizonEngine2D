@@ -142,13 +142,13 @@ namespace Hzn
 		virtual glm::vec3 getPosition() const override { return m_Position; }
 		/// <summary>
 		/// Set the position of the camera to the given position.
-		/// Recaculates the projection matrix.
+		/// Recalculates the projection matrix.
 		/// </summary>
 		/// <param name="position">: 3D Position vector of the camera.</param>
 		virtual void setPosition(const glm::vec3& position) override
 		{
-			m_Position = position;
-			calculateViewMatrix();
+				m_Position = position;
+				calculateViewMatrix();
 		}
 
 		virtual float getRotation() const override { return m_Rotation; }
