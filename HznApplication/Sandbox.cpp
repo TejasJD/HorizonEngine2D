@@ -15,16 +15,17 @@ Sandbox::Sandbox(const std::string& name)
 void Sandbox::onUpdate(Hzn::TimeStep deltaTime)
 {
 	calculateFps();
-	cameraController.onUpdate(deltaTime);
+	cameraController.getCamera().setPosition(glm::vec3{ gridSize / 2 * 0.11f, gridSize / 2 * 0.11f, 0.0f });
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
 
-	cameraController.getCamera().setPosition(glm::vec3{ gridSize / 2 * 0.11f, gridSize / 2 * 0.11f, 0.0f });
 	Hzn::Renderer2D::beginScene(dynamic_cast<const Hzn::OrthographicCamera&>(cameraController.getCamera()));
 
-	/*Hzn::Renderer2D::drawQuad(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
-	Hzn::Renderer2D::drawQuad(glm::vec3(0.51f, 0.0f, 0.0f), glm::vec3(0.5f));
-	Hzn::Renderer2D::drawQuad(glm::vec3(1.02f, 0.0f, 0.0f), glm::vec3(0.5f));*/
+	// if the food goes out of the grid, generate new food.
+	if (food.first >= gridSize || food.second >= gridSize)
+	{
+		food = generateFood();
+	}
 
 	// update snake position
 
