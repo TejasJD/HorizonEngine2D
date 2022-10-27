@@ -9,10 +9,13 @@ class EditorLayer : public Hzn::Layer
 private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
+	std::string projectPath ="Project (No open project)";;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
 	bool openContext = false;
+	bool dirOpenContext = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
+	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 public:
 	EditorLayer(const std::string& name = "Editor Layer");
 
@@ -31,11 +34,16 @@ private:
 	void drawScene();
 	void drawObjectBehaviour();
 	void drawHierarchy();
-	void drawProjectExplorer();
+	void drawProjectExplorer(std::string directoryPath);
+	void drawProjectExplorerNode(const std::filesystem::path& path);
+
 	void drawConsole();
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
 	void drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node);
+
+	void drawAudio(std::string directoryPath);
+	void drawAudioNode(const std::filesystem::path& path);
 };
 
 class HznApp : public Hzn::App
