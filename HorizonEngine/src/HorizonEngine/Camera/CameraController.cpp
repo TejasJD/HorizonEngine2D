@@ -23,7 +23,7 @@ namespace Hzn
 		}
 
 
-		if (m_Rotation)
+		if (m_CanRotate)
 		{
 			if (Hzn::Input::keyPressed(Hzn::Key::Q))
 			{

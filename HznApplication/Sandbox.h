@@ -3,6 +3,11 @@
 #ifndef HZNAPP_SANDBOX_H
 #define HZNAPP_SANDBOX_H
 
+enum class Direction
+{
+	Up = 0, Down, Left, Right
+};
+
 class Sandbox : public Hzn::Layer
 {
 public:
@@ -31,11 +36,19 @@ private:
 		}
 	}
 	glm::vec3 gridColor = { 0.0f, 1.0f, 0.0f };
+	glm::vec3 gridPosition = { 0.0, 0.0f, 0.0f };
+
 	float fps = 0.0f;
 	float frameCount = 0.0f;
 	float currentTime = 0.0f;
 	float lastTime = 0.0f;
 	float objScale = 1.0f;
+
+	float lTime = 0.0f;
+
+	Direction direction = Direction::Up;
+
+	std::deque<std::pair<int, int>> snakeSize = { {0, 0}, {0, 1}, {0, 2} };
 
 	Hzn::OrthographicCameraController cameraController;
 };

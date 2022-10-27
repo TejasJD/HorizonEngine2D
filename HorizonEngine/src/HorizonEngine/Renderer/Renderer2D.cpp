@@ -71,13 +71,13 @@ namespace Hzn
 
 	}
 
-	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color = glm::vec4(1.0f))
+	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color)
 	{
 		checkInitialized();
 		drawQuad(glm::vec3(position, 1.0f), size, color);
 	}
 
-	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color = glm::vec4(1.0f))
+	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color)
 	{
 		checkInitialized();
 		s_Data->shader->setUniform("a_Color", color);
