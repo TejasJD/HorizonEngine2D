@@ -839,12 +839,13 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		}
 		if (ImGui::MenuItem("Delete", NULL, false)) {
 			
+			Hzn::ProjectFile* pf = nullptr;
+			pf->deleteDir(contextObject);
 		}
 
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Create new file", NULL, false)) {
-			// Do stuff here 
+		if (ImGui::MenuItem("New file", NULL, false)) {
 
 			if (std::filesystem::exists(contextObject + "/new file"))
 			{
@@ -852,6 +853,18 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 			}
 			else {
 				std::ofstream(contextObject + "/new file");
+			}
+
+		}
+
+		if (ImGui::MenuItem("New folder", NULL, false)) {
+
+			if (std::filesystem::exists(contextObject + "/new folder"))
+			{
+				HZN_CRITICAL("new folder already exists");
+			}
+			else {
+				std::filesystem::create_directory(contextObject + "/new folder");
 			}
 
 		}
@@ -875,7 +888,7 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 	if (ImGui::BeginPopup("contextProject")) {
 		
 
-		if (ImGui::MenuItem("Create new file", NULL, false)) {
+		if (ImGui::MenuItem("New file", NULL, false)) {
 			if (std::filesystem::exists(projectRootFolder + "/new file"))
 			{
 				HZN_CRITICAL("new file already exists");
@@ -884,6 +897,19 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 				std::ofstream(projectRootFolder + "/new file");
 			}
 		}
+
+		if (ImGui::MenuItem("New folder", NULL, false)) {
+
+			if (std::filesystem::exists(projectRootFolder + "/new folder"))
+			{
+				HZN_CRITICAL("new folder already exists");
+			}
+			else {
+				std::filesystem::create_directory(projectRootFolder + "/new folder");
+			}
+
+		}
+
 
 		ImGui::EndPopup();
 	}
