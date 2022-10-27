@@ -43,6 +43,7 @@ namespace Hzn {
 		void setField(std::string k, std::any v) override;
 		std::any getField(std::string k) override;
 		std::vector<std::string>* stringify() override;
+		std::map<std::string, std::any>* getValues() override;
 	private:
 		void awake() override;
 		void start() override;

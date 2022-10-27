@@ -51,6 +51,10 @@ namespace Hzn {
 		return content;
 	}
 
+	std::map<std::string, std::any>* BoxCollider2D::getValues() {
+		return values;
+	}
+
 	std::vector<b2PolygonShape>* BoxCollider2D::generateCollider() {
 		std::vector<b2PolygonShape>* shapes;
 		b2PolygonShape polygonShape;

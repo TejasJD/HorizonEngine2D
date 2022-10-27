@@ -7,8 +7,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	/*app->addLayer(new EditorLayer());*/
-	app->addLayer(new SampleLayer());
+	app->addLayer(new EditorLayer());
+	/*app->addLayer(new SampleLayer());*/
 	return app;
 }
 
@@ -561,9 +561,29 @@ void EditorLayer::drawObjectBehaviour() {
 	//ImGuiConfigFlags configFlags = ImGuiDir_Right | ImGuiWindowFlags_NoCollapse;
 	//ImGui::Begin("Object Behaviour", &pOpen, configFlags);
 	ImGui::Begin("Object Behaviour");
-	// TODO: Add behaviours/components of currently selected object
-	if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
 
+	if (contextObject != "") {
+		std::vector<std::shared_ptr<Hzn::Component>>* components = selectedObject->getComponents();
+		for (int i = 0; i < components->size(); i++) {
+			ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+
+			bool open = ImGui::TreeNodeEx(components->at(i)->getComponentType().c_str(), base_flags | ImGuiTreeNodeFlags_Selected);
+
+			if (open) {
+				std::map<std::string, std::any> map = *(components->at(i)->getValues());
+				for (std::map<std::string, std::any>::iterator it = map.begin(); it != map.end(); ++it) {
+					ImGui::Text(it->first.c_str());
+					// ImGui::SameLine();
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		// TODO: Add behaviours/components of currently selected object
+		if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
+
+		}
 	}
 	ImGui::End();
 }
@@ -584,10 +604,12 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 		contextObject = node->item;
+		selectedObject = openScene->findGameObject(contextObject);
 	}
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		contextObject = node->item;
+		selectedObject = openScene->findGameObject(contextObject);
 
 		ImGui::OpenPopup("contextObject");
 	}

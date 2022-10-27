@@ -16,6 +16,9 @@ namespace Hzn {
 		virtual void setField(std::string k, std::any v) = 0;
 		virtual std::any getField(std::string k) = 0;
 		virtual std::vector<std::string>* stringify() = 0;
+		virtual std::map<std::string, std::any>* getValues() {
+			return nullptr;
+		};
 	protected:
 		virtual void awake() = 0;
 		virtual void start() = 0;

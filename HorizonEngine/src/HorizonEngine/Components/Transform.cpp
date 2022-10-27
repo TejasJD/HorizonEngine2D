@@ -86,6 +86,10 @@ namespace Hzn {
 		return content;
 	}
 
+	std::map<std::string, std::any>* Transform::getValues() {
+		return values;
+	}
+
 	void Transform::awake() {}
 
 	void Transform::start() {}

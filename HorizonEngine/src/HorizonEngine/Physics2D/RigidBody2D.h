@@ -37,6 +37,7 @@ namespace Hzn {
 		void setField(std::string k, std::any v) override;
 		std::any getField(std::string k) override;
 		std::vector<std::string>* stringify() override;
+		std::map<std::string, std::any>* getValues() override;
 
 		void setPosition(glm::vec2 position);
 		void setRotation(float rotation);
