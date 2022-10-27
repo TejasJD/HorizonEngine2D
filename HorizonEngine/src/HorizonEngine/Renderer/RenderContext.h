@@ -13,7 +13,7 @@ namespace Hzn
 		virtual void init() = 0;
 		virtual void swapBuffers() = 0;
 
-		static RenderContext* create(void *const& windowHandle);
+		static std::shared_ptr<RenderContext> create(void *const& windowHandle);
 	};
 }
 

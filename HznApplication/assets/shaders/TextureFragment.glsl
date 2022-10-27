@@ -1,11 +1,12 @@
 # version 420 core
 		
 in vec2 v_TexCoord;
-out vec4 fragmentColor;
+out vec4 v_Color;
 
-uniform sampler2D f_Texture;
+uniform sampler2D u_Texture;
+uniform vec4 u_Color;
 
 void main()
 {
-	fragmentColor = texture(f_Texture, v_TexCoord);
+	v_Color = texture(u_Texture, v_TexCoord) * u_Color;
 }

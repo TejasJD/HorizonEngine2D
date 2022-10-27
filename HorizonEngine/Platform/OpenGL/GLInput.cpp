@@ -7,12 +7,12 @@
 
 namespace Hzn
 {
-	Input* Input::m_Instance = nullptr;
-	Input* Input::create()
+	std::shared_ptr<Input> Input::m_Instance;
+	std::shared_ptr<Input> Input::create()
 	{ 
 		if (!m_Instance)
 		{
-			m_Instance = new GLInput();
+			m_Instance = std::make_shared<GLInput>();
 		}
 
 		return m_Instance;

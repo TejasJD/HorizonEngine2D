@@ -11,6 +11,8 @@
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/App.h"
 
+#include "HorizonEngine/Renderer/Renderer.h"
+
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
@@ -55,6 +57,8 @@ namespace Hzn
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
+
+	void ImguiLayer::onUpdate(TimeStep ts) {}
 
 	void ImguiLayer::onDetach()
 	{

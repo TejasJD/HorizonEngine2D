@@ -10,14 +10,15 @@ namespace Hzn
 	class GLRendererAPI : public RendererAPI
 	{
 	public:
-		GLRendererAPI();
-		virtual ~GLRendererAPI();
+		GLRendererAPI() {}
+		virtual ~GLRendererAPI() {}
+
 		// Inherited via RendererAPI
 		virtual void init() override;
 		virtual void setClearColor(const glm::vec4& color) override;
 		virtual void submitClear() override;
 		virtual void drawElements(const std::shared_ptr<VertexArray>& vertexArray) override;
-		virtual void drawTriangles(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 	};
 }
 

@@ -21,7 +21,7 @@ namespace Hzn
 		virtual std::shared_ptr<ElementBuffer> getElementBuffer() = 0;
 		virtual std::vector<std::shared_ptr<VertexBuffer>> getVertexBuffers() = 0;
 
-		static VertexArray* create();
+		static std::shared_ptr<VertexArray> create();
 	};
 }
 

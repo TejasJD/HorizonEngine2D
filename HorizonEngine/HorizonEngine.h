@@ -52,16 +52,21 @@
 
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
-//#include "HorizonEngine/Utils/TreeNode.h"
 
 #include "HorizonEngine/Layer.h"
-#include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Renderer/RenderCall.h"
+#include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Renderer/Renderer2D.h"
+#include "HorizonEngine/Renderer/Renderer3D.h"
+
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/Shader.h"
 #include "HorizonEngine/Renderer/VertexArray.h"
 #include "HorizonEngine/Renderer/Texture.h"
-#include "HorizonEngine/Camera.h"
+
+#include "HorizonEngine/Camera/Camera.h"
+#include "HorizonEngine/Camera/CameraController.h"
+
 #include "Platform/OpenGL/FDWindows.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 
 #include "HorizonEngine/App.h"
