@@ -23,6 +23,9 @@ public:
 	virtual void onRenderImgui() override;
 
 	virtual void onEvent(Hzn::Event& event) override;
+
+	bool isCollidingWithItself(std::pair<int, int> nextPosition);
+	std::pair<int, int> generateFood();
 private:
 	void calculateFps()
 	{
@@ -49,8 +52,15 @@ private:
 	Direction direction = Direction::Up;
 
 	std::deque<std::pair<int, int>> snakeSize = { {0, 0}, {0, 1}, {0, 2} };
+	std::pair<int, int> food = {0, 0};
 
 	Hzn::OrthographicCameraController cameraController;
+
+	int gridSize = 10;
+	bool victory = false;
+
+	glm::vec3 snakeColor = { 1.0f, 0.0f, 0.0f };
+	glm::vec3 foodColor = { 0.0f, 1.0f, 0.0f };
 };
 
 #endif
