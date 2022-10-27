@@ -18,11 +18,15 @@ namespace Hzn
 	}
 	bool AudioSource::Play()
 	{
+		if (!isPlaying())
+		{
+			alSourcei(p_Source, AL_BUFFER, (ALint)p_Buffer);
+			alSourcePlay(p_Source);
 
-		alSourcei(p_Source, AL_BUFFER, (ALint)p_Buffer);
-		alSourcePlay(p_Source);
+			HZN_CORE_INFO("playing sound :  {0}", p_Source);
+		}
 
-		HZN_CORE_INFO("playing sound :  {0}", p_Source);
+		
 
 		if (alGetError() == AL_NO_ERROR)
 		{
