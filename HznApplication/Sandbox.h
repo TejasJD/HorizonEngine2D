@@ -61,6 +61,9 @@ private:
 
 	glm::vec3 snakeColor = { 1.0f, 0.0f, 0.0f };
 	glm::vec3 foodColor = { 0.0f, 1.0f, 0.0f };
+
+	int score = 0;
+
 };
 
 #endif

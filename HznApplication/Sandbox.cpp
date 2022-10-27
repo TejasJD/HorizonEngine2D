@@ -54,6 +54,7 @@ void Sandbox::onUpdate(Hzn::TimeStep deltaTime)
 			snakeSize = { {0, 0}, {0, 1}, {0, 2} };
 			direction = Direction::Up;
 			food = generateFood();
+			score = 0;
 		}
 		else {
 			snakeSize.push_back({ snakeSize.back().first + moveDirection.first, snakeSize.back().second + moveDirection.second });
@@ -66,7 +67,11 @@ void Sandbox::onUpdate(Hzn::TimeStep deltaTime)
 					direction = Direction::Up;
 					food = generateFood();
 					victory = false;
+					score = 0;
 				}
+				
+				score++;
+
 			}
 			else {
 				snakeSize.pop_front();
@@ -134,6 +139,10 @@ void Sandbox::onRenderImgui()
 {
 	ImGui::Begin("FPS Counter");
 	ImGui::Text("FPS: %.2f fps", fps);
+	ImGui::End();
+
+	ImGui::Begin("Snake Score");
+	ImGui::Text("Score: %d", score);
 	ImGui::End();
 
 	ImGui::Begin("Settings");
