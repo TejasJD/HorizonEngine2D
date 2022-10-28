@@ -246,6 +246,7 @@ void Sandbox::recalculateFreePositions()
 			freePositions.erase(it);
 		}
 	}
+	food = generateFood();
 	HZN_DEBUG("free positions: {0}", freePositions.size());
 	oldGridSize = gridSize;
 	startGame = false;
@@ -256,6 +257,5 @@ void Sandbox::resetGame()
 	snake = { {0, 0}, {0, 1}, {0, 2} };
 	snakeHead = { 0, 2 };
 	direction = Direction::Up;
-	food = generateFood();
 	score = 0;
 }
