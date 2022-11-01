@@ -445,7 +445,6 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 			{
 				std::string projectFolderPath = Hzn::FileDialogs::openFolder();
 
-				std::cout << projectFolderPath << std::endl;
 
 				//Check if the dtring returns empty or not
 				if (projectFolderPath != "") {
@@ -720,6 +719,14 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
+
+		std::cout << entry.path().string().find("assets") << std::endl;
+
+		
+		if (entry.path().string().find("assets") == std::string::npos) {
+			continue;
+		}
+
 		ImGuiTreeNodeFlags node_flags = base_flags;
 		
 		if (entry.path().string() == contextObject)
