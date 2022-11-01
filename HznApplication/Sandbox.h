@@ -3,6 +3,11 @@
 #ifndef HZNAPP_SANDBOX_H
 #define HZNAPP_SANDBOX_H
 
+enum class Direction
+{
+	Up = 0, Down, Left, Right
+};
+
 class Sandbox : public Hzn::Layer
 {
 public:
