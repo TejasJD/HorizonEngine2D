@@ -23,9 +23,10 @@ namespace Hzn
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray)
+	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->getElementBuffer()->size(), GL_UNSIGNED_INT, nullptr);
+		int elements = (count == 0) ? vertexArray->getElementBuffer()->size() : count;
+		glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void GLRendererAPI::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)

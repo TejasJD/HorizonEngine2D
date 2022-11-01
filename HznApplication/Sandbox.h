@@ -11,46 +11,34 @@ enum class Direction
 class Sandbox : public Hzn::Layer
 {
 public:
-	Sandbox(const std::string& name = "Sample Layer");
+	Sandbox();
+	virtual ~Sandbox() {}
 
-	// Inherited via Layer
-	virtual void onUpdate(Hzn::TimeStep timestep) override;
+	void onAttach() override;
 
-	virtual void onAttach() override;
 
-	virtual void onDetach() override;
+	void onDetach() override;
 
-	virtual void onRenderImgui() override;
 
-	virtual void onEvent(Hzn::Event& event) override;
+	void onUpdate(Hzn::TimeStep deltaTime) override;
+
+
+	void onEvent(Hzn::Event& event) override;
+
+
+	void onRenderImgui() override;
+
 private:
-	void calculateFps()
-	{
-		currentTime = glfwGetTime();
-		frameCount++;
-		if (currentTime - lastTime >= 1.0f)
-		{
-			fps = frameCount;
-			frameCount = 0;
-			lastTime = currentTime;
-		}
-	}
-	glm::vec3 gridColor = { 0.0f, 1.0f, 0.0f };
-	glm::vec3 gridPosition = { 0.0, 0.0f, 0.0f };
+	float quadAngle = 0.0f;
+	float m_AspectRatio = 0.0f;
+	float m_PreviousFrame = 0.0f;
+	uint32_t m_FrameCounter = 0;
+	float m_Fps = 0.0f;
+	int32_t quads = 10;
 
-	float fps = 0.0f;
-	float frameCount = 0.0f;
-	float currentTime = 0.0f;
-	float lastTime = 0.0f;
-	float objScale = 1.0f;
-
-	float lTime = 0.0f;
-
-	Direction direction = Direction::Up;
-
-	std::deque<std::pair<int, int>> snakeSize = { {0, 0}, {0, 1}, {0, 2} };
-
-	Hzn::OrthographicCameraController cameraController;
+	Hzn::OrthographicCameraController m_CameraController;
+	std::shared_ptr<Hzn::Texture2D> someSky;
+	std::shared_ptr<Hzn::Texture2D> checkerBoard;
 };
 
-#endif
+#endif // !HZNAPP_SANDBOX_H

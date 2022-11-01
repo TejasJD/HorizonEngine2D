@@ -3,8 +3,6 @@
 #
 cmake_minimum_required (VERSION 3.15)
 
-project(HorizonEngine)
-
 set(HZN_SOURCE_FILES
 	"src/HorizonEngine/App.cpp"
 	"src/HorizonEngine/GameObject.cpp"
@@ -145,6 +143,7 @@ find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
 find_package(openal CONFIG REQUIRED)
 find_package(Sndfile CONFIG REQUIRED)
+find_package(imguizmo CONFIG REQUIRED)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
 
 target_link_libraries(HorizonEngine 
@@ -158,6 +157,7 @@ target_link_libraries(HorizonEngine
 	unofficial::sajson::sajson
 	OpenAL::OpenAL
 	SndFile::sndfile
+	imguizmo::imguizmo
 )
 
 #testing

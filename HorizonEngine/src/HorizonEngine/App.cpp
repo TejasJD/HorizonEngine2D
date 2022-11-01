@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
-
 #include "App.h"
 
 namespace Hzn

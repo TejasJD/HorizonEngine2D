@@ -12,7 +12,7 @@ namespace Hzn
 		switch (type)
 		{
 		case Hzn::ShaderDataType::None: return GL_NONE;
-		case Hzn::ShaderDataType::Vecf: return GL_FLOAT;
+		case Hzn::ShaderDataType::Float: return GL_FLOAT;
 		case Hzn::ShaderDataType::Vec2f: return GL_FLOAT;
 		case Hzn::ShaderDataType::Vec3f: return GL_FLOAT;
 		case Hzn::ShaderDataType::Vec4f: return GL_FLOAT;
@@ -20,7 +20,7 @@ namespace Hzn
 		case Hzn::ShaderDataType::Mat4f: return GL_FLOAT;
 		case Hzn::ShaderDataType::Mat3i: return GL_INT;
 		case Hzn::ShaderDataType::Mat4i: return GL_INT;
-		case Hzn::ShaderDataType::Veci: return GL_INT;
+		case Hzn::ShaderDataType::Int: return GL_INT;
 		case Hzn::ShaderDataType::Vec2i: return GL_INT;
 		case Hzn::ShaderDataType::Vec3i: return GL_INT;
 		case Hzn::ShaderDataType::Vec4i: return GL_INT;
@@ -33,7 +33,7 @@ namespace Hzn
 
 	GLVertexArray::GLVertexArray()
 	{
-		glCreateVertexArrays(1, &m_VertexArrayId);
+		glGenVertexArrays(1, &m_VertexArrayId);
 	}
 
 	GLVertexArray::~GLVertexArray()
@@ -55,7 +55,7 @@ namespace Hzn
 	{
 		glBindVertexArray(m_VertexArrayId);
 		vertexBuffer->bind();
-		unsigned int location = 0;
+		uint32_t location = 0;
 
 		for (const auto& element : vertexBuffer->getBufferLayout())
 		{
@@ -65,7 +65,7 @@ namespace Hzn
 				ShaderDataTypeToGLenum(element.m_Type),
 				element.m_Normalized ? GL_TRUE : GL_FALSE,
 				vertexBuffer->getBufferLayout().getStride(),
-				reinterpret_cast<void*>(element.m_Offset)
+				(const void *)(element.m_Offset)
 			);
 
 			glEnableVertexAttribArray(location);

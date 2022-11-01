@@ -1,20 +1,20 @@
 #include "pch.h"
 
-#define IMGUI_IMPL_API
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include "HorizonEngine/Events/MouseEvent.h"
 #include "HorizonEngine/Events/KeyEvent.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/App.h"
-
 #include "HorizonEngine/Renderer/Renderer.h"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#define IMGUI_IMPL_API
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+#include <ImGuizmo.h>
 
 #include "ImguiLayer.h"
 
@@ -55,7 +55,7 @@ namespace Hzn
 
 		auto window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplOpenGL3_Init("#version 420");
 	}
 
 	void ImguiLayer::onUpdate(TimeStep ts) {}
@@ -72,6 +72,7 @@ namespace Hzn
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImguiLayer::imguiEnd()

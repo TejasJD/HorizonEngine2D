@@ -27,6 +27,7 @@ namespace Hzn
 		virtual void setUniform(const std::string& s, const glm::vec3& vec3) override;
 		virtual void setUniform(const std::string& s, const glm::vec2& vec2) override;
 		virtual void setUniform(const std::string& s, int ui) override;
+		virtual void setUniform(const std::string& s, int* a, uint32_t count) override;
 		virtual void setUniform(const std::string& s, float uf) override;
 
 		static GLenum HznShaderTypeToGLShader(ShaderType type);
