@@ -9,6 +9,7 @@
 #include "glm/glm.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/compatibility.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -64,6 +65,7 @@
 #include "HorizonEngine/Renderer/Shader.h"
 #include "HorizonEngine/Renderer/VertexArray.h"
 #include "HorizonEngine/Renderer/Texture.h"
+#include "HorizonEngine/Renderer/Sprite.h"
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Camera/CameraController.h"
