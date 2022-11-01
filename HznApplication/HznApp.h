@@ -55,6 +55,7 @@ private:
 	std::string contextObject = "";
 	bool openContext = false;
 	bool dirOpenContext = false;
+	bool clickStatus = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 public:

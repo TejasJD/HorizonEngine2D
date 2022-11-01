@@ -720,8 +720,6 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
 
-		std::cout << entry.path().string().find("assets") << std::endl;
-
 		
 		if (entry.path().string().find("assets") == std::string::npos) {
 			continue;
@@ -754,19 +752,20 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 			}
 		}
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+		if (!clickStatus && ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			clickStatus = true;
 			contextObject = entry.path().string();
 		}
 
-		if (!entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		if (!clickStatus && !entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			clickStatus = true;
 			contextObject = entry.path().string();
-
 			ImGui::OpenPopup("dirContextObject");
 		}
 
-		if (entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		if (!clickStatus && entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			clickStatus = true;
 			contextObject = entry.path().string();
-
 			ImGui::OpenPopup("contextObject");
 		}
 	}
@@ -785,6 +784,8 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 	ImGui::Begin(projectPath.c_str());
 
 	drawProjectExplorerNode(directoryPath);
+
+	clickStatus = false;
 
 	if (openContext) {
 		if (ImGui::IsPopupOpen("contextObject")) {
