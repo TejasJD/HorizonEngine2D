@@ -44,7 +44,7 @@ namespace Hzn
 		/// This should be paired with the 'endScene' method after you have completed 
 		/// all the other Render calls.
 		/// </summary>
-		/// <param name="camera"></param>
+		/// <param name="camera">Orthographic Camera to view the 2D scene.</param>
 		static void beginScene(const OrthographicCamera& camera);
 
 		/// <summary>
@@ -57,37 +57,75 @@ namespace Hzn
 		/// <summary>
 		/// Render a colored quadrilateral (4-sided shape) on the screen.
 		/// </summary>
-		/// <param name="position">: Where should the shape appear on the screen (x, y). </param>
-		/// <param name="size">: What should be the size of the shape.</param>
-		/// <param name="color">: What should be the color of the shape.</param>
+		/// <param name="position">Where should the shape appear on the screen (x, y). </param>
+		/// <param name="size">What should be the size of the shape.</param>
+		/// <param name="color">What should be the color of the shape.</param>
 		static void drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color = glm::vec4(1.0f));
 
 		/// <summary>
 		/// Render a quadrilateral (4-sided shape) with color on the screen. z-coordinate can be used for
 		/// positioning the rendered object behind or in front of others.
 		/// </summary>
-		/// <param name="position">: Where should the shape appear on the screen (x, y, z).</param>
-		/// <param name="size">: What should be the size of the shape.</param>
-		/// <param name="color">: What should be the color of the shape.</param>
+		/// <param name="position">Where should the shape appear on the screen (x, y, z).</param>
+		/// <param name="size">What should be the size of the shape.</param>
+		/// <param name="color">What should be the color of the shape.</param>
 		static void drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color = glm::vec4(1.0f));
+
+		/// <summary>
+		/// Render a rotated quadrilateral(4 - sided shape) with color on the screen.
+		/// </summary>
+		/// <param name="position">Where should the shape appear on the screen (x, y).</param>
+		/// <param name="angle">Angle you want the shape to be rotated at.</param>
+		/// <param name="size">What should be the size of the shape.</param>
+		/// <param name="color">What should be the color of the shape.</param>
+		static void drawQuad(const glm::vec2& position, float angle, const glm::vec3& size,const glm::vec4 color = glm::vec4(1.0f));
+
+		/// <summary>
+		/// Render a rotated quadrilateral(4 - sided shape) with color on the screen. z - coordinate can be used for
+		/// positioning the rendered object behind or in front of others.
+		/// </summary>
+		/// <param name="position">Where should the shape appear on the screen (x, y, z).</param>
+		/// <param name="angle">Angle you want the shape to be rotated at.</param>
+		/// <param name="size">What should be the size of the shape.</param>
+		/// <param name="color">What should be the color of the shape.</param>
+		static void drawQuad(const glm::vec3& position, float angle, const glm::vec3& size,const glm::vec4 color = glm::vec4(1.0f));
 
 		/// <summary>
 		/// Render a quadrilateral (4-sided shape) with texture on the screen. z-coordinate can be used for
 		/// positioning the rendered object behind or in front of others.
 		/// </summary>
-		/// <param name="position">: Where should the shape appear on the screen (x, y, z).</param>
-		/// <param name="size">: What should be the size of the shape.</param>
+		/// <param name="position">Where should the shape appear on the screen (x, y, z).</param>
+		/// <param name="size">What should be the size of the shape.</param>
 		/// <param name="texture"> Which texture should be used on the shape.</param>
 		static void drawQuad(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
 
 		/// <summary>
-		/// Render a quadrilateral(4 - sided shape) with texture on the screen.z - coordinate can be used for
+		/// Render a quadrilateral(4 - sided shape) with texture on the screen. z - coordinate can be used for
 		/// positioning the rendered object behind or in front of others.
 		/// </summary>
-		/// <param name="position">: Where should the shape appear on the screen (x, y, z).</param>
-		/// <param name="size">: What should be the size of the shape.</param>
+		/// <param name="position">Where should the shape appear on the screen (x, y, z).</param>
+		/// <param name="size">What should be the size of the shape.</param>
 		/// <param name="texture"> Which texture should be used on the shape.</param>
 		static void drawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
+
+		/// <summary>
+		/// Render a rotated quadrilateral(4 - sided shape) with texture on the screen.
+		/// </summary>
+		/// <param name="position">Where should the shape appear on the screen (x, y).</param>
+		/// <param name="angle">Angle you want the shape to be rotated at.</param>
+		/// <param name="size">What should be the size of the shape.</param>
+		/// <param name="texture">Which texture should be used on the shape.</param>
+		static void drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
+
+		/// <summary>
+		/// Render a rotated quadrilateral(4 - sided shape) with texture on the screen. z - coordinate can be used for
+		/// positioning the rendered object behind or in front of others.
+		/// </summary>
+		/// <param name="position">Where should the shape appear on the screen (x, y, z).</param>
+		/// <param name="angle">Angle you want the shape to be rotated at.</param>
+		/// <param name="size">What should be the size of the shape.</param>
+		/// <param name="texture">Which texture should be used on the shape.</param>
+		static void drawQuad(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
 
 		/// <summary>
 		/// Check if the renderer was initialized.

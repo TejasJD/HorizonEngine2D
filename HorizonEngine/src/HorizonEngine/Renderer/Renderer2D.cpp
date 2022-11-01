@@ -43,6 +43,22 @@ namespace Hzn
 		static constexpr uint32_t mxtextureSlots = 32;
 		// each texture is bound to one of the texture slots in this.
 		std::array<std::shared_ptr<Texture2D>, mxtextureSlots> textureSlots; // TODO: have a UUID that represent assets.
+
+		std::array<glm::vec4, 4> quadPositions =
+		{
+			glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f),
+			glm::vec4(-0.5f, 0.5f, 0.0f, 1.0f),
+			glm::vec4(0.5f, 0.5f, 0.0f, 1.0f),
+			glm::vec4(0.5f, -0.5f, 0.0f, 1.0f)
+		};
+
+		std::array<glm::vec2, 4> quadTexCoords =
+		{
+			glm::vec2(0.0f, 0.0f),
+			glm::vec2(0.0f, 1.0f),
+			glm::vec2(1.0f, 1.0f),
+			glm::vec2(1.0f, 0.0f)
+		};
 	};
 
 	constexpr uint32_t RenderData::mxtextureSlots;
@@ -175,35 +191,59 @@ namespace Hzn
 
 	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color /*= glm::vec4(1.0f)*/)
 	{
+		constexpr float textureIndex = 0.0f;
+
 		if (data.curidx >= data.mxindices)
 		{
 			endBatch();
 			beginBatch();
 		}
 
-		data.ptr->position = position;
-		data.ptr->color = color;
-		data.ptr->texCoord = { 0.0, 0.0 };
-		data.ptr->texSlot = 0.0f;
-		data.ptr++;
+		// build up a transformation matrix and apply those transformations to
+		// all the vertex positions.
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
 
-		data.ptr->position = { position.x , position.y + size.y, 0.0f };
-		data.ptr->color = color;
-		data.ptr->texCoord = { 0.0, 1.0 };
-		data.ptr->texSlot = 0.0f;
-		data.ptr++;
+		for (int i = 0; i < data.quadPositions.size(); ++i)
+		{
+			data.ptr->position = transform * data.quadPositions[i];
+			data.ptr->color = color;
+			data.ptr->texCoord = data.quadTexCoords[i];
+			data.ptr->texSlot = textureIndex;
+			data.ptr++;
+		}
 
-		data.ptr->position = { position.x + size.x, position.y + size.y, 0.0f };
-		data.ptr->color = color;
-		data.ptr->texCoord = { 1.0, 1.0 };
-		data.ptr->texSlot = 0.0f;
-		data.ptr++;
+		data.curidx += 6;
+	}
 
-		data.ptr->position = { position.x + size.x, position.y, 0.0f };
-		data.ptr->color = color;
-		data.ptr->texCoord = { 1.0, 0.0 };
-		data.ptr->texSlot = 0.0f;
-		data.ptr++;
+	void Renderer2D::drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const glm::vec4 color /*= glm::vec4(1.0f)*/)
+	{
+		drawQuad(glm::vec3(position, 0.0f), angle, size, color);
+	}
+
+	void Renderer2D::drawQuad(const glm::vec3& position, float angle, const glm::vec3& size, const glm::vec4 color /*= glm::vec4(1.0f)*/)
+	{
+		constexpr float textureIndex = 0.0f;
+
+		if (data.curidx >= data.mxindices)
+		{
+			endBatch();
+			beginBatch();
+		}
+
+		// build up a transformation matrix and apply those transformations to
+		// all the vertex positions.
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), size);
+
+		for (int i = 0; i < data.quadPositions.size(); ++i)
+		{
+			data.ptr->position = transform * data.quadPositions[i];
+			data.ptr->color = color;
+			data.ptr->texCoord = data.quadTexCoords[i];
+			data.ptr->texSlot = textureIndex;
+			data.ptr++;
+		}
 
 		data.curidx += 6;
 	}
@@ -245,29 +285,69 @@ namespace Hzn
 			data.textureSlots[data.textureidx++] = texture;
 		}
 
-		data.ptr->position = position;
-		data.ptr->color = color;
-		data.ptr->texCoord = { 0.0, 0.0 };
-		data.ptr->texSlot = textureIndex;
-		data.ptr++;
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
 
-		data.ptr->position = { position.x , position.y + size.y, 0.0f };
-		data.ptr->color = color;
-		data.ptr->texCoord = { 0.0, 1.0 };
-		data.ptr->texSlot = textureIndex;
-		data.ptr++;
+		for (int i = 0; i < data.quadPositions.size(); ++i)
+		{
+			data.ptr->position = transform * data.quadPositions[i];
+			data.ptr->color = color;
+			data.ptr->texCoord = data.quadTexCoords[i];
+			data.ptr->texSlot = textureIndex;
+			data.ptr++;
+		}
 
-		data.ptr->position = { position.x + size.x, position.y + size.y, 0.0f };
-		data.ptr->color = color;
-		data.ptr->texCoord = { 1.0, 1.0 };
-		data.ptr->texSlot = textureIndex;
-		data.ptr++;
+		data.curidx += 6;
+	}
 
-		data.ptr->position = { position.x + size.x, position.y, 0.0f };
-		data.ptr->color = color;
-		data.ptr->texCoord = { 1.0, 0.0 };
-		data.ptr->texSlot = textureIndex;
-		data.ptr++;
+	void Renderer2D::drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture)
+	{
+		drawQuad(glm::vec3(position, 0.0f), angle, size, texture);
+	}
+
+	void Renderer2D::drawQuad(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture)
+	{
+		if (data.curidx >= data.mxindices)
+		{
+			endBatch();
+			beginBatch();
+		}
+
+		glm::vec4 color = glm::vec4(1.0f);
+
+		// texture slot that the quad will be using.
+		float textureIndex = 0.0f;
+
+		// if this texture is already one of the bound textures, we just use that texture slot for
+		// this quad.
+		for (int i = 0; i < data.textureidx; ++i)
+		{
+			if (data.textureSlots[i] == texture)
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		// if this is found to be a new texture, we bind it to the available slot and increment
+		// the slot pointer.
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = data.textureidx;
+			data.textureSlots[data.textureidx++] = texture;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), size);
+
+		for (int i = 0; i < data.quadPositions.size(); ++i)
+		{
+			data.ptr->position = transform * data.quadPositions[i];
+			data.ptr->color = color;
+			data.ptr->texCoord = data.quadTexCoords[i];
+			data.ptr->texSlot = textureIndex;
+			data.ptr++;
+		}
 
 		data.curidx += 6;
 	}

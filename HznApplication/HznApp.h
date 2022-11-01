@@ -51,6 +51,7 @@ class HznApp : public Hzn::App
 public:
 	HznApp()
 	{
+		/*Hzn::App::getApp().getAppWindow().setVsync(false);*/
 		Hzn::Renderer2D::init();
 	}
 	~HznApp()

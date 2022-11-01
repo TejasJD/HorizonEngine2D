@@ -29,6 +29,7 @@ public:
 	void onRenderImgui() override;
 
 private:
+	float quadAngle = 0.0f;
 	float m_AspectRatio = 0.0f;
 	float m_PreviousFrame = 0.0f;
 	uint32_t m_FrameCounter = 0;
@@ -36,7 +37,8 @@ private:
 	int32_t quads = 10;
 
 	Hzn::OrthographicCameraController m_CameraController;
-	std::shared_ptr<Hzn::Texture2D> m_Texture;
+	std::shared_ptr<Hzn::Texture2D> someSky;
+	std::shared_ptr<Hzn::Texture2D> checkerBoard;
 };
 
 #endif // !HZNAPP_SANDBOX_H
