@@ -17,7 +17,7 @@ namespace Hzn
 		virtual void init() override;
 		virtual void setClearColor(const glm::vec4& color) override;
 		virtual void submitClear() override;
-		virtual void drawElements(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count = 0) override;
 		virtual void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) override;
 	};
 }

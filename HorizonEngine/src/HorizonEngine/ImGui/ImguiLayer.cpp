@@ -55,7 +55,7 @@ namespace Hzn
 
 		auto window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplOpenGL3_Init("#version 420");
 	}
 
 	void ImguiLayer::onUpdate(TimeStep ts) {}

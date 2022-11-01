@@ -87,7 +87,7 @@ namespace Hzn
 		OrthographicCamera m_Camera;
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
 		float m_Rotation = 0.0f;
-		float m_TranslationSpeed = 2.5f;
+		float m_TranslationSpeed = 1.0f;
 		float m_RotationSpeed = 4.0f;
 		float lastX = 0.0f;
 		float lastY = 0.0f;

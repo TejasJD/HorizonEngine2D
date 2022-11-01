@@ -102,7 +102,8 @@ namespace Hzn
 		/// </summary>
 		virtual void calculateProjectionMatrix() override
 		{
-			m_ProjectionMatrix = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom, -1.0f, 1.0f);
+			m_ProjectionMatrix = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom
+				, -m_Zoom, m_Zoom, -1.0f, 1.0f);
 		}
 		/// <summary>
 		/// Get the aspect ratio value that the camera currently holds.

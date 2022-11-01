@@ -22,6 +22,7 @@ namespace Hzn
 		virtual void unbind() const = 0;
 		virtual unsigned int getId() const = 0;
 		virtual void setUniform(const std::string& s, const glm::mat4& mat4) = 0;
+		virtual void setUniform(const std::string& s, int* a, uint32_t count) = 0;
 		virtual void setUniform(const std::string& s, const glm::mat3& mat3) = 0;
 		virtual void setUniform(const std::string& s, const glm::vec4& vec4) = 0;
 		virtual void setUniform(const std::string& s, const glm::vec3& vec3) = 0;

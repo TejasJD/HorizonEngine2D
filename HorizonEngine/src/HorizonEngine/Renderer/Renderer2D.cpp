@@ -3,87 +3,273 @@
 
 namespace Hzn
 {
-	struct Renderer2DData
-	{
-		std::shared_ptr<VertexArray> vertexArray;
-		std::shared_ptr<Shader> shader;
-		std::shared_ptr<Texture> defaultTexture;
-	};
 
 	bool Renderer2D::m_Initialized = false;
+	uint32_t Render2DStats::drawcalls = 0;
+	uint32_t Render2DStats::mxvertices = 0;
+	uint32_t Render2DStats::mxindices = 0;
+	uint32_t Render2DStats::mxquads = 0;
+	uint32_t Render2DStats::mxtextureSlots = 32; // TODO: Such information would be queried from GPU eventually.
 
-	static std::shared_ptr<Renderer2DData> s_Data = std::make_shared<Renderer2DData>();
+	struct Vertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+		glm::vec2 texCoord;
+		float texSlot;
+	};
+
+	struct RenderData
+	{
+		/*uint32_t vao = 0, vbo = 0, ebo = 0;*/
+		std::shared_ptr<VertexArray> vao;
+		std::shared_ptr<VertexBuffer> vbo;
+		std::shared_ptr<ElementBuffer> ebo;
+		std::shared_ptr<Shader> shader;
+		std::shared_ptr<Texture2D> defaultTexture;
+
+		uint32_t mxquads = 10000;
+		uint32_t mxvertices = 4 * mxquads;
+		uint32_t mxindices = 6 * mxquads;
+
+		Vertex* buffer = nullptr;
+
+		Vertex* ptr = nullptr;
+		uint32_t curidx = 0;
+		// 0 is bound to default texture.
+		uint32_t textureidx = 1;
+		
+		uint32_t draws = 0;
+		static constexpr uint32_t mxtextureSlots = 32;
+		// each texture is bound to one of the texture slots in this.
+		std::array<std::shared_ptr<Texture2D>, mxtextureSlots> textureSlots; // TODO: have a UUID that represent assets.
+	};
+
+	constexpr uint32_t RenderData::mxtextureSlots;
+
+	// static because we don't want to expose data used by the 2D renderer to other
+	// other translation units.
+	static RenderData data;
 
 	void Renderer2D::init()
 	{
-		s_Data->vertexArray = Hzn::VertexArray::create();
-		s_Data->shader = Hzn::Shader::create({
-			{Hzn::ShaderType::VertexShader, "assets/shaders/Vertex.glsl"},
-			{Hzn::ShaderType::FragmentShader, "assets/shaders/Fragment.glsl"}
+		// initialize render stats.
+		Render2DStats::mxquads = data.mxquads;
+		Render2DStats::mxindices = data.mxindices;
+		Render2DStats::mxvertices = data.mxvertices;
+		Render2DStats::mxtextureSlots = data.mxtextureSlots;
+
+		// allocate data for buffer.
+		data.ptr = data.buffer = new Vertex[data.mxvertices];
+
+		// shader creation.
+		data.shader = Shader::create({
+			{Hzn::ShaderType::VertexShader, "assets/shaders/TextureVertex.glsl"},
+			{Hzn::ShaderType::FragmentShader, "assets/shaders/TextureFragment.glsl"}
 		});
 
-		std::vector<float> vertices =
-		{
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.5f, 0.5f, 0.0f,
-			-0.5f, 0.5f, 0.0f
-		};
+		// default-texture creation.
+		uint32_t whiteTexture = 0xffffffff;
+		data.defaultTexture = Texture2D::create(1, 1);
+		data.defaultTexture->setData(&whiteTexture, sizeof(uint32_t));
+		// bind default texture to slot 0.
+		data.textureSlots[0] = data.defaultTexture;
 
+		// this array of samplers is set as uniform for textures.
+		// it holds a value (index) which tells GPU, which texture slot to sample the texture from.
+		std::array<int32_t, data.mxtextureSlots> samplerArray = {};
+		for (int32_t i = 0; i < data.mxtextureSlots; ++i) samplerArray[i] = i; // store the slot value (index) in the sampler array.
+		data.shader->bind();
+		data.shader->setUniform("u_Textures", samplerArray.data(), data.mxtextureSlots);
 
-		std::vector<uint32_t> indices =
-		{
-			0, 1, 2, // lower-right triangle
-			0, 3, 2 // upper-left triangle
-		};
-		
-		auto vertexBuffer = VertexBuffer::create(vertices);
-		auto elementBuffer = ElementBuffer::create(indices);
+		data.vao = VertexArray::create();
+
+		data.vbo = VertexBuffer::create(data.mxvertices * sizeof(Vertex));
 
 		BufferLayout layout =
 		{
-			{Hzn::ShaderDataType::Vec3f, "a_Pos"}
+			{Hzn::ShaderDataType::Vec3f, "a_Pos"},
+			{Hzn::ShaderDataType::Vec4f, "a_Color"},
+			{Hzn::ShaderDataType::Vec2f, "a_TexCoord"},
+			{Hzn::ShaderDataType::Float, "a_TexSlot"}
 		};
 
-		vertexBuffer->setBufferLayout(layout);
-		
-		s_Data->vertexArray->addVertexBuffer(vertexBuffer);
-		s_Data->vertexArray->setElementBuffer(elementBuffer);
+		data.vbo->setBufferLayout(layout);
 
-		m_Initialized = true;
+		/*data.vbo->setData(vertices, sizeof(vertices));*/
+
+		data.vao->addVertexBuffer(data.vbo);
+
+		uint32_t* indices = new uint32_t[data.mxindices];
+
+		uint32_t offset = 0;
+		for (int i = 0; i < data.mxindices; i += 6)
+		{
+			indices[i] = 0 + offset;
+			indices[i + 1] = 1 + offset;
+			indices[i + 2] = 2 + offset;
+			indices[i + 3] = 0 + offset;
+			indices[i + 4] = 3 + offset;
+			indices[i + 5] = 2 + offset;
+
+			offset += 4;
+		}
+
+		data.ebo = ElementBuffer::create(indices, data.mxindices);
+		data.vao->setElementBuffer(data.ebo);
+		delete[] indices;
 	}
 
 	void Renderer2D::destroy()
 	{
-		m_Initialized = false;
+		data.ptr = nullptr;
+		delete[] data.buffer;
 	}
 
 	void Renderer2D::beginScene(const OrthographicCamera& camera)
 	{
-		checkInitialized();
-		s_Data->shader->bind();
-		s_Data->shader->setUniform("view", camera.getViewMatrix());
-		s_Data->shader->setUniform("projection", camera.getProjectionMatrix());
+		data.shader->bind();
+		data.shader->setUniform("u_Projection", camera.getProjectionMatrix());
+		data.shader->setUniform("u_View", camera.getViewMatrix());
+		beginBatch();
+	}
+
+	void Renderer2D::beginBatch()
+	{
+		data.ptr = data.buffer;
+		data.curidx = 0;
+		data.textureidx = 1;
 	}
 
 	void Renderer2D::endScene()
 	{
-
+		endBatch();
+		Render2DStats::drawcalls = data.draws;
+		data.draws = 0;
 	}
 
-	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color)
+	void Renderer2D::submitBatch()
 	{
-		checkInitialized();
-		drawQuad(glm::vec3(position, 1.0f), size, color);
+		// bind the textures we have in our array to the texture units in GPU before we draw.
+		for (int i = 0; i < data.textureidx; ++i)
+		{
+			data.textureSlots[i]->bind(i);
+		}
+
+		RenderCall::drawElements(data.vao, data.curidx);
+		data.draws++;
 	}
 
-	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color)
+	void Renderer2D::endBatch()
 	{
-		checkInitialized();
-		s_Data->shader->setUniform("a_Color", color);
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
-		s_Data->shader->setUniform("model", model);
-		RenderCall::drawElements(s_Data->vertexArray);
+		uint32_t size = (data.ptr - data.buffer) * sizeof(Vertex);
+		data.vao->bind();
+		data.vbo->setData(data.buffer, size);
+		submitBatch();
 	}
 
+	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color /*= glm::vec4(1.0f)*/)
+	{
+		drawQuad(glm::vec3(position, 0.0f), size, color);
+	}
+
+	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color /*= glm::vec4(1.0f)*/)
+	{
+		if (data.curidx >= data.mxindices)
+		{
+			endBatch();
+			beginBatch();
+		}
+
+		data.ptr->position = position;
+		data.ptr->color = color;
+		data.ptr->texCoord = { 0.0, 0.0 };
+		data.ptr->texSlot = 0.0f;
+		data.ptr++;
+
+		data.ptr->position = { position.x , position.y + size.y, 0.0f };
+		data.ptr->color = color;
+		data.ptr->texCoord = { 0.0, 1.0 };
+		data.ptr->texSlot = 0.0f;
+		data.ptr++;
+
+		data.ptr->position = { position.x + size.x, position.y + size.y, 0.0f };
+		data.ptr->color = color;
+		data.ptr->texCoord = { 1.0, 1.0 };
+		data.ptr->texSlot = 0.0f;
+		data.ptr++;
+
+		data.ptr->position = { position.x + size.x, position.y, 0.0f };
+		data.ptr->color = color;
+		data.ptr->texCoord = { 1.0, 0.0 };
+		data.ptr->texSlot = 0.0f;
+		data.ptr++;
+
+		data.curidx += 6;
+	}
+
+	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture)
+	{
+		drawQuad(glm::vec3(position, 0.0f), size, texture);
+	}
+
+	void Renderer2D::drawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture)
+	{
+		if (data.curidx >= data.mxindices)
+		{
+			endBatch();
+			beginBatch();
+		}
+
+		glm::vec4 color = glm::vec4(1.0f);
+		
+		// texture slot that the quad will be using.
+		float textureIndex = 0.0f;
+
+		// if this texture is already one of the bound textures, we just use that texture slot for
+		// this quad.
+		for (int i = 0; i < data.textureidx; ++i)
+		{
+			if (data.textureSlots[i] == texture)
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+		
+		// if this is found to be a new texture, we bind it to the available slot and increment
+		// the slot pointer.
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = data.textureidx;
+			data.textureSlots[data.textureidx++] = texture;
+		}
+
+		data.ptr->position = position;
+		data.ptr->color = color;
+		data.ptr->texCoord = { 0.0, 0.0 };
+		data.ptr->texSlot = textureIndex;
+		data.ptr++;
+
+		data.ptr->position = { position.x , position.y + size.y, 0.0f };
+		data.ptr->color = color;
+		data.ptr->texCoord = { 0.0, 1.0 };
+		data.ptr->texSlot = textureIndex;
+		data.ptr++;
+
+		data.ptr->position = { position.x + size.x, position.y + size.y, 0.0f };
+		data.ptr->color = color;
+		data.ptr->texCoord = { 1.0, 1.0 };
+		data.ptr->texSlot = textureIndex;
+		data.ptr++;
+
+		data.ptr->position = { position.x + size.x, position.y, 0.0f };
+		data.ptr->color = color;
+		data.ptr->texCoord = { 1.0, 0.0 };
+		data.ptr->texSlot = textureIndex;
+		data.ptr++;
+
+		data.curidx += 6;
+	}
 }
+

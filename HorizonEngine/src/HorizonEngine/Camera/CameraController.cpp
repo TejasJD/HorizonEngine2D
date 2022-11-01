@@ -63,6 +63,7 @@ namespace Hzn
 
 		m_Camera.setRotation(m_Rotation);
 		m_Camera.setPosition(m_Position);
+		m_TranslationSpeed = m_Camera.getZoom();
 	}
 
 	void OrthographicCameraController::onEvent(Event& e)
@@ -85,9 +86,9 @@ namespace Hzn
 		//HZN_CORE_INFO("(xOffset = {0}, yOffset = {1})", e.GetXOffset(), e.GetYOffset());
 		float yOffset = e.GetYOffset();
 		float zoom = m_Camera.getZoom();
-		zoom -= (0.24f * yOffset);
+		zoom -= (0.25f * yOffset);
 
-		if (zoom < 1.0f) zoom = 1.0f;
+		if (zoom < 0.25f) zoom = 0.25f;
 
 		m_Camera.setZoom(zoom);
 		//HZN_CORE_INFO("{0}", m_Camera.getZoom());

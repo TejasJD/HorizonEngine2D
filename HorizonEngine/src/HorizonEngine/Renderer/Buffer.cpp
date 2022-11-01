@@ -8,7 +8,7 @@
 
 namespace Hzn
 {
-	std::shared_ptr<VertexBuffer> VertexBuffer::create(std::vector<float> vertices)
+	std::shared_ptr<VertexBuffer> VertexBuffer::create(float* vertices, uint32_t size)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -16,14 +16,14 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL: 
-			return std::make_shared<GLVertexBuffer>(vertices.size() * sizeof(float), &vertices[0]);
+			return std::make_shared<GLVertexBuffer>(vertices, size);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");
 		return nullptr;
 	}
 
-	std::shared_ptr<ElementBuffer> ElementBuffer::create(std::vector<unsigned int> indices)
+	std::shared_ptr<VertexBuffer> VertexBuffer::create(uint32_t size)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -31,7 +31,22 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<GLElementBuffer>(indices.size(), &indices[0]);
+			return std::make_shared<GLVertexBuffer>(size);
+		}
+
+		HZN_CORE_ASSERT(false, "Invalid API selected!");
+		return nullptr;
+	}
+
+	std::shared_ptr<ElementBuffer> ElementBuffer::create(uint32_t* indices, uint32_t count)
+	{
+		switch (RendererAPI::getAPI())
+		{
+		case RendererAPI::API::None:
+			HZN_CORE_ASSERT(false, "No Render API Selected");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<GLElementBuffer>(indices, count);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");

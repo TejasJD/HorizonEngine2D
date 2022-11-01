@@ -248,4 +248,11 @@ namespace Hzn
 		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
 		glUniform1f(uLoc, uf);
 	}
+
+	void GLShader::setUniform(const std::string& s, int* a, uint32_t count)
+	{
+		uint32_t uLoc = glGetUniformLocation(m_ProgramId, s.c_str());
+		glUniform1iv(uLoc, count, a);
+	}
+
 }
