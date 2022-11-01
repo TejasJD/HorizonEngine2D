@@ -14,6 +14,7 @@
 #include "imgui_internal.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "ImGuizmo.h"
 
 // Reference additional headers your program requires here.
 #include "HorizonEngine/Core/Core.h"
