@@ -443,11 +443,13 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 			if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
 			{
-				std::string projectFilePath = Hzn::FileDialogs::openFile();
+				std::string projectFolderPath = Hzn::FileDialogs::openFolder();
+
+				std::cout << projectFolderPath << std::endl;
 
 				//Check if the dtring returns empty or not
-				if (projectFilePath != "") {
-					projectRootFolder = std::filesystem::path(projectFilePath).parent_path().string();
+				if (projectFolderPath != "") {
+					projectRootFolder = std::filesystem::path(projectFolderPath).string();
 					projectPath = "Project(" + projectRootFolder + ")";
 				}
 			}
