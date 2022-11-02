@@ -10,6 +10,14 @@
 
 namespace Hzn
 {
+	struct Renderer2DStats
+	{
+		uint32_t quads = 0;
+		uint32_t vertices = 0;
+		uint32_t indices = 0;
+		uint32_t draws = 0;
+	};
+
 	/// <summary>
 	/// Represents a 2D Renderer.
 	/// </summary>
@@ -174,15 +182,7 @@ namespace Hzn
 		/// </summary>
 		static void endBatch();
 
-		struct Stats
-		{
-			uint32_t quads = 0;
-			uint32_t vertices = 0;
-			uint32_t indices = 0;
-			uint32_t draws = 0;
-		};
-
-		inline static Stats getStats() { return m_Stats; }
+		inline static Renderer2DStats getStats() { return m_Stats; }
 
 	private:
 		/// <summary>
@@ -201,7 +201,7 @@ namespace Hzn
 		}
 
 		static bool m_Initialized;
-		static Stats m_Stats;
+		static Renderer2DStats m_Stats;
 	};
 }
 

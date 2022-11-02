@@ -43,9 +43,13 @@ namespace Hzn
 		}
 
 		void run();
+		void onEvent(Event& e);
+		void close() { m_Running = false; }
+
+
 		bool onWindowClose(WindowCloseEvent& e);
 		bool onWindowResize(WindowResizeEvent& e);
-		void onEvent(Event& e);
+
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_Window; }
 		void registerComponents();

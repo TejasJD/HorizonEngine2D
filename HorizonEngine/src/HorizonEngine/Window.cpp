@@ -7,7 +7,7 @@
 
 namespace Hzn
 {
-	std::shared_ptr<Window> Window::create(const unsigned int& width, const unsigned int& height, const char* const& title)
+	std::shared_ptr<Window> Window::create(uint32_t width, uint32_t height, const char* title)
 	{
 		switch (RendererAPI::getAPI())
 		{

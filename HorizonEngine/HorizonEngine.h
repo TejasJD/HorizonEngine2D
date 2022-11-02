@@ -66,6 +66,7 @@
 #include "HorizonEngine/Renderer/VertexArray.h"
 #include "HorizonEngine/Renderer/Texture.h"
 #include "HorizonEngine/Renderer/Sprite.h"
+#include "HorizonEngine/Renderer/FrameBuffer.h"
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Camera/CameraController.h"

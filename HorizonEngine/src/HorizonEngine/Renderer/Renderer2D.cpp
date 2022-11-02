@@ -5,7 +5,7 @@ namespace Hzn
 {
 
 	bool Renderer2D::m_Initialized = false;
-	Renderer2D::Stats Renderer2D::m_Stats;
+	Renderer2DStats Renderer2D::m_Stats;
 
 	struct Vertex
 	{
@@ -73,8 +73,8 @@ namespace Hzn
 
 		// shader creation.
 		data.shader = Shader::create({
-			{Hzn::ShaderType::VertexShader, "assets/shaders/TextureVertex.glsl"},
-			{Hzn::ShaderType::FragmentShader, "assets/shaders/TextureFragment.glsl"}
+			{Hzn::ShaderType::VertexShader, "api_assets/shaders/TextureVertex.glsl"},
+			{Hzn::ShaderType::FragmentShader, "api_assets/shaders/TextureFragment.glsl"}
 			});
 
 		// default-texture creation.
