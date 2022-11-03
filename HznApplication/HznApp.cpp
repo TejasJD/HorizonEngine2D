@@ -829,7 +829,6 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		ImGui::OpenPopup("dirContextObject");
 
 		ImGui::BeginPopup("dirContextObject");
-		//HZN_CORE_DEBUG("Object: " + contextObject);
 
 		if (ImGui::MenuItem("Cut", NULL, false)) {
 			// Do stuff here

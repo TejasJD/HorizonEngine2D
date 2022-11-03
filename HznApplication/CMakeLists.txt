@@ -7,10 +7,11 @@ project(HznApplication)
 
 set(HZAPP_SOURCE_FILES
 	"HznApp.cpp"
-)
+ "panels/ContentBrowserPanel.cpp")
 
 set(HZAPP_HEADER_FILES
 	"HznApp.h"
+	"panels/ContentBrowserPanel.h"
 )
 
 # 'HznApplication' target which would generate an executable.
