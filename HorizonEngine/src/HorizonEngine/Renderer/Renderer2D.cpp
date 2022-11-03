@@ -5,11 +5,7 @@ namespace Hzn
 {
 
 	bool Renderer2D::m_Initialized = false;
-	uint32_t Render2DStats::drawcalls = 0;
-	uint32_t Render2DStats::mxvertices = 0;
-	uint32_t Render2DStats::mxindices = 0;
-	uint32_t Render2DStats::mxquads = 0;
-	uint32_t Render2DStats::mxtextureSlots = 32; // TODO: Such information would be queried from GPU eventually.
+	Renderer2DStats Renderer2D::m_Stats;
 
 	struct Vertex
 	{
@@ -28,22 +24,21 @@ namespace Hzn
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<Texture2D> defaultTexture;
 
-		uint32_t mxquads = 10000;
-		uint32_t mxvertices = 4 * mxquads;
-		uint32_t mxindices = 6 * mxquads;
-
-		Vertex* buffer = nullptr;
+		static constexpr uint32_t mxquads = 1000;
+		static constexpr uint32_t mxvertices = 4 * mxquads;
+		static constexpr uint32_t mxindices = 6 * mxquads;
+		static constexpr uint32_t mxtextureSlots = 32;
 
 		Vertex* ptr = nullptr;
 		uint32_t curidx = 0;
 		// 0 is bound to default texture.
 		uint32_t textureidx = 1;
-		
 		uint32_t draws = 0;
-		static constexpr uint32_t mxtextureSlots = 32;
+		uint32_t quads = 0;
+
+		Vertex* buffer = nullptr;
 		// each texture is bound to one of the texture slots in this.
 		std::array<std::shared_ptr<Texture2D>, mxtextureSlots> textureSlots; // TODO: have a UUID that represent assets.
-
 		std::array<glm::vec4, 4> quadPositions =
 		{
 			glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f),
@@ -51,7 +46,6 @@ namespace Hzn
 			glm::vec4(0.5f, 0.5f, 0.0f, 1.0f),
 			glm::vec4(0.5f, -0.5f, 0.0f, 1.0f)
 		};
-
 		std::array<glm::vec2, 4> quadTexCoords =
 		{
 			glm::vec2(0.0f, 0.0f),
@@ -62,6 +56,9 @@ namespace Hzn
 	};
 
 	constexpr uint32_t RenderData::mxtextureSlots;
+	constexpr uint32_t RenderData::mxquads;
+	constexpr uint32_t RenderData::mxvertices;
+	constexpr uint32_t RenderData::mxindices;
 
 	// static because we don't want to expose data used by the 2D renderer to other
 	// other translation units.
@@ -70,19 +67,15 @@ namespace Hzn
 	void Renderer2D::init()
 	{
 		// initialize render stats.
-		Render2DStats::mxquads = data.mxquads;
-		Render2DStats::mxindices = data.mxindices;
-		Render2DStats::mxvertices = data.mxvertices;
-		Render2DStats::mxtextureSlots = data.mxtextureSlots;
 
 		// allocate data for buffer.
 		data.ptr = data.buffer = new Vertex[data.mxvertices];
 
 		// shader creation.
 		data.shader = Shader::create({
-			{Hzn::ShaderType::VertexShader, "assets/shaders/TextureVertex.glsl"},
-			{Hzn::ShaderType::FragmentShader, "assets/shaders/TextureFragment.glsl"}
-		});
+			{Hzn::ShaderType::VertexShader, "api_assets/shaders/TextureVertex.glsl"},
+			{Hzn::ShaderType::FragmentShader, "api_assets/shaders/TextureFragment.glsl"}
+			});
 
 		// default-texture creation.
 		uint32_t whiteTexture = 0xffffffff;
@@ -147,6 +140,11 @@ namespace Hzn
 		data.shader->bind();
 		data.shader->setUniform("u_Projection", camera.getProjectionMatrix());
 		data.shader->setUniform("u_View", camera.getViewMatrix());
+
+		// initialize few stat variables.
+		data.draws = 0;
+		data.quads = 0;
+
 		beginBatch();
 	}
 
@@ -160,8 +158,12 @@ namespace Hzn
 	void Renderer2D::endScene()
 	{
 		endBatch();
-		Render2DStats::drawcalls = data.draws;
-		data.draws = 0;
+
+		// record stats.
+		Renderer2D::m_Stats.draws = data.draws;
+		Renderer2D::m_Stats.quads = data.quads;
+		Renderer2D::m_Stats.vertices = 4 * data.quads;
+		Renderer2D::m_Stats.indices = 6 * data.quads;
 	}
 
 	void Renderer2D::submitBatch()
@@ -213,6 +215,7 @@ namespace Hzn
 		}
 
 		data.curidx += 6;
+		data.quads++;
 	}
 
 	void Renderer2D::drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const glm::vec4 color /*= glm::vec4(1.0f)*/)
@@ -246,6 +249,7 @@ namespace Hzn
 		}
 
 		data.curidx += 6;
+		data.quads++;
 	}
 
 	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture)
@@ -262,7 +266,7 @@ namespace Hzn
 		}
 
 		glm::vec4 color = glm::vec4(1.0f);
-		
+
 		// texture slot that the quad will be using.
 		float textureIndex = 0.0f;
 
@@ -276,7 +280,7 @@ namespace Hzn
 				break;
 			}
 		}
-		
+
 		// if this is found to be a new texture, we bind it to the available slot and increment
 		// the slot pointer.
 		if (textureIndex == 0.0f)
@@ -297,6 +301,7 @@ namespace Hzn
 		}
 
 		data.curidx += 6;
+		data.quads++;
 	}
 
 	void Renderer2D::drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture)
@@ -350,6 +355,114 @@ namespace Hzn
 		}
 
 		data.curidx += 6;
+		data.quads++;
+	}
+
+	void Renderer2D::drawSprite(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite)
+	{
+		drawSprite(glm::vec3(position, 0.0f), size, sprite);
+	}
+
+	void Renderer2D::drawSprite(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite)
+	{
+		if (data.curidx >= data.mxindices)
+		{
+			endBatch();
+			beginBatch();
+		}
+
+		glm::vec4 color = glm::vec4(1.0f);
+
+		// texture slot that the quad will be using.
+		float textureIndex = 0.0f;
+
+		// if this texture is already one of the bound textures, we just use that texture slot for
+		// this quad.
+		for (int i = 0; i < data.textureidx; ++i)
+		{
+			if (data.textureSlots[i] == sprite->getSpriteSheet())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		// if this is found to be a new texture, we bind it to the available slot and increment
+		// the slot pointer.
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = data.textureidx;
+			data.textureSlots[data.textureidx++] = sprite->getSpriteSheet();
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::scale(glm::mat4(1.0f), size);
+
+		for (int i = 0; i < data.quadPositions.size(); ++i)
+		{
+			data.ptr->position = transform * data.quadPositions[i];
+			data.ptr->color = color;
+			data.ptr->texCoord = sprite->getTexCoords()[i];
+			data.ptr->texSlot = textureIndex;
+			data.ptr++;
+		}
+
+		data.curidx += 6;
+		data.quads++;
+	}
+
+	void Renderer2D::drawSprite(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite)
+	{
+		drawSprite(glm::vec3(position, 0.0f), angle, size, sprite);
+	}
+
+	void Renderer2D::drawSprite(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite)
+	{
+		if (data.curidx >= data.mxindices)
+		{
+			endBatch();
+			beginBatch();
+		}
+
+		glm::vec4 color = glm::vec4(1.0f);
+
+		// texture slot that the quad will be using.
+		float textureIndex = 0.0f;
+
+		// if this texture is already one of the bound textures, we just use that texture slot for
+		// this quad.
+		for (int i = 0; i < data.textureidx; ++i)
+		{
+			if (data.textureSlots[i] == sprite->getSpriteSheet())
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		// if this is found to be a new texture, we bind it to the available slot and increment
+		// the slot pointer.
+		if (textureIndex == 0.0f)
+		{
+			textureIndex = data.textureidx;
+			data.textureSlots[data.textureidx++] = sprite->getSpriteSheet();
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f)) *
+			glm::scale(glm::mat4(1.0f), size);
+
+		for (int i = 0; i < data.quadPositions.size(); ++i)
+		{
+			data.ptr->position = transform * data.quadPositions[i];
+			data.ptr->color = color;
+			data.ptr->texCoord = sprite->getTexCoords()[i];
+			data.ptr->texSlot = textureIndex;
+			data.ptr++;
+		}
+
+		data.curidx += 6;
+		data.quads++;
 	}
 }
 

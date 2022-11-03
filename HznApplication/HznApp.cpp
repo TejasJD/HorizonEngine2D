@@ -18,7 +18,7 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 // ************************************************************************
 
 // *********** EDITOR LAYER **********
-EditorLayer::EditorLayer(const std::string& name) : Layer(name) {
+EditorLayer::EditorLayer(const char* name) : Hzn::Layer(name) {
 	
 	
 	folderIcon = Hzn::Texture2D::create("assets/icons/DirectoryIcon.png");
