@@ -3,15 +3,16 @@
 #
 cmake_minimum_required (VERSION 3.15)
 
-project(HznApplication)
-
 set(HZAPP_SOURCE_FILES
 	"HznApp.cpp"
- "panels/ContentBrowserPanel.cpp")
+	"Sandbox.cpp"
+	"panels/ContentBrowserPanel.cpp"
+ )
 
 set(HZAPP_HEADER_FILES
 	"HznApp.h"
 	"panels/ContentBrowserPanel.h"
+	"Sandbox.h"
 )
 
 # 'HznApplication' target which would generate an executable.

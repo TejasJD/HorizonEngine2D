@@ -7,39 +7,31 @@
 
 namespace Hzn
 {
+	//! class with static member functions that makes calls to the appropriate rendering API.
 	class RenderCall
 	{
 	public:
 
-		inline static void init()
+		inline static void init() { m_Api->init(); }
+
+		inline static void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 		{
-			m_Api->init();
+			m_Api->setViewport(0, 0, width, height);
 		}
 
-		inline static void setClearColor(const glm::vec4& color)
-		{
-			m_Api->setClearColor(color);
+		inline static void setClearColor(const glm::vec4& color) { m_Api->setClearColor(color); }
+
+		inline static void submitClear() { m_Api->submitClear(); }
+
+		inline static void drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count = 0) 
+		{ 
+			m_Api->drawElements(vertexArray, count); 
 		}
 
-		inline static void submitClear()
-		{
-			m_Api->submitClear();
-		}
-
-		inline static void drawElements(const std::shared_ptr<VertexArray>& vertexArray)
-		{
-			m_Api->drawElements(vertexArray);
-		}
-
-		inline static void drawTriangles(const std::shared_ptr<VertexArray>& vertexArray)
-		{
-			m_Api->drawTriangles(vertexArray);
-		}
-
-		static RendererAPI* create();
+		static std::unique_ptr<RendererAPI> create();
 
 	private:
-		static RendererAPI* m_Api;
+		static std::unique_ptr<RendererAPI> m_Api;
 	};
 }
 

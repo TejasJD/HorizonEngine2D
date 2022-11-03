@@ -3,8 +3,6 @@
 #
 cmake_minimum_required (VERSION 3.15)
 
-project(HorizonEngine)
-
 set(HZN_SOURCE_FILES
 	"src/HorizonEngine/App.cpp"
 	"src/HorizonEngine/GameObject.cpp"
@@ -39,12 +37,17 @@ set(HZN_SOURCE_FILES
 	"Platform/OpenGL/GLVertexArray.cpp"
 	"src/HorizonEngine/Renderer/VertexArray.cpp"
 	"src/HorizonEngine/Renderer/Renderer.cpp"
-	"src/HorizonEngine/Camera.h"
+	"src/HorizonEngine/Camera/Camera.h"
 	"src/HorizonEngine/Renderer/RenderCall.cpp"
 	"Platform/OpenGL/GLRendererAPI.cpp"
-	"src/HorizonEngine/Camera.cpp"
+	"src/HorizonEngine/Camera/Camera.cpp"
 	"Platform/OpenGL/FDWindows.cpp"
-	"src/HorizonEngine/Renderer/Texture.cpp" "Platform/OpenGL/GLTexture.cpp" "src/vendor/stb/stbimage.cpp")
+	"src/HorizonEngine/Renderer/Texture.cpp"
+	"Platform/OpenGL/GLTexture.cpp"
+	"src/vendor/stb/stbimage.cpp"
+	"src/HorizonEngine/Camera/CameraController.cpp"
+	"src/HorizonEngine/Renderer/Renderer2D.cpp"
+	"src/HorizonEngine/Renderer/Renderer3D.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -103,7 +106,10 @@ set(HZN_HEADER_FILES
 	"Platform/OpenGL/FDWindows.h"
 	"src/HorizonEngine/Core/TimeStep.h"
 	"Platform/OpenGL/GLTexture.h"
-	"src/HorizonEngine/Renderer/Texture.h")
+	"src/HorizonEngine/Renderer/Texture.h"
+	"src/HorizonEngine/Camera/CameraController.h"
+	"src/HorizonEngine/Renderer/Renderer2D.h"
+	"src/HorizonEngine/Renderer/Renderer3D.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -112,7 +118,7 @@ add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 target_compile_definitions(HorizonEngine
 	PUBLIC
 	HZN_PLATFORM_WINDOWS
-	HZN_ASSERTS_ON
+	$<$<CONFIG:Debug>:HZN_ASSERTS_ON>
 )
 
 
@@ -137,6 +143,7 @@ find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
 find_package(openal CONFIG REQUIRED)
 find_package(Sndfile CONFIG REQUIRED)
+find_package(imguizmo CONFIG REQUIRED)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
 
 target_link_libraries(HorizonEngine 
@@ -150,6 +157,7 @@ target_link_libraries(HorizonEngine
 	unofficial::sajson::sajson
 	OpenAL::OpenAL
 	SndFile::sndfile
+	imguizmo::imguizmo
 )
 
 #testing

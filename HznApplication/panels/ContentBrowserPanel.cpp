@@ -40,7 +40,7 @@ void ContentBrowserPanel::OnImGuiRender()
 		ImGui::PushID(filenameString.c_str());
 		std::shared_ptr<Hzn::Texture> icon = directoryEntry.is_directory() ? folderIcon : fileIcon;
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+		ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 		if (ImGui::BeginDragDropSource())
 		{

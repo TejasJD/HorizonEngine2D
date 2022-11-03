@@ -3,37 +3,13 @@
 
 namespace Hzn
 {
-	std::shared_ptr<Camera> Renderer::m_Camera;
-
 	void Renderer::init()
 	{
 		RenderCall::init();
 	}
 
-	void Renderer::beginScene(const std::shared_ptr<Camera>& camera)
+	void Renderer::onWindowResize(unsigned int width, unsigned int height)
 	{
-		m_Camera = camera;
-	}
-
-	void Renderer::endScene()
-	{
-
-	}
-
-	void Renderer::render(const std::shared_ptr<Shader>& shader, 
-		const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& modelTransform)
-	{
-		if (!m_Camera)
-		{
-			throw std::runtime_error("Camera not bound!");
-		}
-
-		shader->bind();
-		shader->setUniform("view", m_Camera->getViewMatrix());
-		shader->setUniform("projection", m_Camera->getProjectionMatrix());
-		shader->setUniform("model", modelTransform);
-
-		vertexArray->bind();
-		RenderCall::drawElements(vertexArray);
+		RenderCall::setViewport(0, 0, width, height);
 	}
 }

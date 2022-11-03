@@ -1,183 +1,17 @@
 #include "pch.h"
-
 #include <HorizonEngine.h>
 #include <HznEntryPoint.h>
+
+#include "Sandbox.h"
 #include "HznApp.h"
 
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	app->addLayer(new EditorLayer());
-	//app->addLayer(new SampleLayer());
+	//app->addLayer(new EditorLayer());
+	app->addLayer(new Sandbox());
 	return app;
 }
-
-// *********** SAMPLE LAYER **********
-
-SampleLayer::SampleLayer(const std::string& name) : Layer(name)
-{
-	Hzn::BufferLayout layout =
-	{
-		{Hzn::ShaderDataType::Vec3f, "a_Pos"},
-		{Hzn::ShaderDataType::Vec2f, "a_TexCoord"}
-	};
-
-	std::vector<float> vertices = {
-		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-	};
-
-	std::vector<uint32_t> indices = {
-		0, 1, 2,
-		0, 3, 2
-	};
-
-	shader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create({
-		{Hzn::ShaderType::VertexShader, "assets/shaders/GridVertex.glsl"},
-		{Hzn::ShaderType::FragmentShader, "assets/shaders/GridFragment.glsl"}
-	}));
-	textureShader = std::shared_ptr<Hzn::Shader>(Hzn::Shader::create({
-		{Hzn::ShaderType::VertexShader, "assets/shaders/TextureVertex.glsl"},
-		{Hzn::ShaderType::FragmentShader, "assets/shaders/TextureFragment.glsl"}
-	}));
-
-	texture = Hzn::Texture2D::create("assets/textures/Checkerboard.png");
-	logoTexture = Hzn::Texture2D::create("assets/textures/someSky.png");
-
-	textureShader->bind();
-	textureShader->setUniform("f_Texture", 0);
-
-	vertexBuffer = std::shared_ptr<Hzn::VertexBuffer>(Hzn::VertexBuffer::create(vertices));
-	vertexBuffer->setBufferLayout(layout);
-
-	elementBuffer = std::shared_ptr<Hzn::ElementBuffer>(Hzn::ElementBuffer::create(indices));
-
-	vertexArray = std::shared_ptr<Hzn::VertexArray>(Hzn::VertexArray::create());
-	vertexArray->addVertexBuffer(vertexBuffer);
-	vertexArray->setElementBuffer(elementBuffer);
-
-	camera = std::shared_ptr<Hzn::Camera>(new Hzn::OrthographicCamera(
-		-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 100.0f,
-		{ 0.0f, 0.0f, 3.0f },
-		{ 0.0f, 0.0f, -1.0f },
-		{ 0.0f, 1.0f, 0.0f }
-	));
-
-	camera->speed = 2.5f;
-}
-
-void SampleLayer::onAttach()
-{
-	HZN_CRITICAL("Sample Layer Attached!");
-}
-
-void SampleLayer::onUpdate(Hzn::TimeStep deltaTime)
-{
-	float currentFrame = glfwGetTime();
-	++frameCount;
-
-	if (currentFrame - previousSecond >= 1.0f)
-	{
-		previousSecond = currentFrame;
-		fps = frameCount;
-		frameCount = 0;
-	}
-
-	camera->deltaTime = deltaTime;
-
-	if (Hzn::Input::keyPressed(Hzn::Key::Up))
-	{
-		camera->position += (camera->speed * camera->deltaTime) * camera->up;
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::Down))
-	{
-		camera->position -= (camera->speed * camera->deltaTime) * camera->up;
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::Left))
-	{
-		camera->position -= (camera->speed * camera->deltaTime) * glm::vec3({ 1.0f, 0.0f, 0.0f });
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::Right))
-	{
-		camera->position += (camera->speed * camera->deltaTime) * glm::vec3({ 1.0f, 0.0f, 0.0f });;
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::J))
-	{
-		rotation -= 90.0f * camera->deltaTime;
-	}
-	else if (Hzn::Input::keyPressed(Hzn::Key::L))
-	{
-		rotation += 90.0f * camera->deltaTime;
-	}
-	auto y = sin(glm::radians(rotation));
-	auto x = cos(glm::radians(rotation));
-	camera->up = glm::vec3(x, y, 0.0f);
-
-	Hzn::RenderCall::setClearColor({0.1f, 0.1f, 0.1f, 0.1f});
-	Hzn::RenderCall::submitClear();
-
-	Hzn::Renderer::beginScene(camera);
-
-	shader->bind();
-	for (int i = 0; i < 20; ++i)
-	{
-		for (int j = 0; j < 20; ++j)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3((float)i * 0.11f , (float)j * 0.11f, 0));
-			shader->setUniform("a_Color", glm::vec4(gridColor, 1.0f));
-			model = glm::scale(model, glm::vec3(0.1f));
-			Hzn::Renderer::render(shader, vertexArray, model);
-		}
-	}
-
-	texture->bind();
-	Hzn::Renderer::render(textureShader, vertexArray
-		, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-	logoTexture->bind();
-	Hzn::Renderer::render(textureShader, vertexArray
-		, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
-	Hzn::Renderer::endScene();
-}
-
-void SampleLayer::onRenderImgui()
-{
-	static bool my_tool_active = true;
-	ImGui::Begin("FPS Counter", &my_tool_active);
-	ImGui::Text("Framerate: %.2f FPS", (float)fps);
-	ImGui::End();
-
-	ImGui::Begin("Color Picker");
-	ImGui::ColorEdit3("Grid Color", glm::value_ptr(gridColor), true);
-	ImGui::End();
-
-}
-
-void SampleLayer::onEvent(Hzn::Event& event)
-{
-	Hzn::EventDispatcher e(event);
-	e.Dispatch<Hzn::MouseScrolledEvent>(std::bind(&SampleLayer::onMouseScroll, this, std::placeholders::_1));
-}
-
-void SampleLayer::onDetach()
-{
-
-}
-
-void SampleLayer::mouseMovementCamera(Hzn::TimeStep deltaTime)
-{
-
-}
-
-bool SampleLayer::onMouseScroll(Hzn::MouseScrolledEvent& event)
-{
-	/*HZN_INFO("(xOffset = {0}, yOffset = {1})", event.GetXOffset(), event.GetYOffset());*/
-	return false;
-}
-
 
 // ************************************************************************
 
@@ -704,7 +538,7 @@ void EditorLayer::drawHierarchy() {
 	if (drag_delta.x > 0.0f || drag_delta.y > 0.0f) {
 		// TODO: Put dragged object as child of currently hovered object
 		// or change its posiiton in the hierarchy 
-		// (one of the two depending on the mouse position)
+		// (one of the two depending on the mouse m_Position)
 	}
 
 	ImGui::End();

@@ -20,6 +20,7 @@
     "sajson",
     "openal-soft",
     "sndfile",
-    "stb"
+    "stb",
+    "imguizmo"
   ]
 }

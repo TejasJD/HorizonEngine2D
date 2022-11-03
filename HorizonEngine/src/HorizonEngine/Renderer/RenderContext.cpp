@@ -7,7 +7,7 @@
 
 namespace Hzn
 {
-	RenderContext* RenderContext::create(void* const& windowHandle)
+	std::shared_ptr<RenderContext> RenderContext::create(void* const& windowHandle)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new GLContext((GLFWwindow*)windowHandle);
+			return std::make_shared<GLContext>((GLFWwindow*)windowHandle);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");

@@ -12,6 +12,7 @@ namespace Hzn
 		~ImguiLayer();
 		virtual void onAttach() override;
 		virtual void onDetach() override;
+		void ImguiLayer::onUpdate(TimeStep ts) override;
 		virtual void onRenderImgui() override;
 		void imguiBegin();
 		void imguiEnd();
