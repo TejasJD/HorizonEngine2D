@@ -20,6 +20,7 @@ private:
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 	std::filesystem::path m_CurrentDirectory;
 	std::shared_ptr<Hzn::Texture> folderIcon;
+	std::map<std::string, std::shared_ptr<Hzn::Texture>> fileIconMap;
 	std::shared_ptr<Hzn::Texture> fileIcon;
 public:
 	EditorLayer(const char* name = "Editor Layer");

@@ -24,6 +24,8 @@ EditorLayer::EditorLayer(const char* name) : Hzn::Layer(name) {
 	folderIcon = Hzn::Texture2D::create("assets/icons/DirectoryIcon.png");
 	fileIcon = Hzn::Texture2D::create("assets/icons/FileIcon.png");
 
+	
+	
 	//Initialize the audio system and load the files under the audio folder
 	Hzn::SoundDevice::Init();
 
@@ -295,6 +297,14 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 				assetPath = projectRootFolder + "\\assets";
 				m_CurrentDirectory = assetPath;
+
+				for (const auto& entry : std::filesystem::recursive_directory_iterator(assetPath))
+				{
+					if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
+						fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
+
+					}
+				}
 			}
 
 			ImGui::Separator();
@@ -581,8 +591,11 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 		name = name.substr(lastSlash, name.size() - lastSlash);
 
 		bool entryIsFile = !std::filesystem::is_directory(entry.path());
-		if (entryIsFile)
-			node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		if (entryIsFile) {
+			fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
+			continue;
+		}
+			
 
 		bool node_open = ImGui::TreeNodeEx(name.c_str(), node_flags);
 
@@ -628,7 +641,6 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 
 void EditorLayer::drawProjectExplorer(std::string directoryPath) {
 
-	std::cout << contextObject<< std::endl;
 	openContext = false;
 	dirOpenContext = false;
 	ImGui::Begin(projectPath.c_str());
@@ -919,11 +931,27 @@ void EditorLayer::drawContentBrowser() {
 
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
+			
 			const auto& path = directoryEntry.path();
 			std::string filenameString = path.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			std::shared_ptr<Hzn::Texture> icon = directoryEntry.is_directory() ? folderIcon : fileIcon;
+			
+			
+			std::shared_ptr<Hzn::Texture> icon;
+
+			if (directoryEntry.is_directory()) {
+				icon = folderIcon;
+			}
+			else if (directoryEntry.path().string().find(".png") != std::string::npos)
+			{
+				fileIconMap.find(directoryEntry.path().string());
+				icon = fileIconMap.find(directoryEntry.path().string())->second;
+			}
+			else
+			{
+				icon = fileIcon;
+			}
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
