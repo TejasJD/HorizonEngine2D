@@ -182,7 +182,7 @@ namespace Hzn
 		/// </summary>
 		static void endBatch();
 
-		inline static Renderer2DStats getStats() { return m_Stats; }
+		static Renderer2DStats getStats() { return m_Stats; }
 
 	private:
 		/// <summary>
@@ -190,7 +190,7 @@ namespace Hzn
 		/// Call this method in every other API method to prevent other render calls from
 		/// errors, undefined behavior etc.
 		/// </summary>
-		inline static void checkInitialized()
+		static void checkInitialized()
 		{
 			if (!isInitialized())
 			{

@@ -34,6 +34,7 @@ private:
 	Hzn::OrthographicCameraController m_CameraController;
 	std::shared_ptr<Hzn::Texture2D> m_SpriteSheet;
 	std::shared_ptr<Hzn::Sprite2D> m_Sprite;
+	std::shared_ptr<Hzn::Texture2D> m_Bear;
 };
 
 #endif // !HZNAPP_SANDBOX_H

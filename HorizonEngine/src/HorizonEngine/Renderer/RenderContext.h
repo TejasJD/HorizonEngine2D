@@ -8,7 +8,7 @@ namespace Hzn
 	class RenderContext
 	{
 	public:
-		virtual ~RenderContext() {}
+		virtual ~RenderContext() = default;
 
 		virtual void init() = 0;
 		virtual void swapBuffers() = 0;

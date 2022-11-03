@@ -15,7 +15,7 @@ and can be primarily accessed through **Developer Command Prompt for VS 2022 / D
 1. ### Windows
    1. Run the following commands in the **command prompt / powershell** to get the project files on your local machine.
 ```
-git clone https://github.com/alex-mulkerrins/groupProject.git
+git clone https://github.com/TejasJD/groupProject.git
 cd groupProject
 git submodule init
 git submodule update

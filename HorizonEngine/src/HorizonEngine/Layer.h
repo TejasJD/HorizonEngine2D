@@ -45,6 +45,8 @@ namespace Hzn
 		/// </summary>
 		virtual void onRenderImgui() {}
 
+		virtual void blockEvents(bool flag) {};
+
 	protected:
 		std::string m_Name;
 	};

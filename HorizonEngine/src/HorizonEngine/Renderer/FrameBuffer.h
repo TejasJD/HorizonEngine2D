@@ -23,7 +23,7 @@ namespace Hzn
 	class FrameBuffer
 	{
 	public:
-		virtual ~FrameBuffer() {}
+		virtual ~FrameBuffer() = default;
 
 		/// <summary>
 		/// Get the properties of the frame buffer object. Is read-only.
