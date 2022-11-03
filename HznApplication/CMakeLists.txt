@@ -6,12 +6,10 @@ cmake_minimum_required (VERSION 3.15)
 set(HZAPP_SOURCE_FILES
 	"HznApp.cpp"
 	"Sandbox.cpp"
-	"panels/ContentBrowserPanel.cpp"
  )
 
 set(HZAPP_HEADER_FILES
 	"HznApp.h"
-	"panels/ContentBrowserPanel.h"
 	"Sandbox.h"
 )
 

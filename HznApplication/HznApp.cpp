@@ -5,11 +5,13 @@
 #include "Sandbox.h"
 #include "HznApp.h"
 
+
+
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	//app->addLayer(new EditorLayer());
-	app->addLayer(new Sandbox());
+	app->addLayer(new EditorLayer());
+	//app->addLayer(new Sandbox());
 	return app;
 }
 
@@ -18,6 +20,10 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 // *********** EDITOR LAYER **********
 EditorLayer::EditorLayer(const std::string& name) : Layer(name) {
 	
+	
+	folderIcon = Hzn::Texture2D::create("assets/icons/DirectoryIcon.png");
+	fileIcon = Hzn::Texture2D::create("assets/icons/FileIcon.png");
+
 	//Initialize the audio system and load the files under the audio folder
 	Hzn::SoundDevice::Init();
 
@@ -34,10 +40,10 @@ EditorLayer::EditorLayer(const std::string& name) : Layer(name) {
 
 void EditorLayer::onAttach()
 {
-	
+
 
 	HZN_INFO("Editor Layer Attached!");
-	Hzn::ProjectFile *file = new Hzn::ProjectFile("assets/scenes/input.txt");
+	Hzn::ProjectFile* file = new Hzn::ProjectFile("assets/scenes/input.txt");
 	openScene = new Hzn::Scene(file);
 	openScene->open();
 	nodes = openScene->getHierarchy();
@@ -131,6 +137,7 @@ void EditorLayer::onRenderImgui()
 	drawProjectExplorer(projectRootFolder);
 	drawConsole();
 	drawAudio("assets/audios/");
+	drawContentBrowser();
 }
 
 
@@ -285,6 +292,9 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 					projectRootFolder = std::filesystem::path(projectFolderPath).string();
 					projectPath = "Project(" + projectRootFolder + ")";
 				}
+
+				assetPath = projectRootFolder + "\\assets";
+				m_CurrentDirectory = assetPath;
 			}
 
 			ImGui::Separator();
@@ -456,7 +466,7 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 	}
 
 	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
-	
+
 	openContext |= ImGui::IsPopupOpen("contextObject");
 
 	if (open) {
@@ -544,23 +554,23 @@ void EditorLayer::drawHierarchy() {
 	ImGui::End();
 }
 
-void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
+void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
 	if (path.empty()) {
-		return ;
+		return;
 	}
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
 
-		
+
 		if (entry.path().string().find("assets") == std::string::npos) {
 			continue;
 		}
 
 		ImGuiTreeNodeFlags node_flags = base_flags;
-		
+
 		if (entry.path().string() == contextObject)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
@@ -589,6 +599,11 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 		if (!clickStatus && ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 			clickStatus = true;
 			contextObject = entry.path().string();
+
+			if (!entryIsFile) {
+				m_CurrentDirectory = contextObject;
+
+			}
 		}
 
 		if (!clickStatus && !entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
@@ -611,8 +626,9 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 
 }
 
-void EditorLayer::drawProjectExplorer(std::string directoryPath){
+void EditorLayer::drawProjectExplorer(std::string directoryPath) {
 
+	std::cout << contextObject<< std::endl;
 	openContext = false;
 	dirOpenContext = false;
 	ImGui::Begin(projectPath.c_str());
@@ -644,14 +660,14 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		}
 		if (ImGui::MenuItem("Rename", NULL, false)) {
 			// Do stuff here 
-			
+
 		}
 		if (ImGui::MenuItem("Delete")) {
-			
+
 			Hzn::ProjectFile pf(contextObject);
 			pf.deleteFile(contextObject);
 		}
-	
+
 		ImGui::EndPopup();
 	}
 
@@ -681,7 +697,7 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 
 		}
 		if (ImGui::MenuItem("Delete", NULL, false)) {
-			
+
 			Hzn::ProjectFile* pf = nullptr;
 			pf->deleteDir(contextObject);
 		}
@@ -729,7 +745,7 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		ImGui::OpenPopupOnItemClick("contextProject", ImGuiPopupFlags_MouseButtonRight);
 	}
 	if (ImGui::BeginPopup("contextProject")) {
-		
+
 
 		if (ImGui::MenuItem("New file", NULL, false)) {
 			if (std::filesystem::exists(projectRootFolder + "/new file"))
@@ -791,11 +807,11 @@ bool EditorLayer::ButtonCenteredOnLine(const char* label, float alignment)
 void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
-	
+
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
-		
+
 		ImGuiTreeNodeFlags node_flags = base_flags;
 
 		if (entry.path().string() == contextObject)
@@ -832,11 +848,11 @@ void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 }
 
 void EditorLayer::drawAudio(std::string directoryPath) {
-	
+
 
 	openContext = false;
 	ImGui::Begin("Audios");
-	
+
 	drawAudioNode(directoryPath);
 
 	if (openContext) {
@@ -871,6 +887,71 @@ void EditorLayer::drawAudio(std::string directoryPath) {
 	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 	const bool is_active = ImGui::IsItemActive();   // Held
+
+	ImGui::End();
+}
+
+
+void EditorLayer::drawContentBrowser() {
+	
+	contextObject = m_CurrentDirectory.string();
+	ImGui::Begin("Content Browser");
+
+	if (!projectRootFolder.empty()) {
+		if (m_CurrentDirectory != std::filesystem::path(assetPath))
+		{
+			if (ImGui::Button("<-"))
+			{
+				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+			}
+		}
+
+		static float padding = 16.0f;
+		static float thumbnailSize = 128.0f;
+		float cellSize = thumbnailSize + padding;
+
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		int columnCount = (int)(panelWidth / cellSize);
+		if (columnCount < 1)
+			columnCount = 1;
+
+		ImGui::Columns(columnCount, 0, false);
+
+		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		{
+			const auto& path = directoryEntry.path();
+			std::string filenameString = path.filename().string();
+
+			ImGui::PushID(filenameString.c_str());
+			std::shared_ptr<Hzn::Texture> icon = directoryEntry.is_directory() ? folderIcon : fileIcon;
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+			ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+			if (ImGui::BeginDragDropSource()) {
+
+				auto relativePath = std::filesystem::relative(path, assetPath);
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				ImGui::EndDragDropSource();
+			}
+
+			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				if (directoryEntry.is_directory())
+					m_CurrentDirectory /= path.filename();
+
+			}
+			ImGui::TextWrapped(filenameString.c_str());
+
+			ImGui::NextColumn();
+
+			ImGui::PopID();
+		}
+	}
+
+
+	ImGui::Columns(1);
 
 	ImGui::End();
 }
