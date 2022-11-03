@@ -12,18 +12,18 @@ namespace Hzn
 	{
 	public:
 
-		inline static void init() { m_Api->init(); }
+		static void init() { m_Api->init(); }
 
-		inline static void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+		static void setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 		{
 			m_Api->setViewport(0, 0, width, height);
 		}
 
-		inline static void setClearColor(const glm::vec4& color) { m_Api->setClearColor(color); }
+		static void setClearColor(const glm::vec4& color) { m_Api->setClearColor(color); }
 
-		inline static void submitClear() { m_Api->submitClear(); }
+		static void submitClear() { m_Api->submitClear(); }
 
-		inline static void drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count = 0) 
+		static void drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count = 0) 
 		{ 
 			m_Api->drawElements(vertexArray, count); 
 		}

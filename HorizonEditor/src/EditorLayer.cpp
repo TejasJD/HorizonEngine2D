@@ -3,7 +3,8 @@
 
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
-	m_AspectRatio((float)Hzn::App::getApp().getAppWindow().getWidth() / (float)Hzn::App::getApp().getAppWindow().getHeight()),
+    m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
+        static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
 	m_CameraController(Hzn::OrthographicCameraController(m_AspectRatio, 1.0f))
 {
 }
@@ -23,11 +24,12 @@ void EditorLayer::onDetach() {}
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	m_CameraController.onUpdate(ts);
+	if(m_ViewportFocused && m_ViewportHovered) m_CameraController.onUpdate(ts);
+
 	m_FrameBuffer->bind();
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
-	Hzn::Renderer2D::beginScene((const Hzn::OrthographicCamera&)m_CameraController.getCamera());
+	Hzn::Renderer2D::beginScene(dynamic_cast<const Hzn::OrthographicCamera&>(m_CameraController.getCamera()));
 
 	for (int32_t i = 0; i < quads; ++i)
 	{
@@ -47,13 +49,13 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 bool EditorLayer::onWindowResize(Hzn::WindowResizeEvent& e)
 {
-	HZN_INFO("{0}, {1}", e.GetWidth(), e.GetHeight());
 	return false;
 }
 
 void EditorLayer::onEvent(Hzn::Event& e)
 {
-	m_CameraController.onEvent(e);
+    /*HZN_DEBUG("Editor Layer Received Event!");*/
+	if(m_ViewportFocused && m_ViewportHovered) m_CameraController.onEvent(e);
 
 	Hzn::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Hzn::WindowResizeEvent>(std::bind(&EditorLayer::onWindowResize, this, std::placeholders::_1));
@@ -162,11 +164,20 @@ void EditorLayer::onRenderImgui()
 	ImGui::End();
     // SETTINGS END.
 
-	// VIEWPORT BEGIN.
+	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::Begin("Viewport");
+
+    // get the states of the viewport.
+    m_ViewportFocused = ImGui::IsWindowFocused();
+    m_ViewportHovered = ImGui::IsWindowHovered();
+
+    // ImGui layer will not block the events if the viewport is focused and hovered.
+    Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
 	glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
 
+    // if the viewport changes we don't get the viewport.
 	if(lastViewportSize != viewportSize)
 	{
 		// this invalidates the current frame buffer and recreates a new frame buffer.

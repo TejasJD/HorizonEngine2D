@@ -11,7 +11,7 @@ namespace Hzn
 	class RendererAPI
 	{
 	public:
-		virtual ~RendererAPI() {}
+		virtual ~RendererAPI() = default;
 		enum class API
 		{
 			None = 0,
