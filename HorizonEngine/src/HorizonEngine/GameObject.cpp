@@ -85,9 +85,12 @@ namespace Hzn
 			if (t) {
 				transform = t;
 				t->setField("gameObject", shared_from_this());
+				t->setField("parent", std::shared_ptr<Component>(component));
+				t->setField("root", std::shared_ptr<Component>(component));
 			}
 		}
 		else {
+			component->setField("gameObject", shared_from_this());
 			component->setField("transform", std::shared_ptr<Component>(transform));
 		}
 	}

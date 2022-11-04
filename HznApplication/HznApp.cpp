@@ -564,7 +564,10 @@ void EditorLayer::drawObjectBehaviour() {
 
 	if (contextObject != "") {
 		std::vector<std::shared_ptr<Hzn::Component>>* components = selectedObject->getComponents();
+
 		for (int i = 0; i < components->size(); i++) {
+			//HZN_CORE_DEBUG(std::any_cast<std::shared_ptr<Hzn::GameObject>>(components->at(i)->getField("gameObject"))->name);
+
 			ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
 			bool open = ImGui::TreeNodeEx(components->at(i)->getComponentType().c_str(), base_flags | ImGuiTreeNodeFlags_Selected);
@@ -572,7 +575,12 @@ void EditorLayer::drawObjectBehaviour() {
 			if (open) {
 				std::map<std::string, std::any> map = *(components->at(i)->getValues());
 				for (std::map<std::string, std::any>::iterator it = map.begin(); it != map.end(); ++it) {
-					ImGui::Text(it->first.c_str());
+					//ImGui::Text(it->first.c_str());
+					drawField(it->first, it->second, components->at(i));
+					//char value[128] = "";
+					//if (ImGui::InputText(it->first.c_str(), value, IM_ARRAYSIZE(value))) { // , ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL)) {
+					//	HZN_CORE_DEBUG(value);
+					//}
 					// ImGui::SameLine();
 				}
 
@@ -733,4 +741,141 @@ bool EditorLayer::ButtonCenteredOnLine(const char* label, float alignment)
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
 
 	return ImGui::Button(label, ImVec2(buttonWidth, buttonHeight));
+}
+
+void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<Hzn::Component> c) {
+	char textone[512];
+	memset(textone, '\0', sizeof(textone));
+
+	try {
+		std::shared_ptr<Hzn::GameObject> go = std::any_cast<std::shared_ptr<Hzn::GameObject>>(value);
+		if (go) {
+			strcpy(textone, go->name.c_str());
+
+			static std::pair<std::string, std::shared_ptr<Hzn::Component>> pair(name, c);
+			if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+				std::string s(textone);
+				c->setField(name, openScene->findGameObject(s));
+				//value = openScene->findGameObject(s);
+
+				nodes = openScene->getHierarchy();
+			}
+
+			return;
+		}
+	}
+	catch (const std::bad_any_cast& e) { }
+
+	try {
+		std::shared_ptr<Hzn::Component> component = std::any_cast<std::shared_ptr<Hzn::Component>>(value);
+		if (component) {
+			std::shared_ptr<Hzn::GameObject> go = std::any_cast<std::shared_ptr<Hzn::GameObject>>(component->getField("gameObject"));
+			strcpy(textone, go->name.c_str());
+
+			if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+				std::shared_ptr<Hzn::GameObject> go = openScene->findGameObject(textone);
+				if (go) {
+					c->setField(name, go->getComponent(component->getComponentType()));
+
+					std::cout << &c->getField(name) << std::endl;
+					std::cout << go->getComponent(component->getComponentType()) << std::endl;
+					// strcpy(textone, openScene->findGameObject(textone)->name.c_str());
+
+					nodes = openScene->getHierarchy();
+				}
+			}
+
+			return;
+		}
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		glm::vec2 vec = std::any_cast<glm::vec2>(value);
+		std::string s = std::to_string(vec.x) + ", " + std::to_string(vec.y);
+		strcpy(textone, s.c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			std::string textString(textone);
+			std::string xString = textString.substr(0, textString.find(","));
+			std::string yString = textString.substr(textString.find(",") + 1, textString.size() - (xString.size() + 1));
+			value = glm::vec2(std::stof(xString), std::stof(yString));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	//try {
+	//	float f = std::any_cast<float>(value);
+	//	text = (char*)std::to_string(f).c_str();
+
+	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
+	//		std::string textString = text;
+	//		value = std::stof(textString);
+	//	}
+
+	//	return;
+	//}
+	//catch (const std::bad_any_cast& e) {}
+
+	//try {
+	//	int i = std::any_cast<int>(value);
+	//	text = (char*)std::to_string(i).c_str();
+
+	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
+	//		std::string textString = text;
+	//		value = std::stoi(textString);
+	//	}
+
+	//	return;
+	//}
+	//catch (const std::bad_any_cast& e) {}
+
+	//try {
+	//	char c = std::any_cast<char>(value);
+	//	text = (char*)std::to_string(c).c_str();
+
+	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
+	//		std::string textString = text;
+	//		if (textString.size() > 0)
+	//			value = textString[0];
+	//	}
+
+	//	return;
+	//}
+	//catch (const std::bad_any_cast& e) {}
+
+	//try {
+	//	std::string s = std::any_cast<std::string>(value);
+	//	text = (char*)s.c_str();
+
+	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
+	//		value = text;
+	//	}
+
+	//	return;
+	//}
+	//catch (const std::bad_any_cast& e) {}
+}
+
+int EditorLayer::gameObjectCallback(ImGuiInputTextCallbackData* data) {
+	std::cout << "asd" << std::endl;
+
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
+	{
+		std::cout << "asd" << std::endl;
+		data->InsertChars(data->CursorPos, "..");
+	}
+
+	if (data->EventFlag == ImGuiInputTextFlags_EnterReturnsTrue)
+	{
+		std::pair<std::string, std::shared_ptr<Hzn::Component>>* pair = ((std::pair<std::string, std::shared_ptr<Hzn::Component>>*)(data->UserData));
+		HZN_CORE_DEBUG(pair->first);
+		//std::pair<std::string, std::shared_ptr<Hzn::Component>>* pair = ((std::pair<std::string, std::shared_ptr<Hzn::Component>>*)(data->UserData));
+		/*std::string s(data->Buf);
+		pair->second->setField(pair->first, openScene->findGameObject(s));*/
+	}
+	
+	return 0;
 }

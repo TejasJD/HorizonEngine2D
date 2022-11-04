@@ -12,7 +12,7 @@ namespace Hzn {
 	}
 
 	void Scene::open() {
-		
+
 		//std::vector<std::string> content = std::vector<std::string>(); // file->getContent();
 		//content.push_back("name:Test Name");
 		//content.push_back("gameObject:GO Name");
@@ -110,7 +110,7 @@ namespace Hzn {
 		//content.push_back("\tsize:vec2:1.000000,1.000000");
 		//content.push_back("\toffset:vec2:0.000000,0.000000");
 		//content.push_back("]");
-		
+
 
 		// Each line in the file is one of the following:
 		// name:SceneName
@@ -156,6 +156,8 @@ namespace Hzn {
 					std::shared_ptr<Component> c(FACTORY(Component).create(value));
 					currentComponent = std::shared_ptr<Component>(c);
 
+					std::cout << c->getComponentType() << std::endl;
+
 					currentGameObject->addComponent(currentComponent);
 				}
 				// start setting values for the current component
@@ -188,7 +190,7 @@ namespace Hzn {
 		// Add the last game object to the scene
 		if (currentGameObject != NULL)
 			addGameObject(std::make_shared<GameObject>(currentGameObject));
-		
+
 		// Loop through the map and set components' values
 		for (std::map<std::shared_ptr<Component>, std::shared_ptr<std::vector<std::string>>>::iterator it = valuesMap->begin(); it != valuesMap->end(); it++)
 		{
@@ -233,7 +235,8 @@ namespace Hzn {
 				else if (typeName == "bool") {
 					if (value.compare("true")) {
 						it->first->setField(name, true);
-					} else {
+					}
+					else {
 						it->first->setField(name, false);
 					}
 				}
@@ -298,8 +301,10 @@ namespace Hzn {
 	void Scene::addGameObject(std::shared_ptr<GameObject> gameObject) {
 		std::shared_ptr<Transform> parent;
 		try {
+			std::cout << gameObject << std::endl;
 			parent = std::any_cast<std::shared_ptr<Transform>>(gameObject->transform->getField("parent"));
-		} catch (const std::bad_any_cast& e) { 
+		}
+		catch (const std::bad_any_cast& e) {
 			parent = NULL;
 		}
 
@@ -442,7 +447,7 @@ namespace Hzn {
 			catch (const std::bad_any_cast& e) {
 				parent = NULL;
 			}
-			if (parent == NULL) {
+			if (parent == NULL || parent.get() == transforms->at(i).get()) {
 				std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(transforms->at(i)->getField("gameObject"));
 
 				// TreeNode<std::string>* temp = new TreeNode<std::string>(n);

@@ -78,6 +78,8 @@ private:
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
 	void drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node);
+	void drawField(std::string key, std::any& value, std::shared_ptr<Hzn::Component> c);
+	static int gameObjectCallback(ImGuiInputTextCallbackData* data);
 };
 
 class HznApp : public Hzn::App

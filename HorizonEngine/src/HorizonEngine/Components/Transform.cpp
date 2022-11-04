@@ -105,7 +105,7 @@ namespace Hzn {
 	void Transform::moveTowards(glm::vec2 targetPosition, float delta) {
 		glm::vec2 position = std::any_cast<glm::vec2>(getField("position"));
 		glm::vec2 direction = glm::vec2(targetPosition.x - position.x,
-										targetPosition.y - position.y);
+			targetPosition.y - position.y);
 		direction = direction * delta;
 		position = glm::vec2(position.x + direction.x, position.y + direction.y);
 		setField("position", position);
