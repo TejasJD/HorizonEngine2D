@@ -8,8 +8,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	//app->addLayer(new EditorLayer());
-	app->addLayer(new Sandbox());
+	app->addLayer(new EditorLayer());
+	//app->addLayer(new Sandbox());
 	return app;
 }
 
@@ -231,14 +231,26 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			/// <summary>
+			/// create a new scene here
+			/// </summary>
+			/// <param name="pOpen"></param>
 			if (ImGui::MenuItem("New Scene", "Ctrl+N", false)) {
 
 			}
+			/// <summary>
+			/// Set condition for open scene, create a string for the file path and set equal to the openFile method (the windows API).
+			/// Next, check if the file path string is empty, if not create a new project file object.
+			/// Create a scene object and pass in the projectFile as a parameter.
+			/// Call s->open() to initiate the open method.
+			/// If string is empty call a new scene.
+			/// </summary>
+			/// <param name="pOpen"></param>
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O", false)) {
 
 				std::string filePathfromdialog = Hzn::FileDialogs::openFile();
 
-				//Check if the dtring returns empty or not
+				//Check if the string returns empty or not
 				if (filePathfromdialog != "") {
 
 					Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
@@ -252,6 +264,15 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 			ImGui::Separator();
 
+			/// <summary>
+			/// The instance where the user selects File -> Save.
+			/// Create a string for the file path, call the saveFile() method in FileDialogs (the windows API to save a file), 
+			/// and set equal to each other.
+			/// Check if an empty string is returned, if not, continue and create a projectFile object 'p' and pass in file path
+			/// Create a scene object 's' and pass in the projectFile 'p'.
+			/// then call s->save(); to save the file.
+			/// </summary>
+			/// <param name="pOpen"></param>
 			if (ImGui::MenuItem("Save", "Ctrl+S", false)) {
 
 				std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
@@ -279,7 +300,7 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 			{
 				std::string projectFilePath = Hzn::FileDialogs::openFile();
 
-				//Check if the dtring returns empty or not
+				//Check if the string returns empty or not
 				if (projectFilePath != "") {
 					projectRootFolder = std::filesystem::path(projectFilePath).parent_path().string();
 					projectPath = "Project(" + projectRootFolder + ")";

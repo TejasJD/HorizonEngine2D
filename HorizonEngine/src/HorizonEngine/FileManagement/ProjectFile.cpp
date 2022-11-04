@@ -3,7 +3,17 @@
 #include "ProjectFile.h"
 
 namespace Hzn {
-	//open a file and load the contents to a vector string
+	/// <summary>
+	/// open a file and load the contents to a vector string.
+	/// 
+	/// First perform a check that the file exists.
+	/// Next, open the file path and check for error handling.
+	/// Push back the content into a vector string.
+	/// Finally, return content to the call.
+	///  
+	/// </summary>
+	/// <param name="filePath"></param>
+	/// <returns></returns>
 	std::vector<std::string> ProjectFile::openFile(std::string filePath) {
 		std::string line;
 
@@ -30,7 +40,12 @@ namespace Hzn {
 	}
 
 
-	//Write the contents to a file and save
+	/// <summary>
+	/// Write the contents to a file and save.
+	/// Open a file stream with the file path
+	/// check for error handling.
+	/// Write the contents of the content vector to the file and close
+	/// </summary>
 	void ProjectFile::saveToFile() {
 		out.open(getPath(), std::ios::out);
 
@@ -44,20 +59,35 @@ namespace Hzn {
 	}
 
 
-	//File manipulation method treat the lines as index 0
-	//return a specific line from content vec
+	/// <summary>
+	/// File manipulation methods treat the lines as index 0.
+	/// return a specific line from content vec.
+	/// </summary>
+	/// <param name="row"></param>
+	/// <returns></returns>
 	std::string ProjectFile::getALine(int row) {
 		return content[row];
 	}
 
 
-	//return next char from content vec
+	/// <summary>
+	/// return next char from content vec
+	/// </summary>
+	/// <param name="row"></param>
+	/// <param name="colNum"></param>
+	/// <returns></returns>
 	char ProjectFile::nextChar(int row, int colNum) {
 		return content[row][colNum];
 	}
 
 
-	//return next n chars from content vec
+	/// <summary>
+	/// return next n chars from content vec
+	/// </summary>
+	/// <param name="row"></param>
+	/// <param name="colNum"></param>
+	/// <param name="numberOfCharacters"></param>
+	/// <returns></returns>
 	std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters) {
 		std::vector<std::string> vecOfChars;
 		std::string line;
@@ -77,14 +107,23 @@ namespace Hzn {
 
 
 
-	//return next line from content vec
+	/// <summary>
+	/// return next line from content vec
+	/// </summary>
+	/// <param name="row"></param>
+	/// <returns></returns>
 	std::string ProjectFile::nextLine(int row) {
 		return content[row];
 	}
 
 
 
-	//return next n lines from content vec
+	/// <summary>
+	/// return next n lines from content vec
+	/// </summary>
+	/// <param name="row"></param>
+	/// <param name="numberOfLines"></param>
+	/// <returns></returns>
 	std::vector<std::string> ProjectFile::nextLines(int row, int numberOfLines) {
 
 		std::vector<std::string> vecOfLines;
@@ -98,7 +137,11 @@ namespace Hzn {
 	}
 
 
-	//Save the contents of content vec to a new file
+	/// <summary>
+	/// Save the contents of content vec to a new file
+	/// </summary>
+	/// <param name="newPath"></param>
+	/// <param name="contentIntoFile"></param>
 	void ProjectFile::saveAs(std::string newPath, std::vector<std::string> contentIntoFile) {
 
 		//As of now we assume all physical paths exist
@@ -114,7 +157,10 @@ namespace Hzn {
 		out.close();
 	}
 
-	//Delete a specified file
+	/// <summary>
+	/// Delete a specified file
+	/// </summary>
+	/// <param name="filePathForDelete"></param>
 	void ProjectFile::deleteFile(std::string filePathForDelete) {
 
 		int result = std::remove(filePathForDelete.c_str());
@@ -127,7 +173,10 @@ namespace Hzn {
 		}
 	}
 
-	//make a folder
+	/// <summary>
+	/// make a folder
+	/// </summary>
+	/// <param name="path"></param>
 	void ProjectFile::makeDir(std::string path) {
 		int result = mkdir(path.c_str());
 
@@ -139,7 +188,10 @@ namespace Hzn {
 		}
 	}
 
-	//remove a folder
+	/// <summary>
+	/// remove a folder
+	/// </summary>
+	/// <param name="path"></param>
 	void ProjectFile::deleteDir(std::string path) {
 		int result = rmdir(path.c_str());
 

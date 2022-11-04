@@ -17,10 +17,23 @@
 
 namespace Hzn {
 
+		/// <summary>
+		/// This method contains the windows API to open files.
+		/// Declare the common dialog box structure.
+		/// set the buffer size for file name
+		/// 
+		/// Initialise the openfilename
+		/// set the structSize
+		/// setting the hwndowner allows the dialog box to control the window, forcing the user
+		/// to engage with the dialog box.
+		/// set the filters and the max file size
+		/// Add additional filter measurement like typing a file name that must exist
+		/// </summary>
+		/// <returns></returns>
 		std::string	FileDialogs::openFile()
 		{
 
-			/*The following codeis the win32 file dialog API (hickeys, 2021), it is used to implement a windows file dialog
+			/*The following code is the win32 file dialog API (hickeys, 2021), it is used to implement a windows file dialog
 			box for the user to SAVE a file from their local machine. Part of this implementation was inspired by the implementation by The Cherno (2020) in the Hazel engine*/
 
 			OPENFILENAME ofn;				// common dialog box structure (ASCII version)
@@ -45,7 +58,11 @@ namespace Hzn {
 			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 			// Display the Open dialog box. 
-
+			
+			/// <summary>
+			/// return the file path if the condition is true to where it was called inn the EditorLayer, else do nothing
+			/// </summary>
+			/// <returns></returns>
 			if (GetOpenFileName(&ofn) == TRUE) {
 
 				return ofn.lpstrFile;
@@ -56,7 +73,11 @@ namespace Hzn {
 			
 		}
 
-
+		/// <summary>
+		/// This windows file dialog API is very similar to the open file dialog.
+		/// The first section is the same
+		/// </summary>
+		/// <returns></returns>
 		std::string	FileDialogs::saveFile() {
 
 
@@ -86,6 +107,12 @@ namespace Hzn {
 
 			// Display the Open dialog box. 
 
+			/// <summary>
+			/// We change 'GetOpenFileName(&ofn)' to
+			/// 'GetSaveFileName(&ofn)' name here and return the file path to where it
+			/// was called in the EditorLayer, or else do nothing.
+			/// </summary>
+			/// <returns></returns>
 			if (GetSaveFileName(&ofn) == TRUE) {
 
 				return ofn.lpstrFile;
