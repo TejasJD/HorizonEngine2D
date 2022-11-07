@@ -22,6 +22,7 @@ private:
 	std::shared_ptr<Hzn::Texture> folderIcon;
 	std::map<std::string, std::shared_ptr<Hzn::Texture>> fileIconMap;
 	std::shared_ptr<Hzn::Texture> fileIcon;
+	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
 public:
 	EditorLayer(const char* name = "Editor Layer");
 

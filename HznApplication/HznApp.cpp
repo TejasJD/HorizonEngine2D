@@ -19,23 +19,15 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 
 // *********** EDITOR LAYER **********
 EditorLayer::EditorLayer(const char* name) : Hzn::Layer(name) {
-	
-	
+
+
 	folderIcon = Hzn::Texture2D::create("assets/icons/DirectoryIcon.png");
 	fileIcon = Hzn::Texture2D::create("assets/icons/FileIcon.png");
 
-	
-	
 	//Initialize the audio system and load the files under the audio folder
 	Hzn::SoundDevice::Init();
 
-	for (const auto& entry : std::filesystem::directory_iterator("assets/audios/"))
-	{
 
-		audioFileMap.insert(std::make_pair(entry.path().string(), new Hzn::AudioSource()));
-		audioFileMap.find(entry.path().string())->second->init(entry.path().string().c_str());
-
-	}
 }
 
 
@@ -138,7 +130,7 @@ void EditorLayer::onRenderImgui()
 	drawHierarchy();
 	drawProjectExplorer(projectRootFolder);
 	drawConsole();
-	drawAudio("assets/audios/");
+	//drawAudio("assets/audios/");
 	drawContentBrowser();
 }
 
@@ -226,8 +218,6 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 
 		ImGui::DockBuilderDockWindow("Scene", center);
 		ImGui::DockBuilderDockWindow("Object Behaviour", left);
-		//ImGui::DockBuilderDockWindow(projectPath.c_str(), rightUp);
-		//ImGui::DockBuilderDockWindow("Audio", rightUp);
 		ImGui::DockBuilderDockWindow("Hierarchy", rightDown);
 		ImGui::DockBuilderDockWindow("Console", down);
 
@@ -295,16 +285,73 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 					projectPath = "Project(" + projectRootFolder + ")";
 				}
 
+				//set assets path of current project
 				assetPath = projectRootFolder + "\\assets";
 				m_CurrentDirectory = assetPath;
 
+				std::map<std::string, std::string> spriteFormat;
+
+				//create texture for image file and sprites from sprite sheets
 				for (const auto& entry : std::filesystem::recursive_directory_iterator(assetPath))
 				{
+
+					if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
+					{
+
+						audioFileMap.insert(std::make_pair(entry.path().string(), new Hzn::AudioSource()));
+						audioFileMap.find(entry.path().string())->second->init(entry.path().string().c_str());
+
+					}
+
+
 					if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
 						fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
 
 					}
+
+					if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
+
+						for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+							
+							if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+								std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+								std::string line;
+
+								while (std::getline(infile, line)) {
+									std::istringstream is_line(line);
+									std::string key;
+									if (std::getline(is_line, key, ':'))
+									{
+										std::string value;
+
+										if (std::getline(is_line, value))
+										{
+											spriteFormat[key] = value;
+										}
+									}
+								}
+
+							}
+						}
+
+						auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
+
+
+						for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+						{
+							for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+							{
+								std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+								spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
+							}
+						}
+
+
+
+
+					}
 				}
+
 			}
 
 			ImGui::Separator();
@@ -595,7 +642,7 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 			fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
 			continue;
 		}
-			
+
 
 		bool node_open = ImGui::TreeNodeEx(name.c_str(), node_flags);
 
@@ -905,7 +952,9 @@ void EditorLayer::drawAudio(std::string directoryPath) {
 
 
 void EditorLayer::drawContentBrowser() {
-	
+
+
+
 	contextObject = m_CurrentDirectory.string();
 	ImGui::Begin("Content Browser");
 
@@ -929,31 +978,106 @@ void EditorLayer::drawContentBrowser() {
 
 		ImGui::Columns(columnCount, 0, false);
 
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		std::map<std::string, std::string> spriteFormat;
+
+		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			
-			const auto& path = directoryEntry.path();
+
+			if (entry.path().string().find(".meta") != std::string::npos)
+			{
+				continue;
+			}
+
+			const auto& path = entry.path();
 			std::string filenameString = path.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			
-			
+
+
 			std::shared_ptr<Hzn::Texture> icon;
 
-			if (directoryEntry.is_directory()) {
+			if (entry.is_directory()) {
 				icon = folderIcon;
 			}
-			else if (directoryEntry.path().string().find(".png") != std::string::npos)
+
+			else if (entry.path().string().find(".png") != std::string::npos)
 			{
-				fileIconMap.find(directoryEntry.path().string());
-				icon = fileIconMap.find(directoryEntry.path().string())->second;
+				fileIconMap.find(entry.path().string());
+				icon = fileIconMap.find(entry.path().string())->second;
 			}
+
 			else
 			{
 				icon = fileIcon;
 			}
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
+			{
+
+				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+
+					//spriteFormat.clear();
+
+					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+						std::string line;
+
+						while (std::getline(infile, line)) {
+							std::istringstream is_line(line);
+							std::string key;
+							if (std::getline(is_line, key, ':'))
+							{
+								std::string value;
+
+								if (std::getline(is_line, value))
+								{
+									spriteFormat[key] = value;
+								}
+							}
+						}
+
+					}
+				}
+
+				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+
+				if (ImGui::Button("show sprites")) {
+					ImGui::OpenPopup("showSprites");
+				}
+
+				if (ImGui::BeginPopupModal("showSprites")) {
+
+					ImGui::Columns(columnCount, 0, false);
+					for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+					{
+						for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+						{
+							std::string currentSprite = entry.path().string().append("(").append(std::to_string(i)).append(",").append(std::to_string(j)).append(")");
+
+							std::shared_ptr<Hzn::Sprite2D> sprite = spriteMap.find(currentSprite)->second;
+							ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
+							std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+							ImGui::TextWrapped(spriteTexCoords.c_str());
+							ImGui::NextColumn();
+						}
+					}
+
+					ImGui::Columns(1);
+					if (ImGui::Button("Close", ImVec2(120, 40))) {
+						ImGui::CloseCurrentPopup();
+					}
+
+					ImGui::EndPopup();
+				}
+
+			}
+			else {
+				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			}
+
+			ImGui::PopStyleColor();
 
 			if (ImGui::BeginDragDropSource()) {
 
@@ -963,10 +1087,10 @@ void EditorLayer::drawContentBrowser() {
 				ImGui::EndDragDropSource();
 			}
 
-			ImGui::PopStyleColor();
+
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				if (directoryEntry.is_directory())
+				if (entry.is_directory())
 					m_CurrentDirectory /= path.filename();
 
 			}
