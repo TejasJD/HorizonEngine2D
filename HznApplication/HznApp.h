@@ -9,7 +9,8 @@ class EditorLayer : public Hzn::Layer
 private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
-	std::string projectPath ="Project (No open project)";;
+	std::string projectPath ="Project (No open project)";
+	std::string SceneFilePath;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
 	bool openContext = false;
@@ -26,6 +27,8 @@ public:
 	virtual void onRenderImgui() override;
 
 	virtual void onEvent(Hzn::Event& event) override;
+
+	
 
 private:
 	void setupDockSpace(bool* pOpen);
@@ -44,6 +47,10 @@ private:
 
 	void drawAudio(std::string directoryPath);
 	void drawAudioNode(const std::filesystem::path& path);
+
+	void NewScene();
+	void SaveAs();
+
 };
 
 class HznApp : public Hzn::App

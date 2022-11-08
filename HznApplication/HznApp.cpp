@@ -8,8 +8,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	//app->addLayer(new EditorLayer());
-	app->addLayer(new Sandbox());
+	app->addLayer(new EditorLayer());
+	//app->addLayer(new Sandbox());
 	return app;
 }
 
@@ -34,7 +34,6 @@ EditorLayer::EditorLayer(const char* name) : Hzn::Layer(name) {
 
 void EditorLayer::onAttach()
 {
-	
 
 	HZN_INFO("Editor Layer Attached!");
 	Hzn::ProjectFile *file = new Hzn::ProjectFile("assets/scenes/input.txt");
@@ -231,13 +230,20 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			/// <summary>
+			/// Create a new scene here.
+			/// Create a projectFile object.
+			/// create ascene object - pass in p
+			/// open contenents to work with.
+			/// </summary>
+			/// <param name="pOpen"></param>
 			if (ImGui::MenuItem("New Scene", "Ctrl+N", false)) {
-
+				EditorLayer::NewScene();
 			}
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O", false)) {
 
 				std::string filePathfromdialog = Hzn::FileDialogs::openFile();
-
+				SceneFilePath = filePathfromdialog;
 				//Check if the dtring returns empty or not
 				if (filePathfromdialog != "") {
 
@@ -247,6 +253,7 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 				}
 				else {
 					//create new scene here
+					EditorLayer::NewScene();
 				}
 			};
 
@@ -254,26 +261,35 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 			if (ImGui::MenuItem("Save", "Ctrl+S", false)) {
 
-				std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
-
-				//Check if the dtring returns empty or not
-				if (filePathfromdialog != "") {
-					Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
+				//check if file path is empty
+				if (SceneFilePath != "") {
+					Hzn::ProjectFile* p = new Hzn::ProjectFile(SceneFilePath);
 					Hzn::Scene* s = new Hzn::Scene(p);
 					s->save();
 				}
 				else {
-					//create new scene here
+					//Save As here create new scene here
+					EditorLayer::SaveAs();
 				}
 			};
 
 			if (ImGui::MenuItem("Save As", "Ctrl+Shift+S", false)) {
-
+				EditorLayer::SaveAs();
 			};
 
 			ImGui::Separator();
 
-			ImGui::MenuItem("New Project", "Ctrl+Shift+N", false);
+			if(ImGui::MenuItem("New Project", "Ctrl+Shift+N", false)) {
+				//create
+				//new scene
+				
+				//new directory
+					//Scene dir
+					//Assets Folder
+						//Textures
+					//project file - capable of generating the game
+					
+			}
 
 			if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
 			{
@@ -339,6 +355,29 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 		ImGui::EndMenuBar();
 	}
 }
+
+
+//Methods for Editor Layer
+//newScene code
+void EditorLayer::NewScene() {
+	Hzn::ProjectFile* p = new Hzn::ProjectFile();
+	Hzn::Scene* s = new Hzn::Scene(p);
+	s->open();
+}
+
+//Save As code
+void EditorLayer::SaveAs() {
+	std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
+
+	//Check if the dtring returns empty or not
+	if (filePathfromdialog != "") {
+		Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
+		Hzn::Scene* s = new Hzn::Scene(p);
+		s->save();
+	}
+}
+
+
 
 void EditorLayer::drawScene() {
 	if (ImGui::Begin("Scene"))
