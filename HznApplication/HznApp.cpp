@@ -777,10 +777,6 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 				if (go) {
 					c->setField(name, go->getComponent(component->getComponentType()));
 
-					std::cout << &c->getField(name) << std::endl;
-					std::cout << go->getComponent(component->getComponentType()) << std::endl;
-					// strcpy(textone, openScene->findGameObject(textone)->name.c_str());
-
 					nodes = openScene->getHierarchy();
 				}
 			}
@@ -806,57 +802,43 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 	}
 	catch (const std::bad_any_cast& e) {}
 
-	//try {
-	//	float f = std::any_cast<float>(value);
-	//	text = (char*)std::to_string(f).c_str();
+	try {
+		float f = std::any_cast<float>(value);
+		strcpy(textone, std::to_string(f).c_str());
 
-	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
-	//		std::string textString = text;
-	//		value = std::stof(textString);
-	//	}
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone))) {
+			std::string textString = textone;
+			c->setField(name, std::stof(textString));
+		}
 
-	//	return;
-	//}
-	//catch (const std::bad_any_cast& e) {}
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
 
-	//try {
-	//	int i = std::any_cast<int>(value);
-	//	text = (char*)std::to_string(i).c_str();
+	try {
+		int i = std::any_cast<int>(value);
+		strcpy(textone, std::to_string(i).c_str());
 
-	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
-	//		std::string textString = text;
-	//		value = std::stoi(textString);
-	//	}
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone))) {
+			std::string textString = textone;
+			c->setField(name, (int)std::stof(textString));
+		}
 
-	//	return;
-	//}
-	//catch (const std::bad_any_cast& e) {}
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
 
-	//try {
-	//	char c = std::any_cast<char>(value);
-	//	text = (char*)std::to_string(c).c_str();
+	try {
+		std::string s = std::any_cast<std::string>(value);
+		strcpy(textone, s.c_str());
 
-	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
-	//		std::string textString = text;
-	//		if (textString.size() > 0)
-	//			value = textString[0];
-	//	}
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone))) {
+			c->setField(name, textone);
+		}
 
-	//	return;
-	//}
-	//catch (const std::bad_any_cast& e) {}
-
-	//try {
-	//	std::string s = std::any_cast<std::string>(value);
-	//	text = (char*)s.c_str();
-
-	//	if (ImGui::InputText(name.c_str(), text, IM_ARRAYSIZE(text))) {
-	//		value = text;
-	//	}
-
-	//	return;
-	//}
-	//catch (const std::bad_any_cast& e) {}
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
 }
 
 int EditorLayer::gameObjectCallback(ImGuiInputTextCallbackData* data) {
