@@ -45,12 +45,18 @@ namespace Hzn
 		/// <param name="camera">Orthographic Camera to view the 2D scene.</param>
 		static void beginScene(const OrthographicCamera& camera);
 
+		static void beginScene(const SceneCamera2D& camera, const glm::mat4& transform);
+
 		/// <summary>
 		/// Call this method to end the scene, after you have made calls to other elements of the renderer in your
 		/// Application Loop / Game Loop / 'onUpdate' function of the Layer (or such functions that sit in the run loop).
 		/// This should be called anywhere after the 'beginScene' method (also beginScene is needed for the endScene method).
 		/// </summary>
 		static void endScene();
+
+		static void drawQuad(const glm::mat4& transform, const glm::vec4& color);
+		static void drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture);
+		static void drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite);
 
 		/// <summary>
 		/// Render a colored quadrilateral (4-sided shape) on the screen.

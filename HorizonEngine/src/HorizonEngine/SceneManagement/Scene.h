@@ -3,42 +3,31 @@
 #ifndef HZN_SCENE_H
 #define HZN_SCENE_H
 
-#include <vector>
-#include <map>
-#include <string>
+#include "HorizonEngine/Core/TimeStep.h"
+#include <entt/entt.hpp>
 
-#include "../FileManagement/ProjectFile.h"
-#include "../Components/ComponentType.h"
-#include "../GameObject.h"
-
-#include "Utils/TreeNode.h"
-
-namespace Hzn {
-	class Scene {
+namespace Hzn
+{
+	class GameObject;
+	
+	class Scene
+	{
+		friend class GameObject;
 	public:
-		std::string name;
-		ProjectFile* file;
-	private:
-		int objectId = 0;
-		std::map<std::string, std::vector<std::shared_ptr<Component>>*>* componentGroups;
-		std::vector<std::shared_ptr<GameObject>>* gameObjects;
-	public:
-		Scene(ProjectFile* projectFile = new ProjectFile("input.txt"));
+		Scene();
 		~Scene();
-		void open();
-		void close();
-		void save();
-		void addGameObject(std::shared_ptr<GameObject> gameObject);
-		//void removeGameObject(std::string name);
-		std::shared_ptr<GameObject> findGameObject(std::string name);
-		std::vector<std::shared_ptr<GameObject>>* getObjects();
-		std::vector<std::shared_ptr<TreeNode<std::string>>> getHierarchy();
-		void createEmpty(std::string parentName = "");
+
+		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
+		void onUpdate(TimeStep ts);
+		GameObject createGameObject();
+
 	private:
-		//void removeChildren(std::shared_ptr<GameObject> gameObject, std::string name, bool removeThis);
-		void getChildren(std::shared_ptr<Component> transform, std::shared_ptr<TreeNode<std::string>> node);
-		std::string generateRandomString(const int len);
+		// entt registry for creating game objects.
+		entt::registry m_Registry;
+		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.
+		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
 	};
+
 }
 
 #endif // !HZN_SCENE_H
