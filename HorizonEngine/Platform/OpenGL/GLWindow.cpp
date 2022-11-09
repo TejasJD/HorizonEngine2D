@@ -42,7 +42,7 @@ namespace Hzn
 		HZN_CORE_ASSERT(glfwSuccess, "Failed to initialize GLFW!");
 
 		m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title, nullptr, nullptr);
-		m_Context = std::unique_ptr<RenderContext>(RenderContext::create(m_Window));
+		m_Context = RenderContext::create(m_Window);
 		m_Context->init();
 
 		//! set the glfwWindowUserPointer to hold additional data.
@@ -52,76 +52,78 @@ namespace Hzn
 		//! sets callback to the window close event
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 				WindowCloseEvent eventObj;
-				data.callback(eventObj);
+				data->callback(eventObj);
 			});
 
 		//! sets event to resize the window
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+				data->width = width;
+				data->height = height;
+				
 				WindowResizeEvent eventObj(width, height);
-				data.callback(eventObj);
-				glViewport(0, 0, width, height);
+				data->callback(eventObj);
 			});
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 				MouseMovedEvent eventObj(x, y);
-				data.callback(eventObj);
+				data->callback(eventObj);
 			});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double x, double y)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 				MouseScrolledEvent eventObj(x, y);
-				data.callback(eventObj);
+				data->callback(eventObj);
 
 			});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
 				if (action == GLFW_PRESS)
 				{
 					MouseButtonPressedEvent eventObj(button);
-					data.callback(eventObj);
+					data->callback(eventObj);
 				}
 				else
 				{
 					MouseButtonReleasedEvent eventObj(button);
-					data.callback(eventObj);
+					data->callback(eventObj);
 				}
 			});
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 				if (action == GLFW_PRESS)
 				{
 					KeyPressedEvent k(key, 0);
-					data.callback(k);
+					data->callback(k);
 				}
 				else if (action == GLFW_REPEAT)
 				{
 					KeyPressedEvent k(key, 1);
-					data.callback(k);
+					data->callback(k);
 				}
 				else
 				{
 					KeyReleasedEvent k(key);
-					data.callback(k);
+					data->callback(k);
 				}
 			});
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int codepoint)
 			{
-				WindowData data = *(WindowData*)glfwGetWindowUserPointer(window);
+				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 				KeyTypedEvent event(codepoint);
-				data.callback(event);
+				data->callback(event);
 			});
 
 		glfwSetErrorCallback(errorCallback);

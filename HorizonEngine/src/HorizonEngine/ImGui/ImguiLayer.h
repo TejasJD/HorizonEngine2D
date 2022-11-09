@@ -12,13 +12,14 @@ namespace Hzn
 		~ImguiLayer();
 		virtual void onAttach() override;
 		virtual void onDetach() override;
-		virtual void onRenderImgui() override;
+		virtual void onUpdate(TimeStep ts) override;
+		virtual void onEvent(Event& e) override;
 		void imguiBegin();
 		void imguiEnd();
+		virtual void blockEvents(bool flag) { absorbEvents = flag; }
 
 	private:
-		float m_Time;
-
+		bool absorbEvents = true;
 	};
 }
 

@@ -5,9 +5,9 @@
 
 namespace Hzn
 {
-	RendererAPI* RenderCall::m_Api = RenderCall::create();
+	std::unique_ptr<RendererAPI> RenderCall::m_Api = RenderCall::create();
 
-	RendererAPI* RenderCall::create()
+	std::unique_ptr<RendererAPI> RenderCall::create()
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Renderer API selected!");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new GLRendererAPI();
+			return std::make_unique<GLRendererAPI>();
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid Renderer API!")

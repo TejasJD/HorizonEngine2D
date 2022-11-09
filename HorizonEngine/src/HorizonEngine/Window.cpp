@@ -7,7 +7,7 @@
 
 namespace Hzn
 {
-	Window* Window::create(const unsigned int& width, const unsigned int& height, const char* const& title)
+	std::shared_ptr<Window> Window::create(uint32_t width, uint32_t height, const char* title)
 	{
 		switch (RendererAPI::getAPI())
 		{
@@ -15,7 +15,7 @@ namespace Hzn
 			HZN_CORE_ASSERT(false, "No Render API Selected");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new GLWindow(width, height, title);
+			return std::make_shared<GLWindow>(width, height, title);
 		}
 
 		HZN_CORE_ASSERT(false, "Invalid API selected!");

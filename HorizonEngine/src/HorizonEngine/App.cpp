@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
-
 #include "App.h"
 
 namespace Hzn
@@ -14,9 +13,10 @@ namespace Hzn
 		registerComponents();
 		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
-		m_Input = std::unique_ptr<Input>(Input::create());
-		m_Window = std::unique_ptr<Window>(Window::create(800, 600, "HorizonEngine"));
+		m_Window = Window::create(800, 600, "HorizonEngine");
+		// set the App on event function as callback for the widow class.
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
+
 		m_Window->setVsync(true);
 
 		Renderer::init();
@@ -25,13 +25,16 @@ namespace Hzn
 		addOverlay(m_ImguiLayer);
 	}
 
-	App::~App() {}
-
 	//! the main App run loop. This loop keeps the application running and updates and renders
 	//! different layers
 	void App::run()
 	{
 		HZN_CORE_WARN("App started running...");
+
+		for (auto it = m_Layers.rbegin(); it != m_Layers.rend(); ++it)
+		{
+			HZN_CORE_INFO("{0}\n", (*it)->getName());
+		}
 
 		while (m_Running)
 		{
@@ -39,9 +42,12 @@ namespace Hzn
 			TimeStep deltaTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
 			//! general layer update
-			for (auto& layer : m_Layers)
+			if (!m_Minimized) 
 			{
-				layer->onUpdate(deltaTime);
+				for (auto& layer : m_Layers)
+				{
+					layer->onUpdate(deltaTime);
+				}
 			}
 
 			//! updates UI components on any layers
@@ -64,22 +70,35 @@ namespace Hzn
 		return true;
 	}
 
+	bool App::onWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetHeight() == 0 || e.GetWidth() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		Renderer::onWindowResize(e.GetWidth(), e.GetHeight());
+		m_Minimized = false;
+		return false;
+	}
+
 	//! the onEvent function of application class that handles any events coming to the application
 	void App::onEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(std::bind(&App::onWindowClose, this, std::placeholders::_1));
+		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&App::onWindowResize, this, std::placeholders::_1));
 
 		/*auto val = Input::getMousePos();*/
 		/*HZN_CORE_TRACE("{0}, {0}", val.first, val.second);*/
 
-		for (auto it = m_Layers.rbegin(); it != m_Layers.rend(); ++it)
+		for (auto& layer : m_Layers)
 		{
-			(*it)->onEvent(e);
 			if (e.Handled)
 			{
 				break;
 			}
+			layer->onEvent(e);
 		}
 	}
 

@@ -6,17 +6,9 @@
 
 namespace Hzn
 {
-	GLRendererAPI::GLRendererAPI()
-	{
-	}
-
-	GLRendererAPI::~GLRendererAPI()
-	{
-
-	}
-
 	void GLRendererAPI::init()
 	{
+		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
@@ -31,13 +23,14 @@ namespace Hzn
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray)
+	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->getElementBuffer()->size(), GL_UNSIGNED_INT, nullptr);
+		int elements = (count == 0) ? vertexArray->getElementBuffer()->size() : count;
+		glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, nullptr);
 	}
 
-	void GLRendererAPI::drawTriangles(const std::shared_ptr<VertexArray>& vertexArray)
+	void GLRendererAPI::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
 	{
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glViewport(x, y, width, height);
 	}
 }

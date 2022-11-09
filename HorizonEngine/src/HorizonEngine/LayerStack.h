@@ -7,6 +7,9 @@
 
 namespace Hzn 
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	class LayerStack
 	{
 	public:
@@ -14,7 +17,9 @@ namespace Hzn
 		typedef std::list<Layer*>::const_iterator ConstLayerIterator;
 		typedef std::list<Layer*>::reverse_iterator LayerReverseIterator;
 		typedef std::list<Layer*>::const_reverse_iterator ConstLayerReverseIterator;
-
+		/// <summary>
+		/// 
+		/// </summary>
 		LayerStack();
 		~LayerStack();
 

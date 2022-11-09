@@ -1,4 +1,4 @@
-# groupProject
+﻿# groupProject
 
 Github repository for the Msc, ASD group project.
 
@@ -15,7 +15,7 @@ and can be primarily accessed through **Developer Command Prompt for VS 2022 / D
 1. ### Windows
    1. Run the following commands in the **command prompt / powershell** to get the project files on your local machine.
 ```
-git clone https://github.com/alex-mulkerrins/groupProject.git
+git clone https://github.com/TejasJD/groupProject.git
 cd groupProject
 git submodule init
 git submodule update
@@ -68,3 +68,7 @@ target_link_libraries(<target-name> PUBLIC <dependency-name>)
 to the above two commands are upon configuring the *CMakeLists.txt* file
 (the configuration first checks (if already installed) and installs the packages added to [vcpkg.json](vcpkg.json)
 and then continues configuring the rest of the project).
+
+## References
+- Game Engine - YouTube. (n.d.). Www.youtube.com. Retrieved November 1, 2022, from https://www.youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT
+- TheCherno. (2020, January 13). TheCherno/Hazel. GitHub. https://github.com/TheCherno/Hazel

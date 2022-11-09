@@ -8,19 +8,44 @@
 
 namespace Hzn
 {
+	/// <summary>
+	/// Layer
+	/// </summary>
 	class Layer
 	{
 	public:
-		Layer(const std::string& name = "Layer") : m_Name(name) {}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		Layer(const char* name = "Layer") : m_Name(name) {}
 		virtual ~Layer() {}
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		const std::string& getName() { return m_Name; }
-
+		/// <summary>
+		/// 
+		/// </summary>
 		virtual void onAttach() {}
 		virtual void onDetach() {}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="deltaTime"></param>
 		virtual void onUpdate(TimeStep deltaTime) {}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="event"></param>
 		virtual void onEvent(Event& event) {}
+		/// <summary>
+		/// 
+		/// </summary>
 		virtual void onRenderImgui() {}
+
+		virtual void blockEvents(bool flag) {};
 
 	protected:
 		std::string m_Name;

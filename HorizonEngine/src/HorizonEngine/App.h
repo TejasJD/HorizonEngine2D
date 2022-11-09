@@ -28,7 +28,7 @@ namespace Hzn
 	public:
 		App();
 
-		virtual ~App();
+		virtual ~App() = default;
 
 		void addLayer(Layer* layer) 
 		{
@@ -43,8 +43,14 @@ namespace Hzn
 		}
 
 		void run();
-		bool onWindowClose(WindowCloseEvent& e);
 		void onEvent(Event& e);
+		void close() { m_Running = false; }
+
+		Layer* getImguiLayer() { return m_ImguiLayer; }
+
+		bool onWindowClose(WindowCloseEvent& e);
+		bool onWindowResize(WindowResizeEvent& e);
+
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_Window; }
 		void registerComponents();
@@ -53,10 +59,10 @@ namespace Hzn
 		static App* m_Instance;
 
 	private:
-		bool m_Running;
+		bool m_Running = true;
+		bool m_Minimized = false;
 
 		std::shared_ptr<Window> m_Window;
-		std::shared_ptr<Input> m_Input;
 		std::shared_ptr<Shader> m_Shader;
 		std::shared_ptr<VertexArray> m_VertexArray;
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;
@@ -66,10 +72,6 @@ namespace Hzn
 		LayerStack m_Layers;
 		TimeStep m_TimeStep;
 		float lastFrameTime = 0.0f;
-		
-		/*unsigned int m_VertexArray = 0;*/
-		//unsigned int m_VertexBufferId = 0;
-		//unsigned int m_ElementBufferId = 0;
 	};
 
 	// to be defined by the application that implements this function
