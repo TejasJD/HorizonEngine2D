@@ -175,8 +175,21 @@ void Sandbox::onRenderImgui()
 	const ImVec2 offset = ImGui::GetCursorScreenPos() + scrolling;
 	ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-	
+	// Grid 
+	if (show_grid)
+	{
+		ImU32 GRID_COLOR = IM_COL32(200, 200, 200, 40);
+		float GRID_SZ = 64.0f;
+		ImVec2 win_pos = ImGui::GetCursorScreenPos();
+		ImVec2 canvas_sz = ImGui::GetWindowSize();
+		for (float x = fmodf(scrolling.x, GRID_SZ); x < canvas_sz.x; x += GRID_SZ)
+			draw_list->AddLine(ImVec2(x, 0.0f) + win_pos, ImVec2(x, canvas_sz.y) + win_pos, GRID_COLOR);
+		for (float y = fmodf(scrolling.y, GRID_SZ); y < canvas_sz.y; y += GRID_SZ)
+			draw_list->AddLine(ImVec2(0.0f, y) + win_pos, ImVec2(canvas_sz.x, y) + win_pos, GRID_COLOR);
+	}
+
 	ImGui::PopItemWidth();
+	ImGui::EndChild();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleVar();
 	ImGui::EndGroup();
