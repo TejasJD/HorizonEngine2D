@@ -5,11 +5,14 @@
 #include "Sandbox.h"
 #include "HznApp.h"
 
+
+
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	//app->addLayer(new EditorLayer());
-	app->addLayer(new Sandbox());
+	app->addLayer(new EditorLayer());
+	//app->addLayer(new Sandbox());
+  
 	return app;
 }
 
@@ -17,27 +20,25 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 
 // *********** EDITOR LAYER **********
 EditorLayer::EditorLayer(const char* name) : Hzn::Layer(name) {
-	
+
+
+	folderIcon = Hzn::Texture2D::create("assets/icons/DirectoryIcon.png");
+	fileIcon = Hzn::Texture2D::create("assets/icons/FileIcon.png");
+
 	//Initialize the audio system and load the files under the audio folder
 	Hzn::SoundDevice::Init();
 
-	for (const auto& entry : std::filesystem::directory_iterator("assets/audios/"))
-	{
 
-		audioFileMap.insert(std::make_pair(entry.path().string(), new Hzn::AudioSource()));
-		audioFileMap.find(entry.path().string())->second->init(entry.path().string().c_str());
-
-	}
 }
 
 
 
 void EditorLayer::onAttach()
 {
-	
+
 
 	HZN_INFO("Editor Layer Attached!");
-	Hzn::ProjectFile *file = new Hzn::ProjectFile("assets/scenes/input.txt");
+	Hzn::ProjectFile* file = new Hzn::ProjectFile("assets/scenes/input.txt");
 	openScene = new Hzn::Scene(file);
 	openScene->open();
 	nodes = openScene->getHierarchy();
@@ -130,7 +131,7 @@ void EditorLayer::onRenderImgui()
 	drawHierarchy();
 	drawProjectExplorer(projectRootFolder);
 	drawConsole();
-	drawAudio("assets/audios/");
+	drawContentBrowser();
 }
 
 
@@ -217,8 +218,6 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 
 		ImGui::DockBuilderDockWindow("Scene", center);
 		ImGui::DockBuilderDockWindow("Object Behaviour", left);
-		//ImGui::DockBuilderDockWindow(projectPath.c_str(), rightUp);
-		//ImGui::DockBuilderDockWindow("Audio", rightUp);
 		ImGui::DockBuilderDockWindow("Hierarchy", rightDown);
 		ImGui::DockBuilderDockWindow("Console", down);
 
@@ -277,13 +276,82 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 			if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
 			{
-				std::string projectFilePath = Hzn::FileDialogs::openFile();
+				std::string projectFolderPath = Hzn::FileDialogs::openFolder();
+
 
 				//Check if the dtring returns empty or not
-				if (projectFilePath != "") {
-					projectRootFolder = std::filesystem::path(projectFilePath).parent_path().string();
+				if (projectFolderPath != "") {
+					projectRootFolder = std::filesystem::path(projectFolderPath).string();
 					projectPath = "Project(" + projectRootFolder + ")";
 				}
+
+				//set assets path of current project
+				assetPath = projectRootFolder + "\\assets";
+				m_CurrentDirectory = assetPath;
+
+				std::map<std::string, std::string> spriteFormat;
+
+				//create texture for image file and sprites from sprite sheets
+				for (const auto& entry : std::filesystem::recursive_directory_iterator(assetPath))
+				{
+
+					if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
+					{
+
+						audioFileMap.insert(std::make_pair(entry.path().string(), new Hzn::AudioSource()));
+						audioFileMap.find(entry.path().string())->second->init(entry.path().string().c_str());
+
+					}
+
+
+					if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
+						fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
+
+					}
+
+					if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
+
+						for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+							
+							if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+								std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+								std::string line;
+
+								while (std::getline(infile, line)) {
+									std::istringstream is_line(line);
+									std::string key;
+									if (std::getline(is_line, key, ':'))
+									{
+										std::string value;
+
+										if (std::getline(is_line, value))
+										{
+											spriteFormat[key] = value;
+										}
+									}
+								}
+
+							}
+						}
+
+						auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
+
+
+						for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+						{
+							for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+							{
+								std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+								spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
+							}
+						}
+
+
+
+
+					}
+				}
+
 			}
 
 			ImGui::Separator();
@@ -424,9 +492,37 @@ void EditorLayer::drawObjectBehaviour() {
 	//ImGuiConfigFlags configFlags = ImGuiDir_Right | ImGuiWindowFlags_NoCollapse;
 	//ImGui::Begin("Object Behaviour", &pOpen, configFlags);
 	ImGui::Begin("Object Behaviour");
-	// TODO: Add behaviours/components of currently selected object
-	if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
 
+	if (contextObject != "") {
+		std::vector<std::shared_ptr<Hzn::Component>>* components = selectedObject->getComponents();
+
+		for (int i = 0; i < components->size(); i++) {
+			//HZN_CORE_DEBUG(std::any_cast<std::shared_ptr<Hzn::GameObject>>(components->at(i)->getField("gameObject"))->name);
+
+			ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+
+			bool open = ImGui::TreeNodeEx(components->at(i)->getComponentType().c_str(), base_flags | ImGuiTreeNodeFlags_Selected);
+
+			if (open) {
+				std::map<std::string, std::any> map = *(components->at(i)->getValues());
+				for (std::map<std::string, std::any>::iterator it = map.begin(); it != map.end(); ++it) {
+					//ImGui::Text(it->first.c_str());
+					drawField(it->first, it->second, components->at(i));
+					//char value[128] = "";
+					//if (ImGui::InputText(it->first.c_str(), value, IM_ARRAYSIZE(value))) { // , ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL)) {
+					//	HZN_CORE_DEBUG(value);
+					//}
+					// ImGui::SameLine();
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		// TODO: Add behaviours/components of currently selected object
+		if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
+
+		}
 	}
 	ImGui::End();
 }
@@ -447,15 +543,18 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 		contextObject = node->item;
+		selectedObject = openScene->findGameObject(contextObject);
 	}
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		contextObject = node->item;
+		selectedObject = openScene->findGameObject(contextObject);
+    
 		ImGui::OpenPopup("contextObject");
 	}
 
 	std::string s = ImGui::IsPopupOpen("contextObject") ? "true" : "false";
-	
+
 	openContext |= ImGui::IsPopupOpen("contextObject");
 
 	if (open) {
@@ -543,18 +642,24 @@ void EditorLayer::drawHierarchy() {
 	ImGui::End();
 }
 
-void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
+void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
 	if (path.empty()) {
-		return ;
+		return;
 	}
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
+
+
+		if (entry.path().string().find("assets") == std::string::npos) {
+			continue;
+		}
+
 		ImGuiTreeNodeFlags node_flags = base_flags;
-		
-		if (entry.path().string() == contextObject)
+
+		if (entry.path().string() == projectContextObject)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
 		std::string name = entry.path().string();
@@ -564,8 +669,11 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 		name = name.substr(lastSlash, name.size() - lastSlash);
 
 		bool entryIsFile = !std::filesystem::is_directory(entry.path());
-		if (entryIsFile)
-			node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		if (entryIsFile) {
+			fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
+			continue;
+		}
+
 
 		bool node_open = ImGui::TreeNodeEx(name.c_str(), node_flags);
 
@@ -579,31 +687,37 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path){
 			}
 		}
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-			contextObject = entry.path().string();
+		if (!clickStatus && ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			clickStatus = true;
+			projectContextObject = entry.path().string();
+
+			if (!entryIsFile) {
+				m_CurrentDirectory = projectContextObject;
+
+			}
 		}
 
-		if (!entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-			contextObject = entry.path().string();
-
+		if (!clickStatus && !entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			clickStatus = true;
+			projectContextObject = entry.path().string();
 			ImGui::OpenPopup("dirContextObject");
 		}
 
-		if (entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-			contextObject = entry.path().string();
-
-			ImGui::OpenPopup("contextObject");
+		if (!clickStatus && entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			clickStatus = true;
+			projectContextObject = entry.path().string();
+			ImGui::OpenPopup("projectContextObject");
 		}
 	}
 
 
-	openContext |= ImGui::IsPopupOpen("contextObject");
+	openContext |= ImGui::IsPopupOpen("projectContextObject");
 	dirOpenContext |= ImGui::IsPopupOpen("dirContextObject");
 
 
 }
 
-void EditorLayer::drawProjectExplorer(std::string directoryPath){
+void EditorLayer::drawProjectExplorer(std::string directoryPath) {
 
 	openContext = false;
 	dirOpenContext = false;
@@ -611,14 +725,16 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 
 	drawProjectExplorerNode(directoryPath);
 
+	clickStatus = false;
+
 	if (openContext) {
-		if (ImGui::IsPopupOpen("contextObject")) {
+		if (ImGui::IsPopupOpen("projectContextObject")) {
 			ImGui::CloseCurrentPopup();
 		}
 
-		ImGui::OpenPopup("contextObject");
+		ImGui::OpenPopup("projectContextObject");
 
-		ImGui::BeginPopup("contextObject");
+		ImGui::BeginPopup("projectContextObject");
 
 		if (ImGui::MenuItem("Cut", NULL, false)) {
 			// Do stuff here
@@ -634,14 +750,14 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		}
 		if (ImGui::MenuItem("Rename", NULL, false)) {
 			// Do stuff here 
-			
+
 		}
 		if (ImGui::MenuItem("Delete")) {
-			
-			Hzn::ProjectFile pf(contextObject);
-			pf.deleteFile(contextObject);
+
+			Hzn::ProjectFile pf(projectContextObject);
+			pf.deleteFile(projectContextObject);
 		}
-	
+
 		ImGui::EndPopup();
 	}
 
@@ -653,7 +769,6 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		ImGui::OpenPopup("dirContextObject");
 
 		ImGui::BeginPopup("dirContextObject");
-		//HZN_CORE_DEBUG("Object: " + contextObject);
 
 		if (ImGui::MenuItem("Cut", NULL, false)) {
 			// Do stuff here
@@ -672,20 +787,33 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 
 		}
 		if (ImGui::MenuItem("Delete", NULL, false)) {
-			
+
+			Hzn::ProjectFile* pf = nullptr;
+			pf->deleteDir(projectContextObject);
 		}
 
 		ImGui::Separator();
 
-		if (ImGui::MenuItem("Create new file", NULL, false)) {
-			// Do stuff here 
+		if (ImGui::MenuItem("New file", NULL, false)) {
 
-			if (std::filesystem::exists(contextObject + "/new file"))
+			if (std::filesystem::exists(projectContextObject + "/new file"))
 			{
 				HZN_CRITICAL("new file already exists");
 			}
 			else {
-				std::ofstream(contextObject + "/new file");
+				std::ofstream(projectContextObject + "/new file");
+			}
+
+		}
+
+		if (ImGui::MenuItem("New folder", NULL, false)) {
+
+			if (std::filesystem::exists(projectContextObject + "/new folder"))
+			{
+				HZN_CRITICAL("new folder already exists");
+			}
+			else {
+				std::filesystem::create_directory(projectContextObject + "/new folder");
 			}
 
 		}
@@ -707,9 +835,9 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 		ImGui::OpenPopupOnItemClick("contextProject", ImGuiPopupFlags_MouseButtonRight);
 	}
 	if (ImGui::BeginPopup("contextProject")) {
-		
 
-		if (ImGui::MenuItem("Create new file", NULL, false)) {
+
+		if (ImGui::MenuItem("New file", NULL, false)) {
 			if (std::filesystem::exists(projectRootFolder + "/new file"))
 			{
 				HZN_CRITICAL("new file already exists");
@@ -718,6 +846,19 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath){
 				std::ofstream(projectRootFolder + "/new file");
 			}
 		}
+
+		if (ImGui::MenuItem("New folder", NULL, false)) {
+
+			if (std::filesystem::exists(projectRootFolder + "/new folder"))
+			{
+				HZN_CRITICAL("new folder already exists");
+			}
+			else {
+				std::filesystem::create_directory(projectRootFolder + "/new folder");
+			}
+
+		}
+
 
 		ImGui::EndPopup();
 	}
@@ -751,16 +892,135 @@ bool EditorLayer::ButtonCenteredOnLine(const char* label, float alignment)
 	return ImGui::Button(label, ImVec2(buttonWidth, buttonHeight));
 }
 
+void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<Hzn::Component> c) {
+	char textone[512];
+	memset(textone, '\0', sizeof(textone));
 
+	try {
+		std::shared_ptr<Hzn::GameObject> go = std::any_cast<std::shared_ptr<Hzn::GameObject>>(value);
+		if (go) {
+			strcpy(textone, go->name.c_str());
+
+			static std::pair<std::string, std::shared_ptr<Hzn::Component>> pair(name, c);
+			if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+				std::string s(textone);
+				c->setField(name, openScene->findGameObject(s));
+				//value = openScene->findGameObject(s);
+
+				nodes = openScene->getHierarchy();
+			}
+
+			return;
+		}
+	}
+	catch (const std::bad_any_cast& e) { }
+
+	try {
+		std::shared_ptr<Hzn::Component> component = std::any_cast<std::shared_ptr<Hzn::Component>>(value);
+		if (component) {
+			std::shared_ptr<Hzn::GameObject> go = std::any_cast<std::shared_ptr<Hzn::GameObject>>(component->getField("gameObject"));
+			strcpy(textone, go->name.c_str());
+
+			if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+				std::shared_ptr<Hzn::GameObject> go = openScene->findGameObject(textone);
+				if (go) {
+					c->setField(name, go->getComponent(component->getComponentType()));
+
+					nodes = openScene->getHierarchy();
+				}
+			}
+
+			return;
+		}
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		glm::vec2 vec = std::any_cast<glm::vec2>(value);
+		std::string s = std::to_string(vec.x) + ", " + std::to_string(vec.y);
+		strcpy(textone, s.c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			std::string textString(textone);
+			std::string xString = textString.substr(0, textString.find(","));
+			std::string yString = textString.substr(textString.find(",") + 1, textString.size() - (xString.size() + 1));
+			c->setField(name, glm::vec2(std::stof(xString), std::stof(yString)));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		float f = std::any_cast<float>(value);
+		strcpy(textone, std::to_string(f).c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone)), ImGuiInputTextFlags_EnterReturnsTrue) {
+			std::string textString = textone;
+			c->setField(name, std::stof(textString));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		int i = std::any_cast<int>(value);
+		strcpy(textone, std::to_string(i).c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			std::cout << name << std::endl;
+
+			std::string textString = textone;
+			c->setField(name, (int)std::stof(textString));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		std::string s = std::any_cast<std::string>(value);
+		strcpy(textone, s.c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone)), ImGuiInputTextFlags_EnterReturnsTrue) {
+			c->setField(name, std::string(textone));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+}
+
+int EditorLayer::gameObjectCallback(ImGuiInputTextCallbackData* data) {
+	std::cout << "asd" << std::endl;
+
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
+	{
+		std::cout << "asd" << std::endl;
+		data->InsertChars(data->CursorPos, "..");
+	}
+
+	if (data->EventFlag == ImGuiInputTextFlags_EnterReturnsTrue)
+	{
+		std::pair<std::string, std::shared_ptr<Hzn::Component>>* pair = ((std::pair<std::string, std::shared_ptr<Hzn::Component>>*)(data->UserData));
+		HZN_CORE_DEBUG(pair->first);
+		//std::pair<std::string, std::shared_ptr<Hzn::Component>>* pair = ((std::pair<std::string, std::shared_ptr<Hzn::Component>>*)(data->UserData));
+		/*std::string s(data->Buf);
+		pair->second->setField(pair->first, openScene->findGameObject(s));*/
+	}
+	
+	return 0;
+}
 
 void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
-	
+
 
 	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
-		
+
 		ImGuiTreeNodeFlags node_flags = base_flags;
 
 		if (entry.path().string() == contextObject)
@@ -797,11 +1057,11 @@ void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 }
 
 void EditorLayer::drawAudio(std::string directoryPath) {
-	
+
 
 	openContext = false;
 	ImGui::Begin("Audios");
-	
+
 	drawAudioNode(directoryPath);
 
 	if (openContext) {
@@ -836,6 +1096,164 @@ void EditorLayer::drawAudio(std::string directoryPath) {
 	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
 	const bool is_active = ImGui::IsItemActive();   // Held
+
+	ImGui::End();
+}
+
+
+void EditorLayer::drawContentBrowser() {
+
+
+
+	projectContextObject = m_CurrentDirectory.string();
+	ImGui::Begin("Content Browser");
+
+	if (!projectRootFolder.empty()) {
+		if (m_CurrentDirectory != std::filesystem::path(assetPath))
+		{
+			if (ImGui::Button("<-"))
+			{
+				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+			}
+		}
+
+		static float padding = 16.0f;
+		static float thumbnailSize = 128.0f;
+		float cellSize = thumbnailSize + padding;
+
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		int columnCount = (int)(panelWidth / cellSize);
+		if (columnCount < 1)
+			columnCount = 1;
+
+		ImGui::Columns(columnCount, 0, false);
+
+		std::map<std::string, std::string> spriteFormat;
+
+		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		{
+
+			if (entry.path().string().find(".meta") != std::string::npos)
+			{
+				continue;
+			}
+
+			const auto& path = entry.path();
+			std::string filenameString = path.filename().string();
+
+			ImGui::PushID(filenameString.c_str());
+
+
+			std::shared_ptr<Hzn::Texture> icon;
+
+			if (entry.is_directory()) {
+				icon = folderIcon;
+			}
+
+			else if (entry.path().string().find(".png") != std::string::npos)
+			{
+				fileIconMap.find(entry.path().string());
+				icon = fileIconMap.find(entry.path().string())->second;
+			}
+
+			else
+			{
+				icon = fileIcon;
+			}
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
+			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
+			{
+
+				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+
+					//spriteFormat.clear();
+
+					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+						std::string line;
+
+						while (std::getline(infile, line)) {
+							std::istringstream is_line(line);
+							std::string key;
+							if (std::getline(is_line, key, ':'))
+							{
+								std::string value;
+
+								if (std::getline(is_line, value))
+								{
+									spriteFormat[key] = value;
+								}
+							}
+						}
+
+					}
+				}
+
+				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+
+				if (ImGui::Button("show sprites")) {
+					ImGui::OpenPopup("showSprites");
+				}
+
+				if (ImGui::BeginPopupModal("showSprites")) {
+
+					ImGui::Columns(columnCount, 0, false);
+					for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+					{
+						for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+						{
+							std::string currentSprite = entry.path().string().append("(").append(std::to_string(i)).append(",").append(std::to_string(j)).append(")");
+
+							std::shared_ptr<Hzn::Sprite2D> sprite = spriteMap.find(currentSprite)->second;
+							ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
+							std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+							ImGui::TextWrapped(spriteTexCoords.c_str());
+							ImGui::NextColumn();
+						}
+					}
+
+					ImGui::Columns(1);
+					if (ImGui::Button("Close", ImVec2(120, 40))) {
+						ImGui::CloseCurrentPopup();
+					}
+
+					ImGui::EndPopup();
+				}
+
+			}
+			else {
+				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			}
+
+			ImGui::PopStyleColor();
+
+			if (ImGui::BeginDragDropSource()) {
+
+				auto relativePath = std::filesystem::relative(path, assetPath);
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				ImGui::EndDragDropSource();
+			}
+
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				if (entry.is_directory())
+					m_CurrentDirectory /= path.filename();
+
+			}
+			ImGui::TextWrapped(filenameString.c_str());
+
+			ImGui::NextColumn();
+
+			ImGui::PopID();
+		}
+	}
+
+
+	ImGui::Columns(1);
 
 	ImGui::End();
 }
