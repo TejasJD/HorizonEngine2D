@@ -150,6 +150,8 @@ namespace Hzn {
 						addGameObject(std::make_shared<GameObject>(currentGameObject));
 					}
 					currentGameObject = std::make_shared<GameObject>(value);
+					//currentGameObject = std::shared_ptr<GameObject>(new GameObject(this));//std::make_shared<GameObject>(this);
+					//currentGameObject->name = value;
 				}
 				// Create new component for the current game object
 				else if (key.compare("component") == 0) {
@@ -458,6 +460,8 @@ namespace Hzn {
 				getChildren(transforms->at(i), node);
 				nodes.push_back(node);
 			}
+
+			std::cout << std::any_cast<std::shared_ptr<GameObject>>(transforms->at(i)->getField("gameObject"))->name << std::endl;
 		}
 
 		return nodes;

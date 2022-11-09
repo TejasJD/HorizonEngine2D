@@ -69,4 +69,6 @@ namespace Hzn {
 		shapes->push_back(polygonShape);
 		return shapes;
 	}
+
+	void BoxCollider2D::drawFields() {}
 }

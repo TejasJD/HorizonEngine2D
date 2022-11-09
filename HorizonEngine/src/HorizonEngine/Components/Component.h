@@ -7,6 +7,11 @@
 #include <string>
 #include <any>
 
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 namespace Hzn {
 	class Component {
 	public:
@@ -19,6 +24,7 @@ namespace Hzn {
 		virtual std::map<std::string, std::any>* getValues() {
 			return nullptr;
 		};
+		virtual void drawFields() = 0;
 	protected:
 		virtual void awake() = 0;
 		virtual void start() = 0;
