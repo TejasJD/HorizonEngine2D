@@ -5,6 +5,7 @@
 
 #include "HorizonEngine.h"
 #include "pch.h"
+#include <Renderer/Texture.h>
 
 namespace Hzn
 {
@@ -15,7 +16,7 @@ namespace Hzn
 		~AssetManager() {};
 
 		void LoadTexture(std::string fileName, std::string filePath);
-		std::shared_ptr<Hzn::Texture2D> GetTexture(std::string fileName);
+		std::shared_ptr<Hzn::Texture> GetTexture(std::string fileName);
 
 
 		void LoadAudio(std::string fileName, std::string filePath);
@@ -25,7 +26,7 @@ namespace Hzn
 		void UnloadAudio(std::string fileName);
 	private:
 		std::map<std::string, Hzn::AudioSource> _audios;
-		std::map<std::string, std::shared_ptr<Hzn::Texture2D>> _textures;
+		std::map<std::string, std::shared_ptr<Hzn::Texture>> _textures;
 	};
 
 }

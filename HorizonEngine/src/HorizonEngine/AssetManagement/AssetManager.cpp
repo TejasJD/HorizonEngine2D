@@ -2,7 +2,7 @@
 
 void Hzn::AssetManager::LoadTexture(std::string fileName, std::string filePath)
 {
-	std::shared_ptr<Hzn::Texture2D> texture = Hzn::Texture2D::create(filePath);
+	std::shared_ptr<Hzn::Texture> texture = Hzn::Texture2D::create(filePath);
 
 	if (texture)
 	{
@@ -10,7 +10,7 @@ void Hzn::AssetManager::LoadTexture(std::string fileName, std::string filePath)
 	}
 }
 
-std::shared_ptr<Hzn::Texture2D> Hzn::AssetManager::GetTexture(std::string fileName)
+std::shared_ptr<Hzn::Texture> Hzn::AssetManager::GetTexture(std::string fileName)
 {
 	return this->_textures.at(fileName);
 }
