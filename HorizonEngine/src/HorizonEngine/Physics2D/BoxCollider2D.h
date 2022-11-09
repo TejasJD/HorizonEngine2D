@@ -30,6 +30,7 @@ namespace Hzn {
 		}
 		std::vector<std::string>* stringify() override;
 		std::map<std::string, std::any>* getValues() override;
+		void drawFields() override;
 	private:
 		void awake() override {}
 		void start() override {}

@@ -125,4 +125,6 @@ namespace Hzn {
 		transform.get()->setField("position", glm::vec2(t.p.x, t.p.y));
 		transform.get()->setField("rotation", t.q.GetAngle());
 	}
+
+	void Rigidbody2D::drawFields() {}
 }

@@ -795,7 +795,7 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 			std::string textString(textone);
 			std::string xString = textString.substr(0, textString.find(","));
 			std::string yString = textString.substr(textString.find(",") + 1, textString.size() - (xString.size() + 1));
-			value = glm::vec2(std::stof(xString), std::stof(yString));
+			c->setField(name, glm::vec2(std::stof(xString), std::stof(yString)));
 		}
 
 		return;
@@ -806,7 +806,7 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 		float f = std::any_cast<float>(value);
 		strcpy(textone, std::to_string(f).c_str());
 
-		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone))) {
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone)), ImGuiInputTextFlags_EnterReturnsTrue) {
 			std::string textString = textone;
 			c->setField(name, std::stof(textString));
 		}
@@ -819,7 +819,9 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 		int i = std::any_cast<int>(value);
 		strcpy(textone, std::to_string(i).c_str());
 
-		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone))) {
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			std::cout << name << std::endl;
+
 			std::string textString = textone;
 			c->setField(name, (int)std::stof(textString));
 		}
@@ -832,8 +834,8 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 		std::string s = std::any_cast<std::string>(value);
 		strcpy(textone, s.c_str());
 
-		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone))) {
-			c->setField(name, textone);
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone)), ImGuiInputTextFlags_EnterReturnsTrue) {
+			c->setField(name, std::string(textone));
 		}
 
 		return;

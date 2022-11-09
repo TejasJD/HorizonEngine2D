@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "HorizonEngine/SceneManagement/Scene.h"
 #include <memory>
 
 namespace Hzn 
@@ -8,9 +9,16 @@ namespace Hzn
 		name = "GameObject";
 	}
 
+	/*GameObject::GameObject(Scene* scene) : scene(scene) {
+		components = new std::vector<std::shared_ptr<Component>>();
+		name = "GameObject";
+		this->scene = scene;
+	}*/
+
 	GameObject::GameObject(std::string s) {
 		components = new std::vector<std::shared_ptr<Component>>();
 		name = s;
+		// this->scene = scene;
 	}
 
 	/*GameObject::GameObject(GameObject* gameObject) {
