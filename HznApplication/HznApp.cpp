@@ -12,6 +12,7 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 	auto app = std::make_shared<HznApp>();
 	app->addLayer(new EditorLayer());
 	//app->addLayer(new Sandbox());
+  
 	return app;
 }
 
@@ -130,7 +131,6 @@ void EditorLayer::onRenderImgui()
 	drawHierarchy();
 	drawProjectExplorer(projectRootFolder);
 	drawConsole();
-	//drawAudio("assets/audios/");
 	drawContentBrowser();
 }
 
@@ -492,9 +492,37 @@ void EditorLayer::drawObjectBehaviour() {
 	//ImGuiConfigFlags configFlags = ImGuiDir_Right | ImGuiWindowFlags_NoCollapse;
 	//ImGui::Begin("Object Behaviour", &pOpen, configFlags);
 	ImGui::Begin("Object Behaviour");
-	// TODO: Add behaviours/components of currently selected object
-	if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
 
+	if (contextObject != "") {
+		std::vector<std::shared_ptr<Hzn::Component>>* components = selectedObject->getComponents();
+
+		for (int i = 0; i < components->size(); i++) {
+			//HZN_CORE_DEBUG(std::any_cast<std::shared_ptr<Hzn::GameObject>>(components->at(i)->getField("gameObject"))->name);
+
+			ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+
+			bool open = ImGui::TreeNodeEx(components->at(i)->getComponentType().c_str(), base_flags | ImGuiTreeNodeFlags_Selected);
+
+			if (open) {
+				std::map<std::string, std::any> map = *(components->at(i)->getValues());
+				for (std::map<std::string, std::any>::iterator it = map.begin(); it != map.end(); ++it) {
+					//ImGui::Text(it->first.c_str());
+					drawField(it->first, it->second, components->at(i));
+					//char value[128] = "";
+					//if (ImGui::InputText(it->first.c_str(), value, IM_ARRAYSIZE(value))) { // , ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL)) {
+					//	HZN_CORE_DEBUG(value);
+					//}
+					// ImGui::SameLine();
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		// TODO: Add behaviours/components of currently selected object
+		if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
+
+		}
 	}
 	ImGui::End();
 }
@@ -515,10 +543,13 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 		contextObject = node->item;
+		selectedObject = openScene->findGameObject(contextObject);
 	}
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		contextObject = node->item;
+		selectedObject = openScene->findGameObject(contextObject);
+    
 		ImGui::OpenPopup("contextObject");
 	}
 
@@ -628,7 +659,7 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 
 		ImGuiTreeNodeFlags node_flags = base_flags;
 
-		if (entry.path().string() == contextObject)
+		if (entry.path().string() == projectContextObject)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
 		std::string name = entry.path().string();
@@ -658,29 +689,29 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 
 		if (!clickStatus && ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 			clickStatus = true;
-			contextObject = entry.path().string();
+			projectContextObject = entry.path().string();
 
 			if (!entryIsFile) {
-				m_CurrentDirectory = contextObject;
+				m_CurrentDirectory = projectContextObject;
 
 			}
 		}
 
 		if (!clickStatus && !entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 			clickStatus = true;
-			contextObject = entry.path().string();
+			projectContextObject = entry.path().string();
 			ImGui::OpenPopup("dirContextObject");
 		}
 
 		if (!clickStatus && entryIsFile && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 			clickStatus = true;
-			contextObject = entry.path().string();
-			ImGui::OpenPopup("contextObject");
+			projectContextObject = entry.path().string();
+			ImGui::OpenPopup("projectContextObject");
 		}
 	}
 
 
-	openContext |= ImGui::IsPopupOpen("contextObject");
+	openContext |= ImGui::IsPopupOpen("projectContextObject");
 	dirOpenContext |= ImGui::IsPopupOpen("dirContextObject");
 
 
@@ -697,13 +728,13 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath) {
 	clickStatus = false;
 
 	if (openContext) {
-		if (ImGui::IsPopupOpen("contextObject")) {
+		if (ImGui::IsPopupOpen("projectContextObject")) {
 			ImGui::CloseCurrentPopup();
 		}
 
-		ImGui::OpenPopup("contextObject");
+		ImGui::OpenPopup("projectContextObject");
 
-		ImGui::BeginPopup("contextObject");
+		ImGui::BeginPopup("projectContextObject");
 
 		if (ImGui::MenuItem("Cut", NULL, false)) {
 			// Do stuff here
@@ -723,8 +754,8 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath) {
 		}
 		if (ImGui::MenuItem("Delete")) {
 
-			Hzn::ProjectFile pf(contextObject);
-			pf.deleteFile(contextObject);
+			Hzn::ProjectFile pf(projectContextObject);
+			pf.deleteFile(projectContextObject);
 		}
 
 		ImGui::EndPopup();
@@ -758,31 +789,31 @@ void EditorLayer::drawProjectExplorer(std::string directoryPath) {
 		if (ImGui::MenuItem("Delete", NULL, false)) {
 
 			Hzn::ProjectFile* pf = nullptr;
-			pf->deleteDir(contextObject);
+			pf->deleteDir(projectContextObject);
 		}
 
 		ImGui::Separator();
 
 		if (ImGui::MenuItem("New file", NULL, false)) {
 
-			if (std::filesystem::exists(contextObject + "/new file"))
+			if (std::filesystem::exists(projectContextObject + "/new file"))
 			{
 				HZN_CRITICAL("new file already exists");
 			}
 			else {
-				std::ofstream(contextObject + "/new file");
+				std::ofstream(projectContextObject + "/new file");
 			}
 
 		}
 
 		if (ImGui::MenuItem("New folder", NULL, false)) {
 
-			if (std::filesystem::exists(contextObject + "/new folder"))
+			if (std::filesystem::exists(projectContextObject + "/new folder"))
 			{
 				HZN_CRITICAL("new folder already exists");
 			}
 			else {
-				std::filesystem::create_directory(contextObject + "/new folder");
+				std::filesystem::create_directory(projectContextObject + "/new folder");
 			}
 
 		}
@@ -861,7 +892,126 @@ bool EditorLayer::ButtonCenteredOnLine(const char* label, float alignment)
 	return ImGui::Button(label, ImVec2(buttonWidth, buttonHeight));
 }
 
+void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<Hzn::Component> c) {
+	char textone[512];
+	memset(textone, '\0', sizeof(textone));
 
+	try {
+		std::shared_ptr<Hzn::GameObject> go = std::any_cast<std::shared_ptr<Hzn::GameObject>>(value);
+		if (go) {
+			strcpy(textone, go->name.c_str());
+
+			static std::pair<std::string, std::shared_ptr<Hzn::Component>> pair(name, c);
+			if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+				std::string s(textone);
+				c->setField(name, openScene->findGameObject(s));
+				//value = openScene->findGameObject(s);
+
+				nodes = openScene->getHierarchy();
+			}
+
+			return;
+		}
+	}
+	catch (const std::bad_any_cast& e) { }
+
+	try {
+		std::shared_ptr<Hzn::Component> component = std::any_cast<std::shared_ptr<Hzn::Component>>(value);
+		if (component) {
+			std::shared_ptr<Hzn::GameObject> go = std::any_cast<std::shared_ptr<Hzn::GameObject>>(component->getField("gameObject"));
+			strcpy(textone, go->name.c_str());
+
+			if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+				std::shared_ptr<Hzn::GameObject> go = openScene->findGameObject(textone);
+				if (go) {
+					c->setField(name, go->getComponent(component->getComponentType()));
+
+					nodes = openScene->getHierarchy();
+				}
+			}
+
+			return;
+		}
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		glm::vec2 vec = std::any_cast<glm::vec2>(value);
+		std::string s = std::to_string(vec.x) + ", " + std::to_string(vec.y);
+		strcpy(textone, s.c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			std::string textString(textone);
+			std::string xString = textString.substr(0, textString.find(","));
+			std::string yString = textString.substr(textString.find(",") + 1, textString.size() - (xString.size() + 1));
+			c->setField(name, glm::vec2(std::stof(xString), std::stof(yString)));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		float f = std::any_cast<float>(value);
+		strcpy(textone, std::to_string(f).c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone)), ImGuiInputTextFlags_EnterReturnsTrue) {
+			std::string textString = textone;
+			c->setField(name, std::stof(textString));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		int i = std::any_cast<int>(value);
+		strcpy(textone, std::to_string(i).c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			std::cout << name << std::endl;
+
+			std::string textString = textone;
+			c->setField(name, (int)std::stof(textString));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+
+	try {
+		std::string s = std::any_cast<std::string>(value);
+		strcpy(textone, s.c_str());
+
+		if (ImGui::InputText(name.c_str(), textone, IM_ARRAYSIZE(textone)), ImGuiInputTextFlags_EnterReturnsTrue) {
+			c->setField(name, std::string(textone));
+		}
+
+		return;
+	}
+	catch (const std::bad_any_cast& e) {}
+}
+
+int EditorLayer::gameObjectCallback(ImGuiInputTextCallbackData* data) {
+	std::cout << "asd" << std::endl;
+
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
+	{
+		std::cout << "asd" << std::endl;
+		data->InsertChars(data->CursorPos, "..");
+	}
+
+	if (data->EventFlag == ImGuiInputTextFlags_EnterReturnsTrue)
+	{
+		std::pair<std::string, std::shared_ptr<Hzn::Component>>* pair = ((std::pair<std::string, std::shared_ptr<Hzn::Component>>*)(data->UserData));
+		HZN_CORE_DEBUG(pair->first);
+		//std::pair<std::string, std::shared_ptr<Hzn::Component>>* pair = ((std::pair<std::string, std::shared_ptr<Hzn::Component>>*)(data->UserData));
+		/*std::string s(data->Buf);
+		pair->second->setField(pair->first, openScene->findGameObject(s));*/
+	}
+	
+	return 0;
+}
 
 void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
@@ -955,7 +1105,7 @@ void EditorLayer::drawContentBrowser() {
 
 
 
-	contextObject = m_CurrentDirectory.string();
+	projectContextObject = m_CurrentDirectory.string();
 	ImGui::Begin("Content Browser");
 
 	if (!projectRootFolder.empty()) {

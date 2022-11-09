@@ -9,9 +9,12 @@
 namespace Hzn {
 	class Transform;
 	class Component;
+	class Scene;
 
 	class GameObject : public std::enable_shared_from_this<GameObject> {
 	public:
+		/*friend class Scene;
+		Scene* scene = nullptr;*/
 		std::string name;
 		std::shared_ptr<Transform> transform;
 	private:
@@ -19,8 +22,10 @@ namespace Hzn {
 		std::vector<std::shared_ptr<Component>>* components;
 	public:
 		GameObject();
+		//GameObject(Scene* scene);
 		~GameObject();
 		GameObject(std::string s);
+		//GameObject(Scene* scene, std::string s);
 		GameObject(std::shared_ptr<GameObject> gameObject);
 		GameObject(GameObject* go);
 

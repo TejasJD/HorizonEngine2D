@@ -3,23 +3,11 @@
 #include "GLFW/glfw3.h"
 #include "HorizonEngine/App.h"
 #include "GLWindow.h"
-#include "GLInput.h"
+#include "HorizonEngine/Input.h"
 
 namespace Hzn
 {
-	std::shared_ptr<Input> Input::m_Instance;
-	std::shared_ptr<Input> Input::create()
-	{ 
-		if (!m_Instance)
-		{
-			m_Instance = std::make_shared<GLInput>();
-		}
-
-		return m_Instance;
-	}
-
-
-	bool GLInput::keyPressedUtil(int key) const
+	bool Input::keyPressed(int key)
 	{
 		GLFWwindow* window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 		
@@ -27,14 +15,14 @@ namespace Hzn
 		return action == GLFW_PRESS || action == GLFW_REPEAT;
 	}
 
-	bool GLInput::mouseButtonPressedUtil(int button) const
+	bool Input::mouseButtonPressed(int button)
 	{
 		GLFWwindow* window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 		int action = glfwGetMouseButton(window, button);
 		return action == GLFW_PRESS;
 	}
 
-	std::pair<double, double> GLInput::getMousePosUtil() const
+	std::pair<float, float> Input::getMousePos()
 	{
 		GLFWwindow* window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 		std::pair<double, double> pos;
@@ -42,13 +30,13 @@ namespace Hzn
 		return pos;
 	}
 
-	double GLInput::getMouseXUtil() const
+	float Input::getMouseX()
 	{
-		return getMousePosUtil().first;
+		return getMousePos().first;
 	}
 
-	double GLInput::getMouseYUtil() const
+	float Input::getMouseY()
 	{
-		return getMousePosUtil().second;
+		return getMousePos().second;
 	}
 }

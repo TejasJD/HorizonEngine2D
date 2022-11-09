@@ -16,7 +16,7 @@ namespace Hzn
 	class VertexArray
 	{
 	public:
-		virtual ~VertexArray() {}
+		virtual ~VertexArray() = default;
 		
 		/// <summary>
 		/// Bind the Vertex Array object.

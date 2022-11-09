@@ -22,4 +22,6 @@ private:
 	Hzn::OrthographicCameraController m_CameraController;
 	std::shared_ptr<Hzn::Texture2D> m_CheckerboardTexture;
 	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
+	bool m_ViewportFocused = false;
+	bool m_ViewportHovered = false;
 };

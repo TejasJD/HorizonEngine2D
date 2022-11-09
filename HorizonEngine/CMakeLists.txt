@@ -88,7 +88,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Audio/AudioSource.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
-	"Platform/OpenGL/GLInput.h"
+	
 	"src/HorizonEngine/Renderer/RenderContext.h"
 	"Platform/OpenGL/GLContext.h"
 	"src/HorizonEngine/Renderer/Shader.h"

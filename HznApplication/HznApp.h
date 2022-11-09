@@ -13,6 +13,8 @@ private:
 	std::string projectPath ="Project (No open project)";;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
+	std::string projectContextObject = "";
+	std::shared_ptr<Hzn::GameObject> selectedObject;
 	bool openContext = false;
 	bool dirOpenContext = false;
 	bool clickStatus = false;
@@ -48,6 +50,9 @@ private:
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
 	void drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node);
+
+	void drawField(std::string key, std::any& value, std::shared_ptr<Hzn::Component> c);
+	static int gameObjectCallback(ImGuiInputTextCallbackData* data);
 
 	void drawAudio(std::string directoryPath);
 	void drawAudioNode(const std::filesystem::path& path);
