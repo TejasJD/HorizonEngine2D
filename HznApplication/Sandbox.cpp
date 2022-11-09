@@ -154,6 +154,35 @@ void Sandbox::onRenderImgui()
 		ImGui::PopID();
 	}
 	ImGui::EndChild();
+
+	ImGui::SameLine();
+	ImGui::BeginGroup();
+
+	const float NODE_SLOT_RADIUS = 4.0f;
+	const ImVec2 NODE_WINDOW_PADDING(8.0f, 8.0f);
+
+	// Child Canvas 
+	ImGui::Text("Hold middle mouse button to scroll (%.2f, %.2f)", scrolling.x, scrolling.y);
+	ImGui::SameLine(ImGui::GetWindowWidth() - 100);
+	ImGui::Checkbox("Show Grid", &show_grid);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(60, 60, 70, 200));
+	ImGui::BeginChild("scrolling_region", ImVec2(0, 0), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove);
+	ImGui::PopStyleVar(); // WindowPadding
+	ImGui::PushItemWidth(120.0f);
+	
+	const ImVec2 offset = ImGui::GetCursorScreenPos() + scrolling;
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+	
+	ImGui::PopItemWidth();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar();
+	ImGui::EndGroup();
+
+
+	
 	
 	ImGui::End();
 	
