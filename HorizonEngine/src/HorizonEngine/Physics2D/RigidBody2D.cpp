@@ -53,6 +53,10 @@ namespace Hzn {
 		return content;
 	}
 
+	std::map<std::string, std::any>* Rigidbody2D::getValues() {
+		return values;
+	}
+
 	void Rigidbody2D::setPosition(glm::vec2 position) {
 		std::shared_ptr<Transform> transform = std::any_cast<std::shared_ptr<Transform>>(getField("transform"));
 		body->SetTransform(b2Vec2(position.x, position.y), std::any_cast<float>(transform->getField("rotation")));
@@ -121,4 +125,6 @@ namespace Hzn {
 		transform.get()->setField("position", glm::vec2(t.p.x, t.p.y));
 		transform.get()->setField("rotation", t.q.GetAngle());
 	}
+
+	void Rigidbody2D::drawFields() {}
 }
