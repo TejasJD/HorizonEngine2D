@@ -45,7 +45,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Renderer/Renderer3D.cpp"
 	"src/HorizonEngine/Renderer/Sprite.cpp"
 	"src/HorizonEngine/Renderer/FrameBuffer.cpp"
-	"Platform/OpenGL/GLFrameBuffer.cpp" )
+	"Platform/OpenGL/GLFrameBuffer.cpp"  "src/HorizonEngine/SceneManagement/SceneManager.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -98,7 +98,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Renderer/Renderer3D.h"
 	"src/HorizonEngine/Renderer/Sprite.h"
 	"src/HorizonEngine/Renderer/FrameBuffer.h"
-	"Platform/OpenGL/GLFrameBuffer.h" "src/HorizonEngine/SceneManagement/GameObject.h")
+	"Platform/OpenGL/GLFrameBuffer.h" "src/HorizonEngine/SceneManagement/GameObject.h" "src/HorizonEngine/SceneManagement/SceneManager.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})

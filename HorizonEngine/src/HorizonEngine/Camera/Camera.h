@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/detail/compute_common.hpp>
+//#include <cereal/access.hpp>
 
 namespace Hzn
 {
@@ -338,6 +338,7 @@ namespace Hzn
 	class SceneCamera2D : public Camera
 	{
 	public:
+		/*friend class cereal::access;*/
 		SceneCamera2D(const float aspectRatio, const float zoom) :
 			m_AspectRatio(aspectRatio),
 			m_Zoom(zoom)
@@ -367,6 +368,28 @@ namespace Hzn
 		{
 			m_Zoom = zoom;
 			calculateProjectionMatrix();
+		}
+
+		template<typename Archive>
+		void load(Archive& ar)
+		{
+			ar(m_Zoom);
+
+			for(int i = 0; i < 4; ++i)
+			{
+				ar(m_Projection[i].x, m_Projection[i].y, m_Projection[i].z, m_Projection[i].w);
+			}
+		}
+
+		template<typename Archive>
+		void save(Archive& ar) const
+		{
+			ar(m_Zoom);
+
+			for (int i = 0; i < 4; ++i)
+			{
+				ar(m_Projection[i].x, m_Projection[i].y, m_Projection[i].z, m_Projection[i].w);
+			}
 		}
 
 	private:
