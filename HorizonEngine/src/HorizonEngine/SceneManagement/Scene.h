@@ -38,9 +38,12 @@ namespace Hzn
 
 		GameObject getGameObject(const std::string& name);
 
+		std::vector<std::string> allGameObjectNames() const;
+		std::vector<std::string> getAllRootObjects() const;
+
 	private:
 		void serialize(cereal::JSONOutputArchive& outputArchive);
-
+		void invalidate();
 		// variable that is used by the scene manager to invalidate all
 		// the pointers to the scene. If the scene manager sets the scene.
 		// then those pointers cannot perform actions on the scene.

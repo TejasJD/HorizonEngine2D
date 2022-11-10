@@ -18,37 +18,54 @@ EditorLayer::~EditorLayer()
 
 void EditorLayer::onAttach()
 {
-	HZN_TRACE("Editor Layer Attached!");
-	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
-	Hzn::FrameBufferProps props;
-	props.width = Hzn::App::getApp().getAppWindow().getWidth();
-	props.height = Hzn::App::getApp().getAppWindow().getHeight();
+    HZN_TRACE("Editor Layer Attached!");
+    m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
+    Hzn::FrameBufferProps props;
+    props.width = Hzn::App::getApp().getAppWindow().getWidth();
+    props.height = Hzn::App::getApp().getAppWindow().getHeight();
 
-	m_FrameBuffer = Hzn::FrameBuffer::create(props);
+    m_FrameBuffer = Hzn::FrameBuffer::create(props);
 
-    m_Scene = Hzn::SceneManager::load(/*"scenes/default.json"*/);
+    m_Scene = Hzn::SceneManager::load();
 
-    /*m_CameraZoom = m_Scene->getGameObject("camera 1").getComponent<Hzn::CameraComponent>().m_Camera.getZoom();*/
+    Hzn::GameObject object0 = m_Scene->createGameObject("square 1");
+    object0.addComponent<Hzn::TransformComponent>();
+    object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-    m_SquareObject = m_Scene->createGameObject("square object 1");
-    m_SquareObject2 = m_Scene->createGameObject("square object 2");
+    Hzn::GameObject object1 = m_Scene->createGameObject("square 2");
 
-    m_SquareObject.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-    glm::mat4 m_FirstTransform = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 2.0f, 0.0f));
-    m_SquareObject.addComponent<Hzn::TransformComponent>(m_FirstTransform);
+    object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
+    object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-    m_SquareObject2.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    m_SquareObject2.addComponent<Hzn::TransformComponent>();
+    Hzn::GameObject object3 = m_Scene->createGameObject("square 3");
 
-    m_Camera = m_Scene->createGameObject("camera 1");
+    object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
+    object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 
-    m_Camera.addComponent<Hzn::CameraComponent>((float)props.width / props.height, 1.0f);
-    m_Camera.addComponent<Hzn::TransformComponent>();
+    Hzn::GameObject camera = m_Scene->createGameObject("camera 1");
+    camera.addComponent<Hzn::CameraComponent>();
+    camera.addComponent<Hzn::TransformComponent>();
+
+    object0.addChild(camera);
+    object0.addChild(object1);
+
+
+    HZN_INFO(object1.getPrevSibling().getComponent<Hzn::NameComponent>().m_Name);
+    HZN_INFO(camera.getNextSibling().getComponent<Hzn::NameComponent>().m_Name);
+    
+
+    /*Hzn::GameObject object0 = m_Scene->getGameObject("square 1");*/
+    auto list = object0.getChildren();
+
+    for(const auto& x : list)
+    {
+        HZN_INFO(x.getComponent<Hzn::NameComponent>().m_Name);
+    }
 }
 
 void EditorLayer::onDetach()
 {
-    Hzn::SceneManager::close("scenes/default.json");
+    Hzn::SceneManager::close("scenes/custom_scene.json");
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
@@ -172,20 +189,19 @@ void EditorLayer::onRenderImgui()
         ImGui::EndMenuBar();
     }
 
+    // OBJECT HIERARCHY BEGIN
+    drawHierarchy();
+    // OBJECT HIERARCHY END
 
+    /*static bool show = true;*/
     // SETTINGS BEGIN.
-	ImGui::Begin("Settings");
-	ImGui::SliderInt("Grid Side", &quads, 5, 1000);
-	ImGui::SliderFloat("Quad Angle", &quadAngle, -180.0f, 180.0f);
-	ImGui::Text("Draw calls: %d", stats.draws);
-	ImGui::Text("Quads: %d", stats.quads);
-	ImGui::Text("Vertices: %d", stats.vertices);
-	ImGui::Text("Indices: %d", stats.indices);
-    if(ImGui::SliderFloat("Camera Zoom", &m_CameraZoom, 0.25, 10.0f))
-    {
-        m_Scene->getGameObject("camera 1").getComponent<Hzn::CameraComponent>().m_Camera.setZoom(m_CameraZoom);
-    }
-	ImGui::End();
+	ImGui::Begin("Components");
+    auto selectedObj = m_Scene->getGameObject("camera 1");
+    Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
+    Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
+    Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
+    Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+    ImGui::End();
     // SETTINGS END.
 
 	// VIEWPORT BEGIN
@@ -216,4 +232,30 @@ void EditorLayer::onRenderImgui()
 
     ImGui::End();
     // DOCKING END.
+}
+
+void EditorLayer::drawHierarchy()
+{
+    ImGui::Begin("Object Hierarchy");
+    auto list = m_Scene->getAllRootObjects();
+
+    for(const auto& x : list)
+    {
+        drawObjects(m_Scene->getGameObject(x));
+    }
+
+    ImGui::End();
+}
+
+void EditorLayer::drawObjects(const Hzn::GameObject& object)
+{
+    if(ImGui::TreeNode(object.getComponent<Hzn::NameComponent>().m_Name.c_str()))
+    {
+        auto list = object.getChildren();
+        for (const auto& x : list)
+        {
+            drawObjects(x);
+        }
+        ImGui::TreePop();
+    }
 }
