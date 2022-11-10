@@ -27,11 +27,49 @@ namespace Hzn {
 	}
 
 	void Transform::setField(std::string k, std::any v) {
+		if (k == "parent" && values->count(k)) {
+			try {
+				HZN_CORE_DEBUG("0");
+				std::shared_ptr<Component> oldParent = std::any_cast<std::shared_ptr<Component>>(getField("parent"));
+				HZN_CORE_DEBUG("1");
+				std::vector<std::shared_ptr<Transform>>* oldParentChildren = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(oldParent->getField("children"));
+				HZN_CORE_DEBUG("2");
+				for (int i = 0; i < oldParentChildren->size(); i++) {
+					if (oldParentChildren->at(i).get() == this) {
+						oldParentChildren->erase(oldParentChildren->begin() + i);
+						break;
+					}
+				}
+
+				HZN_CORE_DEBUG("3");
+
+				std::shared_ptr<Component> newParent = std::any_cast<std::shared_ptr<Component>>(v);
+				HZN_CORE_DEBUG("4");
+				std::vector<std::shared_ptr<Transform>>* newParentChildren = std::any_cast<std::vector<std::shared_ptr<Transform>>*>(newParent->getField("children"));
+				HZN_CORE_DEBUG("5");
+
+				std::shared_ptr<GameObject> go = std::any_cast<std::shared_ptr<GameObject>>(getField("gameObject"));
+				HZN_CORE_DEBUG("6");
+				newParentChildren->push_back(std::dynamic_pointer_cast<Transform>(std::any_cast<std::shared_ptr<Component>>(go->getComponent("Transform"))));
+				HZN_CORE_DEBUG("7");
+
+				if (values->count("root")) {
+					setField("root", std::any_cast<std::shared_ptr<Component>>(newParent->getField("root")));
+				}
+				HZN_CORE_DEBUG("8");
+			}
+			catch (const std::bad_any_cast& e) {}
+		}
 		values->insert_or_assign(k, v);
 	}
 
 	std::any Transform::getField(std::string k) {
-		return values->find(k)->second;
+		try {
+			return values->find(k)->second;
+		}
+		catch (const std::bad_any_cast& e) {
+			return NULL;
+		}
 	}
 
 	std::vector<std::string>* Transform::stringify() {
@@ -86,6 +124,10 @@ namespace Hzn {
 		return content;
 	}
 
+	std::map<std::string, std::any>* Transform::getValues() {
+		return values;
+	}
+
 	void Transform::awake() {}
 
 	void Transform::start() {}
@@ -101,7 +143,7 @@ namespace Hzn {
 	void Transform::moveTowards(glm::vec2 targetPosition, float delta) {
 		glm::vec2 position = std::any_cast<glm::vec2>(getField("position"));
 		glm::vec2 direction = glm::vec2(targetPosition.x - position.x,
-										targetPosition.y - position.y);
+			targetPosition.y - position.y);
 		direction = direction * delta;
 		position = glm::vec2(position.x + direction.x, position.y + direction.y);
 		setField("position", position);
@@ -212,4 +254,6 @@ namespace Hzn {
 			children->at(i)->setSiblingIndex(std::any_cast<int>(children->at(i)->getField("siblingIndex")) + 1);
 		}
 	}
+
+	void Transform::drawFields() {}
 }

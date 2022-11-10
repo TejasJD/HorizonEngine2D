@@ -109,7 +109,7 @@ values:[
 ]
 component:BoxCollider2D
 values:[
-	transform:Transform:Test GO 3
+	transform:Transform:Test GO 2
 	size:vec2:1.000000,1.000000
 	offset:vec2:0.000000,0.000000
 ]

@@ -19,19 +19,15 @@ namespace Hzn {
 		std::map<std::string, std::any>* values;
 		/*
 		std::shared_ptr<GameObject> gameObject;
-
 		glm::vec2 position = glm::vec2(0, 0);
 		float rotation = 0;
 		glm::vec2 scale = glm::vec2(1, 1);
-
 		glm::vec2 right = glm::vec2(1, 0);
 		glm::vec2 up = glm::vec2(0, 1);
-
 		std::shared_ptr<Transform> parent = NULL;
 		std::shared_ptr<Transform> root = NULL;
 		int siblingIndex = 0;
 		int childrenCount = 0;
-
 		std::vector<std::shared_ptr<Transform>>* children{};
 		*/
 	public:
@@ -43,6 +39,8 @@ namespace Hzn {
 		void setField(std::string k, std::any v) override;
 		std::any getField(std::string k) override;
 		std::vector<std::string>* stringify() override;
+		std::map<std::string, std::any>* getValues() override;
+		void drawFields() override;
 	private:
 		void awake() override;
 		void start() override;
