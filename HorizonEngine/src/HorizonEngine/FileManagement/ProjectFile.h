@@ -47,7 +47,9 @@ namespace Hzn {
 		/*ProjectFile(const ProjectFile& f) = delete;
 		ProjectFile& operator=(const ProjectFile& f) = delete;*/
 
-		ProjectFile();
+		ProjectFile() {
+
+		}
 
 		//Destructor
 		~ProjectFile() {

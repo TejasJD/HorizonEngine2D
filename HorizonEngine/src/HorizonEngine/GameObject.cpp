@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "HorizonEngine/SceneManagement/Scene.h"
 #include <memory>
 
 namespace Hzn 
@@ -8,9 +9,16 @@ namespace Hzn
 		name = "GameObject";
 	}
 
+	/*GameObject::GameObject(Scene* scene) : scene(scene) {
+		components = new std::vector<std::shared_ptr<Component>>();
+		name = "GameObject";
+		this->scene = scene;
+	}*/
+
 	GameObject::GameObject(std::string s) {
 		components = new std::vector<std::shared_ptr<Component>>();
 		name = s;
+		// this->scene = scene;
 	}
 
 	/*GameObject::GameObject(GameObject* gameObject) {
@@ -85,9 +93,12 @@ namespace Hzn
 			if (t) {
 				transform = t;
 				t->setField("gameObject", shared_from_this());
+				t->setField("parent", std::shared_ptr<Component>(component));
+				t->setField("root", std::shared_ptr<Component>(component));
 			}
 		}
 		else {
+			component->setField("gameObject", shared_from_this());
 			component->setField("transform", std::shared_ptr<Component>(transform));
 		}
 	}

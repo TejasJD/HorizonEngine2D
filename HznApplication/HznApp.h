@@ -9,9 +9,13 @@ class EditorLayer : public Hzn::Layer
 private:
 	Hzn::Scene* openScene;
 	std::string projectRootFolder;
-	std::string projectPath ="Project (No open project)";;
+	std::string projectPath ="Project (No open project)";
+	std::string SceneFilePath;
+	std::string assetPath;
 	std::vector<std::shared_ptr<Hzn::TreeNode<std::string>>> nodes;
 	std::string contextObject = "";
+	std::string projectContextObject = "";
+	std::shared_ptr<Hzn::GameObject> selectedObject;
 	bool openContext = false;
 	bool dirOpenContext = false;
 	bool showSceneWindow = true;
@@ -19,8 +23,14 @@ private:
 	bool showObjectPropertiesWindow = true;
 	bool showProjectWindow = true;
 	bool showConsoleWindow = true;
+	bool clickStatus = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;
+	std::filesystem::path m_CurrentDirectory;
+	std::shared_ptr<Hzn::Texture> folderIcon;
+	std::map<std::string, std::shared_ptr<Hzn::Texture>> fileIconMap;
+	std::shared_ptr<Hzn::Texture> fileIcon;
+	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
 public:
 	EditorLayer(const char* name = "Editor Layer");
 
@@ -31,6 +41,8 @@ public:
 	virtual void onRenderImgui() override;
 
 	virtual void onEvent(Hzn::Event& event) override;
+
+	
 
 private:
 	void setupDockSpace(bool* pOpen);
@@ -47,8 +59,16 @@ private:
 
 	void drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node);
 
+	void drawField(std::string key, std::any& value, std::shared_ptr<Hzn::Component> c);
+	static int gameObjectCallback(ImGuiInputTextCallbackData* data);
+
 	void drawAudio(std::string directoryPath);
 	void drawAudioNode(const std::filesystem::path& path);
+
+	void NewScene();
+	void SaveAs();
+  void drawContentBrowser();
+
 };
 
 class HznApp : public Hzn::App
