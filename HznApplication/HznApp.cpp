@@ -12,7 +12,7 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 	auto app = std::make_shared<HznApp>();
 	app->addLayer(new EditorLayer());
 	//app->addLayer(new Sandbox());
-  
+
 	return app;
 }
 
@@ -43,6 +43,11 @@ void EditorLayer::onAttach()
 	openScene->open();
 	nodes = openScene->getHierarchy();
 	/*delete file;*/
+
+	Hzn::FrameBufferProps fbps;
+	fbps.width = 1280;
+	fbps.height = 720;
+	frameBuffer = Hzn::FrameBuffer::create(fbps);
 }
 
 void EditorLayer::onRenderImgui()
@@ -195,7 +200,7 @@ void EditorLayer::setupDockSpace(bool* pOpen) {
 	}
 
 	drawMenuBar(pOpen);
-
+	
 	ImGui::End();
 }
 
@@ -297,22 +302,18 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 					if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
 					{
-
-						audioFileMap.insert(std::make_pair(entry.path().string(), new Hzn::AudioSource()));
-						audioFileMap.find(entry.path().string())->second->init(entry.path().string().c_str());
-
+						assetManager.LoadAudio(entry.path().string(), entry.path().string());
 					}
 
 
 					if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
-						fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
-
+						assetManager.LoadTexture(entry.path().string(), entry.path().string());
 					}
 
 					if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
 
 						for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-							
+
 							if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
 								std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
 								std::string line;
@@ -409,82 +410,119 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 }
 
 void EditorLayer::drawScene() {
-	if (ImGui::Begin("Scene"))
+	ImGui::Begin("Scene");
+
+	//static ImVec2 scrolling(0.0f, 0.0f);
+	/*static bool opt_enable_grid = true;
+
+	ImGui::Checkbox("Enable grid", &opt_enable_grid);*/
+
+	// Typically you would use a BeginChild()/EndChild() pair to benefit from a clipping region + own scrolling.
+	// Here we demonstrate that this can be replaced by simple offsetting + custom drawing + PushClipRect/PopClipRect() calls.
+	// To use a child window instead we could use, e.g:
+	//      ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));      // Disable padding
+	//      ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(50, 50, 50, 255));  // Set a background color
+	//      ImGui::BeginChild("canvas", ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_NoMove);
+	//      ImGui::PopStyleColor();
+	//      ImGui::PopStyleVar();
+	//      [...]
+	//      ImGui::EndChild();
+
+	// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
+	//ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
+	//ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
+	//if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
+	//if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
+	//ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+
+	//// Draw border and background color
+	//ImGuiIO& io = ImGui::GetIO();
+	//ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	//draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+	//draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
+
+	//// This will catch our interactions
+	///*ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);*/
+	//const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+	//const bool is_active = ImGui::IsItemActive();   // Held
+	//const ImVec2 origin(canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y); // Lock scrolled origin
+	//const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
+
+	//// Pan (we use a zero mouse threshold when there's no context menu)
+	//// You may decide to make that threshold dynamic based on whether the mouse is hovering something etc.
+	//const float mouse_threshold_for_pan = -1.0f;
+	//if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
+	//{
+	//	scrolling.x += io.MouseDelta.x;
+	//	scrolling.y += io.MouseDelta.y;
+	//}
+
+	// Context menu (under default mouse threshold)
+	//ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+	//if (drag_delta.x == 0.0f && drag_delta.y == 0.0f)
+	//	ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
+	//if (ImGui::BeginPopup("context"))
+	//{
+	//	if (ImGui::MenuItem("Context Item 1", NULL, false)) {
+	//		// Do stuff here
+	//	}
+	//	if (ImGui::MenuItem("Context Item 2", NULL, false)) {
+	//		// Do stuff here 
+	//	}
+	//	ImGui::EndPopup();
+	//}
+
+	// Draw grid
+	/*draw_list->PushClipRect(canvas_p0, canvas_p1, true);
+	if (opt_enable_grid)
 	{
-		static ImVec2 scrolling(0.0f, 0.0f);
-		static bool opt_enable_grid = true;
-
-		ImGui::Checkbox("Enable grid", &opt_enable_grid);
-
-		// Typically you would use a BeginChild()/EndChild() pair to benefit from a clipping region + own scrolling.
-		// Here we demonstrate that this can be replaced by simple offsetting + custom drawing + PushClipRect/PopClipRect() calls.
-		// To use a child window instead we could use, e.g:
-		//      ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));      // Disable padding
-		//      ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(50, 50, 50, 255));  // Set a background color
-		//      ImGui::BeginChild("canvas", ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_NoMove);
-		//      ImGui::PopStyleColor();
-		//      ImGui::PopStyleVar();
-		//      [...]
-		//      ImGui::EndChild();
-
-		// Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-		ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
-		ImVec2 canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
-		if (canvas_sz.x < 50.0f) canvas_sz.x = 50.0f;
-		if (canvas_sz.y < 50.0f) canvas_sz.y = 50.0f;
-		ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
-
-		// Draw border and background color
-		ImGuiIO& io = ImGui::GetIO();
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
-		draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
-
-		// This will catch our interactions
-		ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-		const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-		const bool is_active = ImGui::IsItemActive();   // Held
-		const ImVec2 origin(canvas_p0.x + scrolling.x, canvas_p0.y + scrolling.y); // Lock scrolled origin
-		const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
-
-		// Pan (we use a zero mouse threshold when there's no context menu)
-		// You may decide to make that threshold dynamic based on whether the mouse is hovering something etc.
-		const float mouse_threshold_for_pan = -1.0f;
-		if (is_active && ImGui::IsMouseDragging(ImGuiMouseButton_Right, mouse_threshold_for_pan))
-		{
-			scrolling.x += io.MouseDelta.x;
-			scrolling.y += io.MouseDelta.y;
-		}
-
-		// Context menu (under default mouse threshold)
-		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-		if (drag_delta.x == 0.0f && drag_delta.y == 0.0f)
-			ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
-		if (ImGui::BeginPopup("context"))
-		{
-			if (ImGui::MenuItem("Context Item 1", NULL, false)) {
-				// Do stuff here
-			}
-			if (ImGui::MenuItem("Context Item 2", NULL, false)) {
-				// Do stuff here 
-			}
-			ImGui::EndPopup();
-		}
-
-		// Draw grid
-		draw_list->PushClipRect(canvas_p0, canvas_p1, true);
-		if (opt_enable_grid)
-		{
-			const float GRID_STEP = 64.0f;
-			for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
-				draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
-			for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
-				draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
-		}
-		draw_list->PopClipRect();
-
-		ImGui::End();
+		const float GRID_STEP = 64.0f;
+		for (float x = fmodf(scrolling.x, GRID_STEP); x < canvas_sz.x; x += GRID_STEP)
+			draw_list->AddLine(ImVec2(canvas_p0.x + x, canvas_p0.y), ImVec2(canvas_p0.x + x, canvas_p1.y), IM_COL32(200, 200, 200, 40));
+		for (float y = fmodf(scrolling.y, GRID_STEP); y < canvas_sz.y; y += GRID_STEP)
+			draw_list->AddLine(ImVec2(canvas_p0.x, canvas_p0.y + y), ImVec2(canvas_p1.x, canvas_p0.y + y), IM_COL32(200, 200, 200, 40));
 	}
+	draw_list->PopClipRect();*/
+
+
+	auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+	auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+	auto viewportOffset = ImGui::GetWindowPos();
+	m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+	m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+	m_ViewportFocused = ImGui::IsWindowFocused();
+	m_ViewportHovered = ImGui::IsWindowHovered();
+	Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+	ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+	m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+	uint64_t textureID = frameBuffer->getColorAttachmentId();
+	ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+	
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+		{
+			const wchar_t* filepath = (const wchar_t*)payload->Data;
+
+			std::wstring ws(filepath);
+
+			std::string str(ws.begin(), ws.end());
+
+			/*std::shared_ptr<Hzn::Texture> texture = assetManager.GetTexture(str);
+
+			ImGui::SameLine();
+			ImGui::Image((ImTextureID)texture->getId(), ImVec2{ 128.0f,  128.0f }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });*/
+			
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::End();
+
 }
 
 void EditorLayer::drawObjectBehaviour() {
@@ -549,7 +587,7 @@ void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		contextObject = node->item;
 		selectedObject = openScene->findGameObject(contextObject);
-    
+
 		ImGui::OpenPopup("contextObject");
 	}
 
@@ -670,7 +708,7 @@ void EditorLayer::drawProjectExplorerNode(const std::filesystem::path& path) {
 
 		bool entryIsFile = !std::filesystem::is_directory(entry.path());
 		if (entryIsFile) {
-			fileIconMap.insert(std::make_pair(entry.path().string(), Hzn::Texture2D::create(entry.path().string())));
+			assetManager.LoadTexture(entry.path().filename().string(), entry.path().string());
 			continue;
 		}
 
@@ -913,7 +951,7 @@ void EditorLayer::drawField(std::string name, std::any& value, std::shared_ptr<H
 			return;
 		}
 	}
-	catch (const std::bad_any_cast& e) { }
+	catch (const std::bad_any_cast& e) {}
 
 	try {
 		std::shared_ptr<Hzn::Component> component = std::any_cast<std::shared_ptr<Hzn::Component>>(value);
@@ -1009,7 +1047,7 @@ int EditorLayer::gameObjectCallback(ImGuiInputTextCallbackData* data) {
 		/*std::string s(data->Buf);
 		pair->second->setField(pair->first, openScene->findGameObject(s));*/
 	}
-	
+
 	return 0;
 }
 
@@ -1023,7 +1061,7 @@ void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 
 		ImGuiTreeNodeFlags node_flags = base_flags;
 
-		if (entry.path().string() == contextObject)
+		if (entry.path().string() == projectContextObject)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
 		std::string name = entry.path().string();
@@ -1039,20 +1077,20 @@ void EditorLayer::drawAudioNode(const std::filesystem::path& path) {
 		bool node_open = ImGui::TreeNodeEx(name.c_str(), node_flags);
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-			contextObject = entry.path().string();
+			projectContextObject = entry.path().string();
 		}
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-			contextObject = entry.path().string();
+			projectContextObject = entry.path().string();
 
-			ImGui::OpenPopup("contextObject");
+			ImGui::OpenPopup("projectContextObject");
 		}
 
 
 	}
 
 
-	openContext |= ImGui::IsPopupOpen("contextObject");
+	openContext |= ImGui::IsPopupOpen("projectContextObject");
 
 }
 
@@ -1065,25 +1103,25 @@ void EditorLayer::drawAudio(std::string directoryPath) {
 	drawAudioNode(directoryPath);
 
 	if (openContext) {
-		if (ImGui::IsPopupOpen("contextObject")) {
+		if (ImGui::IsPopupOpen("projectContextObject")) {
 			ImGui::CloseCurrentPopup();
 		}
 
-		ImGui::OpenPopup("contextObject");
+		ImGui::OpenPopup("projectContextObject");
 
-		ImGui::BeginPopup("contextObject");
+		ImGui::BeginPopup("projectContextObject");
 
 		if (ImGui::MenuItem("Play", NULL, false)) {
-			audioFileMap.find(contextObject)->second->Play();
+			assetManager.GetAudio(projectContextObject).Play();
 		}
 		if (ImGui::MenuItem("Pause", NULL, false)) {
-			audioFileMap.find(contextObject)->second->Pause();
+			assetManager.GetAudio(projectContextObject).Pause();
 		}
 		if (ImGui::MenuItem("Resume", NULL, false)) {
-			audioFileMap.find(contextObject)->second->Resume();
+			assetManager.GetAudio(projectContextObject).Resume();
 		}
 		if (ImGui::MenuItem("Stop", NULL, false)) {
-			audioFileMap.find(contextObject)->second->Stop();
+			assetManager.GetAudio(projectContextObject).Stop();
 		}
 
 		ImGui::EndPopup();
@@ -1152,8 +1190,7 @@ void EditorLayer::drawContentBrowser() {
 
 			else if (entry.path().string().find(".png") != std::string::npos)
 			{
-				fileIconMap.find(entry.path().string());
-				icon = fileIconMap.find(entry.path().string())->second;
+				icon = assetManager.GetTexture(entry.path().string());
 			}
 
 			else
@@ -1166,8 +1203,6 @@ void EditorLayer::drawContentBrowser() {
 			{
 
 				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-					//spriteFormat.clear();
 
 					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
 						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
@@ -1230,10 +1265,9 @@ void EditorLayer::drawContentBrowser() {
 			ImGui::PopStyleColor();
 
 			if (ImGui::BeginDragDropSource()) {
-
-				auto relativePath = std::filesystem::relative(path, assetPath);
-				const wchar_t* itemPath = relativePath.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				
+				const wchar_t* filename = path.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
 				ImGui::EndDragDropSource();
 			}
 

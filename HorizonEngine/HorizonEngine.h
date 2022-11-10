@@ -55,6 +55,8 @@
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
 
+#include "HorizonEngine/AssetManagement/AssetManager.h"
+
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/Renderer/RenderCall.h"
 #include "HorizonEngine/Renderer/Renderer.h"
@@ -68,10 +70,13 @@
 #include "HorizonEngine/Renderer/Sprite.h"
 #include "HorizonEngine/Renderer/FrameBuffer.h"
 
+
+
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Camera/CameraController.h"
 
 #include "Platform/OpenGL/FDWindows.h"
+#include "Platform/OpenGL/GLFrameBuffer.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 
 #include "HorizonEngine/App.h"
 #endif // !HZN_HORIZONENGINE_H

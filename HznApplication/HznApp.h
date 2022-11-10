@@ -19,12 +19,15 @@ private:
 	bool dirOpenContext = false;
 	bool clickStatus = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
-	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 	std::filesystem::path m_CurrentDirectory;
 	std::shared_ptr<Hzn::Texture> folderIcon;
-	std::map<std::string, std::shared_ptr<Hzn::Texture>> fileIconMap;
 	std::shared_ptr<Hzn::Texture> fileIcon;
 	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
+	bool m_ViewportFocused = false, m_ViewportHovered = false;
+	glm::vec2 m_ViewportBounds[2];
+	glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+	Hzn::AssetManager assetManager;
+	std::shared_ptr<Hzn::FrameBuffer> frameBuffer;
 public:
 	EditorLayer(const char* name = "Editor Layer");
 
