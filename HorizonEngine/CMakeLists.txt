@@ -114,7 +114,7 @@ set(HZN_HEADER_FILES
  "src/HorizonEngine/Renderer/FrameBuffer.h" "Platform/OpenGL/GLFrameBuffer.h")
 
 # Add source to this project's executable.
-add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES} "src/HorizonEngine/GraphEditor/GraphEditor.cpp" "src/HorizonEngine/GraphEditor/ImApp.h")
+add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES} "src/HorizonEngine/GraphEditor/GraphEditor.cpp" )
 
 # compile definitions for 'HorizonEngine' target
 target_compile_definitions(HorizonEngine
@@ -163,7 +163,7 @@ target_link_libraries(HorizonEngine
 )
 
 #testing
-add_executable(SampleTest "tests/SampleTest.cpp" "src/HorizonEngine/GraphEditor/GraphEditor.cpp" "src/HorizonEngine/GraphEditor/ImApp.h")
+add_executable(SampleTest "tests/SampleTest.cpp" "src/HorizonEngine/GraphEditor/GraphEditor.cpp" )
 target_include_directories(SampleTest
 	PUBLIC
 	.
@@ -173,7 +173,7 @@ target_include_directories(SampleTest
 	${STB_INCLUDE_DIRS}
 )
 
-add_executable(SampleTest2 "tests/SampleTest2.cpp" "src/HorizonEngine/GraphEditor/GraphEditor.cpp" "src/HorizonEngine/GraphEditor/ImApp.h")
+add_executable(SampleTest2 "tests/SampleTest2.cpp" "src/HorizonEngine/GraphEditor/GraphEditor.cpp" )
 target_include_directories(SampleTest2
 	PUBLIC
 	.

@@ -199,14 +199,14 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
     std::vector<Node> mNodes = {
         {
-            "My Node 0",
+            "Start Node",
             0,
             0, 0,
             false
         },
 
         {
-            "My Node 1",
+            "End Node",
             0,
             400, 0,
             false
@@ -230,6 +230,7 @@ void Sandbox::onRenderImgui()
     static GraphEditor::ViewState viewState;
     static GraphEditor::FitOnScreen fit = GraphEditor::Fit_None;
     static bool showGraphEditor = true;
+
 
     if (ImGui::CollapsingHeader("Graph Editor"))
     {
