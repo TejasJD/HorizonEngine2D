@@ -83,4 +83,29 @@ namespace Hzn
 		s_Scene->invalidate();
 		s_Scene.reset();
 	}
+
+	void SceneManager::save(const std::string& filepath)
+	{
+		// trying to close when there is no scene loaded!
+		if (!s_Scene)
+		{
+			throw std::runtime_error("no scene active!");
+		}
+
+		std::ofstream os(filepath, std::ios::binary);
+
+		if (!os)
+		{
+			throw std::runtime_error("failure on closing scene!");
+		}
+
+		cereal::JSONOutputArchive outputArchive(os);
+		// serialize the scene before closing.
+		s_Scene->serialize(outputArchive);
+
+		os << "\n}\n";
+
+		os.close();
+
+	}
 }
