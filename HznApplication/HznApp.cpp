@@ -248,8 +248,8 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 				if (filePathfromdialog != "") {
 
 					Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
-					Hzn::Scene* s = new Hzn::Scene(p);
-					s->open();
+					openScene = new Hzn::Scene(p);
+					openScene->open();
 				}
 				else {
 					//create new scene here
@@ -361,8 +361,8 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 //newScene code
 void EditorLayer::NewScene() {
 	Hzn::ProjectFile* p = new Hzn::ProjectFile();
-	Hzn::Scene* s = new Hzn::Scene(p);
-	s->open();
+	openScene = new Hzn::Scene(p);
+	openScene->open();
 }
 
 //Save As code
