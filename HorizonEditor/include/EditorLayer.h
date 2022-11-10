@@ -33,4 +33,7 @@ private:
 	float m_CameraZoom = 1.0f;
 
 	std::vector<std::string> rootObjects;
+
+	std::string selectedObject = "";
+	bool openHierarchyPopup = false;
 };
