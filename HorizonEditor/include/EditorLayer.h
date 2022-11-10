@@ -35,5 +35,6 @@ private:
 	std::vector<std::string> rootObjects;
 
 	std::string selectedObject = "";
+	Hzn::GameObject copiedGameObject;
 	bool openHierarchyPopup = false;
 };

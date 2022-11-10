@@ -127,7 +127,7 @@ namespace Hzn
 	{
 		if (!m_Valid)
 		{
-			throw std::runtime_error("trying to get remove game objects from invalidated scene!");
+			throw std::runtime_error("trying to remove game objects from invalidated scene!");
 		}
 		// break all relations that the game object has in the hierarchy.
 		// remove the game object from all objects list.
@@ -135,7 +135,7 @@ namespace Hzn
 		// remove object from the unordered_map.
 		auto list = obj.getChildren();
 		
-		for(auto& x : list)
+		for (auto& x : list)
 		{
 			destroyGameObject(x);
 		}

@@ -257,7 +257,7 @@ void EditorLayer::drawHierarchy()
 
         if (ImGui::BeginPopup("HierarchyObjectPopup")) {
             if (ImGui::MenuItem("Copy", NULL, false)) {
-                // Do stuff here
+                copiedGameObject = m_Scene->getGameObject(selectedObject);
             }
             if (ImGui::MenuItem("Paste", NULL, false)) {
                 // Do stuff here 
@@ -266,7 +266,10 @@ void EditorLayer::drawHierarchy()
                 // Do stuff here 
             }
             if (ImGui::MenuItem("Delete", NULL, false)) {
-                // Do stuff here
+                Hzn::GameObject obj = m_Scene->getGameObject(selectedObject);
+                m_Scene->destroyGameObject(obj);
+
+                selectedObject = "";
             }
             ImGui::Separator();
 
