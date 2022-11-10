@@ -34,9 +34,9 @@
 
 #include "HorizonEngine/FileManagement/ProjectFile.h"
 
+#include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/SceneManagement/Scene.h"
 #include "HorizonEngine/SceneManagement/SceneManager.h"
-#include "HorizonEngine/SceneManagement/GameObject.h"
 
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/Codes/MouseCodes.h"

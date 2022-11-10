@@ -14,7 +14,8 @@ public:
 	virtual void onRenderImgui() override;
 
 private:
-	void destroy();
+	void drawHierarchy();
+	void drawObjects(const Hzn::GameObject& object);
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
@@ -26,9 +27,10 @@ private:
 	bool m_ViewportHovered = false;
 
 	std::shared_ptr<Hzn::Scene> m_Scene;
-	std::shared_ptr<Hzn::SceneManager> m_SceneManager;
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
 	float m_CameraZoom = 1.0f;
+
+	std::vector<std::string> rootObjects;
 };

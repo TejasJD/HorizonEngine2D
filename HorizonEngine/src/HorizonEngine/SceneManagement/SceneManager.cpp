@@ -4,16 +4,14 @@
 
 #include "SceneManager.h"
 #include "Scene.h"
+#include "Components/Component.h"
 
 namespace Hzn
 {
 	struct SceneDefaults
 	{
-		static uint32_t defaultCounter;
-		std::string filePath = "default_scene" + std::to_string(defaultCounter) + ".json";
+		std::string filePath = "default.json";
 	};
-
-	uint32_t SceneDefaults::defaultCounter = 0;
 
 	static SceneDefaults defaults;
 
@@ -32,14 +30,15 @@ namespace Hzn
 
 		s_FilePath = filepath;
 		// deserialize the coming scene and load it.
-		std::ifstream is(s_FilePath, std::ios::binary);
 		if (!filepath.empty())
 		{
 			try {
+				std::ifstream is(s_FilePath, std::ios::binary);
 				cereal::JSONInputArchive inputArchive(is);
 				// create the scene and make it valid for actions.
 				s_Scene = std::make_shared<Scene>(inputArchive);
 				s_Scene->m_Valid = true;
+				is.close();
 				return s_Scene;
 			}
 			catch (const cereal::RapidJSONException& e)
@@ -53,6 +52,7 @@ namespace Hzn
 		// create the scene and make it valid for actions.
 		s_Scene = std::make_shared<Scene>();
 		s_Scene->m_Valid = true;
+
 		return s_Scene;
 	}
 
@@ -80,7 +80,7 @@ namespace Hzn
 		os.close();
 
 		// invalidate any external pointers to the scene.
-		s_Scene->m_Valid = false;
+		s_Scene->invalidate();
 		s_Scene.reset();
 	}
 }

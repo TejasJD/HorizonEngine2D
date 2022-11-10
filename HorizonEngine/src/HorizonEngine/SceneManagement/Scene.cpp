@@ -7,40 +7,55 @@
 
 namespace Hzn
 {
-	Scene::Scene(): m_Registry(entt::registry()) {}
+	Scene::Scene() : m_Registry(entt::registry()) {}
 
 	Scene::Scene(cereal::JSONInputArchive& inputArchive)
 		: m_Registry(entt::registry())
 	{
 		entt::snapshot_loader loader(m_Registry);
-		loader.entities(inputArchive).component<NameComponent, TransformComponent, RenderComponent, CameraComponent>(inputArchive);
+		loader.entities(inputArchive).component<
+			NameComponent,
+			RelationComponent,
+			TransformComponent,
+			RenderComponent,
+			CameraComponent>(inputArchive);
 
 		// since all valid objects have name components we create a view on name components
-		const auto& view = m_Registry.view<NameComponent>();
-
-		// create all the game objects from the registry.
-		for(const auto& entity : view)
-		{
-			m_Objects.insert({ view.get<NameComponent>(entity), {entity, this} });
-		}
+		m_Valid = true;
+		m_Registry.each([&](auto entity)
+			{
+				m_Objects.insert({ m_Registry.get<NameComponent>(entity).m_Name, {entity, this} });
+			});
+		m_Valid = false;
 	}
 
 	Scene::~Scene()
 	{
-		m_Registry.clear();
+		invalidate();
 	}
 
 	void Scene::serialize(cereal::JSONOutputArchive& outputArchive)
 	{
 		entt::snapshot{ m_Registry }
 			.entities(outputArchive)
-			.component<NameComponent, TransformComponent, RenderComponent, CameraComponent>(outputArchive);
+			.component<NameComponent,
+		RelationComponent,
+		TransformComponent,
+		RenderComponent,
+		CameraComponent>(outputArchive);
+	}
+
+	void Scene::invalidate()
+	{
+		m_Registry.clear();
+		m_Objects.clear();
+		m_Valid = false;
 	}
 
 	glm::vec2 Scene::onViewportResize(uint32_t width, uint32_t height)
 	{
 		// update all the camera components on viewport resize.
-		if(glm::vec2(width, height) != m_lastViewportSize)
+		if (glm::vec2(width, height) != m_lastViewportSize)
 		{
 			if (m_Valid)
 			{
@@ -64,7 +79,7 @@ namespace Hzn
 		// render objects in the scene through scene update.
 		if (m_Valid) {
 			const SceneCamera2D* activeCamera = nullptr;
-			const TransformComponent* cameraTransform = nullptr;
+			glm::mat4 cameraTransform = glm::mat4(1.0f);
 
 			const auto& cameras = m_Registry.view<CameraComponent, TransformComponent>();
 
@@ -75,18 +90,18 @@ namespace Hzn
 				if (cameraComponent.m_Primary)
 				{
 					activeCamera = &cameraComponent.m_Camera;
-					cameraTransform = &transformComponent;
+					cameraTransform = transformComponent.getModelMatrix();
 				}
 			}
 
-			if (activeCamera) 
+			if (activeCamera)
 			{
-				Renderer2D::beginScene(*activeCamera, *cameraTransform);
+				Renderer2D::beginScene(*activeCamera, cameraTransform);
 				const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-					Renderer2D::drawQuad(transformComponent, renderComponent);
+					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
 				}
 				Renderer2D::endScene();
 			}
@@ -95,7 +110,7 @@ namespace Hzn
 
 	GameObject Scene::createGameObject(const std::string& name)
 	{
-		if(!m_Valid)
+		if (!m_Valid)
 		{
 			throw std::runtime_error("Adding game object to invalidated scene!");
 		}
@@ -103,6 +118,7 @@ namespace Hzn
 		GameObject obj = { m_Registry.create(), this };
 		// every valid game object has a name component
 		obj.addComponent<NameComponent>(name);
+		obj.addComponent<RelationComponent>();
 		m_Objects.insert({ name, obj });
 		return obj;
 	}
@@ -113,9 +129,17 @@ namespace Hzn
 		{
 			throw std::runtime_error("trying to get remove game objects from invalidated scene!");
 		}
+		// break all relations that the game object has in the hierarchy.
 		// remove the game object from all objects list.
 		m_Registry.destroy(obj.m_ObjectId);
 		// remove object from the unordered_map.
+		auto list = obj.getChildren();
+		
+		for(auto& x : list)
+		{
+			destroyGameObject(x);
+		}
+
 		m_Objects.erase(obj.getComponent<NameComponent>());
 		obj.m_ObjectId = entt::null;
 		obj.m_Scene = nullptr;
@@ -125,16 +149,39 @@ namespace Hzn
 	{
 		if (!m_Valid)
 		{
-			throw std::runtime_error("trying to get remove game objects from invalidated scene!");
+			throw std::runtime_error("trying to get game objects from invalidated scene!");
 		}
 
 		auto it = m_Objects.find(name);
 
-		if(it == m_Objects.end())
+		if (it == m_Objects.end())
 		{
 			throw std::runtime_error("Game object not found!");
 		}
 
 		return it->second;
+	}
+
+	std::vector<std::string> Scene::allGameObjectNames() const
+	{
+		std::vector<std::string> names;
+		for(const auto& x : m_Objects)
+		{
+			names.emplace_back(x.first);
+		}
+		return names;
+	}
+
+	std::vector<std::string> Scene::getAllRootObjects() const
+	{
+		std::vector<std::string> roots;
+		for (const auto& x : m_Objects)
+		{
+			if (x.second.getParent() == GameObject())
+			{
+				roots.emplace_back(x.first);
+			}
+		}
+		return roots;
 	}
 }

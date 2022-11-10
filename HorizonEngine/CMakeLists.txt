@@ -45,7 +45,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Renderer/Renderer3D.cpp"
 	"src/HorizonEngine/Renderer/Sprite.cpp"
 	"src/HorizonEngine/Renderer/FrameBuffer.cpp"
-	"Platform/OpenGL/GLFrameBuffer.cpp"  "src/HorizonEngine/SceneManagement/SceneManager.cpp")
+	"Platform/OpenGL/GLFrameBuffer.cpp"  "src/HorizonEngine/SceneManagement/SceneManager.cpp" "src/HorizonEngine/SceneManagement/GameObject.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
