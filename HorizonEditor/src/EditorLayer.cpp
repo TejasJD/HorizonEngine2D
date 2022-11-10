@@ -249,9 +249,13 @@ void EditorLayer::drawHierarchy()
     }
 
     if (openHierarchyPopup) {
-        if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-            HZN_CORE_DEBUG("Test");
+        if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
+            ImGui::CloseCurrentPopup();
+        }
 
+        ImGui::OpenPopup("HierarchyObjectPopup");
+
+        if (ImGui::BeginPopup("HierarchyObjectPopup")) {
             if (ImGui::MenuItem("Copy", NULL, false)) {
                 // Do stuff here
             }
@@ -282,7 +286,7 @@ void EditorLayer::drawObjects(const Hzn::GameObject& object)
     std::vector<Hzn::GameObject> list = object.getChildren();
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
-    
+
     if (list.size() == 0) {
         flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
     }
@@ -291,27 +295,29 @@ void EditorLayer::drawObjects(const Hzn::GameObject& object)
         flags |= ImGuiTreeNodeFlags_Selected;
     }
 
-    if(ImGui::TreeNodeEx(object.getComponent<Hzn::NameComponent>().m_Name.c_str(), flags))
-    {
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-            selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
-        }
+    bool open = ImGui::TreeNodeEx(object.getComponent<Hzn::NameComponent>().m_Name.c_str(), flags);
 
 
-        if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-            selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
-            
-            ImGui::OpenPopup("HierarchyObjectPopup");
-        }
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+        selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
+    }
 
-        openHierarchyPopup |= true;
 
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+        selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
+
+        ImGui::OpenPopup("HierarchyObjectPopup");
+    }
+
+    openHierarchyPopup |= ImGui::IsPopupOpen("HierarchyObjectPopup");
+
+    if (open) {
         for (const auto& x : list)
         {
             drawObjects(x);
         }
-
-        if (list.size() > 0)
-            ImGui::TreePop();
     }
+
+    if (open && list.size() > 0)
+        ImGui::TreePop();
 }
