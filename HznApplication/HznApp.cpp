@@ -8,8 +8,8 @@
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
-	//app->addLayer(new EditorLayer());
-	app->addLayer(new Sandbox());
+	app->addLayer(new EditorLayer());
+	//app->addLayer(new Sandbox());
 	return app;
 }
 
@@ -125,11 +125,21 @@ void EditorLayer::onRenderImgui()
 	// Setup dock space
 	bool pOpen = true;
 	setupDockSpace(&pOpen);
-	drawScene();
-	drawObjectBehaviour();
-	drawHierarchy();
+
+	if (showSceneWindow)
+		drawScene();
+
+	if (showObjectPropertiesWindow)
+		drawObjectBehaviour(&pOpen);
+
+	if (showHierarchyWindow)
+		drawHierarchy();
+	
 	drawProjectExplorer(projectRootFolder);
-	drawConsole();
+	
+	if (showConsoleWindow)
+		drawConsole();
+	
 	drawAudio("assets/audios/");
 }
 
@@ -297,41 +307,42 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Edit"))
-		{
-			if (ImGui::MenuItem("Undo", "Ctrl+Z")) { /* Do Something */ }
-			if (ImGui::MenuItem("Redo", "Ctrl+Y")) { /* Do Something */ }
-			ImGui::Separator();
+		//if (ImGui::BeginMenu("Edit"))
+		//{
+		//	if (ImGui::MenuItem("Undo", "Ctrl+Z")) { /* Do Something */ }
+		//	if (ImGui::MenuItem("Redo", "Ctrl+Y")) { /* Do Something */ }
+		//	ImGui::Separator();
 
-			ImGui::MenuItem("Select All", "Ctrl+A", false);
-			ImGui::MenuItem("Deselect All", NULL, false);
-			ImGui::Separator();
+		//	ImGui::MenuItem("Select All", "Ctrl+A", false);
+		//	ImGui::MenuItem("Deselect All", NULL, false);
+		//	ImGui::Separator();
 
-			ImGui::MenuItem("Cut", "Ctrl+X", false);
-			ImGui::MenuItem("Copy", "Ctrl+C", false);
-			ImGui::MenuItem("Paste", "Ctrl+V", false);
-			ImGui::MenuItem("Duplicate", "Ctrl+D", false);
-			ImGui::MenuItem("Rename", "Ctrl+R", false);
-			ImGui::MenuItem("Delete", "Delete", false);
-			ImGui::Separator();
+		//	ImGui::MenuItem("Cut", "Ctrl+X", false);
+		//	ImGui::MenuItem("Copy", "Ctrl+C", false);
+		//	ImGui::MenuItem("Paste", "Ctrl+V", false);
+		//	ImGui::MenuItem("Duplicate", "Ctrl+D", false);
+		//	ImGui::MenuItem("Rename", "Ctrl+R", false);
+		//	ImGui::MenuItem("Delete", "Delete", false);
+		//	ImGui::Separator();
 
-			ImGui::MenuItem("Play", NULL, false);
-			ImGui::MenuItem("Pause", NULL, false);
-			ImGui::Separator();
+		//	ImGui::MenuItem("Play", NULL, false);
+		//	ImGui::MenuItem("Pause", NULL, false);
+		//	ImGui::Separator();
 
-			ImGui::MenuItem("Project Settings", NULL, false);
-			ImGui::Separator();
+		//	ImGui::MenuItem("Project Settings", NULL, false);
+		//	ImGui::Separator();
 
-			ImGui::EndMenu();
-		}
+		//	ImGui::EndMenu();
+		//}
 
 		if (ImGui::BeginMenu("View"))
 		{
-			ImGui::MenuItem("Scene", NULL, true);
-			ImGui::MenuItem("Hierarchy", NULL, true);
-			ImGui::MenuItem("Object Properties", NULL, true);
-			ImGui::MenuItem("Project", NULL, true);
-			ImGui::MenuItem("Console", NULL, true);
+			ImGui::MenuItem("Scene", NULL, &showSceneWindow);
+			ImGui::MenuItem("Hierarchy", NULL, &showHierarchyWindow);
+			if (ImGui::MenuItem("Object Properties", NULL, &showObjectPropertiesWindow));
+			ImGui::MenuItem("Project", NULL, &showProjectWindow);
+			if (ImGui::MenuItem("Console", NULL, &showConsoleWindow)) {
+			}
 
 			ImGui::EndMenu();
 		}
@@ -419,16 +430,22 @@ void EditorLayer::drawScene() {
 	}
 }
 
-void EditorLayer::drawObjectBehaviour() {
-	//bool pOpen = true;
+void EditorLayer::drawObjectBehaviour(bool *pOpen) {
+	
 	//ImGuiConfigFlags configFlags = ImGuiDir_Right | ImGuiWindowFlags_NoCollapse;
 	//ImGui::Begin("Object Behaviour", &pOpen, configFlags);
-	ImGui::Begin("Object Behaviour");
-	// TODO: Add behaviours/components of currently selected object
-	if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
+	if (pOpen) {
+		ImGui::Begin("Object Behaviour", pOpen);
+		// TODO: Add behaviours/components of currently selected object
+		if (ButtonCenteredOnLine("Add Behaviour", 0.5f)) {
 
+		}
+		ImGui::End();
 	}
-	ImGui::End();
+	else
+	{//check if window is already closed
+		ImGui::DestroyContext();
+	}
 }
 
 void EditorLayer::drawHierarchyNode(std::shared_ptr<Hzn::TreeNode<std::string>> node) {

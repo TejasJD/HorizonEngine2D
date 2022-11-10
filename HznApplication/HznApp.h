@@ -14,6 +14,11 @@ private:
 	std::string contextObject = "";
 	bool openContext = false;
 	bool dirOpenContext = false;
+	bool showSceneWindow = true;
+	bool showHierarchyWindow = true;
+	bool showObjectPropertiesWindow = true;
+	bool showProjectWindow = true;
+	bool showConsoleWindow = true;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 public:
@@ -32,7 +37,7 @@ private:
 	void dockWidgets(ImGuiID dockspace_id);
 	void drawMenuBar(bool* pOpen);
 	void drawScene();
-	void drawObjectBehaviour();
+	void drawObjectBehaviour(bool* pOpen);
 	void drawHierarchy();
 	void drawProjectExplorer(std::string directoryPath);
 	void drawProjectExplorerNode(const std::filesystem::path& path);
