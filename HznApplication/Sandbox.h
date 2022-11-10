@@ -3,11 +3,6 @@
 #ifndef HZNAPP_SANDBOX_H
 #define HZNAPP_SANDBOX_H
 
-enum class Direction
-{
-	Up = 0, Down, Left, Right
-};
-
 class Sandbox : public Hzn::Layer
 {
 public:
@@ -37,8 +32,9 @@ private:
 	int32_t quads = 10;
 
 	Hzn::OrthographicCameraController m_CameraController;
-	std::shared_ptr<Hzn::Texture2D> someSky;
-	std::shared_ptr<Hzn::Texture2D> checkerBoard;
+	std::shared_ptr<Hzn::Texture2D> m_SpriteSheet;
+	std::shared_ptr<Hzn::Sprite2D> m_Sprite;
+	std::shared_ptr<Hzn::Texture2D> m_Bear;
 };
 
 #endif // !HZNAPP_SANDBOX_H

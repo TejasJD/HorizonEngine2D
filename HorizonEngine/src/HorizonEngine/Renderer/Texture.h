@@ -11,6 +11,7 @@ namespace Hzn
 	class Texture
 	{
 	public:
+		virtual ~Texture() = default;
 		virtual bool operator==(const Texture& rhs) const = 0;
 		virtual bool operator!=(const Texture& rhs) const = 0;
 		
@@ -47,7 +48,6 @@ namespace Hzn
 		/// </summary>
 		virtual uint32_t getId() const = 0;
 
-		virtual ~Texture() = default;
 	};
 
 	/// <summary>

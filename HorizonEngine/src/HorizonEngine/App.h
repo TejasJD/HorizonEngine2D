@@ -28,7 +28,7 @@ namespace Hzn
 	public:
 		App();
 
-		virtual ~App();
+		virtual ~App() = default;
 
 		void addLayer(Layer* layer) 
 		{
@@ -43,9 +43,14 @@ namespace Hzn
 		}
 
 		void run();
+		void onEvent(Event& e);
+		void close() { m_Running = false; }
+
+		Layer* getImguiLayer() { return m_ImguiLayer; }
+
 		bool onWindowClose(WindowCloseEvent& e);
 		bool onWindowResize(WindowResizeEvent& e);
-		void onEvent(Event& e);
+
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() { return *m_Window; }
 		void registerComponents();
@@ -58,7 +63,6 @@ namespace Hzn
 		bool m_Minimized = false;
 
 		std::shared_ptr<Window> m_Window;
-		std::shared_ptr<Input> m_Input;
 		std::shared_ptr<Shader> m_Shader;
 		std::shared_ptr<VertexArray> m_VertexArray;
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;

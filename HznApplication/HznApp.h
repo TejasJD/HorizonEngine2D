@@ -22,7 +22,7 @@ private:
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;
 public:
-	EditorLayer(const std::string& name = "Editor Layer");
+	EditorLayer(const char* name = "Editor Layer");
 
 	virtual void onAttach() override;
 

@@ -183,7 +183,7 @@ namespace Hzn
 	class VertexBuffer
 	{
 	public:
-		virtual ~VertexBuffer() {};
+		virtual ~VertexBuffer() = default;
 
 		/// <summary>
 		/// Bind the vertex buffer. Only one Vertex Buffer can be bound at a time.
@@ -254,7 +254,7 @@ namespace Hzn
 	class ElementBuffer
 	{
 	public:
-		virtual ~ElementBuffer() {};
+		virtual ~ElementBuffer() = default;
 		/// <summary>
 		/// Bind an Element Buffer. Only one Element Buffer can be bound at a time. 
 		/// When called, it unbinds the previously bound Element Buffer if any and binds this Element Buffer object.

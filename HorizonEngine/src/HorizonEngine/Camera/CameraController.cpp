@@ -37,7 +37,7 @@ namespace Hzn
 
 		if (m_MouseDrag)
 		{
-			if (Hzn::Input::mouseButtonPresssed(Hzn::Mouse::ButtonLeft))
+			if (Hzn::Input::mouseButtonPressed(Hzn::Mouse::ButtonLeft))
 			{
 				auto [x, y] = Hzn::Input::getMousePos();
 				if (!mousePressed)

@@ -18,7 +18,7 @@ namespace Hzn
 		/// 
 		/// </summary>
 		/// <param name="name"></param>
-		Layer(const std::string& name = "Layer") : m_Name(name) {}
+		Layer(const char* name = "Layer") : m_Name(name) {}
 		virtual ~Layer() {}
 		/// <summary>
 		/// 
@@ -44,6 +44,8 @@ namespace Hzn
 		/// 
 		/// </summary>
 		virtual void onRenderImgui() {}
+
+		virtual void blockEvents(bool flag) {};
 
 	protected:
 		std::string m_Name;

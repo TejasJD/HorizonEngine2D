@@ -84,8 +84,7 @@ namespace Hzn
 		int display_w, display_h;
 		glfwGetFramebufferSize(window, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
-		/*glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
-		glClear(GL_COLOR_BUFFER_BIT);*/
+
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
@@ -96,11 +95,20 @@ namespace Hzn
 		}
 	}
 
-	void ImguiLayer::onRenderImgui()
+	void ImguiLayer::onEvent(Event& e)
 	{
-		/*auto val = ImGui::GetCurrentContext();
-		std::cout << (val == nullptr) << std::endl;*/
-		static bool show = true;
-		//ImGui::ShowDemoWindow(&show);
+		if(absorbEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			if (io.WantCaptureKeyboard && e.IsInCategory(EventCategoryKeyboard))
+			{
+				e.Handled = true;
+			}
+
+			if(io.WantCaptureMouse && e.IsInCategory(EventCategoryMouse))
+			{
+				e.Handled = true;
+			}
+		}
 	}
 }

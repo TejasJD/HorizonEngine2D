@@ -13,9 +13,10 @@ namespace Hzn
 		registerComponents();
 		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
-		m_Input = Input::create();
 		m_Window = Window::create(800, 600, "HorizonEngine");
+		// set the App on event function as callback for the widow class.
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
+
 		m_Window->setVsync(true);
 
 		Renderer::init();
@@ -24,13 +25,16 @@ namespace Hzn
 		addOverlay(m_ImguiLayer);
 	}
 
-	App::~App() {}
-
 	//! the main App run loop. This loop keeps the application running and updates and renders
 	//! different layers
 	void App::run()
 	{
 		HZN_CORE_WARN("App started running...");
+
+		for (auto it = m_Layers.rbegin(); it != m_Layers.rend(); ++it)
+		{
+			HZN_CORE_INFO("{0}\n", (*it)->getName());
+		}
 
 		while (m_Running)
 		{
@@ -88,13 +92,13 @@ namespace Hzn
 		/*auto val = Input::getMousePos();*/
 		/*HZN_CORE_TRACE("{0}, {0}", val.first, val.second);*/
 
-		for (auto it = m_Layers.rbegin(); it != m_Layers.rend(); ++it)
+		for (auto& layer : m_Layers)
 		{
-			(*it)->onEvent(e);
 			if (e.Handled)
 			{
 				break;
 			}
+			layer->onEvent(e);
 		}
 	}
 

@@ -16,7 +16,7 @@ std::shared_ptr<Hzn::App> Hzn::createApp()
 // ************************************************************************
 
 // *********** EDITOR LAYER **********
-EditorLayer::EditorLayer(const std::string& name) : Layer(name) {
+EditorLayer::EditorLayer(const char* name) : Hzn::Layer(name) {
 	
 	//Initialize the audio system and load the files under the audio folder
 	Hzn::SoundDevice::Init();
