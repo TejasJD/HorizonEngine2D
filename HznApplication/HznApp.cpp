@@ -5,6 +5,9 @@
 #include "Sandbox.h"
 #include "HznApp.h"
 
+#include "FileManagement/projectManager.h"
+#include "SceneManagement/Scene.h"
+
 
 
 std::shared_ptr<Hzn::App> Hzn::createApp()
@@ -272,7 +275,22 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 
 			ImGui::Separator();
 
-			ImGui::MenuItem("New Project", "Ctrl+Shift+N", false);
+			if(ImGui::MenuItem("New Project", "Ctrl+Shift+N", false)) {
+
+				//call folder path here
+				std::string ProjectPathfromdialog = Hzn::FileDialogs::openFolder();
+				std::cout << ProjectPathfromdialog << std::endl;
+
+				//Make projectManager obj here
+				Hzn::ProjectManager* pm = new Hzn::ProjectManager(ProjectPathfromdialog);
+
+				//Call mkprojDirs this will create a new folder structure
+				Hzn::Scene newScene = pm->mkProjDirs();
+
+				//Take the new scene variable and set the 
+				//EditorLayer scene variable to be the new scene
+				openScene = &newScene;
+			}
 
 			if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
 			{
