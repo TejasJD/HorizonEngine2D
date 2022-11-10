@@ -6,15 +6,15 @@ class EditorLayer : public Hzn::Layer
 {
 public:
 	EditorLayer(const char* name = "Editor Layer");
-	virtual ~EditorLayer() {}
+	virtual ~EditorLayer();
 	virtual void onAttach() override;
 	virtual void onDetach() override;
 	virtual void onUpdate(Hzn::TimeStep deltaTime) override;
 	virtual void onEvent(Hzn::Event& event) override;
 	virtual void onRenderImgui() override;
-	bool onWindowResize(Hzn::WindowResizeEvent& e);
 
 private:
+	void destroy();
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
@@ -26,6 +26,7 @@ private:
 	bool m_ViewportHovered = false;
 
 	std::shared_ptr<Hzn::Scene> m_Scene;
+	std::shared_ptr<Hzn::SceneManager> m_SceneManager;
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;

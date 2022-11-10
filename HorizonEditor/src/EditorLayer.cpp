@@ -9,6 +9,13 @@ EditorLayer::EditorLayer(const char* name) :
 {
 }
 
+
+EditorLayer::~EditorLayer()
+{
+    // I think it's fine for detach function to be statically resolved at compile time in this case.
+    onDetach();
+}
+
 void EditorLayer::onAttach()
 {
 	HZN_TRACE("Editor Layer Attached!");
@@ -18,9 +25,13 @@ void EditorLayer::onAttach()
 	props.height = Hzn::App::getApp().getAppWindow().getHeight();
 
 	m_FrameBuffer = Hzn::FrameBuffer::create(props);
-    m_Scene = std::make_shared<Hzn::Scene>();
-    m_SquareObject = m_Scene->createGameObject();
-    m_SquareObject2 = m_Scene->createGameObject();
+
+    m_Scene = Hzn::SceneManager::load(/*"scenes/default.json"*/);
+
+    /*m_CameraZoom = m_Scene->getGameObject("camera 1").getComponent<Hzn::CameraComponent>().m_Camera.getZoom();*/
+
+    m_SquareObject = m_Scene->createGameObject("square object 1");
+    m_SquareObject2 = m_Scene->createGameObject("square object 2");
 
     m_SquareObject.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
     glm::mat4 m_FirstTransform = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 2.0f, 0.0f));
@@ -29,13 +40,16 @@ void EditorLayer::onAttach()
     m_SquareObject2.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
     m_SquareObject2.addComponent<Hzn::TransformComponent>();
 
-    m_Camera = m_Scene->createGameObject();
+    m_Camera = m_Scene->createGameObject("camera 1");
 
     m_Camera.addComponent<Hzn::CameraComponent>((float)props.width / props.height, 1.0f);
     m_Camera.addComponent<Hzn::TransformComponent>();
 }
 
-void EditorLayer::onDetach() {}
+void EditorLayer::onDetach()
+{
+    Hzn::SceneManager::close("scenes/default.json");
+}
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
@@ -52,24 +66,19 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
+
+	/*Hzn::Renderer2D::beginScene(m_CameraController.getCamera());*/
     // update the scene.
     m_Scene->onUpdate(ts);
     // unbind the current framebuffer.
-	m_FrameBuffer->unbind();
-}
+    /*Hzn::Renderer2D::endScene();*/
 
-bool EditorLayer::onWindowResize(Hzn::WindowResizeEvent& e)
-{
-	return false;
+	m_FrameBuffer->unbind();
 }
 
 void EditorLayer::onEvent(Hzn::Event& e)
 {
-    /*HZN_DEBUG("Editor Layer Received Event!");*/
 	if(m_ViewportFocused && m_ViewportHovered) m_CameraController.onEvent(e);
-
-	Hzn::EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<Hzn::WindowResizeEvent>(std::bind(&EditorLayer::onWindowResize, this, std::placeholders::_1));
 }
 
 void EditorLayer::onRenderImgui()
@@ -174,7 +183,7 @@ void EditorLayer::onRenderImgui()
 	ImGui::Text("Indices: %d", stats.indices);
     if(ImGui::SliderFloat("Camera Zoom", &m_CameraZoom, 0.25, 10.0f))
     {
-        m_Camera.getComponent<Hzn::CameraComponent>().m_Camera.setZoom(m_CameraZoom);
+        m_Scene->getGameObject("camera 1").getComponent<Hzn::CameraComponent>().m_Camera.setZoom(m_CameraZoom);
     }
 	ImGui::End();
     // SETTINGS END.
