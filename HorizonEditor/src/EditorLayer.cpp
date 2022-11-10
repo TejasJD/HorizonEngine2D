@@ -278,6 +278,30 @@ void EditorLayer::drawHierarchy()
         }
     }
 
+    // Right-click
+    ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+    if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+    if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+    ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+    // Context menu (under default mouse threshold)
+    ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+    if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+        ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+    }
+    if (ImGui::BeginPopup("contextHierarchy")) {
+        selectedObject = "";
+
+        if (ImGui::MenuItem("Create Empty", NULL, false)) {
+            // Do stuff here
+        }
+
+        ImGui::EndPopup();
+    }
+    // Left click
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+        selectedObject = "";
+    }
+
     ImGui::End();
 }
 
