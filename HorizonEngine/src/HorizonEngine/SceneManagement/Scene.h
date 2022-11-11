@@ -7,6 +7,8 @@
 #include <cereal/archives/json.hpp>
 #include <glm/glm.hpp>
 
+#include <algorithm>
+
 #include "HorizonEngine/Core/TimeStep.h"
 
 namespace Hzn
@@ -41,7 +43,10 @@ namespace Hzn
 		std::vector<std::string> allGameObjectNames() const;
 		std::vector<std::string> getAllRootObjects() const;
 
+		std::string generateUniqueName();
+
 	private:
+		int gameObjectCounter = 0;
 		void serialize(cereal::JSONOutputArchive& outputArchive);
 		void invalidate();
 		// variable that is used by the scene manager to invalidate all

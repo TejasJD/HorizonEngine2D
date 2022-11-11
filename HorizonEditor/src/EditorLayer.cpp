@@ -274,7 +274,11 @@ void EditorLayer::drawHierarchy()
             ImGui::Separator();
 
             if (ImGui::MenuItem("Create Empty", NULL, false)) {
-                // Do stuff here
+                std::string name = m_Scene->generateUniqueName();
+                Hzn::GameObject parent = m_Scene->getGameObject(selectedObject);
+                Hzn::GameObject newObject = m_Scene->createGameObject(name);
+                newObject.addComponent<Hzn::TransformComponent>();
+                parent.addChild(newObject);
             }
 
             ImGui::EndPopup();
@@ -295,7 +299,9 @@ void EditorLayer::drawHierarchy()
         selectedObject = "";
 
         if (ImGui::MenuItem("Create Empty", NULL, false)) {
-            // Do stuff here
+            std::string name = m_Scene->generateUniqueName();
+            Hzn::GameObject newObject = m_Scene->createGameObject(name);
+            newObject.addComponent<Hzn::TransformComponent>();
         }
 
         ImGui::EndPopup();

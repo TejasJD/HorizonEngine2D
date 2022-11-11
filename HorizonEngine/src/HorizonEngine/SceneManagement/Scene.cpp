@@ -184,4 +184,14 @@ namespace Hzn
 		}
 		return roots;
 	}
+
+	std::string Scene::generateUniqueName() {
+		std::vector<std::string> gameObjectNames = allGameObjectNames();
+		std::string newName = "GameObject (" + std::to_string(gameObjectCounter++) + ")";
+		while (std::find(gameObjectNames.begin(), gameObjectNames.end(), newName) != gameObjectNames.end()) {
+			newName = "GameObject (" + std::to_string(gameObjectCounter++) + ")";
+		}
+
+		return newName;
+	}
 }
