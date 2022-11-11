@@ -277,8 +277,9 @@ void EditorLayer::drawHierarchy()
 
             if (ImGui::MenuItem("Create Empty", NULL, false)) {
                 // Do stuff here
-                Hzn::GameObject newObject = m_Scene->createGameObject("child");
+                Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
                 m_Scene->getGameObject(selectedObjectId).addChild(newObject);
+                newObject.addComponent<Hzn::TransformComponent>();
             }
 
             ImGui::EndPopup();
@@ -300,8 +301,7 @@ void EditorLayer::drawHierarchy()
         selectedObjectId = std::numeric_limits<uint32_t>::max();
 
         if (ImGui::MenuItem("Create Empty", NULL, false)) {
-            std::string name = m_Scene->generateUniqueName();
-            Hzn::GameObject newObject = m_Scene->createGameObject(name);
+            Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
             newObject.addComponent<Hzn::TransformComponent>();
         }
 
