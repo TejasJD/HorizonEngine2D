@@ -81,7 +81,12 @@ namespace Hzn
 	template<>
 	inline void display<NameComponent>(const GameObject& obj)
 	{
-		ImGui::Text(obj.getComponent<NameComponent>().m_Name.c_str());
+		char nameString[512];
+		memset(nameString, '\0', sizeof(nameString));
+		strcpy(nameString, obj.getComponent<NameComponent>().m_Name.c_str());
+		if (ImGui::InputText("name", nameString, IM_ARRAYSIZE(nameString), ImGuiInputTextFlags_AutoSelectAll)) {
+			obj.getComponent<NameComponent>().m_Name = std::string(nameString);
+		}
 	}
 
 	struct TransformComponent
@@ -129,9 +134,14 @@ namespace Hzn
 	{
 		auto& transform = obj.getComponent<TransformComponent>();
 
-		ImGui::InputFloat3("translation", glm::value_ptr(transform.m_Translation));
-		ImGui::InputFloat3("scale", glm::value_ptr(transform.m_Scale));
-		ImGui::SliderFloat("Rotation", &transform.m_Rotation, -180.0f, 180.0f);
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected;
+
+		if (ImGui::TreeNodeEx("Transform", flags)) {
+			ImGui::InputFloat3("translation", glm::value_ptr(transform.m_Translation));
+			ImGui::InputFloat3("scale", glm::value_ptr(transform.m_Scale));
+			ImGui::SliderFloat("Rotation", &transform.m_Rotation, -180.0f, 180.0f);
+			ImGui::TreePop();
+		}
 	}
 
 
@@ -163,7 +173,13 @@ namespace Hzn
 	inline void display<RenderComponent>(const GameObject& obj)
 	{
 		auto& colorComponent = obj.getComponent<RenderComponent>();
-		ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
+
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected;
+
+		if (ImGui::TreeNodeEx("Render", flags)) {
+			ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
+			ImGui::TreePop();
+		}
 	}
 
 	struct CameraComponent
@@ -193,8 +209,13 @@ namespace Hzn
 	{
 		auto& cameraComponent = obj.getComponent<CameraComponent>();
 		static float m_CameraZoom = cameraComponent.m_Camera.getZoom();
-		ImGui::SliderFloat("Zoom", &m_CameraZoom, 0.25f, 10.0f);
-		cameraComponent.m_Camera.setZoom(m_CameraZoom);
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected;
+
+		if (ImGui::TreeNodeEx("Camera", flags)) {
+			if (ImGui::SliderFloat("Zoom", &m_CameraZoom, 0.25f, 10.0f))
+				cameraComponent.m_Camera.setZoom(m_CameraZoom);
+			ImGui::TreePop();
+		}
 	}
 
 	template<typename Component>

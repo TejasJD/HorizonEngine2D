@@ -45,4 +45,9 @@ private:
 	std::string currentScenePath;
 
 	std::vector<std::string> rootObjects;
+
+	std::string selectedObject = "";
+	uint32_t selectedObjectId = std::numeric_limits<uint32_t>::max();
+	Hzn::GameObject copiedGameObject;
+	bool openHierarchyPopup = false;
 };
