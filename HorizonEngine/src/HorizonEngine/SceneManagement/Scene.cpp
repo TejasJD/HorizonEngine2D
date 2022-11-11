@@ -24,7 +24,8 @@ namespace Hzn
 		m_Valid = true;
 		m_Registry.each([&](auto entity)
 			{
-				m_Objects.insert({ m_Registry.get<NameComponent>(entity).m_Name, {entity, this} });
+				/*m_Objects.insert({ m_Registry.get<NameComponent>(entity).m_Name, {entity, this} });*/
+				m_LocStorage.insert({ entt::to_integral(entity), {entity, this} });
 			});
 		m_Valid = false;
 	}
@@ -39,16 +40,17 @@ namespace Hzn
 		entt::snapshot{ m_Registry }
 			.entities(outputArchive)
 			.component<NameComponent,
-		RelationComponent,
-		TransformComponent,
-		RenderComponent,
-		CameraComponent>(outputArchive);
+			RelationComponent,
+			TransformComponent,
+			RenderComponent,
+			CameraComponent>(outputArchive);
 	}
 
 	void Scene::invalidate()
 	{
 		m_Registry.clear();
 		m_Objects.clear();
+		m_LocStorage.clear();
 		m_Valid = false;
 	}
 
@@ -119,7 +121,8 @@ namespace Hzn
 		// every valid game object has a name component
 		obj.addComponent<NameComponent>(name);
 		obj.addComponent<RelationComponent>();
-		m_Objects.insert({ name, obj });
+		/*m_Objects.insert({ name, obj });*/
+		m_LocStorage.insert({ entt::to_integral(obj.m_ObjectId), obj });
 		return obj;
 	}
 
@@ -129,23 +132,32 @@ namespace Hzn
 		{
 			throw std::runtime_error("trying to remove game objects from invalidated scene!");
 		}
-		// break all relations that the game object has in the hierarchy.
-		// remove the game object from all objects list.
-		m_Registry.destroy(obj.m_ObjectId);
-		// remove object from the unordered_map.
+
+		// delete all the child objects of that object, before we delete that object.
 		auto list = obj.getChildren();
-		
+
 		for (auto& x : list)
 		{
 			destroyGameObject(x);
 		}
 
-		m_Objects.erase(obj.getComponent<NameComponent>());
+		// break all relations that the game object has in the hierarchy.
+		if (obj.getParent())
+		{
+			obj.getParent().removeChild(obj);
+		}
+		// remove the game object from all objects list.
+		// remove object from the unordered_map.
+
+		/*m_Objects.erase(obj.getComponent<NameComponent>());*/
+		m_LocStorage.erase(entt::to_integral(obj.m_ObjectId));
+
+		m_Registry.destroy(obj.m_ObjectId);
 		obj.m_ObjectId = entt::null;
 		obj.m_Scene = nullptr;
 	}
 
-	GameObject Scene::getGameObject(const std::string& name)
+	GameObject Scene::getGameObject(const std::string& name) const
 	{
 		if (!m_Valid)
 		{
@@ -162,10 +174,27 @@ namespace Hzn
 		return it->second;
 	}
 
+	GameObject Scene::getGameObject(uint32_t id) const
+	{
+		if (!m_Valid)
+		{
+			throw std::runtime_error("trying to get game objects from invalidated scene!");
+		}
+
+		auto it = m_LocStorage.find(id);
+
+		if (it == m_LocStorage.end())
+		{
+			throw std::runtime_error("Game object not found!");
+		}
+
+		return it->second;
+	}
+
 	std::vector<std::string> Scene::allGameObjectNames() const
 	{
 		std::vector<std::string> names;
-		for(const auto& x : m_Objects)
+		for (const auto& x : m_Objects)
 		{
 			names.emplace_back(x.first);
 		}
@@ -183,5 +212,29 @@ namespace Hzn
 			}
 		}
 		return roots;
+	}
+
+	std::vector<uint32_t> Scene::getAllRootIds() const
+	{
+		std::vector<uint32_t> roots;
+
+		for (const auto& x : m_LocStorage)
+		{
+			if (x.second.getParent() == GameObject())
+			{
+				roots.emplace_back(x.first);
+			}
+		}
+		return roots;
+	}
+
+	std::vector<uint32_t> Scene::getAllObjectIds() const
+	{
+		std::vector<uint32_t> ids;
+		for (const auto& x : m_LocStorage)
+		{
+			ids.emplace_back(x.first);
+		}
+		return ids;
 	}
 }

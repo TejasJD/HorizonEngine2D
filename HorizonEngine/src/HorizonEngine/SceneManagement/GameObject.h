@@ -45,27 +45,6 @@ namespace Hzn
 			return m_Scene->m_Registry.try_get<T>(m_ObjectId) != nullptr;
 		}
 
-		/*template<typename Archive>
-		void load(Archive& ar)
-		{
-			ar(cereal::make_nvp("objectId", entt::to_integral(m_ObjectId)));
-		}
-
-		template<typename Archive>
-		void save(Archive& ar) const
-		{
-			ar(cereal::make_nvp("objectId", entt::to_integral(m_ObjectId)));
-		}*/
-
-		GameObject getParent() const;
-		GameObject getNextSibling() const;
-		GameObject getPrevSibling() const;
-		std::vector<GameObject> getChildren() const;
-		size_t getChildCount() const;
-
-		void addChild(const GameObject& obj);
-		void removeChild(const GameObject& obj);
-
 		bool isParent(const GameObject& obj) const
 		{
 			isValid();
@@ -78,6 +57,16 @@ namespace Hzn
 			auto list = this->getChildren();
 			return std::find(list.begin(), list.end(), obj) != list.end();
 		}
+
+		uint32_t getObjectId() const { return entt::to_integral(m_ObjectId); }
+
+		GameObject getParent() const;
+		GameObject getNextSibling() const;
+		GameObject getPrevSibling() const;
+		std::vector<GameObject> getChildren() const;
+		size_t getChildCount() const;
+		void addChild(const GameObject& obj);
+		void removeChild(const GameObject& obj);
 
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
