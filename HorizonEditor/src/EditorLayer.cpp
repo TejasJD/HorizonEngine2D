@@ -26,41 +26,41 @@ void EditorLayer::onAttach()
 
     m_FrameBuffer = Hzn::FrameBuffer::create(props);
 
-    m_Scene = Hzn::SceneManager::load();
+    m_Scene = Hzn::SceneManager::load("scenes/custom_scene.json");
 
-    Hzn::GameObject object0 = m_Scene->createGameObject("square 1");
-    object0.addComponent<Hzn::TransformComponent>();
-    object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    //Hzn::GameObject object0 = m_Scene->createGameObject("square 1");
+    //object0.addComponent<Hzn::TransformComponent>();
+    //object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-    Hzn::GameObject object1 = m_Scene->createGameObject("square 2");
+    //Hzn::GameObject object1 = m_Scene->createGameObject("square 2");
 
-    object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
-    object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    //object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
+    //object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-    Hzn::GameObject object3 = m_Scene->createGameObject("square 3");
+    //Hzn::GameObject object3 = m_Scene->createGameObject("square 3");
 
-    object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
-    object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+    //object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
+    //object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 
-    Hzn::GameObject camera = m_Scene->createGameObject("camera 1");
-    camera.addComponent<Hzn::CameraComponent>();
-    camera.addComponent<Hzn::TransformComponent>();
+    //Hzn::GameObject camera = m_Scene->createGameObject("camera 1");
+    //camera.addComponent<Hzn::CameraComponent>();
+    //camera.addComponent<Hzn::TransformComponent>();
 
-    object0.addChild(camera);
-    object0.addChild(object1);
+    //object0.addChild(camera);
+    //object0.addChild(object1);
 
 
-    HZN_INFO(object1.getPrevSibling().getComponent<Hzn::NameComponent>().m_Name);
-    HZN_INFO(camera.getNextSibling().getComponent<Hzn::NameComponent>().m_Name);
-    
+    //HZN_INFO(object1.getPrevSibling().getComponent<Hzn::NameComponent>().m_Name);
+    //HZN_INFO(camera.getNextSibling().getComponent<Hzn::NameComponent>().m_Name);
+    //
 
-    /*Hzn::GameObject object0 = m_Scene->getGameObject("square 1");*/
-    auto list = object0.getChildren();
+    ///*Hzn::GameObject object0 = m_Scene->getGameObject("square 1");*/
+    //auto list = object0.getChildren();
 
-    for(const auto& x : list)
-    {
-        HZN_INFO(x.getComponent<Hzn::NameComponent>().m_Name);
-    }
+    //for(const auto& x : list)
+    //{
+    //    HZN_INFO(x.getComponent<Hzn::NameComponent>().m_Name);
+    //}
 }
 
 void EditorLayer::onDetach()
@@ -196,8 +196,8 @@ void EditorLayer::onRenderImgui()
     /*static bool show = true;*/
     // SETTINGS BEGIN.
 	ImGui::Begin("Components");
-    if (selectedObject != "") {
-        auto selectedObj = m_Scene->getGameObject(selectedObject);
+    if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
+        auto selectedObj = m_Scene->getGameObject(selectedObjectId);
         Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
         Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
         Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
@@ -239,9 +239,10 @@ void EditorLayer::onRenderImgui()
 void EditorLayer::drawHierarchy()
 {
     ImGui::Begin("Object Hierarchy");
-    auto list = m_Scene->getAllRootObjects();
+    auto list = m_Scene->getAllRootIds();
 
-    openHierarchyPopup = false;
+    /*openHierarchyPopup = false;*/
+    openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
 
     for (const auto& x : list)
     {
@@ -257,7 +258,7 @@ void EditorLayer::drawHierarchy()
 
         if (ImGui::BeginPopup("HierarchyObjectPopup")) {
             if (ImGui::MenuItem("Copy", NULL, false)) {
-                copiedGameObject = m_Scene->getGameObject(selectedObject);
+                /*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
             }
             if (ImGui::MenuItem("Paste", NULL, false)) {
                 // Do stuff here 
@@ -266,19 +267,18 @@ void EditorLayer::drawHierarchy()
                 // Do stuff here 
             }
             if (ImGui::MenuItem("Delete", NULL, false)) {
-                Hzn::GameObject obj = m_Scene->getGameObject(selectedObject);
+                Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
                 m_Scene->destroyGameObject(obj);
 
-                selectedObject = "";
+                selectedObject = std::string();
+                selectedObjectId = std::numeric_limits<uint32_t>::max();
             }
             ImGui::Separator();
 
             if (ImGui::MenuItem("Create Empty", NULL, false)) {
-                std::string name = m_Scene->generateUniqueName();
-                Hzn::GameObject parent = m_Scene->getGameObject(selectedObject);
-                Hzn::GameObject newObject = m_Scene->createGameObject(name);
-                newObject.addComponent<Hzn::TransformComponent>();
-                parent.addChild(newObject);
+                // Do stuff here
+                Hzn::GameObject newObject = m_Scene->createGameObject("child");
+                m_Scene->getGameObject(selectedObjectId).addChild(newObject);
             }
 
             ImGui::EndPopup();
@@ -297,6 +297,7 @@ void EditorLayer::drawHierarchy()
     }
     if (ImGui::BeginPopup("contextHierarchy")) {
         selectedObject = "";
+        selectedObjectId = std::numeric_limits<uint32_t>::max();
 
         if (ImGui::MenuItem("Create Empty", NULL, false)) {
             std::string name = m_Scene->generateUniqueName();
@@ -309,6 +310,7 @@ void EditorLayer::drawHierarchy()
     // Left click
     if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
         selectedObject = "";
+        selectedObjectId = std::numeric_limits<uint32_t>::max();
     }
 
     ImGui::End();
@@ -324,20 +326,34 @@ void EditorLayer::drawObjects(const Hzn::GameObject& object)
         flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
     }
 
-    if (selectedObject == object.getComponent<Hzn::NameComponent>().m_Name) {
+    /*if (selectedObject == object.getComponent<Hzn::NameComponent>().m_Name) {
+        flags |= ImGuiTreeNodeFlags_Selected;
+    }*/
+
+	if (selectedObjectId == object.getObjectId()) {
         flags |= ImGuiTreeNodeFlags_Selected;
     }
 
     bool open = ImGui::TreeNodeEx(object.getComponent<Hzn::NameComponent>().m_Name.c_str(), flags);
 
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+    /*if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
         selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
+    }*/
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+        selectedObjectId = object.getObjectId();
     }
 
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+    /*if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
         selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
+
+        ImGui::OpenPopup("HierarchyObjectPopup");
+    }*/
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+        selectedObjectId = object.getObjectId();
 
         ImGui::OpenPopup("HierarchyObjectPopup");
     }

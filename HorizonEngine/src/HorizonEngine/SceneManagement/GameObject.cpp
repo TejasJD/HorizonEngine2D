@@ -108,27 +108,42 @@ namespace Hzn
 
 		if(hasChild(obj))
 		{
-			auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
-			auto curr = relationComponent.m_FirstChild;
-			auto prev = curr;
+			auto curr = obj.m_ObjectId;
+			auto parent = m_ObjectId;
+			auto& childRelations = m_Scene->m_Registry.get<RelationComponent>(curr);
+			// parent of 'obj' is '*this'.
+			// so if previous exists.
+			auto prev = childRelations.m_Prev;
+			auto next = childRelations.m_Next;
 
-			while(curr != obj)
+			// meaning if it is not the first child.
+			if(prev != entt::null)
 			{
-				prev = curr;
-				curr = m_Scene->m_Registry.get<RelationComponent>(curr).m_Next;
+				m_Scene->m_Registry.get<RelationComponent>(prev).m_Next = next;
+				// meaning its not the last child.
+				if(next != entt::null)
+				{
+					m_Scene->m_Registry.get<RelationComponent>(next).m_Prev = prev; 
+				}
+			}
+			else
+			{
+				if (next != entt::null)
+				{
+					m_Scene->m_Registry.get<RelationComponent>(next).m_Prev = prev;
+				}
+				// if we are here, it means that 'obj' is the first child of its parent ('*this').
+				// so we just move the first child of '*this' to the next sibling of 'obj'.
+				m_Scene->m_Registry.get<RelationComponent>(parent).m_FirstChild = m_Scene->m_Registry.get<RelationComponent>(curr).m_Next;
 			}
 
-			if(m_Scene->m_Registry.get<RelationComponent>(curr).m_Next != entt::null)
-			{
-				auto next = m_Scene->m_Registry.get<RelationComponent>(curr).m_Next;
-				m_Scene->m_Registry.get<RelationComponent>(curr).m_Next = entt::null;
-				m_Scene->m_Registry.get<RelationComponent>(next).m_Prev = entt::null;
-			}
-			
-			prev = m_Scene->m_Registry.get<RelationComponent>(curr).m_Next;
-			m_Scene->m_Registry.get<RelationComponent>(obj.m_ObjectId).m_Prev = entt::null;
-			m_Scene->m_Registry.get<RelationComponent>(obj.m_ObjectId).m_Parent = entt::null;
-			relationComponent.m_ChildCount--;
+			// break all the relations of 'obj' with the top and the same level of the hierarchy.
+			// except with its own children.
+			childRelations.m_Parent = entt::null;
+			childRelations.m_Next = entt::null;
+			childRelations.m_Prev = entt::null;
+			// reduce the child count on 'parent'.
+			m_Scene->m_Registry.get<RelationComponent>(parent).m_ChildCount--;
 		}
 	}
 
