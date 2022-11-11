@@ -23,6 +23,7 @@ private:
 	bool showObjectPropertiesWindow = true;
 	bool showProjectWindow = true;
 	bool showConsoleWindow = true;
+	bool showAudioWindow = true;
 	bool clickStatus = false;
 	std::shared_ptr<Hzn::GameObject> copiedGameObject;
 	std::map<std::string, Hzn::AudioSource*> audioFileMap;

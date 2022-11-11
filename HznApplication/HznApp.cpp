@@ -63,11 +63,13 @@ void EditorLayer::onRenderImgui()
 	if (showHierarchyWindow)
 		drawHierarchy();
 	
+	if (showProjectWindow)
 	drawProjectExplorer(projectRootFolder);
 	
 	if (showConsoleWindow)
 		drawConsole();
 	
+	if(showAudioWindow)
 	drawAudio("assets/audios/");
 }
 
@@ -355,7 +357,7 @@ void EditorLayer::drawMenuBar(bool* pOpen) {
 			ImGui::MenuItem("Project", NULL, &showProjectWindow);
 			if (ImGui::MenuItem("Console", NULL, &showConsoleWindow)) {
 			}
-
+			ImGui::MenuItem("Audio", NULL, &showAudioWindow);
 			ImGui::EndMenu();
 		}
 
