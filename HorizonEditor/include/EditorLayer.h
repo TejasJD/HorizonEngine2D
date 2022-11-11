@@ -12,6 +12,8 @@ public:
 	virtual void onUpdate(Hzn::TimeStep deltaTime) override;
 	virtual void onEvent(Hzn::Event& event) override;
 	virtual void onRenderImgui() override;
+	virtual void openScene(const std::string path);
+	
 
 private:
 	void drawHierarchy();
@@ -31,6 +33,16 @@ private:
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
 	float m_CameraZoom = 1.0f;
+
+
+	Hzn::AssetManager assetManager;
+	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
+	std::filesystem::path m_CurrentDirectory;
+	std::shared_ptr<Hzn::Texture> folderIcon;
+	std::shared_ptr<Hzn::Texture> fileIcon;
+	std::string projectRootFolder;
+	std::string assetPath;
+	std::string currentScenePath;
 
 	std::vector<std::string> rootObjects;
 
