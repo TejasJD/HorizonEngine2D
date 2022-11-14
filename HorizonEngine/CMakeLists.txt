@@ -5,11 +5,9 @@ cmake_minimum_required (VERSION 3.15)
 
 set(HZN_SOURCE_FILES
 	"src/HorizonEngine/App.cpp"
-	"src/HorizonEngine/GameObject.cpp"
 	"src/HorizonEngine/Utils/Time.cpp"
 	"src/HorizonEngine/Utils/Math.cpp"
 	"src/HorizonEngine/Utils/TreeNode.cpp"
-	"src/HorizonEngine/Components/Transform.cpp"
 	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"src/HorizonEngine/LayerStack.cpp"
@@ -21,9 +19,6 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Audio/SoundBuffer.cpp"
 	"src/HorizonEngine/Audio/AudioSource.cpp"
 	"src/HorizonEngine/SceneManagement/Scene.cpp"
-	"src/HorizonEngine/Physics2D/BoxCollider2D.cpp"
-	"src/HorizonEngine/Physics2D/Rigidbody2D.cpp"
-	"src/HorizonEngine/Physics2D/PhysicsWorld2D.cpp"
 	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"Platform/OpenGL/GLContext.cpp"
@@ -44,10 +39,17 @@ set(HZN_SOURCE_FILES
 	"Platform/OpenGL/FDWindows.cpp"
 	"src/HorizonEngine/Renderer/Texture.cpp"
 	"Platform/OpenGL/GLTexture.cpp"
-	"src/vendor/stb/stbimage.cpp"
+	"vendor/stb/stbimage.cpp"
 	"src/HorizonEngine/Camera/CameraController.cpp"
 	"src/HorizonEngine/Renderer/Renderer2D.cpp"
-	"src/HorizonEngine/Renderer/Renderer3D.cpp" "src/HorizonEngine/Renderer/Sprite.cpp" "src/HorizonEngine/Renderer/FrameBuffer.cpp" "Platform/OpenGL/GLFrameBuffer.cpp")
+	"src/HorizonEngine/Renderer/Renderer3D.cpp"
+	"src/HorizonEngine/Renderer/Sprite.cpp"
+	"src/HorizonEngine/Renderer/FrameBuffer.cpp"
+	"Platform/OpenGL/GLFrameBuffer.cpp"
+	"src/HorizonEngine/SceneManagement/SceneManager.cpp"
+	"src/HorizonEngine/AssetManagement/AssetManager.cpp"
+	"src/HorizonEngine/SceneManagement/GameObject.cpp"
+)
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -55,21 +57,10 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Core/Core.h"
 	"src/HorizonEngine/App.h"
 	"src/HorizonEngine/Window.h"
-	"src/HorizonEngine/GameObject.h"
 	"src/HorizonEngine/Utils/Math.h"
 	"src/HorizonEngine/Utils/Time.h"
 	"src/HorizonEngine/Utils/TreeNode.h"
 	"src/HorizonEngine/SceneManagement/Scene.h"
-	"src/HorizonEngine/Physics2D/RigidBody2D.h"
-	"src/HorizonEngine/Components/Component.h"
-	"src/HorizonEngine/Components/Transform.h"
-	"src/HorizonEngine/Components/ComponentFactory.h"
-	"src/HorizonEngine/Physics2D/BodyType.h"
-	"src/HorizonEngine/Physics2D/ColliderType.h"
-	"src/HorizonEngine/Physics2D/PhysicsMaterial.h"
-	"src/HorizonEngine/Physics2D/Collider2D.h"
-	"src/HorizonEngine/Physics2D/BoxCollider2D.h"
-	"src/HorizonEngine/Physics2D/PhysicsWorld2D.h"
 	"Platform/OpenGL/GLWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
 	"src/HorizonEngine/Events/Event.h"
@@ -88,7 +79,6 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Audio/AudioSource.h"
 	"src/HorizonEngine/Imgui/ImguiLayer.h"
 	"src/HorizonEngine/Input.h"
-	
 	"src/HorizonEngine/Renderer/RenderContext.h"
 	"Platform/OpenGL/GLContext.h"
 	"src/HorizonEngine/Renderer/Shader.h"
@@ -111,7 +101,13 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Renderer/Renderer2D.h"
 	"src/HorizonEngine/Renderer/Renderer3D.h"
 	"src/HorizonEngine/Renderer/Sprite.h"
- "src/HorizonEngine/Renderer/FrameBuffer.h" "Platform/OpenGL/GLFrameBuffer.h")
+	"src/HorizonEngine/Renderer/FrameBuffer.h"
+	"Platform/OpenGL/GLFrameBuffer.h"
+	"src/HorizonEngine/SceneManagement/GameObject.h"
+	"src/HorizonEngine/SceneManagement/SceneManager.h"
+	"src/HorizonEngine/AssetManagement/AssetManager.h"
+	"src/HorizonEngine/SceneManagement/GameObject.h"
+)
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -146,7 +142,9 @@ find_package(unofficial-sajson CONFIG REQUIRED)
 find_package(openal CONFIG REQUIRED)
 find_package(Sndfile CONFIG REQUIRED)
 find_package(imguizmo CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
+find_package(cereal CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
@@ -160,6 +158,8 @@ target_link_libraries(HorizonEngine
 	OpenAL::OpenAL
 	SndFile::sndfile
 	imguizmo::imguizmo
+	EnTT::EnTT
+	cereal::cereal
 )
 
 #testing

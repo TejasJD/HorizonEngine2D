@@ -5,6 +5,9 @@
 
 #include <string>
 
+/// <summary>
+/// Declare methods here.
+/// </summary>
 namespace Hzn
 {
 	class FileDialogs {
