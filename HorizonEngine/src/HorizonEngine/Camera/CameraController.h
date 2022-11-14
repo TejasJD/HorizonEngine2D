@@ -51,7 +51,7 @@ namespace Hzn
 		OrthographicCameraController(float aspectRatio, float zoom)
 			: m_Camera(OrthographicCamera(aspectRatio, zoom))
 		{}
-		virtual ~OrthographicCameraController() = default;
+		virtual ~OrthographicCameraController() override = default;
 		// Inherited via CameraController
 
 		//! keep track of changes made to the Camera on every frame.
@@ -59,9 +59,9 @@ namespace Hzn
 		//! process events received by the Camera.
 		virtual void onEvent(Event& e) override;
 		//! returns a reference to the camera object.
-		virtual Camera& getCamera() override { return m_Camera; }
+		virtual OrthographicCamera& getCamera() override { return m_Camera; }
 		//! returns a reference to the constant camera object (when the member function is called on constant camera object.
-		virtual const Camera& getCamera() const override { return m_Camera; }
+		virtual const OrthographicCamera& getCamera() const override { return m_Camera; }
 
 		virtual void setTranslationSpeed(float translationSpeed) override
 		{

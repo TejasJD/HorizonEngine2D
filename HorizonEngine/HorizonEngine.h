@@ -31,22 +31,12 @@
 #include "HorizonEngine/Audio/SoundDevice.h"
 
 #include "HorizonEngine/Components/Component.h"
-#include "HorizonEngine/Components/ComponentType.h"
-#include "HorizonEngine/Components/ComponentFactory.h"
-#include "HorizonEngine/Components/Transform.h"
 
 #include "HorizonEngine/FileManagement/ProjectFile.h"
 
-#include "HorizonEngine/Physics2D/BodyType.h"
-#include "HorizonEngine/Physics2D/BoxCollider2D.h"
-#include "HorizonEngine/Physics2D/ColliderType.h"
-#include "HorizonEngine/Physics2D/PhysicsMaterial.h"
-#include "HorizonEngine/Physics2D/PhysicsWorld2D.h"
-#include "HorizonEngine/Physics2D/Rigidbody2D.h"
-
+#include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/SceneManagement/Scene.h"
-
-#include "HorizonEngine/GameObject.h"
+#include "HorizonEngine/SceneManagement/SceneManager.h"
 
 #include "HorizonEngine/Input.h"
 #include "HorizonEngine/Codes/MouseCodes.h"
@@ -55,12 +45,14 @@
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
 
+#include "HorizonEngine/AssetManagement/AssetManager.h"
+
 #include "HorizonEngine/Layer.h"
+
 #include "HorizonEngine/Renderer/RenderCall.h"
 #include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Renderer/Renderer2D.h"
 #include "HorizonEngine/Renderer/Renderer3D.h"
-
 #include "HorizonEngine/Renderer/Buffer.h"
 #include "HorizonEngine/Renderer/Shader.h"
 #include "HorizonEngine/Renderer/VertexArray.h"

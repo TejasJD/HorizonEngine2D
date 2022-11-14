@@ -25,9 +25,9 @@ namespace Hzn
 	std::pair<float, float> Input::getMousePos()
 	{
 		GLFWwindow* window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
-		std::pair<double, double> pos;
-		glfwGetCursorPos(window, &pos.first, &pos.second);
-		return pos;
+		double x = 0.0, y = 0.0;
+		glfwGetCursorPos(window, &x, &y);
+		return {static_cast<float>(x), static_cast<float>(y)};
 	}
 
 	float Input::getMouseX()
