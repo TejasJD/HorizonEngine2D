@@ -1,5 +1,5 @@
 {
-  "name": "groupproject",
+  "name": "horizonengine2d",
   "version-string": "0.1.0",
   "dependencies": [
     "glfw3",
