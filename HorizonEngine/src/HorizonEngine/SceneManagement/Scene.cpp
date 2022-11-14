@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/AssetManagement/AssetManager.h"
 
 namespace Hzn
 {
@@ -76,7 +77,8 @@ namespace Hzn
 	}
 
 
-	void Scene::onUpdate(TimeStep ts)
+	//void Scene::onUpdate(TimeStep ts, AssetManager assetManager)
+	void Scene::onUpdate(TimeStep ts, Hzn::AssetManager assetManager)
 	{
 		// render objects in the scene through scene update.
 		if (m_Valid) {
@@ -103,7 +105,16 @@ namespace Hzn
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
+
+					if (!renderComponent.texturePath.empty()) {
+						renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
+						Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent.m_Texture);
+					}
+					else
+					{
 					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+
+					}
 				}
 				Renderer2D::endScene();
 			}

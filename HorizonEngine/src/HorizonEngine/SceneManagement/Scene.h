@@ -11,6 +11,7 @@
 
 #include "HorizonEngine/Core/TimeStep.h"
 
+
 namespace Hzn
 {
 	class SceneManager;
@@ -19,13 +20,14 @@ namespace Hzn
 	{
 		friend class GameObject;
 		friend class SceneManager;
+		friend class AssetManager;
 	public:
 		Scene();
 		Scene(cereal::JSONInputArchive& inputArchive);
 		~Scene();
 
 		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
-		void onUpdate(TimeStep ts);
+		void onUpdate(TimeStep ts, AssetManager assetManager);
 		/**
 		 * \brief creates a game object in the scene and returns a valid game object.
 		 * \return Valid Game Object.

@@ -14,17 +14,17 @@ namespace Hzn
 		virtual ~Texture() = default;
 		virtual bool operator==(const Texture& rhs) const = 0;
 		virtual bool operator!=(const Texture& rhs) const = 0;
-		
+
 		/// <summary>
 		/// Get the width of the texture.
 		/// </summary>
 		virtual unsigned int getWidth() const = 0;
-		
+
 		/// <summary>
 		/// Get the height of the texture.
 		/// </summary>
 		virtual unsigned int getHeight() const = 0;
-		
+
 		/// <summary>
 		/// bind the texture
 		/// </summary>
@@ -41,12 +41,17 @@ namespace Hzn
 		/// </summary>
 		/// <param name="data"> Data to be uploaded to the texture.</param>
 		/// <param name="size"> Size of the data in bytes.</param>
-		virtual void setData(void *data, uint32_t size) = 0;
-		
+		virtual void setData(void* data, uint32_t size) = 0;
+
 		/// <summary>
 		/// get the texture ID.
 		/// </summary>
 		virtual uint32_t getId() const = 0;
+
+		/// <summary>
+		/// get the texture path.
+		/// </summary>
+		virtual const std::string& getPath() const = 0;
 
 	};
 
@@ -57,7 +62,7 @@ namespace Hzn
 	{
 	public:
 		virtual ~Texture2D() = default;
-		
+
 		/// <summary>
 		///	Create an object of Texture2D class (by uploading image data).
 		/// </summary>

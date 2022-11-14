@@ -94,7 +94,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	/*Hzn::Renderer2D::beginScene(m_CameraController.getCamera());*/
 	// update the scene.
 	if (m_Scene) {
-		m_Scene->onUpdate(ts);
+		m_Scene->onUpdate(ts, assetManager);
 	}
 	// unbind the current framebuffer.
 	/*Hzn::Renderer2D::endScene();*/
@@ -297,7 +297,7 @@ void EditorLayer::onRenderImgui()
 						}
 					}
 				}
-				
+
 			}
 
 

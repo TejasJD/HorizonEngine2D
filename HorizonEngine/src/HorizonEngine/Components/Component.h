@@ -9,6 +9,7 @@
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "imgui.h"
+#include "HorizonEngine/Renderer/Texture.h"
 
 namespace Hzn
 {
@@ -47,20 +48,20 @@ namespace Hzn
 		}
 	private:
 		size_t m_ChildCount = 0ULL;
-		entt::entity m_Parent{entt::null};
-		entt::entity m_FirstChild{entt::null};
-		entt::entity m_Next{entt::null};
-		entt::entity m_Prev{entt::null};
+		entt::entity m_Parent{ entt::null };
+		entt::entity m_FirstChild{ entt::null };
+		entt::entity m_Next{ entt::null };
+		entt::entity m_Prev{ entt::null };
 	};
 
 	struct NameComponent
 	{
 		NameComponent() = default;
 		NameComponent(const NameComponent& name) = default;
-		NameComponent(const std::string& name): m_Name(name) {}
+		NameComponent(const std::string& name) : m_Name(name) {}
 		~NameComponent() = default;
 
-		operator std::string() const & { return m_Name; }
+		operator std::string() const& { return m_Name; }
 		operator std::string()& { return m_Name; }
 
 		std::string m_Name;
@@ -151,22 +152,30 @@ namespace Hzn
 		RenderComponent(const glm::vec4& color) : m_Color(color) {};
 		~RenderComponent() = default;
 		// conversion operator for render component.
-		operator const glm::vec4() const & { return m_Color; }
-		operator glm::vec4() & { return m_Color; }
+		operator const glm::vec4() const& { return m_Color; }
+		operator glm::vec4()& { return m_Color; }
 
 		glm::vec4 m_Color = glm::vec4(1.0f);
+
+		std::shared_ptr<Hzn::Texture2D> m_Texture;
+
+		std::string texturePath;
 
 		template<typename Archive>
 		void load(Archive& ar)
 		{
+			ar(texturePath);
 			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
+			ar(texturePath);
 			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
+
+
 	};
 
 	template<>
@@ -178,6 +187,26 @@ namespace Hzn
 
 		if (ImGui::TreeNodeEx("Render", flags)) {
 			ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
+
+			ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* filepath = (const wchar_t*)payload->Data;
+					std::wstring ws(filepath);
+					std::string str(ws.begin(), ws.end());
+
+					std::shared_ptr<Hzn::Texture2D> texture = Hzn::Texture2D::create(str);
+					colorComponent.m_Texture = texture;
+					colorComponent.texturePath = texture->getPath();
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+
+
 			ImGui::TreePop();
 		}
 	}
@@ -186,7 +215,7 @@ namespace Hzn
 	{
 		CameraComponent(const float aspectRatio = 1.0f, const float zoom = 1.0f)
 			: m_Camera(aspectRatio, zoom) {}
-		
+
 		~CameraComponent() = default;
 		SceneCamera2D m_Camera;
 		bool m_Primary = true;
