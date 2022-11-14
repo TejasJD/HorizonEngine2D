@@ -56,9 +56,12 @@ namespace Hzn
 
 	void GLFrameBuffer::recreate(uint32_t width, uint32_t height)
 	{
-		m_Props.width = width;
-		m_Props.height = height;
-		invalidate();
+		if (width > 0 && height > 0)
+		{
+			m_Props.width = width;
+			m_Props.height = height;
+			invalidate();
+		}
 	}
 
 
