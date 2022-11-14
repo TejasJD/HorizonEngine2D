@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
+
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
     m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /

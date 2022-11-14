@@ -52,6 +52,7 @@ namespace Hzn {
 		ProjectFile& operator=(const ProjectFile& f) = delete;*/
 
 
+
 		/// <summary>
 		/// Default constructor, destructor
 		/// and custom constructor to take in a file path
@@ -69,7 +70,6 @@ namespace Hzn {
 		ProjectFile() {
 
 		}
-
 
 		//Destructor
 		~ProjectFile() {
