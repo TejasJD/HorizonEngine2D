@@ -1,11 +1,10 @@
 #include <pch.h>
 #include "EditorLayer.h"
 
-
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
-    m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
-        static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
+	m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
+		static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
 	m_CameraController(Hzn::OrthographicCameraController(m_AspectRatio, 1.0f))
 {
 }
@@ -13,22 +12,22 @@ EditorLayer::EditorLayer(const char* name) :
 
 EditorLayer::~EditorLayer()
 {
-    // I think it's fine for detach function to be statically resolved at compile time in this case.
-    onDetach();
+	// I think it's fine for detach function to be statically resolved at compile time in this case.
+	onDetach();
 }
 
 void EditorLayer::onAttach()
 {
-    
+
 
 
 	HZN_TRACE("Editor Layer Attached!");
 	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
 	Hzn::FrameBufferProps props;
 	props.width = Hzn::App::getApp().getAppWindow().getWidth();
-	props.height= Hzn::App::getApp().getAppWindow().getHeight();
+	props.height = Hzn::App::getApp().getAppWindow().getHeight();
 
-    m_FrameBuffer = Hzn::FrameBuffer::create(props);
+	m_FrameBuffer = Hzn::FrameBuffer::create(props);
 
 	m_Scene = Hzn::SceneManager::load();
 
@@ -69,252 +68,293 @@ void EditorLayer::onAttach()
 
 void EditorLayer::onDetach()
 {
-    Hzn::SceneManager::close("scenes/custom_scene.json");
+	Hzn::SceneManager::close(currentScenePath);
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	if(m_ViewportFocused && m_ViewportHovered) m_CameraController.onUpdate(ts);
+	if (m_ViewportFocused && m_ViewportHovered) m_CameraController.onUpdate(ts);
 
 	m_FrameBuffer->bind();
 
-    // here, in case if the framebuffer is re-created, and the last known
-    // viewport size does not match the viewport size of the new framebuffer, then
-    // we update all the camera components to the proper aspect ratio, and update the last known viewport size.
-    auto& props = m_FrameBuffer->getProps();
+	// here, in case if the framebuffer is re-created, and the last known
+	// viewport size does not match the viewport size of the new framebuffer, then
+	// we update all the camera components to the proper aspect ratio, and update the last known viewport size.
+	auto& props = m_FrameBuffer->getProps();
 
 	if (m_Scene) {
 		lastViewportSize = m_Scene->onViewportResize(props.width, props.height);
 		m_CameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
 	}
-    
+
 
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
 
 	/*Hzn::Renderer2D::beginScene(m_CameraController.getCamera());*/
-    // update the scene.
+	// update the scene.
 	if (m_Scene) {
 		m_Scene->onUpdate(ts);
 	}
-    // unbind the current framebuffer.
-    /*Hzn::Renderer2D::endScene();*/
+	// unbind the current framebuffer.
+	/*Hzn::Renderer2D::endScene();*/
 
 	m_FrameBuffer->unbind();
 }
 
 void EditorLayer::onEvent(Hzn::Event& e)
 {
-	if(m_ViewportFocused && m_ViewportHovered) m_CameraController.onEvent(e);
+	if (m_ViewportFocused && m_ViewportHovered) m_CameraController.onEvent(e);
 }
 
 void EditorLayer::onRenderImgui()
 {
 	auto& window = Hzn::App::getApp().getAppWindow();
 	auto stats = Hzn::Renderer2D::getStats();
-    
-    // imgui code reference: https://github.com/ocornut/imgui/blob/docking/imgui_demo.cpp
 
-    // DOCKING CODE.
+	// imgui code reference: https://github.com/ocornut/imgui/blob/docking/imgui_demo.cpp
 
-    // docking options.
-    static bool p_open = true;
-    static bool opt_fullscreen = true;
-    static bool opt_padding = false;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+	// DOCKING CODE.
 
-    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-    // because it would be confusing to have two docking targets within each others.
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-    if (opt_fullscreen)
-    {
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    }
-    else
-    {
-        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-    }
+	// docking options.
+	static bool p_open = true;
+	static bool opt_fullscreen = true;
+	static bool opt_padding = false;
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-    // and handle the pass-thru hole, so we ask Begin() to not render a background.
-    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-        window_flags |= ImGuiWindowFlags_NoBackground;
+	// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+	// because it would be confusing to have two docking targets within each others.
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+	if (opt_fullscreen)
+	{
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	}
+	else
+	{
+		dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+	}
 
-    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-    // all active windows docked into it will lose their parent and become undocked.
-    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-    if (!opt_padding)
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+	// and handle the pass-thru hole, so we ask Begin() to not render a background.
+	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+		window_flags |= ImGuiWindowFlags_NoBackground;
 
-    // DOCKING BEGIN.
-    ImGui::Begin("DockSpace Demo",  &p_open, window_flags);
-    if (!opt_padding)
-        ImGui::PopStyleVar();
+	// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+	// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+	// all active windows docked into it will lose their parent and become undocked.
+	// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+	// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+	if (!opt_padding)
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    if (opt_fullscreen)
-        ImGui::PopStyleVar(2);
+	// DOCKING BEGIN.
+	ImGui::Begin("DockSpace Demo", &p_open, window_flags);
+	if (!opt_padding)
+		ImGui::PopStyleVar();
 
-    // Submit the DockSpace
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-    {
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-    }
+	if (opt_fullscreen)
+		ImGui::PopStyleVar(2);
 
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("Options"))
-        {
-            // Disabling fullscreen would allow the window to be moved to the front of other windows,
-            // which we can't undo at the moment without finer window depth/z control.
-            //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-            //ImGui::MenuItem("Padding", NULL, &opt_padding);
-            //ImGui::Separator();
+	// Submit the DockSpace
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+	}
 
-            //if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-            //if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-            //if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-            //if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-            //if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-            //ImGui::Separator();
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("Options"))
+		{
+			// Disabling fullscreen would allow the window to be moved to the front of other windows,
+			// which we can't undo at the moment without finer window depth/z control.
+			//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+			//ImGui::MenuItem("Padding", NULL, &opt_padding);
+			//ImGui::Separator();
+
+			//if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
+			//if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
+			//if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
+			//if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
+			//if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+			//ImGui::Separator();
 
 			if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
 			{
-				std::string projectFolderPath = Hzn::FileDialogs::openFolder();
-				projectRootFolder = std::filesystem::path(projectFolderPath).string();
+				std::string projectFilePath = Hzn::FileDialogs::openFile();
 
-				//Check if the dtring returns empty or not
+				if (std::filesystem::path(projectFilePath).extension().string() == ".hzn")
+				{
+					projectRootFolder = std::filesystem::path(projectFilePath).parent_path().string();
+
+
+
+					//Check if the dtring returns empty or not
 				/*if (projectFolderPath != "") {
 					projectRootFolder = std::filesystem::path(projectFolderPath).string();
 					projectPath = "Project(" + projectRootFolder + ")";
 				}*/
 
 				//set assets path of current project
-				assetPath = projectRootFolder + "\\assets";
-				m_CurrentDirectory = assetPath;
+					m_CurrentDirectory = projectRootFolder;
 
-				std::map<std::string, std::string> spriteFormat;
+					std::string sceneFolderPath = projectRootFolder + "\\scenes";
 
-				//create texture for image file and sprites from sprite sheets
-				for (const auto& entry : std::filesystem::recursive_directory_iterator(assetPath))
-				{
-                    
-                    if (!entry.is_directory() && entry.path().string().find("DirectoryIcon.png") != std::string::npos) {
-                        folderIcon = Hzn::Texture2D::create(entry.path().string());
-                    }
-                    
-                    if (!entry.is_directory() && entry.path().string().find("FileIcon.png") != std::string::npos) {
-                    
-                        fileIcon = Hzn::Texture2D::create(entry.path().string());
-                    }
+					std::string iconPath = projectRootFolder + "\\icons";
 
-					/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
-					{
-						assetManager.LoadAudio(entry.path().string(), entry.path().string());
-					}*/
+					currentScenePath = sceneFolderPath + "\\defaultScene.json";
 
-
-					if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
-						assetManager.LoadTexture(entry.path().string(), entry.path().string());
+					if (!std::filesystem::is_empty(std::filesystem::path(sceneFolderPath))) {
+						m_Scene = Hzn::SceneManager::load(currentScenePath);
 					}
 
-					if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
+					for (const auto& entry : std::filesystem::recursive_directory_iterator(iconPath)) {
+						//create texture of directory icon
+						if (!entry.is_directory() && entry.path().string().find("DirectoryIcon.png") != std::string::npos) {
+							folderIcon = Hzn::Texture2D::create(entry.path().string());
+						}
 
-						for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+						//create texture of file icon
+						if (!entry.is_directory() && entry.path().string().find("FileIcon.png") != std::string::npos) {
 
-							if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-								std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-								std::string line;
+							fileIcon = Hzn::Texture2D::create(entry.path().string());
+						}
+					}
 
-								while (std::getline(infile, line)) {
-									std::istringstream is_line(line);
-									std::string key;
-									if (std::getline(is_line, key, ':'))
-									{
-										std::string value;
 
-										if (std::getline(is_line, value))
+
+					//create map to store format of sprite
+					std::map<std::string, std::string> spriteFormat;
+
+					//create texture for image file and sprites from sprite sheets
+					for (const auto& entry : std::filesystem::recursive_directory_iterator(projectRootFolder))
+					{
+
+
+
+						//load audios file andcreate audio source
+						/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
+						{
+							assetManager.LoadAudio(entry.path().string(), entry.path().string());
+						}*/
+
+
+						//load image file and create texture
+						if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
+							assetManager.LoadTexture(entry.path().string(), entry.path().string());
+						}
+
+						//get sprite format from meta file 
+						if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
+
+							for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+
+								if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+									std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+									std::string line;
+
+									while (std::getline(infile, line)) {
+										std::istringstream is_line(line);
+										std::string key;
+										if (std::getline(is_line, key, ':'))
 										{
-											spriteFormat[key] = value;
+											std::string value;
+
+											if (std::getline(is_line, value))
+											{
+												spriteFormat[key] = value;
+											}
 										}
 									}
+
 								}
-
 							}
-						}
 
-						auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
+							//create texture for sprite sheet file
+							auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
 
-
-						for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
-						{
-							for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+							//create sprites based on format for each sprite sheet
+							for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
 							{
-								std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
-								spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
+								for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+								{
+									std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+									spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
+								}
 							}
+
+
+
+
 						}
-
-
-
-
 					}
 				}
-
+				
 			}
+
 
 			if (ImGui::MenuItem("Save scene"))
 			{
 				Hzn::SceneManager::save(currentScenePath);
 			}
 
-            if (ImGui::MenuItem("Exit"))
-            {
-	            Hzn::App::getApp().close();
-            }
+			if (ImGui::MenuItem("Save scene as"))
+			{
+				std::string filePathfromdialog = Hzn::FileDialogs::saveFile();
+
+				//Check if the dtring returns empty or not
+				if (filePathfromdialog != "") {
+					Hzn::ProjectFile* p = new Hzn::ProjectFile(filePathfromdialog);
+					Hzn::SceneManager::save(p->getPath());
+				}
+
+			}
+
+			if (ImGui::MenuItem("Exit"))
+			{
+				Hzn::App::getApp().close();
+			}
 
 
-               
-            ImGui::EndMenu();
-        }
 
-        ImGui::EndMenuBar();
-    }
+			ImGui::EndMenu();
+		}
 
-    // OBJECT HIERARCHY BEGIN
-    drawHierarchy();
-    // OBJECT HIERARCHY END
+		ImGui::EndMenuBar();
+	}
 
-    /*static bool show = true;*/
-    // SETTINGS BEGIN.
+	// OBJECT HIERARCHY BEGIN
+	drawHierarchy();
+	// OBJECT HIERARCHY END
+
+	/*static bool show = true;*/
+	// SETTINGS BEGIN.
 	ImGui::Begin("Components");
-    if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
-        auto selectedObj = m_Scene->getGameObject(selectedObjectId);
-        Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
-        Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
-        Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
-        Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
-    }
-    ImGui::End();
-    // SETTINGS END.
+	if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
+		auto selectedObj = m_Scene->getGameObject(selectedObjectId);
+		Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
+		Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
+		Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
+		Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+	}
+	ImGui::End();
+	// SETTINGS END.
 
-    //content browser begin
+	//content browser begin
 
 	//projectContextObject = m_CurrentDirectory.string();
 	ImGui::Begin("Content Browser");
 
 	if (!projectRootFolder.empty()) {
-		if (m_CurrentDirectory != std::filesystem::path(assetPath))
+		if (m_CurrentDirectory != std::filesystem::path(projectRootFolder))
 		{
 			if (ImGui::Button("<-"))
 			{
@@ -338,7 +378,7 @@ void EditorLayer::onRenderImgui()
 		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 
-			if (entry.path().string().find(".meta") != std::string::npos)
+			if (entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
 			{
 				continue;
 			}
@@ -458,22 +498,22 @@ void EditorLayer::onRenderImgui()
 
 	ImGui::End();
 
-    //content browser end
+	//content browser end
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::Begin("Viewport");
 
-    // get the states of the viewport.
-    m_ViewportFocused = ImGui::IsWindowFocused();
-    m_ViewportHovered = ImGui::IsWindowHovered();
+	// get the states of the viewport.
+	m_ViewportFocused = ImGui::IsWindowFocused();
+	m_ViewportHovered = ImGui::IsWindowHovered();
 
-    // ImGui layer will not block the events if the viewport is focused and hovered.
-    Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused || !m_ViewportHovered);
+	// ImGui layer will not block the events if the viewport is focused and hovered.
+	Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
-    // if viewport size changes then we re-create the frame buffer.
+	// if viewport size changes then we re-create the frame buffer.
 	glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
-	if(lastViewportSize != viewportSize)
+	if (lastViewportSize != viewportSize)
 	{
 		m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
 	}
@@ -502,146 +542,146 @@ void EditorLayer::onRenderImgui()
 
 	ImGui::End();
 	ImGui::PopStyleVar();
-    // VIEWPORT END.
+	// VIEWPORT END.
 
-    ImGui::End();
-    // DOCKING END.
+	ImGui::End();
+	// DOCKING END.
 }
 
 void EditorLayer::drawHierarchy()
 {
-    ImGui::Begin("Object Hierarchy");
-    auto list = m_Scene->getAllRootIds();
+	ImGui::Begin("Object Hierarchy");
+	auto list = m_Scene->getAllRootIds();
 
-    /*openHierarchyPopup = false;*/
-    openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
+	/*openHierarchyPopup = false;*/
+	openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
 
-    for (const auto& x : list)
-    {
-        drawObjects(m_Scene->getGameObject(x));
-    }
+	for (const auto& x : list)
+	{
+		drawObjects(m_Scene->getGameObject(x));
+	}
 
-    if (openHierarchyPopup) {
-        if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
-            ImGui::CloseCurrentPopup();
-        }
+	if (openHierarchyPopup) {
+		if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
+			ImGui::CloseCurrentPopup();
+		}
 
-        ImGui::OpenPopup("HierarchyObjectPopup");
+		ImGui::OpenPopup("HierarchyObjectPopup");
 
-        if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-            if (ImGui::MenuItem("Copy", NULL, false)) {
-                /*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
-            }
-            if (ImGui::MenuItem("Paste", NULL, false)) {
-                // Do stuff here 
-            }
-            if (ImGui::MenuItem("Duplicate", NULL, false)) {
-                // Do stuff here 
-            }
-            if (ImGui::MenuItem("Delete", NULL, false)) {
-                Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
-                m_Scene->destroyGameObject(obj);
+		if (ImGui::BeginPopup("HierarchyObjectPopup")) {
+			if (ImGui::MenuItem("Copy", NULL, false)) {
+				/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
+			}
+			if (ImGui::MenuItem("Paste", NULL, false)) {
+				// Do stuff here 
+			}
+			if (ImGui::MenuItem("Duplicate", NULL, false)) {
+				// Do stuff here 
+			}
+			if (ImGui::MenuItem("Delete", NULL, false)) {
+				Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
+				m_Scene->destroyGameObject(obj);
 
-                selectedObject = std::string();
-                selectedObjectId = std::numeric_limits<uint32_t>::max();
-            }
-            ImGui::Separator();
+				selectedObject = std::string();
+				selectedObjectId = std::numeric_limits<uint32_t>::max();
+			}
+			ImGui::Separator();
 
-            if (ImGui::MenuItem("Create Empty", NULL, false)) {
-                // Do stuff here
-                Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-                m_Scene->getGameObject(selectedObjectId).addChild(newObject);
-                newObject.addComponent<Hzn::TransformComponent>();
-            }
+			if (ImGui::MenuItem("Create Empty", NULL, false)) {
+				// Do stuff here
+				Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
+				m_Scene->getGameObject(selectedObjectId).addChild(newObject);
+				newObject.addComponent<Hzn::TransformComponent>();
+			}
 
-            ImGui::EndPopup();
-        }
-    }
+			ImGui::EndPopup();
+		}
+	}
 
-    // Right-click
-    ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
-    if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
-    if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
-    ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-    // Context menu (under default mouse threshold)
-    ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-    if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
-        ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
-    }
-    if (ImGui::BeginPopup("contextHierarchy")) {
-        selectedObject = "";
-        selectedObjectId = std::numeric_limits<uint32_t>::max();
+	// Right-click
+	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+	// Context menu (under default mouse threshold)
+	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+		ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+	}
+	if (ImGui::BeginPopup("contextHierarchy")) {
+		selectedObject = "";
+		selectedObjectId = std::numeric_limits<uint32_t>::max();
 
-        if (ImGui::MenuItem("Create Empty", NULL, false)) {
-            Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-            newObject.addComponent<Hzn::TransformComponent>();
-        }
+		if (ImGui::MenuItem("Create Empty", NULL, false)) {
+			Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
+			newObject.addComponent<Hzn::TransformComponent>();
+		}
 
-        ImGui::EndPopup();
-    }
-    // Left click
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-        selectedObject = "";
-        selectedObjectId = std::numeric_limits<uint32_t>::max();
-    }
+		ImGui::EndPopup();
+	}
+	// Left click
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+		selectedObject = "";
+		selectedObjectId = std::numeric_limits<uint32_t>::max();
+	}
 
-    ImGui::End();
+	ImGui::End();
 }
 
 void EditorLayer::drawObjects(const Hzn::GameObject& object)
 {
-    std::vector<Hzn::GameObject> list = object.getChildren();
+	std::vector<Hzn::GameObject> list = object.getChildren();
 
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
 
-    if (list.size() == 0) {
-        flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    }
+	if (list.size() == 0) {
+		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	}
 
-    /*if (selectedObject == object.getComponent<Hzn::NameComponent>().m_Name) {
-        flags |= ImGuiTreeNodeFlags_Selected;
-    }*/
+	/*if (selectedObject == object.getComponent<Hzn::NameComponent>().m_Name) {
+		flags |= ImGuiTreeNodeFlags_Selected;
+	}*/
 
 	if (selectedObjectId == object.getObjectId()) {
-        flags |= ImGuiTreeNodeFlags_Selected;
-    }
+		flags |= ImGuiTreeNodeFlags_Selected;
+	}
 
-    bool open = ImGui::TreeNodeEx(object.getComponent<Hzn::NameComponent>().m_Name.c_str(), flags);
+	bool open = ImGui::TreeNodeEx(object.getComponent<Hzn::NameComponent>().m_Name.c_str(), flags);
 
 
-    /*if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-        selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
-    }*/
+	/*if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+		selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
+	}*/
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-        selectedObjectId = object.getObjectId();
-    }
+		selectedObjectId = object.getObjectId();
+	}
 
 
-    /*if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-        selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
+	/*if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+		selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
 
-        ImGui::OpenPopup("HierarchyObjectPopup");
-    }*/
+		ImGui::OpenPopup("HierarchyObjectPopup");
+	}*/
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-        selectedObjectId = object.getObjectId();
+		selectedObjectId = object.getObjectId();
 
-        ImGui::OpenPopup("HierarchyObjectPopup");
-    }
+		ImGui::OpenPopup("HierarchyObjectPopup");
+	}
 
-    openHierarchyPopup |= ImGui::IsPopupOpen("HierarchyObjectPopup");
+	openHierarchyPopup |= ImGui::IsPopupOpen("HierarchyObjectPopup");
 
-    if (open) {
-        for (const auto& x : list)
-        {
-            drawObjects(x);
-        }
-    }
+	if (open) {
+		for (const auto& x : list)
+		{
+			drawObjects(x);
+		}
+	}
 
-    if (open && list.size() > 0){
-        ImGui::TreePop();
-    }
+	if (open && list.size() > 0) {
+		ImGui::TreePop();
+	}
 }
 
 

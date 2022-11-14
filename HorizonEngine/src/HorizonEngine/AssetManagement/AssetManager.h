@@ -13,7 +13,10 @@ namespace Hzn
 	{
 	public:
 		AssetManager() {};
-		~AssetManager() {};
+		~AssetManager() {
+			_textures.clear();
+			//_audios_.clear();
+		};
 
 		void LoadTexture(std::string fileName, std::string filePath);
 		std::shared_ptr<Hzn::Texture> GetTexture(std::string fileName);

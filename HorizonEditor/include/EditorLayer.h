@@ -41,7 +41,6 @@ private:
 	std::shared_ptr<Hzn::Texture> folderIcon;
 	std::shared_ptr<Hzn::Texture> fileIcon;
 	std::string projectRootFolder;
-	std::string assetPath;
 	std::string currentScenePath;
 
 	std::vector<std::string> rootObjects;
