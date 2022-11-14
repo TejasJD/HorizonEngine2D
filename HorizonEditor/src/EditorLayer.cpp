@@ -25,7 +25,7 @@ void EditorLayer::onAttach()
 	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
 	Hzn::FrameBufferProps props;
 	props.width = Hzn::App::getApp().getAppWindow().getWidth();
-	props.height = Hzn::App::getApp().getAppWindow().getHeight();
+	props.height= Hzn::App::getApp().getAppWindow().getHeight();
 
     m_FrameBuffer = Hzn::FrameBuffer::create(props);
 
@@ -68,7 +68,7 @@ void EditorLayer::onAttach()
 
 void EditorLayer::onDetach()
 {
-    Hzn::SceneManager::close(currentScenePath);
+    Hzn::SceneManager::close("scenes/custom_scene.json");
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)

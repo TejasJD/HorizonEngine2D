@@ -39,13 +39,17 @@ set(HZN_SOURCE_FILES
 	"Platform/OpenGL/FDWindows.cpp"
 	"src/HorizonEngine/Renderer/Texture.cpp"
 	"Platform/OpenGL/GLTexture.cpp"
-	"src/vendor/stb/stbimage.cpp"
+	"vendor/stb/stbimage.cpp"
 	"src/HorizonEngine/Camera/CameraController.cpp"
 	"src/HorizonEngine/Renderer/Renderer2D.cpp"
 	"src/HorizonEngine/Renderer/Renderer3D.cpp"
 	"src/HorizonEngine/Renderer/Sprite.cpp"
 	"src/HorizonEngine/Renderer/FrameBuffer.cpp"
-	"Platform/OpenGL/GLFrameBuffer.cpp"  "src/HorizonEngine/SceneManagement/SceneManager.cpp" "src/HorizonEngine/AssetManagement/AssetManager.cpp" "src/HorizonEngine/SceneManagement/GameObject.cpp")
+	"Platform/OpenGL/GLFrameBuffer.cpp"
+	"src/HorizonEngine/SceneManagement/SceneManager.cpp"
+	"src/HorizonEngine/AssetManagement/AssetManager.cpp"
+	"src/HorizonEngine/SceneManagement/GameObject.cpp"
+)
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -98,7 +102,12 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Renderer/Renderer3D.h"
 	"src/HorizonEngine/Renderer/Sprite.h"
 	"src/HorizonEngine/Renderer/FrameBuffer.h"
-	"Platform/OpenGL/GLFrameBuffer.h" "src/HorizonEngine/SceneManagement/GameObject.h" "src/HorizonEngine/SceneManagement/SceneManager.h" "src/HorizonEngine/AssetManagement/AssetManager.h" "src/HorizonEngine/SceneManagement/GameObject.h")
+	"Platform/OpenGL/GLFrameBuffer.h"
+	"src/HorizonEngine/SceneManagement/GameObject.h"
+	"src/HorizonEngine/SceneManagement/SceneManager.h"
+	"src/HorizonEngine/AssetManagement/AssetManager.h"
+	"src/HorizonEngine/SceneManagement/GameObject.h"
+)
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
