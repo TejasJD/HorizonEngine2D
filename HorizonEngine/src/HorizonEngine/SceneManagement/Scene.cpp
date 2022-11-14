@@ -75,6 +75,23 @@ namespace Hzn
 		return m_lastViewportSize;
 	}
 
+	void Scene::onEditorUpdate(OrthographicCamera& camera, glm::vec3 position, TimeStep ts) {
+		if (m_Valid) {
+			/*glm::mat4 cameraTransform =
+				glm::translate(glm::mat4(1.0f), position) *
+				glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
+				glm::scale(glm::mat4(1.0f), { 1.0f, 1.0f, 1.0f });*/
+
+			Renderer2D::beginScene(camera);
+			const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
+			for (const auto& entity : sprites)
+			{
+				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
+				Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+			}
+			Renderer2D::endScene();
+		}
+	}
 
 	void Scene::onUpdate(TimeStep ts)
 	{

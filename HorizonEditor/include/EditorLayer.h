@@ -28,12 +28,16 @@ private:
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
 
+	bool m_PlayMode = false;
+
+	glm::vec3 editorCameraPosition = { 0.0f, 0.0f, 0.0f };
+	Hzn::OrthographicCameraController m_EditorCameraController;
+
 	std::shared_ptr<Hzn::Scene> m_Scene;
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
 	float m_CameraZoom = 1.0f;
-
 
 	Hzn::AssetManager assetManager;
 	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
