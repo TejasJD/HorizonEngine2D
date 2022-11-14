@@ -22,16 +22,13 @@ private:
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
 	glm::vec2 lastViewportSize = { 0, 0 };
-	Hzn::OrthographicCameraController m_CameraController;
+	Hzn::OrthographicCameraController m_EditorCameraController;
 	std::shared_ptr<Hzn::Texture2D> m_CheckerboardTexture;
 	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
 
 	bool m_PlayMode = false;
-
-	glm::vec3 editorCameraPosition = { 0.0f, 0.0f, 0.0f };
-	Hzn::OrthographicCameraController m_EditorCameraController;
 
 	std::shared_ptr<Hzn::Scene> m_Scene;
 	Hzn::GameObject m_SquareObject;
