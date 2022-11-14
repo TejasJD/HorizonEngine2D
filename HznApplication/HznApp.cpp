@@ -10,6 +10,7 @@
 
 
 
+
 std::shared_ptr<Hzn::App> Hzn::createApp()
 {
 	auto app = std::make_shared<HznApp>();
