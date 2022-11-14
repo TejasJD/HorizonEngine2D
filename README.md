@@ -1,6 +1,6 @@
-﻿# groupProject
+﻿# HorizonEngine
 
-Github repository for the Msc, ASD group project.
+Github repository for the 2D **HorizonEngine** (Part of Msc, ASD group project).
 
 ## Prerequisites
 1. [Visual studio 2022](https://visualstudio.microsoft.com/) (Follow the *Setup for Development -> Windows* section
@@ -15,8 +15,8 @@ and can be primarily accessed through **Developer Command Prompt for VS 2022 / D
 1. ### Windows
    1. Run the following commands in the **command prompt / powershell** to get the project files on your local machine.
 ```
-git clone https://github.com/TejasJD/groupProject.git
-cd groupProject
+git clone https://github.com/TejasJD/HorizonEngine2D.git
+cd HorizonEngine2D
 git submodule init
 git submodule update
 ```
@@ -48,8 +48,8 @@ provided to the `--preset` option. Command: `cmake --preset x64-debug`
 cmake --preset x64-debug
 cd bin\build\x64-debug
 cmake --build .
-cd HznApplication\Debug
-.\HznApplication.exe
+cd HorizonEditor\Debug
+.\HznEditor.exe
 ```
 ## Adding Dependencies
 1. Dependencies can be searched on the [vcpkg package browser](https://vcpkg.io/en/packages.html).
