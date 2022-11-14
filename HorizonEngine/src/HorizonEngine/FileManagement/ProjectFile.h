@@ -13,6 +13,10 @@
 
 namespace Hzn {
 	class ProjectFile {
+
+	/// <summary>
+	/// Declare variables here
+	/// </summary>
 	private:
 		//Private vars
 		std::string path;
@@ -47,6 +51,22 @@ namespace Hzn {
 		/*ProjectFile(const ProjectFile& f) = delete;
 		ProjectFile& operator=(const ProjectFile& f) = delete;*/
 
+
+
+		/// <summary>
+		/// Default constructor, destructor
+		/// and custom constructor to take in a file path
+		/// 
+		/// 
+		/// Declared and Initialised methods to be implemented in ProjectFile.cpp
+		///		- Getters and setters
+		///		- File functions
+		///		- Text manipulation
+		///		- Folder creation and deletion
+		/// </summary>
+
+		
+
 		ProjectFile() {
 
 		}
@@ -64,7 +84,7 @@ namespace Hzn {
 
 		
 
-
+		
 		//Getters and Setters
 		//getters for path, file name, full Path and content
 		std::string getPath() { return path; }
@@ -83,6 +103,7 @@ namespace Hzn {
 		//file functions
 		//open file
 		std::vector<std::string> openFile(std::string filePath);
+		void ProjectFile::mkNewfile(std::string newPath);
 		//Save, saveAs
 		void saveToFile();
 		//void saveAs(std::string newFullPath);
