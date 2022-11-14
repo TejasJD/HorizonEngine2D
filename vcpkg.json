@@ -21,6 +21,8 @@
     "openal-soft",
     "sndfile",
     "stb",
-    "imguizmo"
+    "imguizmo",
+    "entt",
+    "cereal"
   ]
 }

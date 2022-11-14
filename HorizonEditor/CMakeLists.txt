@@ -27,6 +27,15 @@ add_custom_command(
 	$<TARGET_FILE_DIR:HznEditor>/assets
 )
 
+add_custom_command(
+	TARGET HznEditor
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	${CMAKE_CURRENT_LIST_DIR}/scenes
+	$<TARGET_FILE_DIR:HznEditor>/scenes
+)
+
 # post build commands to copy resources from source to build directories for the HorizonEngine target
 add_custom_command(
 	TARGET HznEditor

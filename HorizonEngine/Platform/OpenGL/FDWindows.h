@@ -15,6 +15,7 @@ namespace Hzn
 	static std::string openFile();
 	static std::string saveFile();
 
+	static std::string openFolder();
 	};
 }
 #endif // !HZN_IMGUI_LAYER_H

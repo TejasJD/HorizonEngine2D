@@ -39,6 +39,14 @@ namespace Hzn {
 		return content;
 	}
 
+	//Make a new blank file
+	void ProjectFile::mkNewfile(std::string newPath) {
+		out.open(newPath, std::ios::out);
+		
+		//check error handling
+		out_check();
+		out.close();
+	}
 
 	/// <summary>
 	/// Write the contents to a file and save.

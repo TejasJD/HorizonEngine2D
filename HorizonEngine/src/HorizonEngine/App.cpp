@@ -4,13 +4,14 @@
 #include <glfw/glfw3.h>
 #include "App.h"
 
+#include "HorizonEngine/Renderer/Renderer.h"
+
 namespace Hzn
 {
 	App* App::m_Instance = nullptr;
 	//! App class constructor, initializes the application
 	App::App() : m_Running(true)
 	{
-		registerComponents();
 		/*HZN_CORE_ASSERT(false, "application already initialized");*/
 		m_Instance = this;
 		m_Window = Window::create(800, 600, "HorizonEngine");
@@ -31,20 +32,15 @@ namespace Hzn
 	{
 		HZN_CORE_WARN("App started running...");
 
-		for (auto it = m_Layers.rbegin(); it != m_Layers.rend(); ++it)
-		{
-			HZN_CORE_INFO("{0}\n", (*it)->getName());
-		}
-
 		while (m_Running)
 		{
-			float currentFrameTime = glfwGetTime();
-			TimeStep deltaTime = currentFrameTime - lastFrameTime;
+			const auto currentFrameTime = static_cast<const float>(glfwGetTime());
+			const TimeStep deltaTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
 			//! general layer update
 			if (!m_Minimized) 
 			{
-				for (auto& layer : m_Layers)
+				for (const auto& layer : m_Layers)
 				{
 					layer->onUpdate(deltaTime);
 				}
@@ -52,7 +48,7 @@ namespace Hzn
 
 			//! updates UI components on any layers
 			m_ImguiLayer->imguiBegin();
-			for (auto& layer : m_Layers)
+			for (const auto& layer : m_Layers)
 			{
 				layer->onRenderImgui();
 			}
@@ -92,7 +88,7 @@ namespace Hzn
 		/*auto val = Input::getMousePos();*/
 		/*HZN_CORE_TRACE("{0}, {0}", val.first, val.second);*/
 
-		for (auto& layer : m_Layers)
+		for (const auto& layer : m_Layers)
 		{
 			if (e.Handled)
 			{
@@ -100,11 +96,5 @@ namespace Hzn
 			}
 			layer->onEvent(e);
 		}
-	}
-
-	void App::registerComponents() {
-		REGISTER(Component, Transform);
-		REGISTER(Component, BoxCollider2D);
-		REGISTER(Component, Rigidbody2D);
 	}
 }

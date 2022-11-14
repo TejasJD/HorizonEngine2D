@@ -51,6 +51,7 @@ namespace Hzn {
 		/*ProjectFile(const ProjectFile& f) = delete;
 		ProjectFile& operator=(const ProjectFile& f) = delete;*/
 
+
 		/// <summary>
 		/// Default constructor, destructor
 		/// and custom constructor to take in a file path
@@ -63,7 +64,12 @@ namespace Hzn {
 		///		- Folder creation and deletion
 		/// </summary>
 
-		ProjectFile();
+		
+
+		ProjectFile() {
+
+		}
+
 
 		//Destructor
 		~ProjectFile() {
@@ -97,6 +103,7 @@ namespace Hzn {
 		//file functions
 		//open file
 		std::vector<std::string> openFile(std::string filePath);
+		void ProjectFile::mkNewfile(std::string newPath);
 		//Save, saveAs
 		void saveToFile();
 		//void saveAs(std::string newFullPath);

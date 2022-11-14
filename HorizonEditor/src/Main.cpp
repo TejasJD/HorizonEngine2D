@@ -16,6 +16,8 @@ public:
 	{
 		Hzn::Renderer2D::destroy();
 	}
+
+	
 };
 
 std::shared_ptr<Hzn::App> Hzn::createApp()

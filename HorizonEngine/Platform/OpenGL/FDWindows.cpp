@@ -1,10 +1,10 @@
-
 #include <string>
 #include <commdlg.h>
 #include "string.h"
 #include "windows.h"
 #include <windows.h>
 #include <string>
+#include <shlobj.h>
 
 #include "FDWindows.h"
 #include "App.h"
@@ -120,6 +120,36 @@ namespace Hzn {
 			else {
 				return std::string();
 			}
+		}
+
+		std::string FileDialogs::openFolder() {
+			TCHAR path[MAX_PATH];
+
+
+			BROWSEINFO bi = { 0 };
+			bi.lpszTitle = ("Browse for folder...");
+			bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+
+			LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+			if (pidl != 0)
+			{
+				//get the name of the folder and put it in path
+				SHGetPathFromIDList(pidl, path);
+
+				//free memory used
+				IMalloc* imalloc = 0;
+				if (SUCCEEDED(SHGetMalloc(&imalloc)))
+				{
+					imalloc->Free(pidl);
+					imalloc->Release();
+				}
+
+				return path;
+			}
+
+			return "";
+
 		}
 }
 
