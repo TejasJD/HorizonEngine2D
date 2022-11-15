@@ -11,6 +11,8 @@
 #include "imgui.h"
 #include "HorizonEngine/Renderer/Texture.h"
 
+#include "HorizonEngine/Utils/Math.h"
+
 namespace Hzn
 {
 	class Scene;
@@ -128,6 +130,37 @@ namespace Hzn
 			ar(m_Translation.x, m_Translation.y, m_Translation.z);
 			ar(m_Scale.x, m_Scale.y, m_Scale.z);
 		}
+
+		void rotateAround(const TransformComponent t, const float angle) {
+			float sin = Math::sin(angle * Math::deg2rad);
+			float cos = Math::cos(angle * Math::deg2rad);
+
+			float x = m_Translation.x - t.m_Translation.x;
+			float y = m_Translation.y - t.m_Translation.y;
+
+			float newX = x * cos - y * sin;
+			float newY = x * sin + y * cos;
+
+			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
+		}
+
+		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference) {
+			std::vector<GameObject> children = obj.getChildren();
+			TransformComponent t = obj.getComponent<TransformComponent>();
+			for (int i = 0; i < children.size(); i++) {
+				updateChildren(children.at(i), positionDifference, scaleFactor, rotationDifference);
+				auto& transform = children.at(i).getComponent<TransformComponent>();
+				transform.m_Translation += positionDifference;
+				transform.m_Scale *= scaleFactor;
+
+				// Rotate object around parent by rotationDifference degrees.
+				transform.rotateAround(t, rotationDifference);
+
+				transform.m_Rotation += rotationDifference;
+				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
+				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
+			}
+		}
 	};
 
 	template<>
@@ -138,13 +171,39 @@ namespace Hzn
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected |ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Transform", flags)) {
-			ImGui::InputFloat3("translation", glm::value_ptr(transform.m_Translation));
-			ImGui::InputFloat3("scale", glm::value_ptr(transform.m_Scale));
-			ImGui::SliderFloat("Rotation", &transform.m_Rotation, -180.0f, 180.0f);
+			bool shouldUpdate = false;
+			glm::vec3 startTranslation = transform.m_Translation;
+			glm::vec3 translationDifference{ 0.0f, 0.0f, 0.0f };
+
+			glm::vec3 startScale = transform.m_Scale;
+			glm::vec3 scaleFactor{ 1.0f, 1.0f, 1.0f };
+
+			float startRotation = transform.m_Rotation;
+			float rotationDifference = 0.0f;
+
+			if (ImGui::InputFloat3("Position", glm::value_ptr(transform.m_Translation), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+				shouldUpdate |= true;
+				translationDifference = transform.m_Translation - startTranslation;
+			}
+			if (ImGui::InputFloat3("Scale", glm::value_ptr(transform.m_Scale), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+				shouldUpdate |= true;
+				scaleFactor = transform.m_Scale / startScale;
+			}
+			if (ImGui::InputFloat("Rotation", &transform.m_Rotation, 1.0f, 10.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+				shouldUpdate |= true;
+
+				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
+				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
+
+				rotationDifference = transform.m_Rotation - startRotation;
+			}
 			ImGui::TreePop();
+
+			if (shouldUpdate) {
+				transform.updateChildren(obj, translationDifference, scaleFactor, rotationDifference);
+			}
 		}
 	}
-
 
 	struct RenderComponent
 	{
