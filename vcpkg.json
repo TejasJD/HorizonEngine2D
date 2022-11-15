@@ -23,6 +23,7 @@
     "stb",
     "imguizmo",
     "entt",
-    "cereal"
+    "cereal",
+    "sfml"
   ]
 }

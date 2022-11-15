@@ -19,8 +19,6 @@ EditorLayer::~EditorLayer()
 void EditorLayer::onAttach()
 {
 
-
-
 	HZN_TRACE("Editor Layer Attached!");
 	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
 	Hzn::FrameBufferProps props;
@@ -217,10 +215,16 @@ void EditorLayer::onRenderImgui()
 
 					std::string iconPath = projectRootFolder + "\\icons";
 
+					std::string imagesPath = projectRootFolder + "\\images";
+
 					currentScenePath = sceneFolderPath + "\\defaultScene.json";
 
 					if (!std::filesystem::is_empty(std::filesystem::path(sceneFolderPath))) {
 						m_Scene = Hzn::SceneManager::load(currentScenePath);
+					}
+
+					if (!std::filesystem::is_empty(std::filesystem::path(imagesPath))) {
+						Hzn::SpriteSheetGenerator::createSheet(imagesPath);
 					}
 
 					for (const auto& entry : std::filesystem::recursive_directory_iterator(iconPath)) {
@@ -324,11 +328,15 @@ void EditorLayer::onRenderImgui()
 				}
 
 			}
-
-			if (ImGui::MenuItem("Exit"))
+			if (ImGui::MenuItem("Play"))
 			{
-				Hzn::App::getApp().close();
+				m_PlayMode = !m_PlayMode;
 			}
+
+            if (ImGui::MenuItem("Exit"))
+            {
+	            Hzn::App::getApp().close();
+            }
 
 
 

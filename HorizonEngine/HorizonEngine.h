@@ -44,6 +44,10 @@
 
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
+#include "HorizonEngine/Utils/Rect.h"
+#include "HorizonEngine/Utils/MaxRectsBinPack.h"
+#include "HorizonEngine/Utils/SpriteSheetGenerator.h"
+
 
 #include "HorizonEngine/AssetManagement/AssetManager.h"
 

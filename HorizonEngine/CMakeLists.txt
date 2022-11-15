@@ -49,7 +49,8 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/SceneManagement/SceneManager.cpp"
 	"src/HorizonEngine/AssetManagement/AssetManager.cpp"
 	"src/HorizonEngine/SceneManagement/GameObject.cpp"
-)
+ "src/HorizonEngine/Utils/MaxRectsBinPack.cpp"
+"src/HorizonEngine/Utils/SpriteSheetGenerator.cpp" "src/HorizonEngine/Utils/Rect.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -107,7 +108,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/SceneManagement/SceneManager.h"
 	"src/HorizonEngine/AssetManagement/AssetManager.h"
 	"src/HorizonEngine/SceneManagement/GameObject.h"
-)
+ "src/HorizonEngine/Utils/SpriteSheetGenerator.h" "src/HorizonEngine/Utils/MaxRectsBinPack.h" "src/HorizonEngine/Utils/Rect.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES} "src/HorizonEngine/GraphEditor/GraphEditor.cpp" )
@@ -145,6 +146,7 @@ find_package(imguizmo CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
 find_package(cereal CONFIG REQUIRED)
+find_package(SFML 2.5 COMPONENTS main graphics REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
@@ -160,6 +162,8 @@ target_link_libraries(HorizonEngine
 	imguizmo::imguizmo
 	EnTT::EnTT
 	cereal::cereal
+	sfml-main
+	sfml-graphics
 )
 
 #testing
