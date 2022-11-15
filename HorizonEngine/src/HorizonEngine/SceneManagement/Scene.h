@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include "HorizonEngine/Core/TimeStep.h"
+#include "HorizonEngine/Camera/CameraController.h"
 
 
 namespace Hzn
@@ -28,6 +29,7 @@ namespace Hzn
 
 		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
 		void onUpdate(TimeStep ts, AssetManager assetManager);
+		void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts);
 		/**
 		 * \brief creates a game object in the scene and returns a valid game object.
 		 * \return Valid Game Object.
