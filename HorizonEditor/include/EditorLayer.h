@@ -50,4 +50,8 @@ private:
 	uint32_t selectedObjectId = std::numeric_limits<uint32_t>::max();
 	Hzn::GameObject copiedGameObject;
 	bool openHierarchyPopup = false;
+
+	glm::vec2 m_ViewportBounds[2]{{0.0f, 0.0f}, {0.0f, 0.0f}};
+
+	bool request_NewProject = false;
 };

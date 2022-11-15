@@ -44,6 +44,7 @@ namespace Hzn
 		/// to draw the sprite from the sprite sheet.
 		/// </summary>
 		const std::array<glm::vec2, 4>& getTexCoords() const{ return m_texCoords; }
+
 	private:
 		/// <summary>
 		/// Creates a sprite. Private because, we want to return a shared pointer to the sprite,

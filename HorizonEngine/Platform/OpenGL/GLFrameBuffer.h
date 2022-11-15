@@ -13,7 +13,11 @@ namespace Hzn
 		GLFrameBuffer(const FrameBufferProps& props);
 		virtual ~GLFrameBuffer();
 
-		virtual uint32_t getColorAttachmentId() const override { return m_ColorAttachment; }
+		virtual uint32_t getColorAttachmentId(uint32_t index = 0) const override
+		{
+			HZN_CORE_ASSERT(index < m_ColorAttachments.size(), "Index greater than size!");
+			return m_ColorAttachments[index];
+		}
 		virtual void bind() override;
 		virtual void unbind() override;
 		virtual const FrameBufferProps& getProps() const override { return m_Props; }
@@ -23,10 +27,14 @@ namespace Hzn
 		void invalidate();
 		void destroy();
 		uint32_t m_FrameBufferId = 0;
-		uint32_t m_ColorAttachment = 0;
-		uint32_t m_DepthAttachment = 0;
 		FrameBufferProps m_Props;
 
+
+		std::vector<FrameBufferTextureSpecification> m_ColorAttachmentSpecs;
+		FrameBufferTextureSpecification m_DepthAttachmentSpecs;
+
+		std::vector<uint32_t> m_ColorAttachments;
+		uint32_t m_DepthAttachment = 0;
 	};
 }
 

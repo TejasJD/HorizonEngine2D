@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "Renderer2D.h"
 
+#include "FrameBuffer.h"
+
 namespace Hzn
 {
-
-	bool Renderer2D::m_Initialized = false;
-	Renderer2DStats Renderer2D::m_Stats;
+	bool Renderer2D::s_Initialized = false;
+	Renderer2DStats Renderer2D::s_Stats;
 
 	struct Vertex
 	{
@@ -17,7 +18,6 @@ namespace Hzn
 
 	struct RenderData
 	{
-		/*uint32_t vao = 0, vbo = 0, ebo = 0;*/
 		std::shared_ptr<VertexArray> vao;
 		std::shared_ptr<VertexBuffer> vbo;
 		std::shared_ptr<ElementBuffer> ebo;
@@ -66,8 +66,6 @@ namespace Hzn
 
 	void Renderer2D::init()
 	{
-		// initialize render stats.
-
 		// allocate data for buffer.
 		data.ptr = data.buffer = new Vertex[data.mxvertices];
 
@@ -172,10 +170,10 @@ namespace Hzn
 		endBatch();
 
 		// record stats.
-		Renderer2D::m_Stats.draws = data.draws;
-		Renderer2D::m_Stats.quads = data.quads;
-		Renderer2D::m_Stats.vertices = 4 * data.quads;
-		Renderer2D::m_Stats.indices = 6 * data.quads;
+		Renderer2D::s_Stats.draws = data.draws;
+		Renderer2D::s_Stats.quads = data.quads;
+		Renderer2D::s_Stats.vertices = 4 * data.quads;
+		Renderer2D::s_Stats.indices = 6 * data.quads;
 	}
 
 	void Renderer2D::submitBatch()

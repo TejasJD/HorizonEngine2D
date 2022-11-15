@@ -1,30 +1,31 @@
 #include "pch.h"
-#include "projectManager.h"
-#include "ProjectFile.h"
-#include "SceneManagement/Scene.h"
+#include "ProjectManager.h"
 
+namespace Hzn
+{
+	std::shared_ptr<Project> ProjectManager::s_Project = nullptr;
 
-namespace Hzn{
-		//Function to make project structure
-		Scene ProjectManager::mkProjDirs() {
-			
-			//Declare project obj
-			Hzn::ProjectFile* pjf = new Hzn::ProjectFile();
-
-			//Make root directory
-			pjf->makeDir(projectPath + "/Horizon_project");
-			//Make assets directory
-			pjf->makeDir(projectPath + "/Horizon_project/assets");
-			//make scenes directory
-			pjf->makeDir(projectPath + "/Horizon_project/scenes");
-			//make a blank file
-			pjf ->mkNewfile(projectPath + "/Horizon_project/scenes/newScene.txt");
-
-			//create a scene object for the new project
-			Hzn::Scene* s = new Hzn::Scene(pjf);
-			s->open();
-
-			//return a scene pointer
-			return *s;
+	std::shared_ptr<Project> ProjectManager::create(const std::string& name, const std::filesystem::path& directoryPath)
+	{
+		if(s_Project)
+		{
+			save();
 		}
+
+		return s_Project = std::make_shared<Project>(name, directoryPath);
+	}
+
+	std::shared_ptr<Project> ProjectManager::open(const std::filesystem::path& projectFilePath)
+	{
+	}
+
+	void ProjectManager::save()
+	{
+		
+	}
+
+	void ProjectManager::close()
+	{
+		
+	}
 }

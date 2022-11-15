@@ -6,9 +6,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <imgui.h>
+
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/SceneManagement/GameObject.h"
-#include "imgui.h"
+#include "HorizonEngine/Renderer/Sprite.h"
 
 namespace Hzn
 {
@@ -160,6 +162,7 @@ namespace Hzn
 		void load(Archive& ar)
 		{
 			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
+
 		}
 
 		template<typename Archive>
