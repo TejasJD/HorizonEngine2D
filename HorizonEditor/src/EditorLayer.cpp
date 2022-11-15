@@ -285,6 +285,11 @@ void EditorLayer::onRenderImgui()
 				Hzn::SceneManager::save(currentScenePath);
 			}
 
+			if (ImGui::MenuItem("Play"))
+			{
+				m_PlayMode = !m_PlayMode;
+			}
+
             if (ImGui::MenuItem("Exit"))
             {
 	            Hzn::App::getApp().close();
