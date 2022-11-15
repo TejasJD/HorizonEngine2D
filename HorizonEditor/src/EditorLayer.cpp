@@ -4,9 +4,9 @@
 
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
-	m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
-		static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
-	m_CameraController(Hzn::OrthographicCameraController(m_AspectRatio, 1.0f))
+    m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
+        static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
+	m_EditorCameraController(Hzn::OrthographicCameraController(m_AspectRatio, 1.0f))
 {
 }
 
@@ -75,7 +75,9 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	if (m_ViewportFocused && m_ViewportHovered) m_CameraController.onUpdate(ts);
+	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
+		m_EditorCameraController.onUpdate(ts);
+	}
 
 	m_FrameBuffer->bind();
 
@@ -86,7 +88,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 	if (m_Scene) {
 		lastViewportSize = m_Scene->onViewportResize(props.width, props.height);
-		m_CameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
+		m_EditorCameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
 	}
 
 
@@ -96,7 +98,10 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	/*Hzn::Renderer2D::beginScene(m_CameraController.getCamera());*/
 	// update the scene.
 	if (m_Scene) {
-		m_Scene->onUpdate(ts);
+		if (m_PlayMode)
+			m_Scene->onUpdate(ts);
+		else
+			m_Scene->onEditorUpdate(m_EditorCameraController.getCamera(), ts);
 	}
 	// unbind the current framebuffer.
 	/*Hzn::Renderer2D::endScene();*/
@@ -106,7 +111,9 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 void EditorLayer::onEvent(Hzn::Event& e)
 {
-	if (m_ViewportFocused && m_ViewportHovered) m_CameraController.onEvent(e);
+	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
+		m_EditorCameraController.onEvent(e);
+	}
 }
 
 void EditorLayer::onRenderImgui()
@@ -294,10 +301,15 @@ void EditorLayer::onRenderImgui()
 			//	Hzn::SceneManager::save(currentScenePath);
 			//}
 
-			if (ImGui::MenuItem("Exit"))
+			if (ImGui::MenuItem("Play"))
 			{
-				Hzn::App::getApp().close();
+				m_PlayMode = !m_PlayMode;
 			}
+
+            if (ImGui::MenuItem("Exit"))
+            {
+	            Hzn::App::getApp().close();
+            }
 
 
 
