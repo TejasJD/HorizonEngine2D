@@ -75,6 +75,18 @@ namespace Hzn
 		return m_lastViewportSize;
 	}
 
+	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts) {
+		if (m_Valid) {
+			Renderer2D::beginScene(camera);
+			const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
+			for (const auto& entity : sprites)
+			{
+				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
+				Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+			}
+			Renderer2D::endScene();
+		}
+	}
 
 	void Scene::onUpdate(TimeStep ts)
 	{
