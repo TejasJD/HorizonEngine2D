@@ -224,7 +224,7 @@ void EditorLayer::onRenderImgui()
 					}
 
 					if (!std::filesystem::is_empty(std::filesystem::path(imagesPath))) {
-						Hzn::SpriteSheetGenerator::createSheet(imagesPath);
+						assetManager = Hzn::SpriteSheetGenerator::createSheet(imagesPath, assetManager);
 					}
 
 					for (const auto& entry : std::filesystem::recursive_directory_iterator(iconPath)) {
@@ -249,7 +249,10 @@ void EditorLayer::onRenderImgui()
 					for (const auto& entry : std::filesystem::recursive_directory_iterator(projectRootFolder))
 					{
 
-
+						if (entry.path().string().find("sheets") != std::string::npos || entry.path().string().find("images") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
+						{
+							continue;
+						}
 
 						//load audios file andcreate audio source
 						/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
@@ -263,49 +266,6 @@ void EditorLayer::onRenderImgui()
 							assetManager.LoadTexture(entry.path().string(), entry.path().string());
 						}
 
-						//get sprite format from meta file 
-						if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
-
-							for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-								if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-									std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-									std::string line;
-
-									while (std::getline(infile, line)) {
-										std::istringstream is_line(line);
-										std::string key;
-										if (std::getline(is_line, key, ':'))
-										{
-											std::string value;
-
-											if (std::getline(is_line, value))
-											{
-												spriteFormat[key] = value;
-											}
-										}
-									}
-
-								}
-							}
-
-							//create texture for sprite sheet file
-							auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
-
-							//create sprites based on format for each sprite sheet
-							for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
-							{
-								for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
-								{
-									std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
-									spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
-								}
-							}
-
-
-
-
-						}
 					}
 				}
 
@@ -388,12 +348,11 @@ void EditorLayer::onRenderImgui()
 
 		ImGui::Columns(columnCount, 0, false);
 
-		std::map<std::string, std::string> spriteFormat;
 
 		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 
-			if (entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
+			if (entry.path().string().find("images") != std::string::npos || entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
 			{
 				continue;
 			}
@@ -421,32 +380,8 @@ void EditorLayer::onRenderImgui()
 			}
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
-			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
+			if (entry.path().parent_path().string().find("sheets") != std::string::npos)
 			{
-
-				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-						std::string line;
-
-						while (std::getline(infile, line)) {
-							std::istringstream is_line(line);
-							std::string key;
-							if (std::getline(is_line, key, ':'))
-							{
-								std::string value;
-
-								if (std::getline(is_line, value))
-								{
-									spriteFormat[key] = value;
-								}
-							}
-						}
-
-					}
-				}
-
 				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 
@@ -457,18 +392,14 @@ void EditorLayer::onRenderImgui()
 				if (ImGui::BeginPopupModal("showSprites")) {
 
 					ImGui::Columns(columnCount, 0, false);
-					for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+					for (size_t i = 0; i < assetManager.GetSprite(entry.path().filename().string()).size(); i++)
 					{
-						for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
-						{
-							std::string currentSprite = entry.path().string().append("(").append(std::to_string(i)).append(",").append(std::to_string(j)).append(")");
+							std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(entry.path().filename().string())[i];
 
-							std::shared_ptr<Hzn::Sprite2D> sprite = spriteMap.find(currentSprite)->second;
 							ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
-							std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+							std::string spriteTexCoords = "(" + std::to_string(i) + ")";
 							ImGui::TextWrapped(spriteTexCoords.c_str());
 							ImGui::NextColumn();
-						}
 					}
 
 					ImGui::Columns(1);

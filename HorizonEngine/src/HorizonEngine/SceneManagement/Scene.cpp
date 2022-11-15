@@ -119,7 +119,7 @@ namespace Hzn
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 
 					if (!renderComponent.texturePath.empty()) {
-						renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
+						//renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
 						Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent.m_Texture);
 					}
 					else

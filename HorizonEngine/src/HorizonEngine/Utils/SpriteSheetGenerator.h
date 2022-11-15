@@ -13,18 +13,11 @@ namespace Hzn {
 	class MaxRectsBinPack;
 	class SpriteSheetGenerator {
 		friend class MaxRectsBinPack;
+		friend class AssetManager;
 	public:
 		SpriteSheetGenerator() {};
 		~SpriteSheetGenerator() {};
-		static void createSheet(const std::string folderPath);
-		
-
-	private:
-
-		//MaxRectsBinPack::FreeRectChoiceHeuristic chooseBestHeuristic(std::vector<sf::Texture*>* rects, size_t texWidth, size_t texHeight);
-		//static std::string getXMLSheet(std::vector<sf::Image> images, std::string name);
-
-
+		static AssetManager createSheet(const std::string folderPath, AssetManager assetManager);
 	};
 }
 #endif
