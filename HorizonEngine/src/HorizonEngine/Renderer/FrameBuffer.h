@@ -5,14 +5,47 @@
 
 namespace Hzn
 {
+	enum class FrameBufferTextureFormat
+	{
+		None = 0,
+		RGBA8 = 1,
+		RED_INTEGER = 2,
+		DEPTH24_STENCIL8 = 3
+	};
+
+	struct FrameBufferTextureSpecification
+	{
+		FrameBufferTextureSpecification() = default;
+		FrameBufferTextureSpecification(FrameBufferTextureFormat format)
+			:m_Format(format) {}
+
+		~FrameBufferTextureSpecification() = default;
+
+		FrameBufferTextureFormat m_Format = FrameBufferTextureFormat::None;
+	};
+
+	struct FrameBufferAttachmentSpecification
+	{
+		FrameBufferAttachmentSpecification() = default;
+
+		FrameBufferAttachmentSpecification(std::initializer_list<FrameBufferTextureSpecification> attachments)
+			: m_Attachments(attachments) {}
+
+		~FrameBufferAttachmentSpecification() = default;
+
+		std::vector<FrameBufferTextureSpecification> m_Attachments;
+	};
+
 	/// <summary>
 	///	Create a FrameBufferProperties object which holds the
 	///	properties required to create a frame buffer.
 	/// </summary>
 	struct FrameBufferProps
 	{
-		uint32_t width = 0, height = 0;
-		uint32_t samples = 0;
+		uint32_t width = 0;
+		uint32_t height = 0;
+		FrameBufferAttachmentSpecification attachments;
+		uint32_t samples = 1;
 		bool isBind = false;
 	};
 
@@ -57,7 +90,7 @@ namespace Hzn
 		///	for the frame buffer.
 		///	</summary>
 		///	<returns>integer with denotes the color attachment Id.</returns>
-		virtual uint32_t getColorAttachmentId() const = 0;
+		virtual uint32_t getColorAttachmentId(uint32_t index = 0) const = 0;
 
 		/// <summary>
 		/// Creates a frame buffer object from the properties in

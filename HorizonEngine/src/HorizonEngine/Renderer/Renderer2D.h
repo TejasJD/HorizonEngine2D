@@ -170,7 +170,7 @@ namespace Hzn
 		/// Check if the renderer was initialized.
 		/// </summary>
 		/// <returns>Returns true if the renderer was initialized else returns false.</returns>
-		inline static bool isInitialized() { return m_Initialized; }
+		inline static bool isInitialized() { return s_Initialized; }
 
 
 		/// <summary>
@@ -188,7 +188,7 @@ namespace Hzn
 		/// </summary>
 		static void endBatch();
 
-		static Renderer2DStats getStats() { return m_Stats; }
+		static Renderer2DStats getStats() { return s_Stats; }
 
 	private:
 		/// <summary>
@@ -205,9 +205,8 @@ namespace Hzn
 				throw std::runtime_error("2D Renderer not initialized!");
 			}
 		}
-
-		static bool m_Initialized;
-		static Renderer2DStats m_Stats;
+		static bool s_Initialized;
+		static Renderer2DStats s_Stats;
 	};
 }
 

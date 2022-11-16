@@ -33,6 +33,8 @@
 #include "HorizonEngine/Components/Component.h"
 
 #include "HorizonEngine/FileManagement/ProjectFile.h"
+#include "HorizonEngine/FileManagement/Project.h"
+#include "HorizonEngine/FileManagement/ProjectManager.h"
 
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/SceneManagement/Scene.h"

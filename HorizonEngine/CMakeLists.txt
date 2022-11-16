@@ -49,7 +49,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/SceneManagement/SceneManager.cpp"
 	"src/HorizonEngine/AssetManagement/AssetManager.cpp"
 	"src/HorizonEngine/SceneManagement/GameObject.cpp"
-)
+ "src/HorizonEngine/FileManagement/Project.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -107,7 +107,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/SceneManagement/SceneManager.h"
 	"src/HorizonEngine/AssetManagement/AssetManager.h"
 	"src/HorizonEngine/SceneManagement/GameObject.h"
-)
+ "src/HorizonEngine/FileManagement/ProjectManager.h" "src/HorizonEngine/FileManagement/Project.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES} "src/HorizonEngine/GraphEditor/GraphEditor.cpp" )
