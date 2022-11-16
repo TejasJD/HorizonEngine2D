@@ -6,6 +6,21 @@
 
 namespace Hzn
 {
+	void GameObject::setParent(GameObject& obj) const 
+	{
+		isValid();
+
+		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
+
+		if (obj) {
+			obj.addChild(*this);
+		}
+		else {
+			relationComponent.m_Parent = { entt::null };
+		}
+
+	}
+
 	GameObject GameObject::getParent() const
 	{
 		isValid();

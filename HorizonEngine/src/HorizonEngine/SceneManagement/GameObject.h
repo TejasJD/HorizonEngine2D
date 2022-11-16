@@ -60,6 +60,7 @@ namespace Hzn
 
 		uint32_t getObjectId() const { return entt::to_integral(m_ObjectId); }
 
+		void setParent(GameObject& obj) const;
 		GameObject getParent() const;
 		GameObject getNextSibling() const;
 		GameObject getPrevSibling() const;
@@ -67,7 +68,6 @@ namespace Hzn
 		size_t getChildCount() const;
 		void addChild(const GameObject& obj);
 		void removeChild(const GameObject& obj);
-
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}

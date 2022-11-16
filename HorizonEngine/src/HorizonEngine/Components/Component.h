@@ -49,6 +49,10 @@ namespace Hzn
 				cereal::make_nvp("nextSibling", entt::to_integral(m_Next)),
 				cereal::make_nvp("prevSibling", entt::to_integral(m_Prev)));
 		}
+
+		bool hasParent() {
+			return m_Parent != entt::null;
+		}
 	private:
 		size_t m_ChildCount = 0ULL;
 		entt::entity m_Parent{entt::null};

@@ -17,7 +17,7 @@ public:
 
 private:
 	void drawHierarchy();
-	void drawObjects(const Hzn::GameObject& object);
+	void drawObjects(Hzn::GameObject& object);
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
