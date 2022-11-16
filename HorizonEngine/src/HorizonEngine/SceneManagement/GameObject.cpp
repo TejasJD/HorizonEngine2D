@@ -12,11 +12,11 @@ namespace Hzn
 
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
-		try {
-			obj.isValid();
+		if (obj) {
 			obj.addChild(*this);
-		} catch (std::runtime_error e) {
-			relationComponent.m_Parent = {entt::null};
+		}
+		else {
+			relationComponent.m_Parent = { entt::null };
 		}
 
 	}

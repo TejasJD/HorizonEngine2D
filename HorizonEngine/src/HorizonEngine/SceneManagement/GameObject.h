@@ -68,6 +68,12 @@ namespace Hzn
 		size_t getChildCount() const;
 		void addChild(const GameObject& obj);
 		void removeChild(const GameObject& obj);
+	private:
+		// this constructor is used by the Scene to give you a valid game object.
+		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
+
+		// if both scenes are not nullptr and both pointers point to the same scene.
+		bool sameScene(const GameObject& rhs) const { return m_Scene && rhs.m_Scene && &*m_Scene == &*rhs.m_Scene; }
 
 		void isValid() const
 		{
@@ -77,13 +83,6 @@ namespace Hzn
 				throw std::runtime_error("Game Object invalidated! Doesn't belong to any scene!");
 			}
 		}
-
-	private:
-		// this constructor is used by the Scene to give you a valid game object.
-		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
-
-		// if both scenes are not nullptr and both pointers point to the same scene.
-		bool sameScene(const GameObject& rhs) const { return m_Scene && rhs.m_Scene && &*m_Scene == &*rhs.m_Scene; }
 
 		// game object id.
 		entt::entity m_ObjectId = entt::null;
