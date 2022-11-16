@@ -54,6 +54,14 @@ namespace Hzn
 		s_Project->m_Scene = SceneManager::open(sceneFile);
 	}
 
+	void ProjectManager::saveScene()
+	{
+		if(s_Project && s_Project->m_Scene)
+		{
+			SceneManager::save();
+		}
+	}
+
 	std::shared_ptr<Project> ProjectManager::open(const std::filesystem::path& projectFilePath)
 	{
 		if(s_Project)

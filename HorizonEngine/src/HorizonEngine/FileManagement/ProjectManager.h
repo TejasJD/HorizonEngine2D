@@ -27,6 +27,7 @@ namespace Hzn
 
 		static void newScene(const std::string& name);
 		static void openScene(const std::string& name);
+		static void saveScene();
 		static void save();
 		static void close();
 
