@@ -11,7 +11,7 @@ namespace Hzn
 	{
 		if(s_Project)
 		{
-			save();
+			close();
 		}
 		s_Project = std::make_shared<Project>(name, directoryPath);
 		return s_Project;
@@ -73,13 +73,12 @@ namespace Hzn
 
 	void ProjectManager::save()
 	{
-		if(s_Project)
+		if(s_Project && s_Project->m_Scene)
 		{
 			std::filesystem::path projectFile = s_Project->m_Path;
 			std::ofstream os(projectFile, std::ios::binary);
 			os << "ActiveScene" << " " << ":" << " " << s_Project->m_Scene->m_Path.string();
 			os.close();
-
 			SceneManager::save();
 		}
 	}
@@ -87,7 +86,9 @@ namespace Hzn
 	void ProjectManager::close()
 	{
 		save();
+		if (s_Project && s_Project->m_Scene) {
 			SceneManager::close();
-		s_Project.reset();
+			s_Project.reset();
+		}
 	}
 }
