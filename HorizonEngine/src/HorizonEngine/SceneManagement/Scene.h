@@ -48,7 +48,6 @@ namespace Hzn
 
 		std::vector<uint32_t> getAllRootIds() const;
 		std::vector<uint32_t> getAllObjectIds() const;
-
 	private:
 		int gameObjectCounter = 0;
 		void serialize(cereal::JSONOutputArchive& outputArchive);

@@ -607,6 +607,19 @@ void EditorLayer::drawHierarchy()
 	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
 	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
 	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
+			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+			if (receivedObject.getComponent<Hzn::RelationComponent>().hasParent()) {
+				receivedObject.getParent().removeChild(receivedObject);
+			}
+			receivedObject.setParent(Hzn::GameObject());
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
 	// Context menu (under default mouse threshold)
 	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
 	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
@@ -632,7 +645,7 @@ void EditorLayer::drawHierarchy()
 	ImGui::End();
 }
 
-void EditorLayer::drawObjects(const Hzn::GameObject& object)
+void EditorLayer::drawObjects(Hzn::GameObject& object)
 {
 	std::vector<Hzn::GameObject> list = object.getChildren();
 
@@ -642,32 +655,45 @@ void EditorLayer::drawObjects(const Hzn::GameObject& object)
 		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	/*if (selectedObject == object.getComponent<Hzn::NameComponent>().m_Name) {
-		flags |= ImGuiTreeNodeFlags_Selected;
-	}*/
-
 	if (selectedObjectId == object.getObjectId()) {
 		flags |= ImGuiTreeNodeFlags_Selected;
 	}
 
-	bool open = ImGui::TreeNodeEx(object.getComponent<Hzn::NameComponent>().m_Name.c_str(), flags);
+	auto& nameComponent = object.getComponent<Hzn::NameComponent>();
 
+	bool open = ImGui::TreeNodeEx(nameComponent.m_Name.c_str(), flags);
+	
+	// Drag and drop
+	ImGuiDragDropFlags src_flags = ImGuiDragDropFlags_SourceNoDisableHover; // | ImGuiDragDropFlags_SourceNoHoldToOpenOthers;
 
-	/*if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-		selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
-	}*/
+	if (ImGui::BeginDragDropSource(src_flags)) {
+		int id = object.getObjectId();
 
+		ImGui::SetDragDropPayload("HIERARCHY_PAYLOAD", &id, sizeof(int));
+		ImGui::Text(nameComponent.m_Name.c_str());
+		ImGui::EndDragDropSource();
+
+		std::vector<std::string> names = m_Scene->allGameObjectNames();
+		HZN_CORE_DEBUG(names.size());
+	}
+
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
+			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+			if (receivedObject.getComponent<Hzn::RelationComponent>().hasParent())
+				receivedObject.getParent().removeChild(receivedObject);
+			object.addChild(receivedObject);
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
+	// Left click
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 		selectedObjectId = object.getObjectId();
 	}
 
-
-	/*if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-		selectedObject = object.getComponent<Hzn::NameComponent>().m_Name.c_str();
-
-		ImGui::OpenPopup("HierarchyObjectPopup");
-	}*/
-
+	// Right click
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 		selectedObjectId = object.getObjectId();
 
@@ -677,7 +703,7 @@ void EditorLayer::drawObjects(const Hzn::GameObject& object)
 	openHierarchyPopup |= ImGui::IsPopupOpen("HierarchyObjectPopup");
 
 	if (open) {
-		for (const auto& x : list)
+		for (auto& x : list)
 		{
 			drawObjects(x);
 		}
