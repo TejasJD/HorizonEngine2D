@@ -41,8 +41,9 @@ namespace Hzn
 
 		std::string key, sep, value;
 		is >> key >> sep >> value;
-
-		m_Scene = SceneManager::open(value);
+		if (!value.empty() && std::filesystem::exists(value) && std::filesystem::is_regular_file(value)) {
+			m_Scene = SceneManager::open(value);
+		}
 
 		is.close();
 	}

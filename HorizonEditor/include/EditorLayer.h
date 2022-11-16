@@ -60,4 +60,6 @@ private:
 	bool request_NewProject = false;
 	bool request_NewScene = false;
 	bool request_OpenScene = false;
+
+	bool canCreateProject = false;
 };

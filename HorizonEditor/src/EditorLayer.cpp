@@ -4,8 +4,8 @@
 
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
-    m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
-        static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
+	m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
+		static_cast<float>(Hzn::App::getApp().getAppWindow().getHeight())),
 	m_EditorCameraController(Hzn::OrthographicCameraController(m_AspectRatio, 1.0f))
 {
 }
@@ -164,20 +164,20 @@ void EditorLayer::onRenderImgui()
 			//if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
 			//ImGui::Separator();
 
-			if(ImGui::MenuItem("New Project"))
+			if (ImGui::MenuItem("New Project"))
 			{
 				request_NewProject = true;
 			}
 
-			if(ImGui::MenuItem("Open Project"))
+			if (ImGui::MenuItem("Open Project"))
 			{
 				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
 				m_Scene = m_ActiveProject->getActiveScene();
 			}
 
-			if(m_ActiveProject)
+			if (m_ActiveProject)
 			{
-				if(ImGui::MenuItem("Close Project"))
+				if (ImGui::MenuItem("Close Project"))
 				{
 					m_Scene.reset();
 					m_ActiveProject.reset();
@@ -275,9 +275,9 @@ void EditorLayer::onRenderImgui()
 			//	Hzn::SceneManager::save(currentScenePath);
 			//}
 
-			if(m_ActiveProject)
+			if (m_ActiveProject)
 			{
-				if(ImGui::MenuItem("New Scene"))
+				if (ImGui::MenuItem("New Scene"))
 				{
 					request_NewScene = true;
 				}
@@ -289,10 +289,10 @@ void EditorLayer::onRenderImgui()
 				m_PlayMode = !m_PlayMode;
 			}
 
-            if (ImGui::MenuItem("Exit"))
-            {
-	            Hzn::App::getApp().close();
-            }
+			if (ImGui::MenuItem("Exit"))
+			{
+				Hzn::App::getApp().close();
+			}
 
 
 
@@ -311,24 +311,42 @@ void EditorLayer::onRenderImgui()
 	if (ImGui::BeginPopupModal("New Project", &request_NewProject, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::InputText("Project Name", projectNameBuffer, 512);
-
 		ImGui::InputText("Root Folder", directoryPathBuffer, 1024);
 		ImGui::SameLine();
 		if (ImGui::Button("..."))
 		{
 			strcpy_s(directoryPathBuffer, Hzn::FileDialogs::openFolder().c_str());
 		}
+		if (!canCreateProject) {
+			ImGui::Text("Enter valid name / choose valid base directory / Project with the same name exists in the same directory!");
+		}
+
+		// create new project and set it as active project.
+		std::string nameString = projectNameBuffer;
+		std::filesystem::path directoryPath = directoryPathBuffer;
+
+		if (!nameString.empty() && !directoryPath.empty())
+		{
+			if (std::filesystem::exists(directoryPathBuffer) &&
+				std::filesystem::is_directory(directoryPathBuffer) &&
+				!std::filesystem::exists(directoryPath.string() + "\\" + projectNameBuffer))
+			{
+				canCreateProject = true;
+			}
+			else canCreateProject = false;
+		}
+		else canCreateProject = false;
 
 		if (ImGui::Button("Create", ImVec2(120, 0)))
 		{
-			// create new project and set it as active project.
-			m_ActiveProject = Hzn::ProjectManager::create(projectNameBuffer, std::filesystem::path(directoryPathBuffer));
-			m_Scene = m_ActiveProject->getActiveScene();
+				if (canCreateProject) {
+					m_ActiveProject = Hzn::ProjectManager::create(projectNameBuffer, std::filesystem::path(directoryPathBuffer));
+					m_Scene = m_ActiveProject->getActiveScene();
 
-			// clear the directory path buffers.
-			memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
-			memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
-
+					// clear the directory path buffers.
+					memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
+					memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
+				}
 			ImGui::CloseCurrentPopup();
 			request_NewProject = false;
 		}
@@ -338,25 +356,25 @@ void EditorLayer::onRenderImgui()
 	if (request_NewScene)
 		ImGui::OpenPopup("New Scene");
 
-	if(ImGui::BeginPopupModal("New Scene", &request_NewScene, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal("New Scene", &request_NewScene, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		
+
 		ImGui::InputText("Scene Name", sceneNameBuffer, 256);
 		std::string sceneName = std::string(sceneNameBuffer);
 
-		if(sceneName.empty()) ImGui::Text("scene name field is empty!");
+		if (sceneName.empty()) ImGui::Text("scene name field is empty!");
 
 		ImGui::Separator();
-			if (ImGui::Button("Create", ImVec2(120, 0)))
-			{
-				// create new project and set it as active project.
-				if (!sceneName.empty()) {
-					Hzn::ProjectManager::newScene(sceneName);
-					m_Scene = m_ActiveProject->getActiveScene();
-					memset(sceneNameBuffer, '\0', sizeof(sceneNameBuffer));
-					request_NewScene = false;
-				}
+		if (ImGui::Button("Create", ImVec2(120, 0)))
+		{
+			// create new project and set it as active project.
+			if (!sceneName.empty()) {
+				Hzn::ProjectManager::newScene(sceneName);
+				m_Scene = m_ActiveProject->getActiveScene();
+				memset(sceneNameBuffer, '\0', sizeof(sceneNameBuffer));
+				request_NewScene = false;
 			}
+		}
 		ImGui::EndPopup();
 	}
 
@@ -626,32 +644,32 @@ void EditorLayer::drawHierarchy()
 			}
 		}
 
-	// Right-click
-	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
-	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
-	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
-	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		// Right-click
+		ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+		if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+		if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+		ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 
-	if (ImGui::BeginDragDropTarget()) {
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
-			if (receivedObject.getComponent<Hzn::RelationComponent>().hasParent()) {
-				receivedObject.getParent().removeChild(receivedObject);
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
+				Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+				if (receivedObject.getComponent<Hzn::RelationComponent>().hasParent()) {
+					receivedObject.getParent().removeChild(receivedObject);
+				}
+				receivedObject.setParent(Hzn::GameObject());
 			}
-			receivedObject.setParent(Hzn::GameObject());
+
+			ImGui::EndDragDropTarget();
 		}
 
-		ImGui::EndDragDropTarget();
-	}
-
-	// Context menu (under default mouse threshold)
-	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
-		ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
-	}
-	if (ImGui::BeginPopup("contextHierarchy")) {
-		selectedObject = "";
-		selectedObjectId = std::numeric_limits<uint32_t>::max();
+		// Context menu (under default mouse threshold)
+		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+		if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+			ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+		}
+		if (ImGui::BeginPopup("contextHierarchy")) {
+			selectedObject = "";
+			selectedObjectId = std::numeric_limits<uint32_t>::max();
 
 			if (ImGui::MenuItem("Create Empty", NULL, false)) {
 				Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
@@ -687,7 +705,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 	auto& nameComponent = object.getComponent<Hzn::NameComponent>();
 
 	bool open = ImGui::TreeNodeEx(nameComponent.m_Name.c_str(), flags);
-	
+
 	// Drag and drop
 	ImGuiDragDropFlags src_flags = ImGuiDragDropFlags_SourceNoDisableHover; // | ImGuiDragDropFlags_SourceNoHoldToOpenOthers;
 
