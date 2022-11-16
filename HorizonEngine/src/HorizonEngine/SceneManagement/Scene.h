@@ -15,11 +15,13 @@
 namespace Hzn
 {
 	class SceneManager;
+	class ProjectManager;
 
 	class Scene
 	{
 		friend class GameObject;
 		friend class SceneManager;
+		friend class ProjectManager;
 	public:
 		Scene();
 		Scene(cereal::JSONInputArchive& inputArchive);
@@ -65,6 +67,7 @@ namespace Hzn
 		std::unordered_map<uint32_t, GameObject> m_LocStorage;
 		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
+		std::filesystem::path m_Path;
 	};
 
 }

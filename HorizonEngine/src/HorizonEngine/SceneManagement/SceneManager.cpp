@@ -5,107 +5,101 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "Components/Component.h"
+#include "HorizonEngine/FileManagement/ProjectManager.h"
 
 namespace Hzn
 {
-	struct SceneDefaults
-	{
-		std::string filePath = "default.json";
-	};
-
-	static SceneDefaults defaults;
-
-	// filepath of the currently open scene file.
-	std::string SceneManager::s_FilePath = std::string();
-
 	std::shared_ptr<Scene> SceneManager::s_Scene = nullptr;
-
-
-	std::shared_ptr<Scene> SceneManager::load(const std::string& filepath)
+	std::shared_ptr<Scene> SceneManager::create(const std::filesystem::path& filepath)
 	{
-		if(s_Scene)
+		if (s_Scene)
 		{
-			// serialize and safely close the currently playing scene.
+			close();
 		}
 
-		s_FilePath = filepath;
-		// deserialize the coming scene and load it.
-		if (!filepath.empty())
-		{
-			try {
-				std::ifstream is(s_FilePath, std::ios::binary);
-				cereal::JSONInputArchive inputArchive(is);
-				// create the scene and make it valid for actions.
-				s_Scene = std::make_shared<Scene>(inputArchive);
-				s_Scene->m_Valid = true;
-				is.close();
-				return s_Scene;
-			}
-			catch (const cereal::RapidJSONException& e)
-			{
-				//TODO: Scene corruption dialog.
-				const std::string& msg = "scene corruption";
-				throw std::runtime_error(msg + e.what());
-			}
-		}
+		// create the scene file at the filepath.
+		std::ofstream os(filepath);
+		os.close();
 
 		// create the scene and make it valid for actions.
 		s_Scene = std::make_shared<Scene>();
 		s_Scene->m_Valid = true;
+		s_Scene->m_Path = filepath;
 
+		// create a default scene in this case.
+		defaultScene();
 		return s_Scene;
 	}
 
-	void SceneManager::close(const std::string& filepath)
+	std::shared_ptr<Scene> SceneManager::open(const std::filesystem::path& filepath)
 	{
-		// trying to close when there is no scene loaded!
-		if(!s_Scene)
+		if(s_Scene)
 		{
-			throw std::runtime_error("no scene active!");
+			close();
 		}
 
-		std::ofstream os(filepath, std::ios::binary);
+		std::ifstream is(filepath, std::ios::binary);
 
-		if(!os)
-		{
-			throw std::runtime_error("failure on closing scene!");
+		HZN_CORE_ASSERT(is, "invalid input file!");
+
+		cereal::JSONInputArchive inputArchive(is);
+		// create the scene and make it valid for actions.
+		s_Scene = std::make_shared<Scene>(inputArchive);
+		s_Scene->m_Valid = true;
+		s_Scene->m_Path = filepath;
+
+		is.close();
+		return s_Scene;
+	}
+
+
+	void SceneManager::save()
+	{
+		// save only when active scene.
+		if (s_Scene) {
+			std::ofstream os(s_Scene->m_Path, std::ios::binary);
+			HZN_CORE_ASSERT(os, "output file couldn't be generated");
+			cereal::JSONOutputArchive outputArchive(os);
+			// serialize the scene before closing.
+			s_Scene->serialize(outputArchive);
+
+			os << "\n}\n";
+			os.close();
 		}
+	}
 
-		cereal::JSONOutputArchive outputArchive(os);
-		// serialize the scene before closing.
-		s_Scene->serialize(outputArchive);
-
-		os << "\n}\n";
-
-		os.close();
-
+	void SceneManager::close()
+	{
+		save();
 		// invalidate any external pointers to the scene.
-		s_Scene->invalidate();
+		if (s_Scene) {
+			s_Scene->invalidate();
+		}
 		s_Scene.reset();
 	}
 
-	void SceneManager::save(const std::string& filepath)
+	void SceneManager::defaultScene()
 	{
-		// trying to close when there is no scene loaded!
-		if (!s_Scene)
-		{
-			throw std::runtime_error("no scene active!");
-		}
+		Hzn::GameObject object0 = s_Scene->createGameObject("square 1");
+		object0.addComponent<Hzn::TransformComponent>();
+		object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-		std::ofstream os(filepath, std::ios::binary);
+		Hzn::GameObject object1 = s_Scene->createGameObject("square 2");
 
-		if (!os)
-		{
-			throw std::runtime_error("failure on closing scene!");
-		}
+		object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
+		object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-		cereal::JSONOutputArchive outputArchive(os);
-		// serialize the scene before closing.
-		s_Scene->serialize(outputArchive);
+		Hzn::GameObject object3 = s_Scene->createGameObject("square 3");
 
-		os << "\n}\n";
+		object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
+		object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 
-		os.close();
+		Hzn::GameObject camera = s_Scene->createGameObject("camera 1");
+		camera.addComponent<Hzn::CameraComponent>();
+		camera.addComponent<Hzn::TransformComponent>();
 
+		object0.addChild(camera);
+		object0.addChild(object1);
 	}
+
 }

@@ -10,12 +10,12 @@ namespace Hzn
 	class SceneManager
 	{
 	public:
-		static std::shared_ptr<Scene> load(const std::string& filepath = std::string());
-		static void close(const std::string& filepath);
-
-		static void save(const std::string& filepath);
+		static std::shared_ptr<Scene> create(const std::filesystem::path& filepath);
+		static std::shared_ptr<Scene> open(const std::filesystem::path& filepath);
+		static void close();
+		static void save();
 	private:
-		static std::string s_FilePath;
+		static void defaultScene();
 		static std::shared_ptr<Scene> s_Scene;
 	};
 }

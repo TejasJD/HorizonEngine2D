@@ -7,9 +7,11 @@
 namespace Hzn
 {
 	class Project;
+	class SceneManager;
 
 	class ProjectManager
 	{
+		friend class SceneManager;
 	public:
 		/**
 		 * \brief Creates new, or opens a project depending on the path provided.
@@ -22,15 +24,11 @@ namespace Hzn
 		 */
 		static std::shared_ptr<Project> create(const std::string& name, const std::filesystem::path& directoryPath);
 		static std::shared_ptr<Project> open(const std::filesystem::path& projectFilePath);
+
+		static void newScene(const std::string& name);
+		static void openScene(const std::string& name);
 		static void save();
-		static std::filesystem::path getProjectPath()
-		{
-			if(!s_Project)
-			{
-				throw std::runtime_error("No Project Open!");
-			}
-			return s_Project->m_Path;
-		}
+		static void close();
 
 	private:
 		static std::shared_ptr<Project> s_Project;

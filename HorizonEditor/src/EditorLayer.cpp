@@ -30,47 +30,11 @@ void EditorLayer::onAttach()
 	};
 
 	m_FrameBuffer = Hzn::FrameBuffer::create(props);
-
-	m_Scene = Hzn::SceneManager::load();
-
-	Hzn::GameObject object0 = m_Scene->createGameObject("square 1");
-	object0.addComponent<Hzn::TransformComponent>();
-	object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-	Hzn::GameObject object1 = m_Scene->createGameObject("square 2");
-
-	object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
-	object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-	Hzn::GameObject object3 = m_Scene->createGameObject("square 3");
-
-	object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
-	object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-
-	Hzn::GameObject camera = m_Scene->createGameObject("camera 1");
-	camera.addComponent<Hzn::CameraComponent>();
-	camera.addComponent<Hzn::TransformComponent>();
-
-	object0.addChild(camera);
-	object0.addChild(object1);
-
-
-	HZN_INFO(object1.getPrevSibling().getComponent<Hzn::NameComponent>().m_Name);
-	HZN_INFO(camera.getNextSibling().getComponent<Hzn::NameComponent>().m_Name);
-
-
-	/*Hzn::GameObject object0 = m_Scene->getGameObject("square 1");*/
-	auto list = object0.getChildren();
-
-	for (const auto& x : list)
-	{
-		HZN_INFO(x.getComponent<Hzn::NameComponent>().m_Name);
-	}
 }
 
 void EditorLayer::onDetach()
 {
-	Hzn::SceneManager::close("scenes/custom_scene.json");
+	Hzn::ProjectManager::close();
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
@@ -119,7 +83,7 @@ void EditorLayer::onEvent(Hzn::Event& e)
 void EditorLayer::onRenderImgui()
 {
 	/*static bool showDemo = true;
-	ImGui::ShowDemoWindow(&showDemo)*/;
+	ImGui::ShowDemoWindow(&showDemo);*/
 
 	auto& window = Hzn::App::getApp().getAppWindow();
 	auto stats = Hzn::Renderer2D::getStats();
@@ -182,12 +146,6 @@ void EditorLayer::onRenderImgui()
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
-	// NEW PROJECT MODAL BEGIN.
-
-	/*if (ImGui::Button("Delete.."))
-		ImGui::OpenPopup("New Project?");*/
-	// Always center this window when appearing
-	// NEW PROJECT MODAL END.
 
 	if (ImGui::BeginMenuBar())
 	{
@@ -209,6 +167,22 @@ void EditorLayer::onRenderImgui()
 			if(ImGui::MenuItem("New Project"))
 			{
 				request_NewProject = true;
+			}
+
+			if(ImGui::MenuItem("Open Project"))
+			{
+				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
+				m_Scene = m_ActiveProject->getActiveScene();
+			}
+
+			if(m_ActiveProject)
+			{
+				if(ImGui::MenuItem("Close Project"))
+				{
+					m_Scene.reset();
+					m_ActiveProject.reset();
+					Hzn::ProjectManager::close();
+				}
 			}
 
 			//if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
@@ -301,6 +275,15 @@ void EditorLayer::onRenderImgui()
 			//	Hzn::SceneManager::save(currentScenePath);
 			//}
 
+			if(m_ActiveProject)
+			{
+				if(ImGui::MenuItem("New Scene"))
+				{
+					request_NewScene = true;
+				}
+			}
+
+
 			if (ImGui::MenuItem("Play"))
 			{
 				m_PlayMode = !m_PlayMode;
@@ -325,13 +308,55 @@ void EditorLayer::onRenderImgui()
 	if (request_NewProject)
 		ImGui::OpenPopup("New Project");
 
-	if (ImGui::BeginPopupModal("New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal("New Project", &request_NewProject, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		if (ImGui::Button("Cancel", ImVec2(120, 0)))
+		ImGui::InputText("Project Name", projectNameBuffer, 512);
+
+		ImGui::InputText("Root Folder", directoryPathBuffer, 1024);
+		ImGui::SameLine();
+		if (ImGui::Button("..."))
 		{
+			strcpy_s(directoryPathBuffer, Hzn::FileDialogs::openFolder().c_str());
+		}
+
+		if (ImGui::Button("Create", ImVec2(120, 0)))
+		{
+			// create new project and set it as active project.
+			m_ActiveProject = Hzn::ProjectManager::create(projectNameBuffer, std::filesystem::path(directoryPathBuffer));
+			m_Scene = m_ActiveProject->getActiveScene();
+
+			// clear the directory path buffers.
+			memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
+			memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
+
 			ImGui::CloseCurrentPopup();
 			request_NewProject = false;
 		}
+		ImGui::EndPopup();
+	}
+
+	if (request_NewScene)
+		ImGui::OpenPopup("New Scene");
+
+	if(ImGui::BeginPopupModal("New Scene", &request_NewScene, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		
+		ImGui::InputText("Scene Name", sceneNameBuffer, 256);
+		std::string sceneName = std::string(sceneNameBuffer);
+
+		if(sceneName.empty()) ImGui::Text("scene name field is empty!");
+
+		ImGui::Separator();
+			if (ImGui::Button("Create", ImVec2(120, 0)))
+			{
+				// create new project and set it as active project.
+				if (!sceneName.empty()) {
+					Hzn::ProjectManager::newScene(sceneName);
+					m_Scene = m_ActiveProject->getActiveScene();
+					memset(sceneNameBuffer, '\0', sizeof(sceneNameBuffer));
+					request_NewScene = false;
+				}
+			}
 		ImGui::EndPopup();
 	}
 
@@ -342,22 +367,23 @@ void EditorLayer::onRenderImgui()
 	/*static bool show = true;*/
 	// SETTINGS BEGIN.
 	ImGui::Begin("Components");
-	if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
-		auto selectedObj = m_Scene->getGameObject(selectedObjectId);
-		Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
-		Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
-		Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
-		Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+	if (m_Scene) {
+		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
+			auto selectedObj = m_Scene->getGameObject(selectedObjectId);
+			Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
+			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
+			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
+			Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+		}
 	}
 	ImGui::End();
 	// SETTINGS END.
 
-	//content browser begin
-
+	//CONTENT BROWSER BEGIN
 	//projectContextObject = m_CurrentDirectory.string();
 	ImGui::Begin("Content Browser");
 
-	if (!projectRootFolder.empty()) {
+	/*if (!projectRootFolder.empty()) {
 		if (m_CurrentDirectory != std::filesystem::path(assetPath))
 		{
 			if (ImGui::Button("<-"))
@@ -496,13 +522,9 @@ void EditorLayer::onRenderImgui()
 			ImGui::PopID();
 		}
 	}
-
-
-	ImGui::Columns(1);
-
+	ImGui::Columns(1);*/
 	ImGui::End();
-
-	//content browser end
+	// CONTENT BROWSER END
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
@@ -527,7 +549,7 @@ void EditorLayer::onRenderImgui()
 	ImGui::Image(reinterpret_cast<ImTextureID>(m_FrameBuffer->getColorAttachmentId()),
 		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
-	if (ImGui::BeginDragDropTarget())
+	/*if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 		{
@@ -541,7 +563,7 @@ void EditorLayer::onRenderImgui()
 
 		}
 		ImGui::EndDragDropTarget();
-	}
+	}*/
 
 
 	ImGui::End();
@@ -555,78 +577,81 @@ void EditorLayer::onRenderImgui()
 void EditorLayer::drawHierarchy()
 {
 	ImGui::Begin("Object Hierarchy");
-	auto list = m_Scene->getAllRootIds();
-
-	/*openHierarchyPopup = false;*/
-	openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
-
-	for (const auto& x : list)
+	if (m_Scene)
 	{
-		drawObjects(m_Scene->getGameObject(x));
-	}
+		auto list = m_Scene->getAllRootIds();
 
-	if (openHierarchyPopup) {
-		if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
-			ImGui::CloseCurrentPopup();
+		/*openHierarchyPopup = false;*/
+		openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
+
+		for (const auto& x : list)
+		{
+			drawObjects(m_Scene->getGameObject(x));
 		}
 
-		ImGui::OpenPopup("HierarchyObjectPopup");
+		if (openHierarchyPopup) {
+			if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
+				ImGui::CloseCurrentPopup();
+			}
 
-		if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-			if (ImGui::MenuItem("Copy", NULL, false)) {
-				/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
-			}
-			if (ImGui::MenuItem("Paste", NULL, false)) {
-				// Do stuff here 
-			}
-			if (ImGui::MenuItem("Duplicate", NULL, false)) {
-				// Do stuff here 
-			}
-			if (ImGui::MenuItem("Delete", NULL, false)) {
-				Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
-				m_Scene->destroyGameObject(obj);
+			ImGui::OpenPopup("HierarchyObjectPopup");
 
-				selectedObject = std::string();
-				selectedObjectId = std::numeric_limits<uint32_t>::max();
+			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
+				if (ImGui::MenuItem("Copy", NULL, false)) {
+					/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
+				}
+				if (ImGui::MenuItem("Paste", NULL, false)) {
+					// Do stuff here 
+				}
+				if (ImGui::MenuItem("Duplicate", NULL, false)) {
+					// Do stuff here 
+				}
+				if (ImGui::MenuItem("Delete", NULL, false)) {
+					Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
+					m_Scene->destroyGameObject(obj);
+
+					selectedObject = std::string();
+					selectedObjectId = std::numeric_limits<uint32_t>::max();
+				}
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Create Empty", NULL, false)) {
+					// Do stuff here
+					Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
+					m_Scene->getGameObject(selectedObjectId).addChild(newObject);
+					newObject.addComponent<Hzn::TransformComponent>();
+				}
+
+				ImGui::EndPopup();
 			}
-			ImGui::Separator();
+		}
+
+		// Right-click
+		ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+		if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+		if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+		ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+		// Context menu (under default mouse threshold)
+		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+		if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+			ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+		}
+		if (ImGui::BeginPopup("contextHierarchy")) {
+			selectedObject = "";
+			selectedObjectId = std::numeric_limits<uint32_t>::max();
 
 			if (ImGui::MenuItem("Create Empty", NULL, false)) {
-				// Do stuff here
 				Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-				m_Scene->getGameObject(selectedObjectId).addChild(newObject);
 				newObject.addComponent<Hzn::TransformComponent>();
 			}
 
 			ImGui::EndPopup();
 		}
-	}
-
-	// Right-click
-	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
-	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
-	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
-	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-	// Context menu (under default mouse threshold)
-	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
-		ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
-	}
-	if (ImGui::BeginPopup("contextHierarchy")) {
-		selectedObject = "";
-		selectedObjectId = std::numeric_limits<uint32_t>::max();
-
-		if (ImGui::MenuItem("Create Empty", NULL, false)) {
-			Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-			newObject.addComponent<Hzn::TransformComponent>();
+		// Left click
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			selectedObject = "";
+			selectedObjectId = std::numeric_limits<uint32_t>::max();
 		}
-
-		ImGui::EndPopup();
-	}
-	// Left click
-	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-		selectedObject = "";
-		selectedObjectId = std::numeric_limits<uint32_t>::max();
 	}
 
 	ImGui::End();
@@ -686,12 +711,4 @@ void EditorLayer::drawObjects(const Hzn::GameObject& object)
 	if (open && list.size() > 0) {
 		ImGui::TreePop();
 	}
-}
-
-
-
-void EditorLayer::openScene(const std::string path)
-{
-	m_Scene = Hzn::SceneManager::load(path);
-	currentScenePath = path;
 }
