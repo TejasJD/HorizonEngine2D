@@ -154,17 +154,18 @@ namespace Hzn
 			TransformComponent t = obj.getComponent<TransformComponent>();
 			for (int i = 0; i < children.size(); i++) {
 				auto& transform = children.at(i).getComponent<TransformComponent>();
+
 				glm::vec3 startPos = transform.m_Translation;
 				glm::vec3 oldScale = transform.m_Scale;
 
-				// Update scale
-				transform.m_Scale *= scaleFactor;
-
-				// Update child position
+				// Update position
 				transform.m_Translation += positionDifference;
 
-				// Update child rotation
+				// Update rotation
 				transform.rotateAround(t, rotationDifference);
+
+				// Update scale
+				transform.m_Scale *= scaleFactor;
 
 				// Update position according to rotation
 				transform.m_Rotation += rotationDifference;
