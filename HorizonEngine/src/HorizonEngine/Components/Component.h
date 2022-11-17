@@ -149,21 +149,32 @@ namespace Hzn
 			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
 		}
 
-		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference) {
+		void updateChildren(const GameObject& obj, const glm::vec3 parentStartPos, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference) {
 			std::vector<GameObject> children = obj.getChildren();
 			TransformComponent t = obj.getComponent<TransformComponent>();
 			for (int i = 0; i < children.size(); i++) {
-				updateChildren(children.at(i), positionDifference, scaleFactor, rotationDifference);
 				auto& transform = children.at(i).getComponent<TransformComponent>();
-				transform.m_Translation += positionDifference;
+				glm::vec3 startPos = transform.m_Translation;
+				glm::vec3 oldScale = transform.m_Scale;
+
+				// Update scale
 				transform.m_Scale *= scaleFactor;
 
-				// Rotate object around parent by rotationDifference degrees.
+				// Update child position
+				transform.m_Translation += positionDifference;
+
+				// Update child rotation
 				transform.rotateAround(t, rotationDifference);
 
+				// Update position according to rotation
 				transform.m_Rotation += rotationDifference;
 				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
 				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
+
+				// Update position according to scale
+				transform.m_Translation = t.m_Translation + (transform.m_Translation - parentStartPos) / oldScale * t.m_Scale;
+
+				updateChildren(children.at(i), startPos, positionDifference, scaleFactor, rotationDifference);
 			}
 		}
 	};
@@ -205,7 +216,7 @@ namespace Hzn
 			ImGui::TreePop();
 
 			if (shouldUpdate) {
-				transform.updateChildren(obj, translationDifference, scaleFactor, rotationDifference);
+				transform.updateChildren(obj, transform.m_Translation, translationDifference, scaleFactor, rotationDifference);
 			}
 		}
 	}
