@@ -258,6 +258,7 @@ void EditorLayer::onRenderImgui()
 
 			if (ImGui::MenuItem("Open Project"))
 			{
+
 				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
 				m_Scene = m_ActiveProject->getActiveScene();
 				openProject();
@@ -287,10 +288,12 @@ void EditorLayer::onRenderImgui()
 				}
 			}
 
-
-			if (ImGui::MenuItem("Play"))
+			if (m_ActiveProject)
 			{
-				m_PlayMode = !m_PlayMode;
+				if (ImGui::MenuItem("Play"))
+				{
+					m_PlayMode = !m_PlayMode;
+				}
 			}
 
 			if (ImGui::MenuItem("Exit"))
