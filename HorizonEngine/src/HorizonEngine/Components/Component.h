@@ -149,17 +149,18 @@ namespace Hzn
 			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
 		}
 
-		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference) {
+		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference
+		, const TransformComponent& rootTransform) {
 			std::vector<GameObject> children = obj.getChildren();
 			TransformComponent t = obj.getComponent<TransformComponent>();
 			for (int i = 0; i < children.size(); i++) {
-				updateChildren(children.at(i), positionDifference, scaleFactor, rotationDifference);
+				updateChildren(children.at(i), positionDifference, scaleFactor, rotationDifference, rootTransform);
 				auto& transform = children.at(i).getComponent<TransformComponent>();
 				transform.m_Translation += positionDifference;
 				transform.m_Scale *= scaleFactor;
 
 				// Rotate object around parent by rotationDifference degrees.
-				transform.rotateAround(t, rotationDifference);
+				transform.rotateAround(rootTransform, rotationDifference);
 
 				transform.m_Rotation += rotationDifference;
 				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
@@ -186,15 +187,15 @@ namespace Hzn
 			float startRotation = transform.m_Rotation;
 			float rotationDifference = 0.0f;
 
-			if (ImGui::InputFloat3("Position", glm::value_ptr(transform.m_Translation), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+			if (ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.5f, -50.0f, 50.0f, "%.3f")) {
 				shouldUpdate |= true;
 				translationDifference = transform.m_Translation - startTranslation;
 			}
-			if (ImGui::InputFloat3("Scale", glm::value_ptr(transform.m_Scale), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+			if (ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.5f, -100.0f, 100.0f, "%.3f")) {
 				shouldUpdate |= true;
 				scaleFactor = transform.m_Scale / startScale;
 			}
-			if (ImGui::InputFloat("Rotation", &transform.m_Rotation, 1.0f, 10.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+			if (ImGui::SliderFloat("Rotation", &transform.m_Rotation, -360.0f, 360.0f, "%.3f")) {
 				shouldUpdate |= true;
 
 				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
@@ -205,7 +206,7 @@ namespace Hzn
 			ImGui::TreePop();
 
 			if (shouldUpdate) {
-				transform.updateChildren(obj, translationDifference, scaleFactor, rotationDifference);
+				transform.updateChildren(obj, translationDifference, scaleFactor, rotationDifference, transform);
 			}
 		}
 	}

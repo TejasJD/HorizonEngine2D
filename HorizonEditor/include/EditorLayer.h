@@ -12,12 +12,12 @@ public:
 	virtual void onUpdate(Hzn::TimeStep deltaTime) override;
 	virtual void onEvent(Hzn::Event& event) override;
 	virtual void onRenderImgui() override;
-	virtual void openScene(const std::string path);
-	
+	virtual void openScene(const std::filesystem::path& filepath);
 
 private:
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
+	void openProject();
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
@@ -54,5 +54,14 @@ private:
 
 	glm::vec2 m_ViewportBounds[2]{{0.0f, 0.0f}, {0.0f, 0.0f}};
 
+	char projectNameBuffer[512]{};
+	char directoryPathBuffer[1024]{};
+	char sceneNameBuffer[256]{};
+	std::shared_ptr<Hzn::Project> m_ActiveProject;
+
 	bool request_NewProject = false;
+	bool request_NewScene = false;
+	bool request_OpenScene = false;
+
+	bool canCreateProject = false;
 };
