@@ -19,6 +19,7 @@ EditorLayer::~EditorLayer()
 
 void EditorLayer::onAttach()
 {
+
 	HZN_TRACE("Editor Layer Attached!");
 	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
 	Hzn::FrameBufferProps props;
@@ -77,6 +78,95 @@ void EditorLayer::onEvent(Hzn::Event& e)
 {
 	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
 		m_EditorCameraController.onEvent(e);
+	}
+}
+
+void EditorLayer::openProject()
+{
+	projectRootFolder = std::filesystem::path(m_ActiveProject->getPath()).parent_path().string();
+
+	//set current path of is  project root directory
+	m_CurrentDirectory = projectRootFolder;
+
+	std::string sceneFolderPath = projectRootFolder + "\\scenes";
+
+	std::string iconPath = projectRootFolder + "\\icons";
+
+	currentScenePath = sceneFolderPath + "\\defaultScene.json";
+
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(iconPath)) {
+		//create texture of directory icon
+		if (!entry.is_directory() && entry.path().string().find("DirectoryIcon.png") != std::string::npos) {
+			folderIcon = Hzn::Texture2D::create(entry.path().string());
+		}
+
+		//create texture of file icon
+		if (!entry.is_directory() && entry.path().string().find("FileIcon.png") != std::string::npos) {
+
+			fileIcon = Hzn::Texture2D::create(entry.path().string());
+		}
+	}
+
+	//create map to store format of sprite
+	std::map<std::string, std::string> spriteFormat;
+
+	//create texture for image file and sprites from sprite sheets
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(projectRootFolder))
+	{
+
+		/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
+		{
+			assetManager.LoadAudio(entry.path().string(), entry.path().string());
+		}*/
+
+		if (entry.path().string().find("icons") != std::string::npos)
+		{
+			continue;
+		}
+
+
+		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
+			assetManager.LoadTexture(entry.path().string(), entry.path().string());
+		}
+
+		if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
+
+			for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+
+				if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+					std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+					std::string line;
+
+					while (std::getline(infile, line)) {
+						std::istringstream is_line(line);
+						std::string key;
+						if (std::getline(is_line, key, ':'))
+						{
+							std::string value;
+
+							if (std::getline(is_line, value))
+							{
+								spriteFormat[key] = value;
+							}
+						}
+					}
+
+				}
+			}
+
+			auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
+
+
+			for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+			{
+				for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+				{
+					std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+					spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
+				}
+			}
+
+		}
 	}
 }
 
@@ -173,6 +263,8 @@ void EditorLayer::onRenderImgui()
 			{
 				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
 				m_Scene = m_ActiveProject->getActiveScene();
+				openProject();
+				
 			}
 
 			if (m_ActiveProject)
@@ -183,92 +275,8 @@ void EditorLayer::onRenderImgui()
 					m_ActiveProject.reset();
 					Hzn::ProjectManager::close();
 				}
+
 			}
-
-			//if (ImGui::MenuItem("Open Project", "Ctrl+Shift+O", false))
-			//{
-			//	std::string projectFolderPath = Hzn::FileDialogs::openFolder();
-			//	projectRootFolder = std::filesystem::path(projectFolderPath).string();
-
-			//	//Check if the dtring returns empty or not
-			//	/*if (projectFolderPath != "") {
-			//		projectRootFolder = std::filesystem::path(projectFolderPath).string();
-			//		projectPath = "Project(" + projectRootFolder + ")";
-			//	}*/
-
-			//	//set assets path of current project
-			//	assetPath = projectRootFolder + "\\assets";
-			//	m_CurrentDirectory = assetPath;
-
-			//	std::map<std::string, std::string> spriteFormat;
-
-			//	//create texture for image file and sprites from sprite sheets
-			//	for (const auto& entry : std::filesystem::recursive_directory_iterator(assetPath))
-			//	{
-
-			//		if (!entry.is_directory() && entry.path().string().find("DirectoryIcon.png") != std::string::npos) {
-			//			folderIcon = Hzn::Texture2D::create(entry.path().string());
-			//		}
-
-			//		if (!entry.is_directory() && entry.path().string().find("FileIcon.png") != std::string::npos) {
-
-			//			fileIcon = Hzn::Texture2D::create(entry.path().string());
-			//		}
-
-			//		/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
-			//		{
-			//			assetManager.LoadAudio(entry.path().string(), entry.path().string());
-			//		}*/
-
-
-			//		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
-			//			assetManager.LoadTexture(entry.path().string(), entry.path().string());
-			//		}
-
-			//		if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
-
-			//			for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-			//				if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-			//					std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-			//					std::string line;
-
-			//					while (std::getline(infile, line)) {
-			//						std::istringstream is_line(line);
-			//						std::string key;
-			//						if (std::getline(is_line, key, ':'))
-			//						{
-			//							std::string value;
-
-			//							if (std::getline(is_line, value))
-			//							{
-			//								spriteFormat[key] = value;
-			//							}
-			//						}
-			//					}
-
-			//				}
-			//			}
-
-			//			auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
-
-
-			//			for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
-			//			{
-			//				for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
-			//				{
-			//					std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
-			//					spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
-			//				}
-			//			}
-
-
-
-
-			//		}
-			//	}
-
-			//}
 
 			//if (ImGui::MenuItem("Save scene"))
 			//{
@@ -346,6 +354,7 @@ void EditorLayer::onRenderImgui()
 					// clear the directory path buffers.
 					memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
 					memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
+					openProject();
 				}
 			ImGui::CloseCurrentPopup();
 			request_NewProject = false;
@@ -401,7 +410,7 @@ void EditorLayer::onRenderImgui()
 	//projectContextObject = m_CurrentDirectory.string();
 	ImGui::Begin("Content Browser");
 
-	/*if (!projectRootFolder.empty()) {
+	if (!projectRootFolder.empty()) {
 		if (m_CurrentDirectory != std::filesystem::path(assetPath))
 		{
 			if (ImGui::Button("<-"))
@@ -426,7 +435,7 @@ void EditorLayer::onRenderImgui()
 		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 
-			if (entry.path().string().find(".meta") != std::string::npos)
+			if (entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
 			{
 				continue;
 			}
@@ -540,7 +549,7 @@ void EditorLayer::onRenderImgui()
 			ImGui::PopID();
 		}
 	}
-	ImGui::Columns(1);*/
+	ImGui::Columns(1);
 	ImGui::End();
 	// CONTENT BROWSER END
 
@@ -756,3 +765,5 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 		ImGui::TreePop();
 	}
 }
+
+
