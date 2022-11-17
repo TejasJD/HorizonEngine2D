@@ -84,7 +84,6 @@ void EditorLayer::onEvent(Hzn::Event& e)
 void EditorLayer::openProject()
 {
 	projectRootFolder = m_ActiveProject->getPath().parent_path().string();
-
 	//set current path of is  project root directory
 	m_CurrentDirectory = projectRootFolder;
 
