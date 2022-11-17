@@ -37,18 +37,19 @@ namespace Hzn
 		{
 			close();
 		}
+		if (!filepath.empty()) {
+			std::ifstream is(filepath, std::ios::binary);
 
-		std::ifstream is(filepath, std::ios::binary);
+			HZN_CORE_ASSERT(is, "invalid input file!");
 
-		HZN_CORE_ASSERT(is, "invalid input file!");
+			cereal::JSONInputArchive inputArchive(is);
+			// create the scene and make it valid for actions.
+			s_Scene = std::make_shared<Scene>(inputArchive);
+			s_Scene->m_Valid = true;
+			s_Scene->m_Path = filepath;
 
-		cereal::JSONInputArchive inputArchive(is);
-		// create the scene and make it valid for actions.
-		s_Scene = std::make_shared<Scene>(inputArchive);
-		s_Scene->m_Valid = true;
-		s_Scene->m_Path = filepath;
-
-		is.close();
+			is.close();
+		}
 		return s_Scene;
 	}
 

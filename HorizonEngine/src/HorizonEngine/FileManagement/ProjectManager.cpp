@@ -38,7 +38,7 @@ namespace Hzn
 		s_Project->m_Scene = SceneManager::create(sceneFilePath);
 	}
 
-	void ProjectManager::openScene(const std::string& name)
+	void ProjectManager::openScene(const std::filesystem::path& sceneFilePath)
 	{
 		if (!s_Project)
 		{
@@ -49,9 +49,7 @@ namespace Hzn
 
 		HZN_CORE_ASSERT(std::filesystem::exists(sceneDir), "no scenes directory!");
 
-		std::filesystem::path sceneFile = sceneDir.string() + "\\" + name + ".scene";
-
-		s_Project->m_Scene = SceneManager::open(sceneFile);
+		s_Project->m_Scene = SceneManager::open(sceneFilePath);
 	}
 
 	void ProjectManager::saveScene()
@@ -68,7 +66,9 @@ namespace Hzn
 		{
 			close();
 		}
-		return s_Project = std::make_shared<Project>(projectFilePath);
+		s_Project = std::make_shared<Project>(projectFilePath);
+
+		return s_Project;
 	}
 
 	void ProjectManager::save()
