@@ -576,7 +576,7 @@ void EditorLayer::onRenderImgui()
 	ImGui::Image(reinterpret_cast<ImTextureID>(m_FrameBuffer->getColorAttachmentId()),
 		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
-	/*if (ImGui::BeginDragDropTarget())
+	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 		{
@@ -586,11 +586,11 @@ void EditorLayer::onRenderImgui()
 
 			std::string str(ws.begin(), ws.end());
 
-			openScene(str);
+			openScene(std::filesystem::path(str));
 
 		}
 		ImGui::EndDragDropTarget();
-	}*/
+	}
 
 
 	ImGui::End();
@@ -766,4 +766,9 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 	}
 }
 
+void EditorLayer::openScene(const std::filesystem::path& filepath)
+{
+	m_ActiveProject->setActiveScene(filepath);
+	m_Scene = m_ActiveProject->getActiveScene();
+}
 

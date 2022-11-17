@@ -12,6 +12,7 @@ public:
 	virtual void onUpdate(Hzn::TimeStep deltaTime) override;
 	virtual void onEvent(Hzn::Event& event) override;
 	virtual void onRenderImgui() override;
+	virtual void openScene(const std::filesystem::path& filepath);
 
 private:
 	void drawHierarchy();

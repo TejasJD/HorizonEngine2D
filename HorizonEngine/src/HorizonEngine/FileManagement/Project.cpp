@@ -48,4 +48,17 @@ namespace Hzn
 
 		is.close();
 	}
+
+	bool Project::setActiveScene(const std::filesystem::path& filepath)
+	{
+		
+		if (m_Scene = SceneManager::open(filepath))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

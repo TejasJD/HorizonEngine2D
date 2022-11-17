@@ -19,6 +19,8 @@ namespace Hzn
 		Project(const std::filesystem::path& projectFilePath);
 		~Project() = default;
 
+		bool setActiveScene(const std::filesystem::path& filepath);
+		
 		std::shared_ptr<Scene> getActiveScene() const { return m_Scene; }
 		std::filesystem::path getPath() const { return m_Path; }
 
