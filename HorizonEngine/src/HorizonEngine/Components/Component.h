@@ -149,33 +149,48 @@ namespace Hzn
 			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
 		}
 
-		void updateChildren(const GameObject& obj, const glm::vec3 parentStartPos, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference) {
+		void translate(const GameObject& obj,  const glm::vec3 positionDifference) {
 			std::vector<GameObject> children = obj.getChildren();
 			TransformComponent t = obj.getComponent<TransformComponent>();
 			for (int i = 0; i < children.size(); i++) {
 				auto& transform = children.at(i).getComponent<TransformComponent>();
+				transform.m_Translation += positionDifference;
+				translate(children.at(i), positionDifference);
+			}
+		}
 
+		void scale(const GameObject& obj, const glm::vec3 parentStartPos, glm::vec3 scaleFactor) {
+			std::vector<GameObject> children = obj.getChildren();
+			TransformComponent t = obj.getComponent<TransformComponent>();
+			for (int i = 0; i < children.size(); i++) {
+				auto& transform = children.at(i).getComponent<TransformComponent>();
 				glm::vec3 startPos = transform.m_Translation;
 				glm::vec3 oldScale = transform.m_Scale;
 
-				// Update position
-				transform.m_Translation += positionDifference;
-
-				// Update rotation
-				transform.rotateAround(t, rotationDifference);
-
-				// Update scale
 				transform.m_Scale *= scaleFactor;
-
-				// Update position according to rotation
-				transform.m_Rotation += rotationDifference;
-				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
-				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
 
 				// Update position according to scale
 				transform.m_Translation = t.m_Translation + (transform.m_Translation - parentStartPos) / oldScale * t.m_Scale;
 
-				updateChildren(children.at(i), startPos, positionDifference, scaleFactor, rotationDifference);
+				scale(children.at(i), startPos, scaleFactor);
+			}
+		}
+
+		void rotate(const GameObject& obj, const float rotationDifference, const TransformComponent& rootTransform) {
+			std::vector<GameObject> children = obj.getChildren();
+			TransformComponent t = obj.getComponent<TransformComponent>();
+			for (int i = 0; i < children.size(); i++) {
+				auto& transform = children.at(i).getComponent<TransformComponent>();
+				
+				// Update position according to rotation
+				transform.rotateAround(rootTransform, rotationDifference);
+
+				// Update rotation
+				transform.m_Rotation += rotationDifference;
+				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
+				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
+
+				rotate(children.at(i), rotationDifference, rootTransform);
 			}
 		}
 	};
@@ -201,10 +216,12 @@ namespace Hzn
 			if (ImGui::InputFloat3("Position", glm::value_ptr(transform.m_Translation), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
 				shouldUpdate |= true;
 				translationDifference = transform.m_Translation - startTranslation;
+				transform.translate(obj, translationDifference);
 			}
 			if (ImGui::InputFloat3("Scale", glm::value_ptr(transform.m_Scale), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
 				shouldUpdate |= true;
 				scaleFactor = transform.m_Scale / startScale;
+				transform.scale(obj, transform.m_Translation, scaleFactor);
 			}
 			if (ImGui::InputFloat("Rotation", &transform.m_Rotation, 1.0f, 10.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
 				shouldUpdate |= true;
@@ -213,12 +230,14 @@ namespace Hzn
 				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
 
 				rotationDifference = transform.m_Rotation - startRotation;
+
+				transform.rotate(obj, rotationDifference, transform);
 			}
 			ImGui::TreePop();
 
-			if (shouldUpdate) {
-				transform.updateChildren(obj, transform.m_Translation, translationDifference, scaleFactor, rotationDifference);
-			}
+			/*if (shouldUpdate) {
+				transform.updateChildren(obj, transform.m_Translation, translationDifference, scaleFactor, rotationDifference, transform);
+			}*/
 		}
 	}
 
