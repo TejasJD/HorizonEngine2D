@@ -258,9 +258,13 @@ void EditorLayer::onRenderImgui()
 
 			if (ImGui::MenuItem("Open Project"))
 			{
-				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
-				m_Scene = m_ActiveProject->getActiveScene();
-				openProject();
+				std::string str = Hzn::FileDialogs::openFile();
+				if(!str.empty()) {
+					m_ActiveProject = Hzn::ProjectManager::open(str);
+					m_Scene = m_ActiveProject->getActiveScene();
+					openProject();
+				}
+				
 			}
 
 			if (m_ActiveProject)
@@ -287,10 +291,12 @@ void EditorLayer::onRenderImgui()
 				}
 			}
 
-
-			if (ImGui::MenuItem("Play"))
+			if (m_ActiveProject)
 			{
-				m_PlayMode = !m_PlayMode;
+				if (ImGui::MenuItem("Play"))
+				{
+					m_PlayMode = !m_PlayMode;
+				}
 			}
 
 			if (ImGui::MenuItem("Exit"))
