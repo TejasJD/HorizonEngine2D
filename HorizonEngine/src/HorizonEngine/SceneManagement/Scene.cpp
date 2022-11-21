@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/AssetManagement/AssetManager.h"
 
 namespace Hzn
 {
@@ -75,14 +76,29 @@ namespace Hzn
 		return m_lastViewportSize;
 	}
 
-	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts) {
+	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts, Hzn::AssetManager assetManager) {
 		if (m_Valid) {
 			Renderer2D::beginScene(camera);
 			const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
 			for (const auto& entity : sprites)
 			{
 				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-				Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+
+				if (!renderComponent.texturePath.empty()) {
+					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
+					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent.m_Texture);
+				}
+				else if(!renderComponent.spritePath.empty())
+				{
+					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.spritePath);
+					renderComponent.m_Sprite = Hzn::Sprite2D::create(renderComponent.m_Texture, { std::stoi(renderComponent.m_SpriteX) , std::stoi(renderComponent.m_SpriteY) }, { std::stof(renderComponent.m_SpriteWidth), std::stof(renderComponent.m_SpriteHeight) });
+					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent.m_Sprite);
+				}
+				else
+				{
+					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+
+				}
 			}
 			Renderer2D::endScene();
 		}
@@ -115,7 +131,6 @@ namespace Hzn
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
 				}
 				Renderer2D::endScene();
 			}

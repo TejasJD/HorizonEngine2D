@@ -66,7 +66,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 		if (m_PlayMode)
 			m_Scene->onUpdate(ts);
 		else
-			m_Scene->onEditorUpdate(m_EditorCameraController.getCamera(), ts);
+			m_Scene->onEditorUpdate(m_EditorCameraController.getCamera(), ts, assetManager);
 	}
 	// unbind the current framebuffer.
 	/*Hzn::Renderer2D::endScene();*/
@@ -156,14 +156,17 @@ void EditorLayer::openProject()
 
 			auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
 
-
-			for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
+			int count = 0;
+			for (size_t i = 0; i < std::stoi(spriteFormat.find("column")->second); i++)
 			{
-				for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
+				for (size_t j = 0; j < std::stoi(spriteFormat.find("row")->second); j++)
 				{
-					std::string currentSprite = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
-					spriteMap.insert(std::make_pair(entry.path().string().append(currentSprite), Hzn::Sprite2D::create(spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) })));
+					assetManager.LoadSpite(entry.path().filename().string(), spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) });
+					std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(entry.path().filename().string())[count];
+
+					count++;
 				}
+
 			}
 
 		}
@@ -264,7 +267,7 @@ void EditorLayer::onRenderImgui()
 				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
 				m_Scene = m_ActiveProject->getActiveScene();
 				openProject();
-				
+
 			}
 
 			if (m_ActiveProject)
@@ -347,15 +350,15 @@ void EditorLayer::onRenderImgui()
 
 		if (ImGui::Button("Create", ImVec2(120, 0)))
 		{
-				if (canCreateProject) {
-					m_ActiveProject = Hzn::ProjectManager::create(projectNameBuffer, std::filesystem::path(directoryPathBuffer));
-					m_Scene = m_ActiveProject->getActiveScene();
+			if (canCreateProject) {
+				m_ActiveProject = Hzn::ProjectManager::create(projectNameBuffer, std::filesystem::path(directoryPathBuffer));
+				m_Scene = m_ActiveProject->getActiveScene();
 
-					// clear the directory path buffers.
-					memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
-					memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
-					openProject();
-				}
+				// clear the directory path buffers.
+				memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
+				memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
+				openProject();
+			}
 			ImGui::CloseCurrentPopup();
 			request_NewProject = false;
 		}
@@ -397,6 +400,7 @@ void EditorLayer::onRenderImgui()
 	if (m_Scene) {
 		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			auto selectedObj = m_Scene->getGameObject(selectedObjectId);
+
 			Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
@@ -405,6 +409,72 @@ void EditorLayer::onRenderImgui()
 	}
 	ImGui::End();
 	// SETTINGS END.
+
+	// Sprites BEGIN.
+	ImGui::Begin("Sprites");
+	static float padding = 16.0f;
+	static float thumbnailSize = 128.0f;
+	float cellSize = thumbnailSize + padding;
+
+	float panelWidth = ImGui::GetContentRegionAvail().x;
+	int columnCount = (int)(panelWidth / cellSize);
+	if (columnCount < 1)
+		columnCount = 1;
+	ImGui::Columns(columnCount, 0, false);
+	int count = 0;
+	if (!currentTexturePath.empty())
+	{
+		std::string spritesFolder = std::filesystem::path(currentTexturePath).parent_path().string() + "\\" + std::filesystem::path(currentTexturePath).filename().replace_extension().string();
+
+		if (spriteFormat.size() > 0)
+		{
+
+			for (size_t i = 0; i < std::stoi(spriteFormat.find("column")->second); i++)
+			{
+				for (size_t j = 0; j < std::stoi(spriteFormat.find("row")->second); j++)
+				{
+					if (count >= assetManager.GetSprite(std::filesystem::path(currentTexturePath).filename().string()).size())
+					{
+						continue;
+					}
+					std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+
+					ImGui::PushID(spriteTexCoords.c_str());
+
+					std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(std::filesystem::path(currentTexturePath).filename().string())[count];
+					ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
+
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+					ImGui::PopStyleColor();
+					if (ImGui::BeginDragDropSource()) {
+
+						std::filesystem::path currentSpritePath = currentTexturePath + "-;" + std::to_string(i) + ";" + std::to_string(j) + ";" + std::to_string(sprite->getCellSize()[0].x) + ";" + std::to_string(sprite->getCellSize()[0].y);
+
+						const wchar_t* filename = currentSpritePath.c_str();
+						ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+						ImGui::EndDragDropSource();
+					}
+
+
+					
+					ImGui::TextWrapped(spriteTexCoords.c_str());
+					ImGui::NextColumn();
+					ImGui::PopID();
+					count++;
+				}
+
+
+
+				
+
+			}
+
+		}
+	}
+
+	ImGui::End();
+	// Sprites END.
+
 
 	//CONTENT BROWSER BEGIN
 	//projectContextObject = m_CurrentDirectory.string();
@@ -430,7 +500,7 @@ void EditorLayer::onRenderImgui()
 
 		ImGui::Columns(columnCount, 0, false);
 
-		std::map<std::string, std::string> spriteFormat;
+
 
 		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
@@ -466,6 +536,7 @@ void EditorLayer::onRenderImgui()
 			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
 			{
 
+
 				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
 
 					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
@@ -493,32 +564,7 @@ void EditorLayer::onRenderImgui()
 
 
 				if (ImGui::Button("show sprites")) {
-					ImGui::OpenPopup("showSprites");
-				}
-
-				if (ImGui::BeginPopupModal("showSprites")) {
-
-					ImGui::Columns(columnCount, 0, false);
-					for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
-					{
-						for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
-						{
-							std::string currentSprite = entry.path().string().append("(").append(std::to_string(i)).append(",").append(std::to_string(j)).append(")");
-
-							std::shared_ptr<Hzn::Sprite2D> sprite = spriteMap.find(currentSprite)->second;
-							ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
-							std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
-							ImGui::TextWrapped(spriteTexCoords.c_str());
-							ImGui::NextColumn();
-						}
-					}
-
-					ImGui::Columns(1);
-					if (ImGui::Button("Close", ImVec2(120, 40))) {
-						ImGui::CloseCurrentPopup();
-					}
-
-					ImGui::EndPopup();
+					currentTexturePath = entry.path().string();
 				}
 
 			}
@@ -530,9 +576,19 @@ void EditorLayer::onRenderImgui()
 
 			if (ImGui::BeginDragDropSource()) {
 
-				const wchar_t* filename = path.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-				ImGui::EndDragDropSource();
+				if (entry.path().string().find("textures") != std::string::npos)
+				{
+					const wchar_t* filename = path.c_str();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+					ImGui::EndDragDropSource();
+				}
+				else
+				{
+					const wchar_t* filename = path.c_str();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+					ImGui::EndDragDropSource();
+				}
+
 			}
 
 

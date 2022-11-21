@@ -37,13 +37,13 @@ private:
 	float m_CameraZoom = 1.0f;
 
 	Hzn::AssetManager assetManager;
-	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
 	std::filesystem::path m_CurrentDirectory;
 	std::shared_ptr<Hzn::Texture> folderIcon;
 	std::shared_ptr<Hzn::Texture> fileIcon;
 	std::string projectRootFolder;
 	std::string assetPath;
 	std::string currentScenePath;
+	std::string currentTexturePath;
 
 	std::vector<std::string> rootObjects;
 
@@ -64,4 +64,5 @@ private:
 	bool request_OpenScene = false;
 
 	bool canCreateProject = false;
+	std::map<std::string, std::string> spriteFormat;
 };

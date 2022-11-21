@@ -11,8 +11,8 @@
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/Renderer/Sprite.h"
-
 #include "HorizonEngine/Utils/Math.h"
+
 
 namespace Hzn
 {
@@ -25,7 +25,7 @@ namespace Hzn
 	{
 		friend class GameObject;
 		friend class Scene;
-		friend class SceneManager;
+		friend class AssetManager;
 		RelationComponent() = default;
 		RelationComponent(const RelationComponent& rhs) = default;
 		~RelationComponent() = default;
@@ -55,20 +55,20 @@ namespace Hzn
 		}
 	private:
 		size_t m_ChildCount = 0ULL;
-		entt::entity m_Parent{entt::null};
-		entt::entity m_FirstChild{entt::null};
-		entt::entity m_Next{entt::null};
-		entt::entity m_Prev{entt::null};
+		entt::entity m_Parent{ entt::null };
+		entt::entity m_FirstChild{ entt::null };
+		entt::entity m_Next{ entt::null };
+		entt::entity m_Prev{ entt::null };
 	};
 
 	struct NameComponent
 	{
 		NameComponent() = default;
 		NameComponent(const NameComponent& name) = default;
-		NameComponent(const std::string& name): m_Name(name) {}
+		NameComponent(const std::string& name) : m_Name(name) {}
 		~NameComponent() = default;
 
-		operator std::string() const & { return m_Name; }
+		operator std::string() const& { return m_Name; }
 		operator std::string()& { return m_Name; }
 
 		std::string m_Name;
@@ -150,7 +150,7 @@ namespace Hzn
 		}
 
 		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference
-		, const TransformComponent& rootTransform) {
+			, const TransformComponent& rootTransform) {
 			std::vector<GameObject> children = obj.getChildren();
 			TransformComponent t = obj.getComponent<TransformComponent>();
 			for (int i = 0; i < children.size(); i++) {
@@ -174,7 +174,7 @@ namespace Hzn
 	{
 		auto& transform = obj.getComponent<TransformComponent>();
 
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected |ImGuiTreeNodeFlags_DefaultOpen;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Transform", flags)) {
 			bool shouldUpdate = false;
@@ -217,34 +217,94 @@ namespace Hzn
 		RenderComponent(const glm::vec4& color) : m_Color(color) {};
 		~RenderComponent() = default;
 		// conversion operator for render component.
-		operator const glm::vec4() const & { return m_Color; }
-		operator glm::vec4() & { return m_Color; }
+		operator const glm::vec4() const& { return m_Color; }
+		operator glm::vec4()& { return m_Color; }
 
 		glm::vec4 m_Color = glm::vec4(1.0f);
+
+		std::shared_ptr<Hzn::Texture2D> m_Texture;
+		std::shared_ptr<Sprite2D> m_Sprite;
+		std::string texturePath;
+		std::string spritePath;
+
+
+		std::string m_SpriteHeight;
+		std::string m_SpriteWidth;
+		std::string m_SpriteY;
+		std::string m_SpriteX;
 
 		template<typename Archive>
 		void load(Archive& ar)
 		{
-			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
-
+			ar(spritePath, m_SpriteHeight, m_SpriteWidth, m_SpriteY, m_SpriteX);
+			ar(texturePath, m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
-			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
+			ar(spritePath, m_SpriteHeight, m_SpriteWidth, m_SpriteY, m_SpriteX);
+			ar(texturePath, m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
 	};
+
+
 
 	template<>
 	inline void display<RenderComponent>(const GameObject& obj)
 	{
 		auto& colorComponent = obj.getComponent<RenderComponent>();
-
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Render", flags)) {
 			ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
+
+			ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+
+					const wchar_t* filepath = (const wchar_t*)payload->Data;
+					std::wstring ws(filepath);
+					std::string str(ws.begin(), ws.end());
+					std::string::size_type nPos1 = str.find_last_of(";");
+					std::string::size_type nPos2 = str.find_last_of(";", nPos1 - 1);
+					std::string::size_type nPos3 = str.find_last_of(";", nPos2 - 1);
+					std::string::size_type nPos4 = str.find_last_of(";", nPos3 - 1);
+
+					if (str.find("-") != std::string::npos)
+					{
+						std::string spritePath = str.substr(0, str.find("-"));
+						std::string spriteHeight = str.substr(nPos1 + 1);
+						std::string spriteWidth = str.substr(nPos2 + 1, nPos1 - nPos2 - 1);
+						std::string spriteY = str.substr(nPos3 + 1, nPos2 - nPos3 - 1);
+						std::string spriteX = str.substr(nPos4 + 1, nPos3 - nPos4 - 1);
+
+						std::shared_ptr<Hzn::Texture2D> texture = Hzn::Texture2D::create(spritePath);
+						std::shared_ptr<Hzn::Sprite2D> sprite = Hzn::Sprite2D::create(texture, { std::stoi(spriteX) , std::stoi(spriteY) }, { std::stof(spriteWidth), std::stof(spriteHeight) });
+						colorComponent.m_Sprite = sprite;
+						colorComponent.texturePath = "";
+						colorComponent.spritePath = texture->getPath();
+
+						colorComponent.m_SpriteHeight = spriteHeight;
+						colorComponent.m_SpriteWidth = spriteWidth;
+						colorComponent.m_SpriteY = spriteY;
+						colorComponent.m_SpriteX = spriteX;
+					}
+					else
+					{
+						std::shared_ptr<Hzn::Texture2D> texture = Hzn::Texture2D::create(str);
+						colorComponent.spritePath = "";
+						colorComponent.m_Texture = texture;
+						colorComponent.texturePath = texture->getPath();
+					}
+
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			ImGui::TreePop();
 		}
 	}
@@ -253,7 +313,7 @@ namespace Hzn
 	{
 		CameraComponent(const float aspectRatio = 1.0f, const float zoom = 1.0f)
 			: m_Camera(aspectRatio, zoom) {}
-		
+
 		~CameraComponent() = default;
 		SceneCamera2D m_Camera;
 		bool m_Primary = true;

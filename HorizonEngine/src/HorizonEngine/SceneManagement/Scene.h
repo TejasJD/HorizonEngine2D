@@ -22,13 +22,14 @@ namespace Hzn
 		friend class GameObject;
 		friend class SceneManager;
 		friend class ProjectManager;
+		friend class AssetManager;
 	public:
 		Scene();
 		Scene(cereal::JSONInputArchive& inputArchive);
 		~Scene();
 
 		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
-		void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts);
+		void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts, AssetManager assetManager);
 		void onUpdate(TimeStep ts);
 		/**
 		 * \brief creates a game object in the scene and returns a valid game object.

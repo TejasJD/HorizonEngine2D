@@ -20,6 +20,7 @@ namespace Hzn
 
 		// generate subdirectories
 		fs::create_directory(m_Path.parent_path().string() + "\\textures");
+		fs::create_directory(m_Path.parent_path().string() + "\\sprites");
 		fs::create_directory(m_Path.parent_path().string() + "\\audios");
 		fs::create_directory(m_Path.parent_path().string() + "\\scenes");
 		fs::copy(fs::current_path().string() + "\\icons", m_Path.parent_path().string() + "\\icons");
