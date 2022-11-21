@@ -112,11 +112,11 @@ namespace Hzn
 			// Calculate body initial position and rotation
 			GameObject parent = obj.getParent();
 			glm::vec3 startPosition = transformComponent.m_Translation + glm::vec3(collider.m_Offset.x, collider.m_Offset.y, transformComponent.m_Translation.z);
-			float rotation = transformComponent.m_Rotation; // .z;
+			float rotation = transformComponent.m_Rotation.z;
 			while (parent) {
 				auto& t = parent.getComponent<TransformComponent>();
 				startPosition += t.m_Translation;
-				rotation += t.m_Rotation; // .z;
+				rotation += t.m_Rotation.z;
 
 				parent = parent.getParent();
 			}
