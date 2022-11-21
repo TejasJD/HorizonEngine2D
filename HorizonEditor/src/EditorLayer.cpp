@@ -477,7 +477,7 @@ void EditorLayer::onRenderImgui()
 	ImGui::Begin("Content Browser");
 
 	if (!projectRootFolder.empty()) {
-		if (m_CurrentDirectory != std::filesystem::path(assetPath))
+		if (m_CurrentDirectory != std::filesystem::path(projectRootFolder))
 		{
 			if (ImGui::Button("<-"))
 			{
