@@ -5,6 +5,8 @@
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
 
+#include "HorizonEngine/Components/PhysicsComponent.h"
+
 namespace Hzn
 {
 	Scene::Scene() : m_Registry(entt::registry()) {}
@@ -18,7 +20,9 @@ namespace Hzn
 			RelationComponent,
 			TransformComponent,
 			RenderComponent,
-			CameraComponent>(inputArchive);
+			CameraComponent,
+			BoxCollider2DComponent,
+			Rigidbody2DComponent>(inputArchive);
 
 		// since all valid objects have name components we create a view on name components
 		m_Valid = true;
@@ -43,7 +47,9 @@ namespace Hzn
 			RelationComponent,
 			TransformComponent,
 			RenderComponent,
-			CameraComponent>(outputArchive);
+			CameraComponent,
+			BoxCollider2DComponent,
+			Rigidbody2DComponent>(outputArchive);
 	}
 
 	void Scene::invalidate()

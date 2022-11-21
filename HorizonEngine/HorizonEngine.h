@@ -31,6 +31,7 @@
 #include "HorizonEngine/Audio/SoundDevice.h"
 
 #include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Components/PhysicsComponent.h"
 
 #include "HorizonEngine/FileManagement/ProjectFile.h"
 #include "HorizonEngine/FileManagement/Project.h"

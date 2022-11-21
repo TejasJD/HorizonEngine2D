@@ -568,6 +568,8 @@ void EditorLayer::onRenderImgui()
 			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+			Hzn::displayIfExists<Hzn::BoxCollider2DComponent>(selectedObj);
+			Hzn::displayIfExists<Hzn::Rigidbody2DComponent>(selectedObj);
 		}
 	}
 	ImGui::End();
