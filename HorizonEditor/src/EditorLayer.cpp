@@ -332,6 +332,9 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 	std::vector<GraphEditor::Link> mLinks = { {0, 0, 1, 0} };
 };
 
+
+
+
 void EditorLayer::onRenderImgui()
 {
 	/*static bool showDemo = true;
@@ -721,11 +724,12 @@ void EditorLayer::onRenderImgui()
 	static GraphEditor::FitOnScreen fit = GraphEditor::Fit_None;
 	static bool showGraphEditor = true;
 
-	if (ImGui::CollapsingHeader("Graph Editor"))
+	if (ImGui::Begin("Graph Editor"))
 	{
 		ImGui::Checkbox("Show GraphEditor", &showGraphEditor);
 		GraphEditor::EditOptions(options);
 	}
+	ImGui::End();
 
 	if (showGraphEditor)
 	{
