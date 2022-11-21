@@ -16,8 +16,7 @@ namespace Hzn
 	{
 	public:
 		App();
-
-		virtual ~App() = default;
+		virtual ~App();
 
 		void addLayer(Layer* layer) 
 		{

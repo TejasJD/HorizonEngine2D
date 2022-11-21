@@ -6,19 +6,29 @@
 
 namespace Hzn
 {
+	static std::unordered_set<uint32_t> allUnder;
+
 	void GameObject::setParent(GameObject& obj) const 
 	{
 		isValid();
 
+		if (!sameScene(obj)) return;
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
 		if (obj) {
-			obj.addChild(*this);
+			if (!isAncestorOf(obj)) {
+				if (getComponent<RelationComponent>().hasParent()) {
+					getParent().removeChild(*this);
+				}
+				obj.addChild(*this);
+			}
 		}
 		else {
+			if (getComponent<RelationComponent>().hasParent()) {
+				getParent().removeChild(*this);
+			}
 			relationComponent.m_Parent = { entt::null };
 		}
-
 	}
 
 	GameObject GameObject::getParent() const
@@ -162,4 +172,21 @@ namespace Hzn
 		}
 	}
 
+	bool GameObject::isAncestorOf(const GameObject& obj) const
+	{
+		allUnder.clear();
+		getChildrenAll();
+		return allUnder.find(entt::to_integral(obj.m_ObjectId)) != allUnder.end();
+	}
+
+	void GameObject::getChildrenAll() const
+	{
+		auto children = getChildren();
+
+		for(const auto& child : children)
+		{
+			allUnder.emplace(entt::to_integral(child.m_ObjectId));
+			child.getChildrenAll();
+		}
+	}
 }

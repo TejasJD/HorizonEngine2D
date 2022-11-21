@@ -26,6 +26,7 @@ namespace Hzn
 		friend class GameObject;
 		friend class Scene;
 		friend class SceneManager;
+
 		RelationComponent() = default;
 		RelationComponent(const RelationComponent& rhs) = default;
 		~RelationComponent() = default;
@@ -33,6 +34,7 @@ namespace Hzn
 		template<typename Archive>
 		void load(Archive& ar)
 		{
+			uint64_t allUnderSize = 0ULL;
 			ar(cereal::make_nvp("childCount", m_ChildCount),
 				cereal::make_nvp("parent", m_Parent),
 				cereal::make_nvp("firstChild", m_FirstChild),
@@ -50,9 +52,10 @@ namespace Hzn
 				cereal::make_nvp("prevSibling", entt::to_integral(m_Prev)));
 		}
 
-		bool hasParent() {
+		bool hasParent() const {
 			return m_Parent != entt::null;
 		}
+
 	private:
 		size_t m_ChildCount = 0ULL;
 		entt::entity m_Parent{entt::null};
@@ -149,22 +152,25 @@ namespace Hzn
 			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
 		}
 
-		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference
-		, const TransformComponent& rootTransform) {
-			std::vector<GameObject> children = obj.getChildren();
-			TransformComponent t = obj.getComponent<TransformComponent>();
-			for (int i = 0; i < children.size(); i++) {
-				updateChildren(children.at(i), positionDifference, scaleFactor, rotationDifference, rootTransform);
-				auto& transform = children.at(i).getComponent<TransformComponent>();
-				transform.m_Translation += positionDifference;
-				transform.m_Scale *= scaleFactor;
 
-				// Rotate object around parent by rotationDifference degrees.
-				transform.rotateAround(rootTransform, rotationDifference);
+		void updateChildren(const GameObject& parent, const glm::mat4& newPos, float rotBy, const glm::vec3& scaleBy
+		, const TransformComponent& rootTransform)
+		{
+			auto children = parent.getChildren();
+			for (auto& child : children)
+			{
+				auto& childTransform = child.getComponent<TransformComponent>();
+				auto newTranslation = newPos * glm::vec4(childTransform.m_Translation, 1.0f);
+				childTransform.m_Translation = glm::vec3(newTranslation.x, newTranslation.y, newTranslation.z);
+				childTransform.m_Scale *= scaleBy;
+				childTransform.m_Rotation += rotBy;
 
-				transform.m_Rotation += rotationDifference;
-				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
-				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
+				childTransform.rotateAround(rootTransform, rotBy);
+
+				if (childTransform.m_Rotation > 180) childTransform.m_Rotation -= 360;
+				if (childTransform.m_Rotation < -180) childTransform.m_Rotation += 360;
+
+				updateChildren(child, newPos, rotBy, scaleBy, rootTransform);
 			}
 		}
 	};
@@ -191,7 +197,7 @@ namespace Hzn
 				shouldUpdate |= true;
 				translationDifference = transform.m_Translation - startTranslation;
 			}
-			if (ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.5f, -100.0f, 100.0f, "%.3f")) {
+			if (ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.5f, 1.0f, 100.0f, "%.3f")) {
 				shouldUpdate |= true;
 				scaleFactor = transform.m_Scale / startScale;
 			}
@@ -206,7 +212,9 @@ namespace Hzn
 			ImGui::TreePop();
 
 			if (shouldUpdate) {
-				transform.updateChildren(obj, translationDifference, scaleFactor, rotationDifference, transform);
+				glm::mat4 transMat = glm::translate(glm::mat4(1.0f), translationDifference)
+					* glm::scale(glm::mat4(1.0f), scaleFactor);
+				transform.updateChildren(obj, transMat, rotationDifference, scaleFactor, transform);
 			}
 		}
 	}

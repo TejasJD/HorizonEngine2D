@@ -24,7 +24,6 @@ namespace Hzn
 		m_Valid = true;
 		m_Registry.each([&](auto entity)
 			{
-				/*m_Objects.insert({ m_Registry.get<NameComponent>(entity).m_Name, {entity, this} });*/
 				m_LocStorage.insert({ entt::to_integral(entity), {entity, this} });
 			});
 		m_Valid = false;

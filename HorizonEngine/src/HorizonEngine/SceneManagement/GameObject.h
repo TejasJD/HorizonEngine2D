@@ -68,7 +68,10 @@ namespace Hzn
 		size_t getChildCount() const;
 		void addChild(const GameObject& obj);
 		void removeChild(const GameObject& obj);
+		bool isAncestorOf(const GameObject& obj) const;
+
 	private:
+		void getChildrenAll() const;
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
 
