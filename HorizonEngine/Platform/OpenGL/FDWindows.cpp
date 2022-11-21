@@ -18,7 +18,8 @@
 namespace Hzn {
 
 		/// <summary>
-		/// This method contains the windows API to open files.
+		/// This method contains the wind
+		/// ows API to open files.
 		/// Declare the common dialog box structure.
 		/// set the buffer size for file name
 		/// 
@@ -50,7 +51,7 @@ namespace Hzn {
 			// use the contents of szFile to initialize itself.
 			ofn.lpstrFile[0] = '\0';
 			ofn.nMaxFile = sizeof(szFile);
-			ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0";
+			ofn.lpstrFilter = "All\0*.hzn\0*.*\0Text\0*.TXT\0";
 			ofn.nFilterIndex = 1;
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
@@ -98,7 +99,7 @@ namespace Hzn {
 			// use the contents of szFile to initialize itself.
 			ofn.lpstrFile[0] = '\0';
 			ofn.nMaxFile = sizeof(szFile);
-			ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0";
+			ofn.lpstrFilter = "All\0*.hzn\0*.*\0Text\0*.TXT\0";
 			ofn.nFilterIndex = 1;
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
