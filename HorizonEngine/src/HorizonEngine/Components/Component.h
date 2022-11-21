@@ -118,11 +118,18 @@ namespace Hzn
 
 		glm::mat4 getModelMatrix() const
 		{
-			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), { 1, 0, 0 })
+			glm::mat4 transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, m_Translation);
+			transform = glm::rotate(transform, glm::radians(m_Rotation.x), { 1, 0, 0 });
+			transform = glm::rotate(transform, glm::radians(m_Rotation.y), { 0, 1, 0 });
+			transform = glm::rotate(transform, glm::radians(m_Rotation.z), { 0, 0, 1 });
+			transform = glm::scale(transform, m_Scale);
+			/*glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), { 1, 0, 0 })
 			* glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), { 0, 1, 0 })
 			* glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), { 0, 0, 1 });
 			return glm::translate(glm::mat4(1.0f), m_Translation) *
-				rotation * glm::scale(glm::mat4(1.0f), m_Scale);
+				rotation * glm::scale(glm::mat4(1.0f), m_Scale);*/
+			return transform;
 		}
 
 		template<typename Archive>
