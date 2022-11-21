@@ -69,6 +69,9 @@ namespace Hzn
 		std::vector<GameObject> getChildrenAll() const;
 		void addChild(const GameObject& obj);
 		void removeChild(const GameObject& obj);
+		bool isAncestorOf(const GameObject& obj) const;
+		glm::mat4 getTransform() const;
+
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}

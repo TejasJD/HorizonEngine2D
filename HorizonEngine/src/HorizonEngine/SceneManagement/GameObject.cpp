@@ -6,6 +6,8 @@
 
 namespace Hzn
 {
+	static std::unordered_set<uint32_t> allUnder;
+
 	void GameObject::setParent(GameObject& obj) const 
 	{
 		isValid();
@@ -15,8 +17,7 @@ namespace Hzn
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
 		if (obj) {
-			std::vector<Hzn::GameObject> children = getChildrenAll();
-			if (!std::count(children.begin(), children.end(), obj)) {
+			if (!isAncestorOf(obj)) {
 				if (getComponent<Hzn::RelationComponent>().hasParent()) {
 					getParent().removeChild(*this);
 				}
@@ -29,7 +30,6 @@ namespace Hzn
 			}
 			relationComponent.m_Parent = { entt::null };
 		}
-
 	}
 
 	GameObject GameObject::getParent() const
@@ -89,20 +89,6 @@ namespace Hzn
 		return m_Scene->m_Registry.get<RelationComponent>(m_ObjectId).m_ChildCount;
 	}
 
-	std::vector<GameObject> GameObject::getChildrenAll() const 
-	{
-		std::vector<GameObject> children = getChildren();
-
-		int size = children.size();
-		for (int i = 0; i < size; i++) {
-			std::vector<GameObject> newChildren = children.at(i).getChildrenAll();
-			children.insert(children.end(), newChildren.begin(), newChildren.end());
-			size += newChildren.size();
-		}
-
-		return children;
-	}
-
 	void GameObject::addChild(const GameObject& obj)
 	{
 		// if this game object itself is valid.
@@ -136,6 +122,25 @@ namespace Hzn
 
 		m_Scene->m_Registry.get<RelationComponent>(obj.m_ObjectId).m_Parent = m_ObjectId;
 		relationComponent.m_ChildCount++;
+
+		glm::mat4 transform = getTransform();
+		auto& childTransform = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);
+		transform = glm::inverse(transform) * childTransform.getModelMatrix();
+
+		// decompose the 'transform' and set those to child.
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+		
+		glm::vec3 rotation = glm::eulerAngles(orientation);
+		rotation = glm::degrees(rotation);
+		// update the translation, orientation and rotation of the child transform.
+		childTransform.m_Translation = translation;
+		childTransform.m_Rotation = rotation;
+		childTransform.m_Scale = scale;
 	}
 
 	void GameObject::removeChild(const GameObject& obj)
@@ -148,6 +153,29 @@ namespace Hzn
 
 		if(hasChild(obj))
 		{
+			// update the transform of 'obj' to world-space.
+			// we get all the ancestors of 'this'.
+			glm::mat4 transform = getTransform();
+			/*auto& parentTransform = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);*/
+			auto& childTransform = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);
+			transform *= childTransform.getModelMatrix();
+
+			// decompose the 'transform' and set those to child.
+			glm::vec3 translation = glm::vec3(0.0f);
+			glm::quat orientation = glm::quat();
+			glm::vec3 scale = glm::vec3(0.0f);
+			glm::vec3 skew = glm::vec3(0.0f);
+			glm::vec4 perspective = glm::vec4(0.0f);
+			glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+			glm::vec3 rotation = glm::eulerAngles(orientation);
+			rotation = glm::degrees(rotation);
+			// update the translation, orientation and rotation of the child transform.
+			childTransform.m_Translation = translation;
+			childTransform.m_Rotation = rotation;
+			childTransform.m_Scale = scale;
+			
+
 			auto curr = obj.m_ObjectId;
 			auto parent = m_ObjectId;
 			auto& childRelations = m_Scene->m_Registry.get<RelationComponent>(curr);
@@ -187,4 +215,31 @@ namespace Hzn
 		}
 	}
 
+	bool GameObject::isAncestorOf(const GameObject& obj) const
+	{
+		auto list = getChildrenAll();
+		return std::count(list.begin(), list.end(), obj);
+	}
+
+	glm::mat4 GameObject::getTransform() const
+	{
+		if (getParent()) return getParent().getTransform() * m_Scene->m_Registry.get<TransformComponent>(m_ObjectId).getModelMatrix();
+		return glm::mat4(1.0f) * m_Scene->m_Registry.get<TransformComponent>(m_ObjectId).getModelMatrix();
+	}
+
+	std::vector<GameObject> GameObject::getChildrenAll() const
+	{
+		std::vector<GameObject> result;
+
+		auto children = getChildren();
+
+		for(auto child : children)
+		{
+			std::vector<GameObject> childResult = child.getChildrenAll();
+			result.emplace_back(child);
+			result.insert(result.end(), childResult.begin(), childResult.end());
+		}
+
+		return result;
+	}
 }
