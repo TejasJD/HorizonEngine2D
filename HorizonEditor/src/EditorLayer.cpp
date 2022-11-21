@@ -802,88 +802,90 @@ void EditorLayer::onRenderImgui()
 void EditorLayer::drawHierarchy()
 {
 	ImGui::Begin("Object Hierarchy");
-	auto list = m_Scene->getAllRootIds();
+	if (m_Scene) {
+		auto list = m_Scene->getAllRootIds();
 
-	/*openHierarchyPopup = false;*/
-	openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
+		/*openHierarchyPopup = false;*/
+		openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
 
-	for (const auto& x : list)
-	{
-		drawObjects(m_Scene->getGameObject(x));
-	}
-
-	if (openHierarchyPopup) {
-		if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
-			ImGui::CloseCurrentPopup();
+		for (const auto& x : list)
+		{
+			drawObjects(m_Scene->getGameObject(x));
 		}
 
-		ImGui::OpenPopup("HierarchyObjectPopup");
+		if (openHierarchyPopup) {
+			if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
+				ImGui::CloseCurrentPopup();
+			}
 
-		if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-			if (ImGui::MenuItem("Copy", NULL, false)) {
-				/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
-			}
-			if (ImGui::MenuItem("Paste", NULL, false)) {
-				// Do stuff here 
-			}
-			if (ImGui::MenuItem("Duplicate", NULL, false)) {
-				// Do stuff here 
-			}
-			if (ImGui::MenuItem("Delete", NULL, false)) {
-				Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
-				m_Scene->destroyGameObject(obj);
+			ImGui::OpenPopup("HierarchyObjectPopup");
 
-				selectedObject = std::string();
-				selectedObjectId = std::numeric_limits<uint32_t>::max();
+			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
+				if (ImGui::MenuItem("Copy", NULL, false)) {
+					/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
+				}
+				if (ImGui::MenuItem("Paste", NULL, false)) {
+					// Do stuff here 
+				}
+				if (ImGui::MenuItem("Duplicate", NULL, false)) {
+					// Do stuff here 
+				}
+				if (ImGui::MenuItem("Delete", NULL, false)) {
+					Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
+					m_Scene->destroyGameObject(obj);
+
+					selectedObject = std::string();
+					selectedObjectId = std::numeric_limits<uint32_t>::max();
+				}
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Create Empty", NULL, false)) {
+					// Do stuff here
+					Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
+					m_Scene->getGameObject(selectedObjectId).addChild(newObject);
+					newObject.addComponent<Hzn::TransformComponent>();
+				}
+
+				ImGui::EndPopup();
 			}
-			ImGui::Separator();
+		}
+
+		// Right-click
+		ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+		if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+		if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+		ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
+				Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+				receivedObject.setParent(Hzn::GameObject());
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		// Context menu (under default mouse threshold)
+		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+		if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+			ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+		}
+		if (ImGui::BeginPopup("contextHierarchy")) {
+			selectedObject = "";
+			selectedObjectId = std::numeric_limits<uint32_t>::max();
 
 			if (ImGui::MenuItem("Create Empty", NULL, false)) {
-				// Do stuff here
 				Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-				m_Scene->getGameObject(selectedObjectId).addChild(newObject);
 				newObject.addComponent<Hzn::TransformComponent>();
 			}
 
 			ImGui::EndPopup();
 		}
-	}
-
-	// Right-click
-	ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
-	if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
-	if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
-	ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-
-	if (ImGui::BeginDragDropTarget()) {
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
-			receivedObject.setParent(Hzn::GameObject());
+		// Left click
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+			selectedObject = "";
+			selectedObjectId = std::numeric_limits<uint32_t>::max();
 		}
-
-		ImGui::EndDragDropTarget();
-	}
-
-	// Context menu (under default mouse threshold)
-	ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-	if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
-		ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
-	}
-	if (ImGui::BeginPopup("contextHierarchy")) {
-		selectedObject = "";
-		selectedObjectId = std::numeric_limits<uint32_t>::max();
-
-		if (ImGui::MenuItem("Create Empty", NULL, false)) {
-			Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-			newObject.addComponent<Hzn::TransformComponent>();
-		}
-
-		ImGui::EndPopup();
-	}
-	// Left click
-	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-		selectedObject = "";
-		selectedObjectId = std::numeric_limits<uint32_t>::max();
 	}
 
 	ImGui::End();
