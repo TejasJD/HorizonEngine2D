@@ -149,22 +149,49 @@ namespace Hzn
 			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
 		}
 
-		void updateChildren(const GameObject& obj, const glm::vec3 positionDifference, const glm::vec3 scaleFactor, const float rotationDifference
-			, const TransformComponent& rootTransform) {
+		void translate(const GameObject& obj,  const glm::vec3 positionDifference) {
 			std::vector<GameObject> children = obj.getChildren();
 			TransformComponent t = obj.getComponent<TransformComponent>();
 			for (int i = 0; i < children.size(); i++) {
-				updateChildren(children.at(i), positionDifference, scaleFactor, rotationDifference, rootTransform);
 				auto& transform = children.at(i).getComponent<TransformComponent>();
 				transform.m_Translation += positionDifference;
-				transform.m_Scale *= scaleFactor;
+				translate(children.at(i), positionDifference);
+			}
+		}
 
-				// Rotate object around parent by rotationDifference degrees.
+		void scale(const GameObject& obj, const glm::vec3 rootPosition, glm::vec3 newScale) {
+			std::vector<GameObject> children = obj.getChildren();
+			TransformComponent t = obj.getComponent<TransformComponent>();
+			for (int i = 0; i < children.size(); i++) {
+				HZN_CORE_ERROR(i);
+				auto& transform = children.at(i).getComponent<TransformComponent>();
+
+				std::cout << glm::length((transform.m_Translation - rootPosition) / transform.m_Scale) << std::endl;
+
+				// Update position according to scale
+				transform.m_Translation = rootPosition + ((transform.m_Translation - rootPosition) / transform.m_Scale) * newScale;
+
+				transform.m_Scale = newScale;
+
+				scale(children.at(i), rootPosition, newScale);
+			}
+		}
+
+		void rotate(const GameObject& obj, const float rotationDifference, const TransformComponent& rootTransform) {
+			std::vector<GameObject> children = obj.getChildren();
+			TransformComponent t = obj.getComponent<TransformComponent>();
+			for (int i = 0; i < children.size(); i++) {
+				auto& transform = children.at(i).getComponent<TransformComponent>();
+				
+				// Update position according to rotation
 				transform.rotateAround(rootTransform, rotationDifference);
 
+				// Update rotation
 				transform.m_Rotation += rotationDifference;
 				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
 				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
+
+				rotate(children.at(i), rotationDifference, rootTransform);
 			}
 		}
 	};
@@ -177,37 +204,26 @@ namespace Hzn
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Transform", flags)) {
-			bool shouldUpdate = false;
 			glm::vec3 startTranslation = transform.m_Translation;
-			glm::vec3 translationDifference{ 0.0f, 0.0f, 0.0f };
-
-			glm::vec3 startScale = transform.m_Scale;
-			glm::vec3 scaleFactor{ 1.0f, 1.0f, 1.0f };
-
 			float startRotation = transform.m_Rotation;
-			float rotationDifference = 0.0f;
 
-			if (ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.5f, -50.0f, 50.0f, "%.3f")) {
-				shouldUpdate |= true;
-				translationDifference = transform.m_Translation - startTranslation;
+			if (ImGui::InputFloat3("Position", glm::value_ptr(transform.m_Translation), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+				transform.translate(obj, transform.m_Translation - startTranslation);
 			}
-			if (ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.5f, -100.0f, 100.0f, "%.3f")) {
-				shouldUpdate |= true;
-				scaleFactor = transform.m_Scale / startScale;
+			if (ImGui::InputFloat3("Scale", glm::value_ptr(transform.m_Scale), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
+				transform.scale(obj, transform.m_Translation, transform.m_Scale);
 			}
-			if (ImGui::SliderFloat("Rotation", &transform.m_Rotation, -360.0f, 360.0f, "%.3f")) {
-				shouldUpdate |= true;
-
+			if (ImGui::InputFloat("Rotation", &transform.m_Rotation, 1.0f, 10.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
 				if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
 				if (transform.m_Rotation < -180) transform.m_Rotation += 360;
 
-				rotationDifference = transform.m_Rotation - startRotation;
+				transform.rotate(obj, transform.m_Rotation - startRotation, transform);
 			}
 			ImGui::TreePop();
 
-			if (shouldUpdate) {
-				transform.updateChildren(obj, translationDifference, scaleFactor, rotationDifference, transform);
-			}
+			/*if (shouldUpdate) {
+				transform.updateChildren(obj, transform.m_Translation, translationDifference, scaleFactor, rotationDifference, transform);
+			}*/
 		}
 	}
 

@@ -62,11 +62,13 @@ namespace Hzn
 
 	std::shared_ptr<Project> ProjectManager::open(const std::filesystem::path& projectFilePath)
 	{
-		if(s_Project)
-		{
-			close();
+		if (!projectFilePath.empty()) {
+			if (s_Project)
+			{
+				close();
+			}
+			s_Project = std::make_shared<Project>(projectFilePath);
 		}
-		s_Project = std::make_shared<Project>(projectFilePath);
 
 		return s_Project;
 	}
