@@ -21,6 +21,12 @@ namespace Hzn
             Console.WriteLine($"C# number: {number}");
         }
 
+        public void PrintInts(int number1, int number2)
+        {
+            Console.WriteLine($"C# number1: {number1}, number2: {number2}");
+        }
+
+
         public void PrintCustomMessage(string message)
         {
             Console.WriteLine($"C# says : {message}");

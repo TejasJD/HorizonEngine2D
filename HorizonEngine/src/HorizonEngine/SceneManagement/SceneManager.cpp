@@ -101,9 +101,6 @@ namespace Hzn
 
 		object0.addChild(object1);
 		object1.addChild(object3);
-
-		HZN_CORE_DEBUG("{0}", object1.isAncestorOf(object3) ? "true" : "false");
-		HZN_CORE_DEBUG("{0}", object0.isAncestorOf(object3) ? "true" : "false");
 	}
 
 }

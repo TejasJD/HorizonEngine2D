@@ -17,8 +17,7 @@ namespace Hzn
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
 		if (obj) {
-			std::vector<Hzn::GameObject> children = getChildrenAll();
-			if (!std::count(children.begin(), children.end(), obj)) {
+			if (!isAncestorOf(obj)) {
 				if (getComponent<Hzn::RelationComponent>().hasParent()) {
 					getParent().removeChild(*this);
 				}
@@ -90,20 +89,6 @@ namespace Hzn
 		return m_Scene->m_Registry.get<RelationComponent>(m_ObjectId).m_ChildCount;
 	}
 
-	std::vector<GameObject> GameObject::getChildrenAll() const 
-	{
-		std::vector<GameObject> children = getChildren();
-
-		int size = children.size();
-		for (int i = 0; i < size; i++) {
-			std::vector<GameObject> newChildren = children.at(i).getChildrenAll();
-			children.insert(children.end(), newChildren.begin(), newChildren.end());
-			size += newChildren.size();
-		}
-
-		return children;
-	}
-
 	void GameObject::addChild(const GameObject& obj)
 	{
 		// if this game object itself is valid.
@@ -115,6 +100,11 @@ namespace Hzn
 		}
 		// if 'obj' and 'this' are the same objects.
 		if (obj == *this) return;
+
+		if(obj.getParent())
+		{
+			obj.getParent().removeChild(obj);
+		}
 
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 		auto curr = relationComponent.m_FirstChild;
@@ -137,6 +127,27 @@ namespace Hzn
 
 		m_Scene->m_Registry.get<RelationComponent>(obj.m_ObjectId).m_Parent = m_ObjectId;
 		relationComponent.m_ChildCount++;
+
+		glm::mat4 transform = getTransform();
+		auto& childTransform = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);
+		transform = glm::inverse(transform) * childTransform.getModelMatrix();
+
+		// decompose the 'transform' and set those to child.
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+		// conjugate of the quaternion.
+		orientation = glm::conjugate(orientation);
+		glm::vec3 rotation = glm::eulerAngles(orientation);
+		rotation = glm::radians(rotation);
+		// update the translation, orientation and rotation of the child transform.
+		childTransform.m_Translation = translation;
+		childTransform.m_Rotation = rotation;
+		childTransform.m_Scale = scale;
 	}
 
 	void GameObject::removeChild(const GameObject& obj)
@@ -149,6 +160,40 @@ namespace Hzn
 
 		if(hasChild(obj))
 		{
+			// update the transform of 'obj' to world-space.
+			// we get all the ancestors of 'this'.
+			glm::mat4 transform = getTransform();
+			/*auto& parentTransform = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);*/
+			auto& childTransform = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);
+			transform *= childTransform.getModelMatrix();
+
+			// decompose the 'transform' and set those to child.
+			glm::vec3 translation = glm::vec3(0.0f);
+			glm::quat orientation = glm::quat();
+			glm::vec3 scale = glm::vec3(0.0f);
+			glm::vec3 skew = glm::vec3(0.0f);
+			glm::vec4 perspective = glm::vec4(0.0f);
+			glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+			// conjugate of the quaternion.
+			orientation = glm::conjugate(orientation);
+			glm::vec3 rotation = glm::eulerAngles(orientation);
+			rotation = glm::radians(rotation);
+			// update the translation, orientation and rotation of the child transform.
+			childTransform.m_Translation = translation;
+			childTransform.m_Rotation = rotation;
+			childTransform.m_Scale = scale;
+
+			/*glm::vec4 new_Translation = parentMat * glm::vec4(childTransform.m_Translation, 1.0f);
+			childTransform.m_Translation = glm::vec3(new_Translation.x, new_Translation.y, new_Translation.z);
+
+			childTransform.m_Rotation += getRotation();
+			if (childTransform.m_Rotation > glm::radians(180.0f)) childTransform.m_Rotation -= glm::radians(360.0f);
+			if (childTransform.m_Rotation < glm::radians(-180.0f)) childTransform.m_Rotation += glm::radians(360.0f);
+
+			childTransform.m_Scale *= getScale();*/
+			
+
 			auto curr = obj.m_ObjectId;
 			auto parent = m_ObjectId;
 			auto& childRelations = m_Scene->m_Registry.get<RelationComponent>(curr);
@@ -190,19 +235,76 @@ namespace Hzn
 
 	bool GameObject::isAncestorOf(const GameObject& obj) const
 	{
-		allUnder.clear();
-		getChildrenAll();
-		return allUnder.find(entt::to_integral(obj.m_ObjectId)) != allUnder.end();
+		auto list = getChildrenAll();
+		return std::count(list.begin(), list.end(), obj);
 	}
 
-	void GameObject::getChildrenAll() const
+	float GameObject::getRotation()
 	{
+		float rotation = 0.0f;
+		/*auto ancestors = getAncestorsAll();
+		for (auto ancestor : ancestors)
+		{
+			auto& transformComponent = m_Scene->m_Registry.get<TransformComponent>(ancestor.m_ObjectId);
+			rotation += transformComponent.m_Rotation;
+			if (rotation > glm::radians(180.0f)) rotation -= glm::radians(360.0f);
+			if (rotation < glm::radians( - 180.0f)) rotation += glm::radians(360.0f);
+		}
+		rotation += m_Scene->m_Registry.get<TransformComponent>(m_ObjectId).m_Rotation;
+		if (rotation > glm::radians(180.0f)) rotation -= glm::radians(360.0f);
+		if (rotation < glm::radians(-180.0f)) rotation += glm::radians(360.0f);*/
+		return rotation;
+	}
+
+	glm::vec3 GameObject::getScale()
+	{
+		glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
+		/*auto ancestors = getAncestorsAll();
+		for (auto ancestor : ancestors)
+		{
+			auto& transformComponent = m_Scene->m_Registry.get<TransformComponent>(ancestor.m_ObjectId);
+			scale *= transformComponent.m_Scale;
+		}*/
+		return scale * m_Scene->m_Registry.get<TransformComponent>(m_ObjectId).m_Scale;
+	}
+
+	glm::mat4 GameObject::getTransform() const
+	{
+		glm::mat4 transform = glm::mat4(1.0f);
+		auto ancestors = getAncestorsAll();
+		for(auto ancestor : ancestors)
+		{
+			auto& transformComponent = m_Scene->m_Registry.get<TransformComponent>(ancestor.m_ObjectId);
+			transform *= transformComponent.getModelMatrix();
+		}
+		return transform * m_Scene->m_Registry.get<TransformComponent>(m_ObjectId).getModelMatrix();
+	}
+
+	std::vector<GameObject> GameObject::getChildrenAll() const
+	{
+		std::vector<GameObject> result;
+
 		auto children = getChildren();
 
-		for(const auto& child : children)
+		for(auto child : children)
 		{
-			allUnder.emplace(entt::to_integral(child.m_ObjectId));
-			child.getChildrenAll();
+			std::vector<GameObject> childResult = child.getChildrenAll();
+			result.emplace_back(child);
+			result.insert(result.end(), childResult.begin(), childResult.end());
 		}
+
+		return result;
+	}
+
+	std::vector<GameObject> GameObject::getAncestorsAll() const
+	{
+		std::vector<GameObject> ancestors;
+		auto ancestor = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId).m_Parent;
+		while (ancestor != entt::null)
+		{
+			ancestors.push_back({ ancestor, m_Scene });
+			ancestor = m_Scene->m_Registry.get<RelationComponent>(ancestor).m_Parent;
+		}
+		return ancestors;
 	}
 }

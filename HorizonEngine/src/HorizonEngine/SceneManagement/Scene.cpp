@@ -81,7 +81,8 @@ namespace Hzn
 			for (const auto& entity : sprites)
 			{
 				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-				Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+				GameObject obj = getGameObject(entt::to_integral(entity));
+				Renderer2D::drawQuad(obj.getTransform(), renderComponent);
 			}
 			Renderer2D::endScene();
 		}
@@ -114,7 +115,8 @@ namespace Hzn
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+					GameObject obj = getGameObject(entt::to_integral(entity));
+					Renderer2D::drawQuad(obj.getTransform(), renderComponent);
 				}
 				Renderer2D::endScene();
 			}

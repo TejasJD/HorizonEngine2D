@@ -103,11 +103,8 @@ namespace Hzn
 	{
 		mono_set_assemblies_path("lib/mono");
 
-		MonoDomain* rootDomain = mono_jit_init("HorizonScriptRuntime");
-
-		HZN_CORE_ASSERT(rootDomain, "Root Domain is null!");
-
-		s_Data->rootDomain = rootDomain;
+		s_Data->rootDomain = mono_jit_init("HorizonScriptRuntime");
+		HZN_CORE_ASSERT(s_Data->rootDomain, "Root Domain is null!");
 
 		s_Data->appDomain = mono_domain_create_appdomain("HorizonAppDomain", nullptr);
 		mono_domain_set(s_Data->appDomain, true);
@@ -130,15 +127,35 @@ namespace Hzn
 		mono_runtime_object_init(instance);
 
 		// invoke function with no params.
-		MonoMethod* monoMethod = mono_class_get_method_from_name(monoClass, "PrintMessage", 0);
-		mono_runtime_invoke(monoMethod, instance, nullptr, nullptr);
+		MonoMethod* PrintMessage = mono_class_get_method_from_name(monoClass, "PrintMessage", 0);
+		mono_runtime_invoke(PrintMessage, instance, nullptr, nullptr);
 
 		// invoke function with params.
-		MonoMethod* PrintCustomMessage = mono_class_get_method_from_name(monoClass, "PrintMessage", 0);
+		MonoMethod* PrintInt = mono_class_get_method_from_name(monoClass, "PrintInt", 1);
+		int value = 7;
+
+		void* params[1] = {&value};
+		mono_runtime_invoke(PrintInt, instance, params, nullptr);
+
+		MonoMethod* PrintInts = mono_class_get_method_from_name(monoClass, "PrintInts", 2);
+
+		int value1 = 7, value2 = 8;
+		void* printIntParams[2] = { &value1, &value2 };
+		mono_runtime_invoke(PrintInts, instance, printIntParams, nullptr);
+
+		MonoString* stringParam = mono_string_new(s_Data->appDomain, "Hello world!");
+
+		MonoMethod* PrintCustomMessage = mono_class_get_method_from_name(monoClass, "PrintCustomMessage", 1);
+
+		void* customMessage[1] = { stringParam };
+
+		mono_runtime_invoke(PrintCustomMessage, instance, customMessage, nullptr);
 	}
 
 	void ScriptEngine::destroyMono()
 	{
-		
+		mono_domain_unload(s_Data->appDomain);
+		s_Data->appDomain = nullptr;
+		s_Data->rootDomain = nullptr;
 	}
 }
