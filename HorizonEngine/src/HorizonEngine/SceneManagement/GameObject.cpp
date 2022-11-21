@@ -10,12 +10,23 @@ namespace Hzn
 	{
 		isValid();
 
+		//getChildrenAll().contains(obj)
+
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
 		if (obj) {
-			obj.addChild(*this);
+			std::vector<Hzn::GameObject> children = getChildrenAll();
+			if (!std::count(children.begin(), children.end(), obj)) {
+				if (getComponent<Hzn::RelationComponent>().hasParent()) {
+					getParent().removeChild(*this);
+				}
+				obj.addChild(*this);
+			}
 		}
 		else {
+			if (getComponent<Hzn::RelationComponent>().hasParent()) {
+				getParent().removeChild(*this);
+			}
 			relationComponent.m_Parent = { entt::null };
 		}
 
@@ -76,6 +87,20 @@ namespace Hzn
 	{
 		isValid();
 		return m_Scene->m_Registry.get<RelationComponent>(m_ObjectId).m_ChildCount;
+	}
+
+	std::vector<GameObject> GameObject::getChildrenAll() const 
+	{
+		std::vector<GameObject> children = getChildren();
+
+		int size = children.size();
+		for (int i = 0; i < size; i++) {
+			std::vector<GameObject> newChildren = children.at(i).getChildrenAll();
+			children.insert(children.end(), newChildren.begin(), newChildren.end());
+			size += newChildren.size();
+		}
+
+		return children;
 	}
 
 	void GameObject::addChild(const GameObject& obj)
