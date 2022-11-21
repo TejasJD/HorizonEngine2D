@@ -83,16 +83,13 @@ void EditorLayer::onEvent(Hzn::Event& e)
 
 void EditorLayer::openProject()
 {
-	projectRootFolder = std::filesystem::path(m_ActiveProject->getPath()).parent_path().string();
-
+	projectRootFolder = m_ActiveProject->getPath().parent_path().string();
 	//set current path of is  project root directory
 	m_CurrentDirectory = projectRootFolder;
 
-	std::string sceneFolderPath = projectRootFolder + "\\scenes";
-
 	std::string iconPath = projectRootFolder + "\\icons";
 
-	currentScenePath = sceneFolderPath + "\\defaultScene.json";
+	currentScenePath = (m_Scene ? m_Scene->getFilePath().string() : std::string());
 
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(iconPath)) {
 		//create texture of directory icon
@@ -267,7 +264,6 @@ void EditorLayer::onRenderImgui()
 				m_ActiveProject = Hzn::ProjectManager::open(Hzn::FileDialogs::openFile());
 				m_Scene = m_ActiveProject->getActiveScene();
 				openProject();
-
 			}
 
 			if (m_ActiveProject)
@@ -824,7 +820,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 void EditorLayer::openScene(const std::filesystem::path& filepath)
 {
-	m_ActiveProject->setActiveScene(filepath);
+	Hzn::ProjectManager::openScene(filepath);
 	m_Scene = m_ActiveProject->getActiveScene();
 }
 
