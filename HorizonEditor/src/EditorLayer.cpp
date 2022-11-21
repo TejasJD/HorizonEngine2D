@@ -629,8 +629,7 @@ void EditorLayer::onRenderImgui()
 void EditorLayer::drawHierarchy()
 {
 	ImGui::Begin("Object Hierarchy");
-	if (m_Scene)
-	{
+	if (m_Scene) {
 		auto list = m_Scene->getAllRootIds();
 
 		/*openHierarchyPopup = false;*/
@@ -687,9 +686,6 @@ void EditorLayer::drawHierarchy()
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
 				Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
-				if (receivedObject.getComponent<Hzn::RelationComponent>().hasParent()) {
-					receivedObject.getParent().removeChild(receivedObject);
-				}
 				receivedObject.setParent(Hzn::GameObject());
 			}
 
@@ -751,7 +747,6 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 		ImGui::EndDragDropSource();
 
 		std::vector<std::string> names = m_Scene->allGameObjectNames();
-		HZN_CORE_DEBUG(names.size());
 	}
 
 	if (ImGui::BeginDragDropTarget()) {

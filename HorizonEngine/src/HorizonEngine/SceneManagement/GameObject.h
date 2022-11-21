@@ -66,6 +66,7 @@ namespace Hzn
 		GameObject getPrevSibling() const;
 		std::vector<GameObject> getChildren() const;
 		size_t getChildCount() const;
+		std::vector<GameObject> getChildrenAll() const;
 		void addChild(const GameObject& obj);
 		void removeChild(const GameObject& obj);
 		bool isAncestorOf(const GameObject& obj) const;
