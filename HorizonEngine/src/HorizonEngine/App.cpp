@@ -5,6 +5,7 @@
 #include "App.h"
 
 #include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/Scripting/ScriptEngine.h"
 
 namespace Hzn
 {
@@ -21,9 +22,15 @@ namespace Hzn
 		m_Window->setVsync(true);
 
 		Renderer::init();
+		ScriptEngine::init();
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);
+	}
+
+	App::~App()
+	{
+		ScriptEngine::destroy();
 	}
 
 	//! the main App run loop. This loop keeps the application running and updates and renders

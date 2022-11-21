@@ -99,8 +99,8 @@ namespace Hzn
 		camera.addComponent<Hzn::CameraComponent>();
 		camera.addComponent<Hzn::TransformComponent>();
 
-		object0.addChild(camera);
 		object0.addChild(object1);
+		object1.addChild(object3);
 	}
 
 }
