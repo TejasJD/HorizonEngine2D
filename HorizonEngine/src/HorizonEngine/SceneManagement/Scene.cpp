@@ -86,13 +86,13 @@ namespace Hzn
 
 				if (!renderComponent.texturePath.empty()) {
 					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
-					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent.m_Texture);
+					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent.m_Texture, renderComponent.m_Color);
 				}
 				else if(!renderComponent.spritePath.empty())
 				{
 					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.spritePath);
 					renderComponent.m_Sprite = Hzn::Sprite2D::create(renderComponent.m_Texture, { std::stoi(renderComponent.m_SpriteX) , std::stoi(renderComponent.m_SpriteY) }, { std::stof(renderComponent.m_SpriteWidth), std::stof(renderComponent.m_SpriteHeight) });
-					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent.m_Sprite);
+					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent.m_Sprite, renderComponent.m_Color);
 				}
 				else
 				{

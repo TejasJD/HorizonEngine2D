@@ -55,8 +55,8 @@ namespace Hzn
 		static void endScene();
 
 		static void drawQuad(const glm::mat4& transform, const glm::vec4& color);
-		static void drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture);
-		static void drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite);
+		static void drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color);
+		static void drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a colored quadrilateral (4-sided shape) on the screen.
@@ -100,7 +100,7 @@ namespace Hzn
 		/// <param name="position">Where should the shape appear on the screen (x, y).</param>
 		/// <param name="size">What should be the size of the shape.</param>
 		/// <param name="texture"> Which texture should be used on the shape.</param>
-		static void drawQuad(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
+		static void drawQuad(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a quadrilateral(4 - sided shape) with texture on the screen. z - coordinate can be used for
@@ -109,7 +109,7 @@ namespace Hzn
 		/// <param name="position">Where should the shape appear on the screen (x, y, z).</param>
 		/// <param name="size">What should be the size of the shape.</param>
 		/// <param name="texture"> Which texture should be used on the shape.</param>
-		static void drawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
+		static void drawQuad(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a rotated quadrilateral(4 - sided shape) with texture on the screen.
@@ -118,7 +118,7 @@ namespace Hzn
 		/// <param name="angle">Angle (in degrees) you want the shape to be rotated at.</param>
 		/// <param name="size">What should be the size of the shape.</param>
 		/// <param name="texture">Which texture should be used on the shape.</param>
-		static void drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
+		static void drawQuad(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a rotated quadrilateral(4 - sided shape) with texture on the screen. z - coordinate can be used for
@@ -128,7 +128,7 @@ namespace Hzn
 		/// <param name="angle">Angle (in degrees) you want the shape to be rotated at.</param>
 		/// <param name="size">What should be the size of the shape.</param>
 		/// <param name="texture">Which texture should be used on the shape.</param>
-		static void drawQuad(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture);
+		static void drawQuad(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a 2D sprite.
@@ -136,7 +136,7 @@ namespace Hzn
 		/// <param name="position">Where should the sprite appear on the screen (x, y, z).</param>
 		/// <param name="size">What should be the size of the sprite.</param>
 		/// <param name="sprite">Sprite that you want to draw.</param>
-		static void drawSprite(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite);
+		static void drawSprite(const glm::vec2& position, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a 2D sprite. z - coordinate can be used for
@@ -145,7 +145,7 @@ namespace Hzn
 		/// <param name="position">Where should the sprite appear on the screen (x, y, z).</param>
 		/// <param name="size">What should be the size of the sprite.</param>
 		/// <param name="sprite">Sprite that you want to draw.</param>
-		static void drawSprite(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite);
+		static void drawSprite(const glm::vec3& position, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a rotated 2D sprite.
@@ -154,7 +154,7 @@ namespace Hzn
 		/// <param name="angle">Angle (in degrees) you want the sprite to be rotated at.</param>
 		/// <param name="size">What should be the size of the sprite.</param>
 		/// <param name="sprite">Sprite that you want to draw.</param>
-		static void drawSprite(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite);
+		static void drawSprite(const glm::vec2& position, float angle, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color);
 
 		/// <summary>
 		/// Render a rotated 2D sprite. z - coordinate can be used for
@@ -164,7 +164,7 @@ namespace Hzn
 		/// <param name="angle">Angle (in degrees) you want the sprite to be rotated at.</param>
 		/// <param name="size">What should be the size of the sprite.</param>
 		/// <param name="sprite">Sprite that you want to draw.</param>
-		static void drawSprite(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite);
+		static void drawSprite(const glm::vec3& position, float angle, const glm::vec3& size, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color);
 
 		/// <summary>
 		/// Check if the renderer was initialized.

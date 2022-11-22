@@ -607,12 +607,12 @@ void EditorLayer::onRenderImgui()
 					std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
 
 					ImGui::PushID(spriteTexCoords.c_str());
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
 					std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(std::filesystem::path(currentTexturePath).filename().string())[count];
 					ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
-
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 					ImGui::PopStyleColor();
+
 					if (ImGui::BeginDragDropSource()) {
 
 						std::filesystem::path currentSpritePath = currentTexturePath + "-;" + std::to_string(i) + ";" + std::to_string(j) + ";" + std::to_string(sprite->getCellSize()[0].x) + ";" + std::to_string(sprite->getCellSize()[0].y);
