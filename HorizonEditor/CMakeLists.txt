@@ -38,8 +38,8 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy_directory
-	${CMAKE_CURRENT_LIST_DIR}/scenes
-	$<TARGET_FILE_DIR:HznEditor>/scenes
+	${CMAKE_CURRENT_LIST_DIR}/icons
+	$<TARGET_FILE_DIR:HznEditor>/icons
 )
 
 add_custom_command(
@@ -47,9 +47,10 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy_directory
-	${CMAKE_CURRENT_LIST_DIR}/icons
-	$<TARGET_FILE_DIR:HznEditor>/icons
+	${CMAKE_CURRENT_LIST_DIR}/mono/lib
+	$<TARGET_FILE_DIR:HznEditor>/../lib
 )
+
 
 # post build commands to copy resources from source to build directories for the HorizonEngine target
 add_custom_command(
@@ -59,4 +60,22 @@ add_custom_command(
 	ARGS -E copy_directory
 	$<TARGET_FILE_DIR:HorizonEngine>/api_assets
 	$<TARGET_FILE_DIR:HznEditor>/api_assets
+)
+
+add_custom_command(
+	TARGET HznEditor
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	$<TARGET_FILE_DIR:HorizonEngine>/mono-2.0-sgen.dll
+	$<TARGET_FILE_DIR:HznEditor>/mono-2.0-sgen.dll
+)
+
+add_custom_command(
+	TARGET HznEditor
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	${CMAKE_CURRENT_LIST_DIR}/Scripts
+	$<TARGET_FILE_DIR:HznEditor>/Scripts
 )

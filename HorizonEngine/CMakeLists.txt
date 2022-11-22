@@ -51,6 +51,8 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/SceneManagement/GameObject.cpp"
 	"src/HorizonEngine/FileManagement/ProjectManager.cpp"
 	"src/HorizonEngine/FileManagement/Project.cpp"
+	"src/HorizonEngine/GraphEditor/GraphEditor.cpp"
+	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
 )
 
 set(HZN_HEADER_FILES
@@ -111,11 +113,11 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/SceneManagement/GameObject.h"
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
-
+	"src/HorizonEngine/Scripting/ScriptEngine.h"
 )
 
 # Add source to this project's executable.
-add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES} "src/HorizonEngine/GraphEditor/GraphEditor.cpp" )
+add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
 
 # compile definitions for 'HorizonEngine' target
 target_compile_definitions(HorizonEngine
@@ -132,6 +134,7 @@ target_include_directories(HorizonEngine
 	src
 	src/HorizonEngine
 	platform
+	vendor/mono/include
 )
 
 # precompiled headers to target 'HorizonEngine'
@@ -165,6 +168,7 @@ target_link_libraries(HorizonEngine
 	imguizmo::imguizmo
 	EnTT::EnTT
 	cereal::cereal
+	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/dbg/mono-2.0-sgen.lib
 )
 
 #testing
@@ -201,6 +205,15 @@ add_custom_command(
 	ARGS -E copy_directory
 	${CMAKE_CURRENT_LIST_DIR}/api_assets
 	$<TARGET_FILE_DIR:HorizonEngine>/api_assets
+)
+
+add_custom_command(
+	TARGET HorizonEngine
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	${CMAKE_CURRENT_LIST_DIR}/vendor/mono/dylib/dbg
+	$<TARGET_FILE_DIR:HorizonEngine>
 )
 
 message(STATUS ${CMAKE_BINARY_DIR})

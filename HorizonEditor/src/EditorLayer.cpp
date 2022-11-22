@@ -174,14 +174,6 @@ void EditorLayer::onEvent(Hzn::Event& e)
 //		}
 //	}
 //}
-
-
-
-
-
-
-
-
 //// ***** CODE FOR NODE EDITOR *****
 //template <typename T, std::size_t N>
 //
@@ -346,6 +338,58 @@ void EditorLayer::onEvent(Hzn::Event& e)
 
 
 
+
+//			2,
+//			Array{"MyOutput0", "MyOuput1"},
+//			nullptr
+//		},
+//
+//		{
+//			IM_COL32(180, 160, 160, 255),
+//			IM_COL32(140, 100, 100, 255),
+//			IM_COL32(150, 110, 110, 255),
+//			3,
+//			nullptr,
+//			Array{ IM_COL32(200,100,100,255), IM_COL32(100,200,100,255), IM_COL32(100,100,200,255) },
+//			1,
+//			Array{"MyOutput0"},
+//			Array{ IM_COL32(200,200,200,255)}
+//		}
+//	};
+//
+//	struct Node
+//	{
+//		const char* name;
+//		GraphEditor::TemplateIndex templateIndex;
+//		float x, y;
+//		bool mSelected;
+//	};
+//
+//	std::vector<Node> mNodes = {
+//		{
+//			"Start Node",
+//			0,
+//			0, 0,
+//			false
+//		},
+//
+//		{
+//			"End Node",
+//			0,
+//			400, 0,
+//			false
+//		},
+//
+//		{
+//			"My Node 2",
+//			1,
+//			400, 400,
+//			false
+//		}
+//	};
+//
+//	std::vector<GraphEditor::Link> mLinks = { {0, 0, 1, 0} };
+//};
 
 void EditorLayer::onRenderImgui()
 {
@@ -951,17 +995,8 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-			Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObject((uint32_t) * (const int*)payload->Data);
-
-			// Set new parent only if the target object is not a child of the source object
+			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
 			receivedObject.setParent(object);
-			/*std::vector<Hzn::GameObject> children = receivedObject.getChildrenAll();
-			if (!std::count(children.begin(), children.end(), object)) {
-				if (receivedObject.getComponent<Hzn::RelationComponent>().hasParent()) {
-					receivedObject.getParent().removeChild(receivedObject);
-				}
-				object.addChild(receivedObject);
-			}*/
 		}
 
 		ImGui::EndDragDropTarget();

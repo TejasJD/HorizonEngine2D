@@ -24,7 +24,6 @@ namespace Hzn
 		m_Valid = true;
 		m_Registry.each([&](auto entity)
 			{
-				/*m_Objects.insert({ m_Registry.get<NameComponent>(entity).m_Name, {entity, this} });*/
 				m_LocStorage.insert({ entt::to_integral(entity), {entity, this} });
 			});
 		m_Valid = false;
@@ -82,7 +81,8 @@ namespace Hzn
 			for (const auto& entity : sprites)
 			{
 				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-				Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+				GameObject obj = getGameObject(entt::to_integral(entity));
+				Renderer2D::drawQuad(obj.getTransform(), renderComponent);
 			}
 			Renderer2D::endScene();
 		}
@@ -115,7 +115,8 @@ namespace Hzn
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent);
+					GameObject obj = getGameObject(entt::to_integral(entity));
+					Renderer2D::drawQuad(obj.getTransform(), renderComponent);
 				}
 				Renderer2D::endScene();
 			}
