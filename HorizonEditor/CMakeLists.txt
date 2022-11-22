@@ -5,10 +5,16 @@ cmake_minimum_required (VERSION 3.15)
 
 set(HZNEDITOR_SOURCE_FILES
 	"src/Main.cpp"
-  "src/EditorLayer.cpp")
+  "src/EditorLayer.cpp"
+  "src/NodeEditor/NodeEditor.cpp"
+  "src/ContentBrowser/ContentBrowser.cpp"
+  "src/Modals/Modals.cpp")
 
 set(HZNEDITOR_HEADER_FILES
- "include/EditorLayer.h" )
+ "include/EditorLayer.h"
+ "include/NodeEditor.h"
+ "include/ContentBrowser.h"
+ "include/Modals.h")
 
 # 'HznApplication' target which would generate an executable.
 add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES})
