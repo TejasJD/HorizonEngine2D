@@ -4,6 +4,13 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "Modals.h"
+#include "ContentBrowser.h"
+
+std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
+std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
+Hzn::AssetManager EditorData::assetManager;
+std::string ContentBrowser::m_CurrentTexturePath;
 
 
 EditorLayer::EditorLayer(const char* name) :
@@ -55,8 +62,8 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	// we update all the camera components to the proper aspect ratio, and update the last known viewport size.
 	auto& props = m_FrameBuffer->getProps();
 
-	if (m_Scene) {
-		lastViewportSize = m_Scene->onViewportResize(props.width, props.height);
+	if (EditorData::s_Scene_Active) {
+		lastViewportSize = EditorData::s_Scene_Active->onViewportResize(props.width, props.height);
 		m_EditorCameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
 	}
 
@@ -66,11 +73,11 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 	/*Hzn::Renderer2D::beginScene(m_CameraController.getCamera());*/
 	// update the scene.
-	if (m_Scene) {
+	if (EditorData::s_Scene_Active) {
 		if (m_PlayMode)
-			m_Scene->onUpdate(ts);
+			EditorData::s_Scene_Active->onUpdate(ts);
 		else
-			m_Scene->onEditorUpdate(m_EditorCameraController.getCamera(), ts, assetManager);
+			EditorData::s_Scene_Active->onEditorUpdate(m_EditorCameraController.getCamera(), ts, EditorData::assetManager);
 	}
 	// unbind the current framebuffer.
 	/*Hzn::Renderer2D::endScene();*/
@@ -85,110 +92,227 @@ void EditorLayer::onEvent(Hzn::Event& e)
 	}
 }
 
-void EditorLayer::openProject()
-{
-	projectRootFolder = m_ActiveProject->getPath().parent_path().string();
-	//set current path of is  project root directory
-	m_CurrentDirectory = projectRootFolder;
-
-	std::string iconPath = projectRootFolder + "\\icons";
-
-	currentScenePath = (m_Scene ? m_Scene->getFilePath().string() : std::string());
-
-	for (const auto& entry : std::filesystem::recursive_directory_iterator(iconPath)) {
-		//create texture of directory icon
-		if (!entry.is_directory() && entry.path().string().find("DirectoryIcon.png") != std::string::npos) {
-			folderIcon = Hzn::Texture2D::create(entry.path().string());
-		}
-
-		//create texture of file icon
-		if (!entry.is_directory() && entry.path().string().find("FileIcon.png") != std::string::npos) {
-
-			fileIcon = Hzn::Texture2D::create(entry.path().string());
-		}
-	}
-
-	//create map to store format of sprite
-	std::map<std::string, std::string> spriteFormat;
-
-	//create texture for image file and sprites from sprite sheets
-	for (const auto& entry : std::filesystem::recursive_directory_iterator(projectRootFolder))
-	{
-
-		/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
-		{
-			assetManager.LoadAudio(entry.path().string(), entry.path().string());
-		}*/
-
-		if (entry.path().string().find("icons") != std::string::npos)
-		{
-			continue;
-		}
 
 
-		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
-			assetManager.LoadTexture(entry.path().string(), entry.path().string());
-		}
 
-		if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
 
-			for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
 
-				if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-					std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-					std::string line;
+//// ***** CODE FOR NODE EDITOR *****
+//template <typename T, std::size_t N>
+//
+//struct Array
+//{
+//	T data[N];
+//	const size_t size() const { return N; }
+//
+//	const T operator [] (size_t index) const { return data[index]; }
+//	operator T* () {
+//		T* p = new T[N];
+//		memcpy(p, data, sizeof(data));
+//		return p;
+//	}
+//};
+//
+//template <typename T, typename ... U> Array(T, U...)->Array<T, 1 + sizeof...(U)>;
+//
+//struct GraphEditorDelegate : public GraphEditor::Delegate
+//{
+//	bool AllowedLink(GraphEditor::NodeIndex from, GraphEditor::NodeIndex to) override
+//	{
+//		return true;
+//	}
+//
+//	void SelectNode(GraphEditor::NodeIndex nodeIndex, bool selected) override
+//	{
+//		mNodes[nodeIndex].mSelected = selected;
+//	}
+//
+//	void MoveSelectedNodes(const ImVec2 delta) override
+//	{
+//		for (auto& node : mNodes)
+//		{
+//			if (!node.mSelected)
+//			{
+//				continue;
+//			}
+//			node.x += delta.x;
+//			node.y += delta.y;
+//		}
+//	}
+//
+//	virtual void RightClick(GraphEditor::NodeIndex nodeIndex, GraphEditor::SlotIndex slotIndexInput, GraphEditor::SlotIndex slotIndexOutput) override
+//	{
+//	}
+//
+//	void AddLink(GraphEditor::NodeIndex inputNodeIndex, GraphEditor::SlotIndex inputSlotIndex, GraphEditor::NodeIndex outputNodeIndex, GraphEditor::SlotIndex outputSlotIndex) override
+//	{
+//		mLinks.push_back({ inputNodeIndex, inputSlotIndex, outputNodeIndex, outputSlotIndex });
+//	}
+//
+//	void DelLink(GraphEditor::LinkIndex linkIndex) override
+//	{
+//		mLinks.erase(mLinks.begin() + linkIndex);
+//	}
+//
+//	void CustomDraw(ImDrawList* drawList, ImRect rectangle, GraphEditor::NodeIndex nodeIndex) override
+//	{
+//		drawList->AddLine(rectangle.Min, rectangle.Max, IM_COL32(0, 0, 0, 255));
+//		drawList->AddText(rectangle.Min, IM_COL32(255, 128, 64, 255), "Draw");
+//	}
+//
+//	const size_t GetTemplateCount() override
+//	{
+//		return sizeof(mTemplates) / sizeof(GraphEditor::Template);
+//	}
+//
+//	const GraphEditor::Template GetTemplate(GraphEditor::TemplateIndex index) override
+//	{
+//		return mTemplates[index];
+//	}
+//
+//	const size_t GetNodeCount() override
+//	{
+//		return mNodes.size();
+//	}
+//
+//	const GraphEditor::Node GetNode(GraphEditor::NodeIndex index) override
+//	{
+//		const auto& myNode = mNodes[index];
+//		return GraphEditor::Node
+//		{
+//			myNode.name,
+//			myNode.templateIndex,
+//			ImRect(ImVec2(myNode.x, myNode.y), ImVec2(myNode.x + 200, myNode.y + 200)),
+//			myNode.mSelected
+//		};
+//	}
+//
+//	const size_t GetLinkCount() override
+//	{
+//		return mLinks.size();
+//	}
+//
+//	const GraphEditor::Link GetLink(GraphEditor::LinkIndex index) override
+//	{
+//		return mLinks[index];
+//	}
+//
+//	// Graph datas
+//	static const inline GraphEditor::Template mTemplates[] = {
+//		{
+//			IM_COL32(160, 160, 180, 255),
+//			IM_COL32(100, 100, 140, 255),
+//			IM_COL32(110, 110, 150, 255),
+//			1,
+//			Array{"MyInput"},
+//			nullptr,
+//			2,
+//			Array{"MyOutput0", "MyOuput1"},
+//			nullptr
+//		},
+//
+//		{
+//			IM_COL32(180, 160, 160, 255),
+//			IM_COL32(140, 100, 100, 255),
+//			IM_COL32(150, 110, 110, 255),
+//			3,
+//			nullptr,
+//			Array{ IM_COL32(200,100,100,255), IM_COL32(100,200,100,255), IM_COL32(100,100,200,255) },
+//			1,
+//			Array{"MyOutput0"},
+//			Array{ IM_COL32(200,200,200,255)}
+//		}
+//	};
+//
+//	struct Node
+//	{
+//		const char* name;
+//		GraphEditor::TemplateIndex templateIndex;
+//		float x, y;
+//		bool mSelected;
+//	};
+//
+//	std::vector<Node> mNodes = {
+//		{
+//			"Start Node",
+//			0,
+//			0, 0,
+//			false
+//		},
+//
+//		{
+//			"End Node",
+//			0,
+//			400, 0,
+//			false
+//		},
+//
+//		{
+//			"My Node 2",
+//			1,
+//			400, 400,
+//			false
+//		}
+//	};
+//
+//	std::vector<GraphEditor::Link> mLinks = { {0, 0, 1, 0} };
+//};//End node editor
 
-					while (std::getline(infile, line)) {
-						std::istringstream is_line(line);
-						std::string key;
-						if (std::getline(is_line, key, ':'))
-						{
-							std::string value;
 
-							if (std::getline(is_line, value))
-							{
-								spriteFormat[key] = value;
-							}
-						}
-					}
 
-				}
-			}
 
-			auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
 
-			int count = 0;
-			for (size_t i = 0; i < std::stoi(spriteFormat.find("column")->second); i++)
-			{
-				for (size_t j = 0; j < std::stoi(spriteFormat.find("row")->second); j++)
-				{
-					assetManager.LoadSpite(entry.path().filename().string(), spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) });
-					std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(entry.path().filename().string())[count];
-
-					count++;
-				}
-
-			}
-
-		}
-	}
-}
-
-// ***** CODE FOR NODE EDITOR *****
-template <typename T, std::size_t N>
-
-struct Array
-{
-	T data[N];
-	const size_t size() const { return N; }
-
-	const T operator [] (size_t index) const { return data[index]; }
-	operator T* () {
-		T* p = new T[N];
-		memcpy(p, data, sizeof(data));
-		return p;
-	}
-};
+//			2,
+//			Array{"MyOutput0", "MyOuput1"},
+//			nullptr
+//		},
+//
+//		{
+//			IM_COL32(180, 160, 160, 255),
+//			IM_COL32(140, 100, 100, 255),
+//			IM_COL32(150, 110, 110, 255),
+//			3,
+//			nullptr,
+//			Array{ IM_COL32(200,100,100,255), IM_COL32(100,200,100,255), IM_COL32(100,100,200,255) },
+//			1,
+//			Array{"MyOutput0"},
+//			Array{ IM_COL32(200,200,200,255)}
+//		}
+//	};
+//
+//	struct Node
+//	{
+//		const char* name;
+//		GraphEditor::TemplateIndex templateIndex;
+//		float x, y;
+//		bool mSelected;
+//	};
+//
+//	std::vector<Node> mNodes = {
+//		{
+//			"Start Node",
+//			0,
+//			0, 0,
+//			false
+//		},
+//
+//		{
+//			"End Node",
+//			0,
+//			400, 0,
+//			false
+//		},
+//
+//		{
+//			"My Node 2",
+//			1,
+//			400, 400,
+//			false
+//		}
+//	};
+//
+//	std::vector<GraphEditor::Link> mLinks = { {0, 0, 1, 0} };
+//};
 
 void EditorLayer::onRenderImgui()
 {
@@ -255,8 +379,10 @@ void EditorLayer::onRenderImgui()
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
+	//End Docking here
 
 
+	// Options menu
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("Options"))
@@ -276,26 +402,27 @@ void EditorLayer::onRenderImgui()
 
 			if (ImGui::MenuItem("New Project"))
 			{
-				request_NewProject = true;
+				Modals::request_NewProject = true;
 			}
 
 			if (ImGui::MenuItem("Open Project"))
 			{
 				std::string str = Hzn::FileDialogs::openFile();
 				if(!str.empty()) {
-					m_ActiveProject = Hzn::ProjectManager::open(str);
-					m_Scene = m_ActiveProject->getActiveScene();
-					openProject();
+					EditorData::m_Project_Active = Hzn::ProjectManager::open(str);
+					EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
+					Modals::openProject();
+					EditorData::assetManager = Modals::assetManager;
 				}
 				
 			}
 
-			if (m_ActiveProject)
+			if (EditorData::m_Project_Active)
 			{
 				if (ImGui::MenuItem("Close Project"))
 				{
-					m_Scene.reset();
-					m_ActiveProject.reset();
+					EditorData::s_Scene_Active.reset();
+					EditorData::m_Project_Active.reset();
 					Hzn::ProjectManager::close();
 				}
 
@@ -306,15 +433,15 @@ void EditorLayer::onRenderImgui()
 			//	Hzn::SceneManager::save(currentScenePath);
 			//}
 
-			if (m_ActiveProject)
+			if (EditorData::m_Project_Active)
 			{
 				if (ImGui::MenuItem("New Scene"))
 				{
-					request_NewScene = true;
+					Modals::request_NewScene = true;
 				}
 			}
 
-			if (m_ActiveProject)
+			if (EditorData::m_Project_Active)
 			{
 				if (ImGui::MenuItem("Play"))
 				{
@@ -327,90 +454,23 @@ void EditorLayer::onRenderImgui()
 				Hzn::App::getApp().close();
 			}
 
-
-
 			ImGui::EndMenu();
 		}
 
 		ImGui::EndMenuBar();
-	}
+	}//End options
 
-	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	//MODALS
+	//Scene pop-ups
+	Modals::getCenterWindow();
+	//new project
+	Modals::getNewProJPopup();
+	//New Scene
+	Modals::getNewScenePopup();
 
-	if (request_NewProject)
-		ImGui::OpenPopup("New Project");
 
-	if (ImGui::BeginPopupModal("New Project", &request_NewProject, ImGuiWindowFlags_AlwaysAutoResize))
-	{
-		ImGui::InputText("Project Name", projectNameBuffer, 512);
-		ImGui::InputText("Root Folder", directoryPathBuffer, 1024);
-		ImGui::SameLine();
-		if (ImGui::Button("..."))
-		{
-			strcpy_s(directoryPathBuffer, Hzn::FileDialogs::openFolder().c_str());
-		}
-		if (!canCreateProject) {
-			ImGui::Text("Enter valid name / choose valid base directory / Project with the same name exists in the same directory!");
-		}
 
-		// create new project and set it as active project.
-		std::string nameString = projectNameBuffer;
-		std::filesystem::path directoryPath = directoryPathBuffer;
 
-		if (!nameString.empty() && !directoryPath.empty())
-		{
-			if (std::filesystem::exists(directoryPathBuffer) &&
-				std::filesystem::is_directory(directoryPathBuffer) &&
-				!std::filesystem::exists(directoryPath.string() + "\\" + projectNameBuffer))
-			{
-				canCreateProject = true;
-			}
-			else canCreateProject = false;
-		}
-		else canCreateProject = false;
-
-		if (ImGui::Button("Create", ImVec2(120, 0)))
-		{
-			if (canCreateProject) {
-				m_ActiveProject = Hzn::ProjectManager::create(projectNameBuffer, std::filesystem::path(directoryPathBuffer));
-				m_Scene = m_ActiveProject->getActiveScene();
-
-				// clear the directory path buffers.
-				memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
-				memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
-				openProject();
-			}
-			ImGui::CloseCurrentPopup();
-			request_NewProject = false;
-		}
-		ImGui::EndPopup();
-	}
-
-	if (request_NewScene)
-		ImGui::OpenPopup("New Scene");
-
-	if (ImGui::BeginPopupModal("New Scene", &request_NewScene, ImGuiWindowFlags_AlwaysAutoResize))
-	{
-
-		ImGui::InputText("Scene Name", sceneNameBuffer, 256);
-		std::string sceneName = std::string(sceneNameBuffer);
-
-		if (sceneName.empty()) ImGui::Text("scene name field is empty!");
-
-		ImGui::Separator();
-		if (ImGui::Button("Create", ImVec2(120, 0)))
-		{
-			// create new project and set it as active project.
-			if (!sceneName.empty()) {
-				Hzn::ProjectManager::newScene(sceneName);
-				m_Scene = m_ActiveProject->getActiveScene();
-				memset(sceneNameBuffer, '\0', sizeof(sceneNameBuffer));
-				request_NewScene = false;
-			}
-		}
-		ImGui::EndPopup();
-	}
 
 	// OBJECT HIERARCHY BEGIN
 	drawHierarchy();
@@ -419,10 +479,9 @@ void EditorLayer::onRenderImgui()
 	/*static bool show = true;*/
 	// SETTINGS BEGIN.
 	ImGui::Begin("Components");
-	if (m_Scene) {
+	if (EditorData::s_Scene_Active) {
 		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
-			auto selectedObj = m_Scene->getGameObject(selectedObjectId);
-
+			auto selectedObj = EditorData::s_Scene_Active->getGameObject(selectedObjectId);
 			Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
@@ -432,7 +491,11 @@ void EditorLayer::onRenderImgui()
 	ImGui::End();
 	// SETTINGS END.
 
-	// Sprites BEGIN.
+	//CONTENT BROWSER BEGIN
+	ContentBrowser::ContentBrowser(Modals::projectRootFolder);
+	// CONTENT BROWSER END
+
+	//Sprites BEGIN
 	ImGui::Begin("Sprites");
 	static float padding = 16.0f;
 	static float thumbnailSize = 128.0f;
@@ -444,18 +507,17 @@ void EditorLayer::onRenderImgui()
 		columnCount = 1;
 	ImGui::Columns(columnCount, 0, false);
 	int count = 0;
-	if (!currentTexturePath.empty())
+	if (!ContentBrowser::m_CurrentTexturePath.empty())
 	{
-		std::string spritesFolder = std::filesystem::path(currentTexturePath).parent_path().string() + "\\" + std::filesystem::path(currentTexturePath).filename().replace_extension().string();
 
-		if (spriteFormat.size() > 0)
+		if (Modals::spriteFormat.size() > 0)
 		{
 
-			for (size_t i = 0; i < std::stoi(spriteFormat.find("column")->second); i++)
+			for (size_t i = 0; i < std::stoi(Modals::spriteFormat.find("column")->second); i++)
 			{
-				for (size_t j = 0; j < std::stoi(spriteFormat.find("row")->second); j++)
+				for (size_t j = 0; j < std::stoi(Modals::spriteFormat.find("row")->second); j++)
 				{
-					if (count >= assetManager.GetSprite(std::filesystem::path(currentTexturePath).filename().string()).size())
+					if (count >= EditorData::assetManager.GetSprite(std::filesystem::path(ContentBrowser::m_CurrentTexturePath).filename().string()).size())
 					{
 						continue;
 					}
@@ -464,13 +526,13 @@ void EditorLayer::onRenderImgui()
 					ImGui::PushID(spriteTexCoords.c_str());
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
-					std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(std::filesystem::path(currentTexturePath).filename().string())[count];
+					std::shared_ptr<Hzn::Sprite2D> sprite = EditorData::assetManager.GetSprite(std::filesystem::path(ContentBrowser::m_CurrentTexturePath).filename().string())[count];
 					ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
 					ImGui::PopStyleColor();
 
 					if (ImGui::BeginDragDropSource()) {
 
-						std::filesystem::path currentSpritePath = currentTexturePath + "-;" + std::to_string(i) + ";" + std::to_string(j) + ";" + std::to_string(sprite->getCellSize()[0].x) + ";" + std::to_string(sprite->getCellSize()[0].y);
+						std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + std::to_string(i) + ";" + std::to_string(j) + ";" + std::to_string(sprite->getCellSize()[0].x) + ";" + std::to_string(sprite->getCellSize()[0].y);
 
 						const wchar_t* filename = currentSpritePath.c_str();
 						ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
@@ -478,7 +540,7 @@ void EditorLayer::onRenderImgui()
 					}
 
 
-					
+
 					ImGui::TextWrapped(spriteTexCoords.c_str());
 					ImGui::NextColumn();
 					ImGui::PopID();
@@ -487,7 +549,7 @@ void EditorLayer::onRenderImgui()
 
 
 
-				
+
 
 			}
 
@@ -495,144 +557,38 @@ void EditorLayer::onRenderImgui()
 	}
 
 	ImGui::End();
-	// Sprites END.
+	//Sprites END
 
+	//// VISUAL SCRIPTING BEGIN 
+	//static GraphEditor::Options options;
+	////static GraphEditorDelegate delegate;
+	//static GraphEditor::ViewState viewState;
+	//static GraphEditor::FitOnScreen fit = GraphEditor::Fit_None;
+	//static bool showGraphEditor = true;
 
-	//CONTENT BROWSER BEGIN
-	//projectContextObject = m_CurrentDirectory.string();
-	ImGui::Begin("Content Browser");
+	//if (ImGui::CollapsingHeader("Graph Editor"))
+	//{
+	//	ImGui::Checkbox("Show GraphEditor", &showGraphEditor);
+	//	GraphEditor::EditOptions(options);
+	//}
 
-	if (!projectRootFolder.empty()) {
-		if (m_CurrentDirectory != std::filesystem::path(projectRootFolder))
-		{
-			if (ImGui::Button("<-"))
-			{
-				m_CurrentDirectory = m_CurrentDirectory.parent_path();
-			}
-		}
+	//if (showGraphEditor)
+	//{
+	//	ImGui::Begin("Graph Editor", NULL, 0);
+	//	if (ImGui::Button("Fit all nodes"))
+	//	{
+	//		fit = GraphEditor::Fit_AllNodes;
+	//	}
+	//	ImGui::SameLine();
+	//	if (ImGui::Button("Fit selected nodes"))
+	//	{
+	//		fit = GraphEditor::Fit_SelectedNodes;
+	//	}
+	//	//GraphEditor::Show(delegate, options, viewState, true, &fit);
 
-		static float padding = 16.0f;
-		static float thumbnailSize = 128.0f;
-		float cellSize = thumbnailSize + padding;
-
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		if (columnCount < 1)
-			columnCount = 1;
-
-		ImGui::Columns(columnCount, 0, false);
-
-
-
-		for (auto& entry : std::filesystem::directory_iterator(m_CurrentDirectory))
-		{
-
-			if (entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
-			{
-				continue;
-			}
-
-			const auto& path = entry.path();
-			std::string filenameString = path.filename().string();
-
-			ImGui::PushID(filenameString.c_str());
-
-
-			std::shared_ptr<Hzn::Texture> icon;
-
-			if (entry.is_directory()) {
-				icon = folderIcon;
-			}
-
-			else if (entry.path().string().find(".png") != std::string::npos)
-			{
-				icon = assetManager.GetTexture(entry.path().string());
-			}
-
-			else
-			{
-				icon = fileIcon;
-			}
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-
-			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
-			{
-
-
-				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-						std::string line;
-
-						while (std::getline(infile, line)) {
-							std::istringstream is_line(line);
-							std::string key;
-							if (std::getline(is_line, key, ':'))
-							{
-								std::string value;
-
-								if (std::getline(is_line, value))
-								{
-									spriteFormat[key] = value;
-								}
-							}
-						}
-
-					}
-				}
-
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
-
-
-				if (ImGui::Button("show sprites")) {
-					currentTexturePath = entry.path().string();
-				}
-
-			}
-			else {
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
-			}
-
-			ImGui::PopStyleColor();
-
-			if (ImGui::BeginDragDropSource()) {
-
-				if (entry.path().string().find("textures") != std::string::npos)
-				{
-					const wchar_t* filename = path.c_str();
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-					ImGui::EndDragDropSource();
-				}
-				else
-				{
-					const wchar_t* filename = path.c_str();
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-					ImGui::EndDragDropSource();
-				}
-
-			}
-
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (entry.is_directory())
-					m_CurrentDirectory /= path.filename();
-
-			}
-			ImGui::TextWrapped(filenameString.c_str());
-
-			ImGui::NextColumn();
-
-			ImGui::PopID();
-		}
-	}
-	ImGui::Columns(1);
-	ImGui::End();
-	// CONTENT BROWSER END
-
-	// VISUAL SCRIPTING BEGIN
-	// VISUAL SCRIPTING END
+	//	ImGui::End();
+	//}
+	//// VISUAL SCRIPTING END 
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
@@ -685,15 +641,15 @@ void EditorLayer::onRenderImgui()
 void EditorLayer::drawHierarchy()
 {
 	ImGui::Begin("Object Hierarchy");
-	if (m_Scene) {
-		auto list = m_Scene->getAllRootIds();
+	if (EditorData::s_Scene_Active) {
+		auto list = EditorData::s_Scene_Active->getAllRootIds();
 
 		/*openHierarchyPopup = false;*/
 		openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
 
 		for (const auto& x : list)
 		{
-			drawObjects(m_Scene->getGameObject(x));
+			drawObjects(EditorData::s_Scene_Active->getGameObject(x));
 		}
 
 		if (openHierarchyPopup) {
@@ -705,7 +661,7 @@ void EditorLayer::drawHierarchy()
 
 			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
 				if (ImGui::MenuItem("Copy", NULL, false)) {
-					/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
+					/*copiedGameObject = EditorData::s_Scene_Active->getGameObject(selectedObject);*/
 				}
 				if (ImGui::MenuItem("Paste", NULL, false)) {
 					// Do stuff here 
@@ -714,8 +670,8 @@ void EditorLayer::drawHierarchy()
 					// Do stuff here 
 				}
 				if (ImGui::MenuItem("Delete", NULL, false)) {
-					Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
-					m_Scene->destroyGameObject(obj);
+					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObject(selectedObjectId);
+					EditorData::s_Scene_Active->destroyGameObject(obj);
 
 					selectedObject = std::string();
 					selectedObjectId = std::numeric_limits<uint32_t>::max();
@@ -724,8 +680,8 @@ void EditorLayer::drawHierarchy()
 
 				if (ImGui::MenuItem("Create Empty", NULL, false)) {
 					// Do stuff here
-					Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-					m_Scene->getGameObject(selectedObjectId).addChild(newObject);
+					Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
+					EditorData::s_Scene_Active->getGameObject(selectedObjectId).addChild(newObject);
 					newObject.addComponent<Hzn::TransformComponent>();
 				}
 
@@ -741,7 +697,7 @@ void EditorLayer::drawHierarchy()
 
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-				Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+				Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObject((uint32_t) * (const int*)payload->Data);
 				receivedObject.setParent(Hzn::GameObject());
 			}
 
@@ -758,7 +714,7 @@ void EditorLayer::drawHierarchy()
 			selectedObjectId = std::numeric_limits<uint32_t>::max();
 
 			if (ImGui::MenuItem("Create Empty", NULL, false)) {
-				Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
+				Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
 				newObject.addComponent<Hzn::TransformComponent>();
 			}
 
@@ -802,12 +758,12 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 		ImGui::Text(nameComponent.m_Name.c_str());
 		ImGui::EndDragDropSource();
 
-		std::vector<std::string> names = m_Scene->allGameObjectNames();
+		std::vector<std::string> names = EditorData::s_Scene_Active->allGameObjectNames();
 	}
 
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+			Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObject((uint32_t) * (const int*)payload->Data);
 			receivedObject.setParent(object);
 		}
 
@@ -843,6 +799,6 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 void EditorLayer::openScene(const std::filesystem::path& filepath)
 {
 	Hzn::ProjectManager::openScene(filepath);
-	m_Scene = m_ActiveProject->getActiveScene();
+	EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 }
 
