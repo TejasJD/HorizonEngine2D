@@ -418,7 +418,7 @@ void EditorLayer::onRenderImgui()
 	ImGui::Begin("Components");
 	if (m_Scene) {
 		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
-			auto selectedObj = m_Scene->getGameObject(selectedObjectId);
+			auto selectedObj = m_Scene->getGameObjectById(selectedObjectId);
 			Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
 			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
@@ -511,7 +511,7 @@ void EditorLayer::onRenderImgui()
 					}
 				}
 
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton((ImTextureID)(uint64_t)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 
 				if (ImGui::Button("show sprites")) {
@@ -528,7 +528,7 @@ void EditorLayer::onRenderImgui()
 							std::string currentSprite = entry.path().string().append("(").append(std::to_string(i)).append(",").append(std::to_string(j)).append(")");
 
 							std::shared_ptr<Hzn::Sprite2D> sprite = spriteMap.find(currentSprite)->second;
-							ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
+							ImGui::ImageButton((ImTextureID)(uint64_t)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
 							std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
 							ImGui::TextWrapped(spriteTexCoords.c_str());
 							ImGui::NextColumn();
@@ -545,7 +545,7 @@ void EditorLayer::onRenderImgui()
 
 			}
 			else {
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton((ImTextureID)(uint64_t)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 			}
 
 			ImGui::PopStyleColor();
@@ -598,7 +598,7 @@ void EditorLayer::onRenderImgui()
 
 	/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
 
-	ImGui::Image(reinterpret_cast<ImTextureID>(m_FrameBuffer->getColorAttachmentId()),
+	ImGui::Image(reinterpret_cast<ImTextureID>((uint64_t)m_FrameBuffer->getColorAttachmentId()),
 		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
 	if (ImGui::BeginDragDropTarget())
@@ -637,7 +637,7 @@ void EditorLayer::drawHierarchy()
 
 		for (const auto& x : list)
 		{
-			drawObjects(m_Scene->getGameObject(x));
+			drawObjects(m_Scene->getGameObjectById(x));
 		}
 
 		if (openHierarchyPopup) {
@@ -649,7 +649,7 @@ void EditorLayer::drawHierarchy()
 
 			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
 				if (ImGui::MenuItem("Copy", NULL, false)) {
-					/*copiedGameObject = m_Scene->getGameObject(selectedObject);*/
+					/*copiedGameObject = m_Scene->getGameObjectById(selectedObject);*/
 				}
 				if (ImGui::MenuItem("Paste", NULL, false)) {
 					// Do stuff here 
@@ -658,7 +658,7 @@ void EditorLayer::drawHierarchy()
 					// Do stuff here 
 				}
 				if (ImGui::MenuItem("Delete", NULL, false)) {
-					Hzn::GameObject obj = m_Scene->getGameObject(selectedObjectId);
+					Hzn::GameObject obj = m_Scene->getGameObjectById(selectedObjectId);
 					m_Scene->destroyGameObject(obj);
 
 					selectedObject = std::string();
@@ -669,7 +669,7 @@ void EditorLayer::drawHierarchy()
 				if (ImGui::MenuItem("Create Empty", NULL, false)) {
 					// Do stuff here
 					Hzn::GameObject newObject = m_Scene->createGameObject("Game Object");
-					m_Scene->getGameObject(selectedObjectId).addChild(newObject);
+					m_Scene->getGameObjectById(selectedObjectId).addChild(newObject);
 					newObject.addComponent<Hzn::TransformComponent>();
 				}
 
@@ -685,7 +685,7 @@ void EditorLayer::drawHierarchy()
 
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-				Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+				Hzn::GameObject receivedObject = m_Scene->getGameObjectById((uint32_t) * (const int*)payload->Data);
 				receivedObject.setParent(Hzn::GameObject());
 			}
 
@@ -746,12 +746,12 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 		ImGui::Text(nameComponent.m_Name.c_str());
 		ImGui::EndDragDropSource();
 
-		std::vector<std::string> names = m_Scene->allGameObjectNames();
+		/*std::vector<std::string> names = m_Scene->allGameObjectNames();*/
 	}
 
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-			Hzn::GameObject receivedObject = m_Scene->getGameObject((uint32_t) * (const int*)payload->Data);
+			Hzn::GameObject receivedObject = m_Scene->getGameObjectById((uint32_t) * (const int*)payload->Data);
 			receivedObject.setParent(object);
 		}
 

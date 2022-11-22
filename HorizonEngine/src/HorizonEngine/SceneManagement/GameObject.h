@@ -11,7 +11,7 @@ namespace Hzn
 	class GameObject
 	{
 		friend class Scene;
-		friend class RelationComponent;
+		friend struct RelationComponent;
 		friend bool operator==(const GameObject& lhs, const GameObject& rhs);
 	public:
 		// you are capable of initializing an invalid game object.

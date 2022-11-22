@@ -42,11 +42,7 @@ namespace Hzn
 		 */
 		void destroyGameObject(GameObject& obj);
 
-		GameObject getGameObject(const std::string& name) const;
-		GameObject getGameObject(uint32_t id) const;
-
-		std::vector<std::string> allGameObjectNames() const;
-		std::vector<std::string> getAllRootObjects() const;
+		GameObject getGameObjectById(uint32_t id);
 
 		std::vector<uint32_t> getAllRootIds() const;
 		std::vector<uint32_t> getAllObjectIds() const;
@@ -66,7 +62,7 @@ namespace Hzn
 
 		// unordered map for retrieving objects by name.
 		std::unordered_map<std::string, GameObject> m_Objects;
-		std::unordered_map<uint32_t, GameObject> m_LocStorage;
+		std::unordered_map<uint32_t, entt::entity> m_GameObjectIdMap;
 		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
 		std::filesystem::path m_Path = std::filesystem::path();

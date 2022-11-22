@@ -29,6 +29,7 @@ namespace Hzn
 
 		RelationComponent() = default;
 		RelationComponent(const RelationComponent& rhs) = default;
+		RelationComponent& operator=(const RelationComponent& rhs) = default;
 		~RelationComponent() = default;
 
 		template<typename Archive>
@@ -105,8 +106,8 @@ namespace Hzn
 		TransformComponent() = default;
 		TransformComponent(const glm::vec3& position, const glm::vec3& scale)
 			: m_Translation(position), m_Scale(scale) {}
-		TransformComponent(const glm::vec3& position, float angle, const glm::vec3& scale)
-			: m_Translation(position), m_Rotation(angle), m_Scale(scale) {}
+		TransformComponent(const glm::vec3& position, const::glm::vec3& rotation, const glm::vec3& scale)
+			: m_Translation(position), m_Scale(scale), m_Rotation(rotation) {}
 		TransformComponent(const TransformComponent& rhs) = default;
 		TransformComponent& operator=(const TransformComponent& rhs) = default;
 		~TransformComponent() = default;
@@ -114,7 +115,6 @@ namespace Hzn
 		glm::vec3 m_Translation = glm::vec3(0.0f);
 		glm::vec3 m_Scale = glm::vec3(1.0f);
 		glm::vec3 m_Rotation = glm::vec3(0.0f);
-
 
 		glm::mat4 getModelMatrix() const
 		{
@@ -124,11 +124,6 @@ namespace Hzn
 			transform = glm::rotate(transform, glm::radians(m_Rotation.y), { 0, 1, 0 });
 			transform = glm::rotate(transform, glm::radians(m_Rotation.z), { 0, 0, 1 });
 			transform = glm::scale(transform, m_Scale);
-			/*glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.x), { 1, 0, 0 })
-			* glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.y), { 0, 1, 0 })
-			* glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation.z), { 0, 0, 1 });
-			return glm::translate(glm::mat4(1.0f), m_Translation) *
-				rotation * glm::scale(glm::mat4(1.0f), m_Scale);*/
 			return transform;
 		}
 
@@ -160,52 +155,6 @@ namespace Hzn
 
 			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
 		}
-
-		//void translate(const GameObject& obj,  const glm::vec3 positionDifference) {
-		//	std::vector<GameObject> children = obj.getChildren();
-		//	TransformComponent t = obj.getComponent<TransformComponent>();
-		//	for (int i = 0; i < children.size(); i++) {
-		//		auto& transform = children.at(i).getComponent<TransformComponent>();
-		//		transform.m_Translation += positionDifference;
-		//		translate(children.at(i), positionDifference);
-		//	}
-		//}
-
-		//void scale(const GameObject& obj, const glm::vec3 rootPosition, glm::vec3 newScale) {
-		//	std::vector<GameObject> children = obj.getChildren();
-		//	TransformComponent t = obj.getComponent<TransformComponent>();
-		//	for (int i = 0; i < children.size(); i++) {
-		//		HZN_CORE_ERROR(i);
-		//		auto& transform = children.at(i).getComponent<TransformComponent>();
-
-		//		std::cout << glm::length((transform.m_Translation - rootPosition) / transform.m_Scale) << std::endl;
-
-		//		// Update position according to scale
-		//		transform.m_Translation = rootPosition + ((transform.m_Translation - rootPosition) / transform.m_Scale) * newScale;
-
-		//		transform.m_Scale = newScale;
-
-		//		scale(children.at(i), rootPosition, newScale);
-		//	}
-		//}
-
-		//void rotate(const GameObject& obj, const float rotationDifference, const TransformComponent& rootTransform) {
-		//	std::vector<GameObject> children = obj.getChildren();
-		//	TransformComponent t = obj.getComponent<TransformComponent>();
-		//	for (int i = 0; i < children.size(); i++) {
-		//		auto& transform = children.at(i).getComponent<TransformComponent>();
-		//		
-		//		// Update position according to rotation
-		//		transform.rotateAround(rootTransform, rotationDifference);
-
-		//		// Update rotation
-		//		transform.m_Rotation += rotationDifference;
-		//		if (transform.m_Rotation > 180) transform.m_Rotation -= 360;
-		//		if (transform.m_Rotation < -180) transform.m_Rotation += 360;
-
-		//		rotate(children.at(i), rotationDifference, rootTransform);
-		//	}
-		//}
 	};
 
 	template<>
@@ -221,10 +170,6 @@ namespace Hzn
 			ImGui::DragFloat3("Rotation", glm::value_ptr(transform.m_Rotation), 1.0f,
 				- 360.0f, 360.0f);
 			ImGui::TreePop();
-
-			/*if (shouldUpdate) {
-				transform.updateChildren(obj, transform.m_Translation, translationDifference, scaleFactor, rotationDifference, transform);
-			}*/
 		}
 	}
 
