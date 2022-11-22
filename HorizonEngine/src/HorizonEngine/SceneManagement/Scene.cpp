@@ -86,7 +86,7 @@ namespace Hzn
 
 				if (!renderComponent.texturePath.empty()) {
 					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
-					Renderer2D::drawQuad(transformComponent.getModelMatrix(), renderComponent.m_Texture, renderComponent.m_Color);
+					Renderer2D::drawQuad(obj.getTransform(), renderComponent.m_Texture, renderComponent.m_Color);
 				}
 				else if(!renderComponent.spritePath.empty())
 				{

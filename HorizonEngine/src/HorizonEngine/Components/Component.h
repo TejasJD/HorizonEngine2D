@@ -276,7 +276,7 @@ namespace Hzn
 		if (ImGui::TreeNodeEx("Render", flags)) {
 			ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
 
-			ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+			ImGui::Button("Texture", ImVec2(80.0f, 50.0f));
 			if (ImGui::BeginDragDropTarget())
 			{
 
