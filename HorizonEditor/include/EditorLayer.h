@@ -2,9 +2,17 @@
 
 #include "HorizonEngine.h"
 
+
+struct EditorData {
+	static std::shared_ptr<Hzn::Scene> s_Scene_Active;
+	static std::shared_ptr<Hzn::Project> m_Project_Active;
+};
+
+
 class EditorLayer : public Hzn::Layer
 {
 public:
+
 	EditorLayer(const char* name = "Editor Layer");
 	virtual ~EditorLayer();
 	virtual void onAttach() override;
@@ -15,9 +23,11 @@ public:
 	virtual void openScene(const std::filesystem::path& filepath);
 
 private:
+
+
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
-	void openProject();
+	//void openProject();
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
@@ -36,12 +46,12 @@ private:
 	Hzn::GameObject m_Camera;
 	float m_CameraZoom = 1.0f;
 
-	Hzn::AssetManager assetManager;
-	std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
-	std::filesystem::path m_CurrentDirectory;
-	std::shared_ptr<Hzn::Texture> folderIcon;
-	std::shared_ptr<Hzn::Texture> fileIcon;
-	std::string projectRootFolder;
+	//Hzn::AssetManager assetManager;
+	//std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
+	//std::filesystem::path m_CurrentDirectory;
+	//std::shared_ptr<Hzn::Texture> folderIcon;
+	//std::shared_ptr<Hzn::Texture> fileIcon;
+	//std::string projectRootFolder;
 	std::string assetPath;
 	std::string currentScenePath;
 
@@ -54,14 +64,17 @@ private:
 
 	glm::vec2 m_ViewportBounds[2]{{0.0f, 0.0f}, {0.0f, 0.0f}};
 
-	char projectNameBuffer[512]{};
-	char directoryPathBuffer[1024]{};
-	char sceneNameBuffer[256]{};
+	//char projectNameBuffer[512]{};
+	//char directoryPathBuffer[1024]{};
+	//char sceneNameBuffer[256]{};
 	std::shared_ptr<Hzn::Project> m_ActiveProject;
 
-	bool request_NewProject = false;
-	bool request_NewScene = false;
+
+
+	
+	//bool request_NewScene = false;
 	bool request_OpenScene = false;
 
-	bool canCreateProject = false;
+	//bool canCreateProject = false;
+
 };
