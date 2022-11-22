@@ -111,6 +111,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/SceneManagement/GameObject.h"
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
+
 )
 
 # Add source to this project's executable.
