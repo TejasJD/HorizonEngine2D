@@ -6,6 +6,9 @@
 #include "imgui_internal.h"
 #include "Modals.h"
 
+#include "../../HorizonEngine/src/HorizonEngine/ImNodes/imnodes.h"
+#include "../../HorizonEngine/src/HorizonEngine/ImNodes/imnodes_internal.h"
+
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
 
@@ -664,6 +667,20 @@ void EditorLayer::onRenderImgui()
 	//	ImGui::End();
 	//}
 	//// VISUAL SCRIPTING END 
+
+	const int hardcoded_node_id = 1;
+
+	ImGui::Begin("Node Editor");
+
+	ImNodes::BeginNodeEditor();
+
+	ImNodes::BeginNode(hardcoded_node_id);
+	ImGui::Dummy(ImVec2(80.0f, 45.0f));
+	ImNodes::EndNode();
+
+	ImNodes::EndNodeEditor();
+
+	ImGui::End();
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
