@@ -98,6 +98,9 @@ namespace Hzn
 	{
 		// render objects in the scene through scene update.
 		if (m_Valid) {
+			// Update physics
+			Physics2DManager::onUpdate(ts);
+
 			const SceneCamera2D* activeCamera = nullptr;
 			glm::mat4 cameraTransform = glm::mat4(1.0f);
 
@@ -140,6 +143,7 @@ namespace Hzn
 		// every valid game object has a name component
 		obj.addComponent<NameComponent>(name);
 		obj.addComponent<RelationComponent>();
+		obj.addComponent<BoxCollider2DComponent>();
 		/*m_Objects.insert({ name, obj });*/
 		m_LocStorage.insert({ entt::to_integral(obj.m_ObjectId), obj });
 		return obj;

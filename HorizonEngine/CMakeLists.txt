@@ -53,6 +53,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/FileManagement/Project.cpp"
 	"src/HorizonEngine/GraphEditor/GraphEditor.cpp"
 	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
+	"src/HorizonEngine/Physics2D/Physics2DManager.cpp"
 )
 
 set(HZN_HEADER_FILES
@@ -114,6 +115,9 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
 	"src/HorizonEngine/Scripting/ScriptEngine.h"
+	"src/HorizonEngine/Physics2D/Physics2DManager.h"
+	"src/HorizonEngine/Physics2D/Physics2DContactListener.h"
+	"src/HorizonEngine/Components/PhysicsComponent.h"
 )
 
 # Add source to this project's executable.

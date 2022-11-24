@@ -404,6 +404,11 @@ void EditorLayer::onRenderImgui()
 				m_Scene = m_ActiveProject->getActiveScene();
 				memset(sceneNameBuffer, '\0', sizeof(sceneNameBuffer));
 				request_NewScene = false;
+
+				selectedObject = "";
+				selectedObjectId = std::numeric_limits<uint32_t>::max();
+
+				m_PlayMode = false;
 			}
 		}
 		ImGui::EndPopup();

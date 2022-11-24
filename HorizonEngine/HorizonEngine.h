@@ -33,6 +33,9 @@
 #include "HorizonEngine/Components/Component.h"
 #include "HorizonEngine/Components/PhysicsComponent.h"
 
+#include "HorizonEngine/Physics2D/Physics2DManager.h"
+#include "HorizonEngine/Physics2D/Physics2DContactListener.h"
+
 #include "HorizonEngine/FileManagement/ProjectFile.h"
 #include "HorizonEngine/FileManagement/Project.h"
 #include "HorizonEngine/FileManagement/ProjectManager.h"

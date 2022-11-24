@@ -242,4 +242,20 @@ namespace Hzn
 
 		return result;
 	}
+
+	void GameObject::onCollisionEnter2D(const GameObject& obj) const {
+
+	}
+
+	void GameObject::onCollisionExit2D(const GameObject& obj) const {
+
+	}
+
+	void GameObject::onTriggerEnter2D(const GameObject& obj) const {
+
+	}
+
+	void GameObject::onTriggerExit2D(const GameObject& obj) const {
+
+	}
 }

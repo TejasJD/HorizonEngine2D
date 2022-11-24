@@ -32,6 +32,13 @@ namespace Hzn
 		}
 
 		template<typename T>
+		void removeComponent()
+		{
+			isValid();
+			m_Scene->m_Registry.remove<T>(m_ObjectId);
+		}
+
+		template<typename T>
 		T& getComponent() const
 		{
 			isValid();
@@ -71,6 +78,11 @@ namespace Hzn
 		void removeChild(const GameObject& obj);
 		bool isAncestorOf(const GameObject& obj) const;
 		glm::mat4 getTransform() const;
+
+		void onCollisionEnter2D(const GameObject& obj) const;
+		void onCollisionExit2D(const GameObject& obj) const;
+		void onTriggerEnter2D(const GameObject& obj) const;
+		void onTriggerExit2D(const GameObject& obj) const;
 
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
