@@ -9,9 +9,7 @@
 
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
-Hzn::AssetManager EditorData::assetManager;
 std::string ContentBrowser::m_CurrentTexturePath;
-
 
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
@@ -77,7 +75,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 		if (m_PlayMode)
 			EditorData::s_Scene_Active->onUpdate(ts);
 		else
-			EditorData::s_Scene_Active->onEditorUpdate(m_EditorCameraController.getCamera(), ts, EditorData::assetManager);
+			EditorData::s_Scene_Active->onEditorUpdate(m_EditorCameraController.getCamera(), ts);
 	}
 	// unbind the current framebuffer.
 	/*Hzn::Renderer2D::endScene();*/
@@ -408,13 +406,12 @@ void EditorLayer::onRenderImgui()
 			if (ImGui::MenuItem("Open Project"))
 			{
 				std::string str = Hzn::FileDialogs::openFile();
-				if(!str.empty()) {
+				if (!str.empty()) {
 					EditorData::m_Project_Active = Hzn::ProjectManager::open(str);
 					EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 					Modals::openProject();
-					EditorData::assetManager = Modals::assetManager;
 				}
-				
+
 			}
 
 			if (EditorData::m_Project_Active)
@@ -423,6 +420,7 @@ void EditorLayer::onRenderImgui()
 				{
 					EditorData::s_Scene_Active.reset();
 					EditorData::m_Project_Active.reset();
+					Modals::projectRootFolder.clear();
 					Hzn::ProjectManager::close();
 				}
 
@@ -510,49 +508,45 @@ void EditorLayer::onRenderImgui()
 	if (!ContentBrowser::m_CurrentTexturePath.empty())
 	{
 
-		if (Modals::spriteFormat.size() > 0)
+		if (Hzn::AssetManager::spriteStorage.size() > 0)
 		{
 
-			for (size_t i = 0; i < std::stoi(Modals::spriteFormat.find("column")->second); i++)
+			for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
 			{
-				for (size_t j = 0; j < std::stoi(Modals::spriteFormat.find("row")->second); j++)
+
+				if (sprite->first.find(ContentBrowser::m_CurrentTexturePath) == std::string::npos)
 				{
-					if (count >= EditorData::assetManager.GetSprite(std::filesystem::path(ContentBrowser::m_CurrentTexturePath).filename().string()).size())
-					{
-						continue;
-					}
-					std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+					continue;
+				}
 
-					ImGui::PushID(spriteTexCoords.c_str());
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				std::string::size_type nPos1 = sprite->first.find_last_of(";");
+				std::string::size_type nPos2 = sprite->first.find_last_of(";", nPos1 - 1);
 
-					std::shared_ptr<Hzn::Sprite2D> sprite = EditorData::assetManager.GetSprite(std::filesystem::path(ContentBrowser::m_CurrentTexturePath).filename().string())[count];
-					ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
-					ImGui::PopStyleColor();
+				std::string spriteY = sprite->first.substr(nPos1 + 1);
+				std::string spriteX = sprite->first.substr(nPos2 + 1, nPos1 - nPos2 - 1);
 
-					if (ImGui::BeginDragDropSource()) {
+				std::string spriteTexCoords = "(" + std::to_string(std::stoi(spriteX)) + "," + std::to_string(std::stoi(spriteY)) + ")";
 
-						std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + std::to_string(i) + ";" + std::to_string(j) + ";" + std::to_string(sprite->getCellSize()[0].x) + ";" + std::to_string(sprite->getCellSize()[0].y);
+				ImGui::PushID(spriteTexCoords.c_str());
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
-						const wchar_t* filename = currentSpritePath.c_str();
-						ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-						ImGui::EndDragDropSource();
-					}
+				ImGui::ImageButton((ImTextureID)sprite->second->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->second->getTexCoords()[0].x, sprite->second->getTexCoords()[2].y }, { sprite->second->getTexCoords()[2].x, sprite->second->getTexCoords()[0].y });
+				ImGui::PopStyleColor();
 
+				if (ImGui::BeginDragDropSource()) {
+					std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + spriteX + ";" + spriteY;
 
-
-					ImGui::TextWrapped(spriteTexCoords.c_str());
-					ImGui::NextColumn();
-					ImGui::PopID();
-					count++;
+					const wchar_t* filename = currentSpritePath.c_str();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+					ImGui::EndDragDropSource();
 				}
 
 
 
-
-
+				ImGui::TextWrapped(spriteTexCoords.c_str());
+				ImGui::NextColumn();
+				ImGui::PopID();
 			}
-
 		}
 	}
 
@@ -801,4 +795,3 @@ void EditorLayer::openScene(const std::filesystem::path& filepath)
 	Hzn::ProjectManager::openScene(filepath);
 	EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 }
-

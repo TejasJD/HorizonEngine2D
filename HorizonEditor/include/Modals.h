@@ -8,43 +8,40 @@
 
 
 
-	class Modals {
-		friend class EditorLayer;
-		friend class ContentBrowser;
-	private:
-	
-		static void openProject();
-		static std::string projectRootFolder;
-		
-		static Hzn::AssetManager assetManager;
-		static std::map<std::string, std::string> spriteFormat;
+class Modals {
+	friend class EditorLayer;
+	friend class ContentBrowser;
+private:
 
-		static std::shared_ptr<Hzn::Texture> folderIcon;
-		static std::shared_ptr<Hzn::Texture> fileIcon;
+	static void openProject();
+	static std::string projectRootFolder;
 
-		static std::filesystem::path m_CurrentDirectory;
-		static std::string currentScenePath;
+	static std::shared_ptr<Hzn::Texture> folderIcon;
+	static std::shared_ptr<Hzn::Texture> fileIcon;
 
-		static char projectNameBuffer[512];
-		static char directoryPathBuffer[1024];
-		static char sceneNameBuffer[256];
+	static std::filesystem::path m_CurrentDirectory;
+	static std::string currentScenePath;
 
-		static bool request_NewProject;
-		static bool request_NewScene;
+	static char projectNameBuffer[512];
+	static char directoryPathBuffer[1024];
+	static char sceneNameBuffer[256];
 
-		static bool canCreateProject;
-		
+	static bool request_NewProject;
+	static bool request_NewScene;
 
-	public:
+	static bool canCreateProject;
 
-		Modals() = default;
-		~Modals();
 
-		static void getCenterWindow();
-		static void getNewProJPopup();
+public:
 
-		static void getNewScenePopup();
-	};
+	Modals() = default;
+	~Modals();
+
+	static void getCenterWindow();
+	static void getNewProJPopup();
+
+	static void getNewScenePopup();
+};
 
 
 #endif // !HZN_MODALS_H

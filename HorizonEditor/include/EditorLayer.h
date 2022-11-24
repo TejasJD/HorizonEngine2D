@@ -6,7 +6,6 @@
 struct EditorData {
 	static std::shared_ptr<Hzn::Scene> s_Scene_Active;
 	static std::shared_ptr<Hzn::Project> m_Project_Active;
-	static Hzn::AssetManager assetManager;
 };
 
 
@@ -28,7 +27,6 @@ private:
 
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
-	//void openProject();
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
@@ -54,7 +52,7 @@ private:
 	Hzn::GameObject copiedGameObject;
 	bool openHierarchyPopup = false;
 
-	glm::vec2 m_ViewportBounds[2]{{0.0f, 0.0f}, {0.0f, 0.0f}};
+	glm::vec2 m_ViewportBounds[2]{ {0.0f, 0.0f}, {0.0f, 0.0f} };
 
 	//char projectNameBuffer[512]{};
 	//char directoryPathBuffer[1024]{};
@@ -63,7 +61,7 @@ private:
 
 
 
-	
+
 	//bool request_NewScene = false;
 	bool request_OpenScene = false;
 

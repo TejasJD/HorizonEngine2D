@@ -11,15 +11,12 @@ class ContentBrowser {
 private:
 	std::string m_ProjectRootFolder;
 	static std::string m_CurrentTexturePath;
-
-	void showSprites();
 public:
 
 	ContentBrowser(const std::string projectRootFolder)
 		: m_ProjectRootFolder(projectRootFolder)
 	{
 		OnImGuiRender();
-		showSprites();
 	};
 	~ContentBrowser() {};
 
