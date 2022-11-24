@@ -56,7 +56,7 @@ void ContentBrowser::OnImGuiRender()
 
 			else if (entry.path().string().find(".png") != std::string::npos)
 			{
-				icon = Modals::assetManager.GetTexture(entry.path().string());
+				icon = Hzn::AssetManager::getTexture(entry.path().string());
 			}
 
 			else
@@ -67,30 +67,6 @@ void ContentBrowser::OnImGuiRender()
 
 			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
 			{
-
-
-				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-						std::string line;
-
-						while (std::getline(infile, line)) {
-							std::istringstream is_line(line);
-							std::string key;
-							if (std::getline(is_line, key, ':'))
-							{
-								std::string value;
-
-								if (std::getline(is_line, value))
-								{
-									Modals::spriteFormat[key] = value;
-								}
-							}
-						}
-
-					}
-				}
 
 				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
@@ -114,13 +90,6 @@ void ContentBrowser::OnImGuiRender()
 					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
 					ImGui::EndDragDropSource();
 				}
-				else
-				{
-					const wchar_t* filename = path.c_str();
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-					ImGui::EndDragDropSource();
-				}
-
 			}
 
 

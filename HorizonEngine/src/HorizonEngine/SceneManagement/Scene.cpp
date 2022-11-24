@@ -4,7 +4,6 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
-#include "HorizonEngine/AssetManagement/AssetManager.h"
 
 namespace Hzn
 {
@@ -75,7 +74,7 @@ namespace Hzn
 		return m_lastViewportSize;
 	}
 
-	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts, Hzn::AssetManager assetManager) {
+	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts) {
 		if (m_Valid) {
 			Renderer2D::beginScene(camera);
 			const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
@@ -85,14 +84,11 @@ namespace Hzn
 				GameObject obj = getGameObject(entt::to_integral(entity));
 
 				if (!renderComponent.texturePath.empty()) {
-					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.texturePath);
-					Renderer2D::drawQuad(obj.getTransform(), renderComponent.m_Texture, renderComponent.m_Color);
+					Renderer2D::drawQuad(obj.getTransform(), AssetManager::getTexture(renderComponent.texturePath), renderComponent.m_Color);
 				}
 				else if(!renderComponent.spritePath.empty())
 				{
-					renderComponent.m_Texture = assetManager.GetTexture(renderComponent.spritePath);
-					renderComponent.m_Sprite = Hzn::Sprite2D::create(renderComponent.m_Texture, { std::stoi(renderComponent.m_SpriteX) , std::stoi(renderComponent.m_SpriteY) }, { std::stof(renderComponent.m_SpriteWidth), std::stof(renderComponent.m_SpriteHeight) });
-					Renderer2D::drawSprite(obj.getTransform(), renderComponent.m_Sprite, renderComponent.m_Color);
+					Renderer2D::drawSprite(obj.getTransform(), AssetManager::getSprite(renderComponent.spritePath, {renderComponent.m_Pos.x, renderComponent.m_Pos.y}), renderComponent.m_Color);
 				}
 				else
 				{

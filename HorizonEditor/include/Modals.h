@@ -16,9 +16,6 @@
 		static void openProject();
 		static std::string projectRootFolder;
 		
-		static Hzn::AssetManager assetManager;
-		static std::map<std::string, std::string> spriteFormat;
-
 		static std::shared_ptr<Hzn::Texture> folderIcon;
 		static std::shared_ptr<Hzn::Texture> fileIcon;
 

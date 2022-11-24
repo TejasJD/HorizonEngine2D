@@ -12,10 +12,12 @@
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/Renderer/Sprite.h"
 #include "HorizonEngine/Utils/Math.h"
+#include "HorizonEngine/AssetManagement/AssetManager.h"
 
 
 namespace Hzn
 {
+	class AssetManager;
 	class Scene;
 
 	template<typename>
@@ -219,7 +221,7 @@ namespace Hzn
 			ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.25f, -50.0f, 50.0f);
 			ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.25f, 1.0f, 50.0f);
 			ImGui::DragFloat3("Rotation", glm::value_ptr(transform.m_Rotation), 1.0f,
-				- 360.0f, 360.0f);
+				-360.0f, 360.0f);
 			ImGui::TreePop();
 
 			/*if (shouldUpdate) {
@@ -239,29 +241,24 @@ namespace Hzn
 
 		glm::vec4 m_Color = glm::vec4(1.0f);
 
-		std::shared_ptr<Hzn::Texture2D> m_Texture;
-		std::shared_ptr<Sprite2D> m_Sprite;
+		glm::vec2 m_Pos = glm::vec2(0.0f);
+
+
 		std::string texturePath;
 		std::string spritePath;
-
-
-		std::string m_SpriteHeight;
-		std::string m_SpriteWidth;
-		std::string m_SpriteY;
-		std::string m_SpriteX;
 
 		template<typename Archive>
 		void load(Archive& ar)
 		{
-			ar(spritePath, m_SpriteHeight, m_SpriteWidth, m_SpriteY, m_SpriteX);
-			ar(texturePath, m_Color.x, m_Color.y, m_Color.z, m_Color.w);
+			ar(texturePath, spritePath, m_Pos.x, m_Pos.y);
+			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
-			ar(spritePath, m_SpriteHeight, m_SpriteWidth, m_SpriteY, m_SpriteX);
-			ar(texturePath, m_Color.x, m_Color.y, m_Color.z, m_Color.w);
+			ar(texturePath, spritePath, m_Pos.x, m_Pos.y);
+			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
 	};
 
@@ -270,53 +267,42 @@ namespace Hzn
 	template<>
 	inline void display<RenderComponent>(const GameObject& obj)
 	{
-		auto& colorComponent = obj.getComponent<RenderComponent>();
+		auto& renderComponent = obj.getComponent<RenderComponent>();
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Render", flags)) {
-			ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
+			ImGui::ColorEdit3("Color", glm::value_ptr(renderComponent.m_Color));
 
 			ImGui::Button("Texture", ImVec2(80.0f, 50.0f));
 			if (ImGui::BeginDragDropTarget())
 			{
 
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE"))
 				{
 
 					const wchar_t* filepath = (const wchar_t*)payload->Data;
 					std::wstring ws(filepath);
 					std::string str(ws.begin(), ws.end());
+
 					std::string::size_type nPos1 = str.find_last_of(";");
 					std::string::size_type nPos2 = str.find_last_of(";", nPos1 - 1);
-					std::string::size_type nPos3 = str.find_last_of(";", nPos2 - 1);
-					std::string::size_type nPos4 = str.find_last_of(";", nPos3 - 1);
 
-					if (str.find("-") != std::string::npos)
-					{
-						std::string spritePath = str.substr(0, str.find("-"));
-						std::string spriteHeight = str.substr(nPos1 + 1);
-						std::string spriteWidth = str.substr(nPos2 + 1, nPos1 - nPos2 - 1);
-						std::string spriteY = str.substr(nPos3 + 1, nPos2 - nPos3 - 1);
-						std::string spriteX = str.substr(nPos4 + 1, nPos3 - nPos4 - 1);
+					std::string spriteY = str.substr(nPos1 + 1);
+					std::string spriteX = str.substr(nPos2 + 1, nPos1 - nPos2 - 1);
 
-						std::shared_ptr<Hzn::Texture2D> texture = Hzn::Texture2D::create(spritePath);
-						std::shared_ptr<Hzn::Sprite2D> sprite = Hzn::Sprite2D::create(texture, { std::stoi(spriteX) , std::stoi(spriteY) }, { std::stof(spriteWidth), std::stof(spriteHeight) });
-						colorComponent.m_Sprite = sprite;
-						colorComponent.texturePath = "";
-						colorComponent.spritePath = texture->getPath();
-
-						colorComponent.m_SpriteHeight = spriteHeight;
-						colorComponent.m_SpriteWidth = spriteWidth;
-						colorComponent.m_SpriteY = spriteY;
-						colorComponent.m_SpriteX = spriteX;
-					}
-					else
-					{
-						std::shared_ptr<Hzn::Texture2D> texture = Hzn::Texture2D::create(str);
-						colorComponent.spritePath = "";
-						colorComponent.m_Texture = texture;
-						colorComponent.texturePath = texture->getPath();
-					}
+					renderComponent.spritePath = str.substr(0, str.find("-"));
+					
+					renderComponent.m_Pos.x = std::stoi(spriteX);
+					renderComponent.m_Pos.y = std::stoi(spriteY);
+					
+				}
+				else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* filepath = (const wchar_t*)payload->Data;
+					std::wstring ws(filepath);
+					std::string str(ws.begin(), ws.end());
+					
+					renderComponent.texturePath = str;
 
 				}
 				ImGui::EndDragDropTarget();

@@ -2,6 +2,7 @@
 #include "ProjectManager.h"
 
 #include "HorizonEngine/SceneManagement/SceneManager.h"
+#include "AssetManagement/AssetManager.h"
 
 namespace Hzn
 {
@@ -65,6 +66,7 @@ namespace Hzn
 		if (!projectFilePath.empty()) {
 			if (s_Project)
 			{
+				AssetManager::destory();
 				close();
 			}
 			s_Project = std::make_shared<Project>(projectFilePath);
@@ -90,6 +92,7 @@ namespace Hzn
 		save();
 		if (s_Project && s_Project->m_Scene) {
 			SceneManager::close();
+			AssetManager::destory();
 			s_Project.reset();
 		}
 	}
