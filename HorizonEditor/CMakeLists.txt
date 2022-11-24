@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.15)
 set(HZNEDITOR_SOURCE_FILES
 	"src/Main.cpp"
   "src/EditorLayer.cpp"
-  "src/NodeEditor/NodeEditor.cpp"
+  
   "src/ContentBrowser/ContentBrowser.cpp"
   "src/Modals/Modals.cpp")
 
