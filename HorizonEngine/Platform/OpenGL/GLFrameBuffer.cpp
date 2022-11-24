@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GLFrameBuffer.h"
+#include "HorizonEngine/App.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -27,8 +28,8 @@ namespace Hzn
 			uint32_t samples,
 			uint32_t attachmentNumber,
 			uint32_t id,
-			uint32_t width,
-			uint32_t height,
+			int32_t width,
+			int32_t height,
 			FrameBufferTextureFormat format
 		)
 		{
@@ -61,7 +62,7 @@ namespace Hzn
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentNumber, textureTarget(multisampled), id, 0);
 		}
 
-		static void AttachDepthTexture(uint32_t samples, uint32_t id, uint32_t width, uint32_t height, FrameBufferTextureFormat format)
+		static void AttachDepthTexture(uint32_t samples, uint32_t id, int32_t width, int32_t height, FrameBufferTextureFormat format)
 		{
 			bool multisampled = samples > 1;
 
@@ -187,7 +188,7 @@ namespace Hzn
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void GLFrameBuffer::recreate(uint32_t width, uint32_t height)
+	void GLFrameBuffer::recreate(int32_t width, int32_t height)
 	{
 		if (width > 0 && height > 0)
 		{
