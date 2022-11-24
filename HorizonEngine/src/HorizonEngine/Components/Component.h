@@ -12,8 +12,6 @@
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/Renderer/Sprite.h"
 
-#include "HorizonEngine/Utils/Math.h"
-
 namespace Hzn
 {
 	class Scene;
@@ -59,20 +57,20 @@ namespace Hzn
 
 	private:
 		size_t m_ChildCount = 0ULL;
-		entt::entity m_Parent{entt::null};
-		entt::entity m_FirstChild{entt::null};
-		entt::entity m_Next{entt::null};
-		entt::entity m_Prev{entt::null};
+		entt::entity m_Parent{ entt::null };
+		entt::entity m_FirstChild{ entt::null };
+		entt::entity m_Next{ entt::null };
+		entt::entity m_Prev{ entt::null };
 	};
 
 	struct NameComponent
 	{
 		NameComponent() = default;
 		NameComponent(const NameComponent& name) = default;
-		NameComponent(const std::string& name): m_Name(name) {}
+		NameComponent(const std::string& name) : m_Name(name) {}
 		~NameComponent() = default;
 
-		operator std::string() const & { return m_Name; }
+		operator std::string() const& { return m_Name; }
 		operator std::string()& { return m_Name; }
 
 		std::string m_Name;
@@ -142,19 +140,6 @@ namespace Hzn
 			ar(m_Rotation.x, m_Rotation.y, m_Rotation.z);
 			ar(m_Scale.x, m_Scale.y, m_Scale.z);
 		}
-
-		void rotateAround(const TransformComponent t, const float angle) {
-			float sin = Math::sin(angle * Math::deg2rad);
-			float cos = Math::cos(angle * Math::deg2rad);
-
-			float x = m_Translation.x - t.m_Translation.x;
-			float y = m_Translation.y - t.m_Translation.y;
-
-			float newX = x * cos - y * sin;
-			float newY = x * sin + y * cos;
-
-			m_Translation = glm::vec3(newX + t.m_Translation.x, newY + t.m_Translation.y, m_Translation.z);
-		}
 	};
 
 	template<>
@@ -162,13 +147,13 @@ namespace Hzn
 	{
 		auto& transform = obj.getComponent<TransformComponent>();
 
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected |ImGuiTreeNodeFlags_DefaultOpen;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Transform", flags)) {
 			ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.25f, -50.0f, 50.0f);
 			ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.25f, 1.0f, 50.0f);
 			ImGui::DragFloat3("Rotation", glm::value_ptr(transform.m_Rotation), 1.0f,
-				- 360.0f, 360.0f);
+				-360.0f, 360.0f);
 			ImGui::TreePop();
 		}
 	}
@@ -179,10 +164,11 @@ namespace Hzn
 		RenderComponent(const glm::vec4& color) : m_Color(color) {};
 		~RenderComponent() = default;
 		// conversion operator for render component.
-		operator const glm::vec4() const & { return m_Color; }
-		operator glm::vec4() & { return m_Color; }
+		operator const glm::vec4() const& { return m_Color; }
+		operator glm::vec4()& { return m_Color; }
 
 		glm::vec4 m_Color = glm::vec4(1.0f);
+		std::shared_ptr<Sprite2D> m_Sprite;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -215,7 +201,7 @@ namespace Hzn
 	{
 		CameraComponent(const float aspectRatio = 1.0f, const float zoom = 1.0f)
 			: m_Camera(aspectRatio, zoom) {}
-		
+
 		~CameraComponent() = default;
 		SceneCamera2D m_Camera;
 		bool m_Primary = true;
@@ -247,15 +233,21 @@ namespace Hzn
 		}
 	}
 
-	template<typename Component>
-	inline void displayIfExists(const GameObject& obj)
-	{
-		if (obj.hasComponent<Component>())
-		{
-			display<Component>(obj);
-		}
-	}
+	template<typename... Component>
+	struct ComponentGroup {};
 
+	using AllComponents = ComponentGroup<NameComponent, TransformComponent, RenderComponent, CameraComponent>;
+
+	template<typename ...Component>
+	void displayIfExists(const GameObject& obj, ComponentGroup<Component...>)
+	{
+		([&] {
+			if (obj.hasComponent<Component>())
+			{
+				display<Component>(obj);
+			}
+			}(), ...);
+	}
 }
 
 #endif

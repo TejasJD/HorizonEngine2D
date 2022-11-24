@@ -21,7 +21,8 @@
     <OutputPath>..\Scripts\</OutputPath>
     <BaseIntermediateOutputPath>..\Scripts\obj\Debug\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +34,8 @@
     <OutputPath>..\Scripts\</OutputPath>
     <BaseIntermediateOutputPath>..\Scripts\obj\Release\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,6 +44,7 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\InternalCalls.cs" />
     <Compile Include="Source\Core.cs" />
   </ItemGroup>
   <ItemGroup>

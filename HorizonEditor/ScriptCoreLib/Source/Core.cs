@@ -9,6 +9,7 @@ namespace Hzn
         public Main()
         {
             Console.WriteLine("Main Constructor!");
+            InternalCalls.Greet();
         }
 
         public void PrintMessage()

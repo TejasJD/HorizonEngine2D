@@ -64,17 +64,8 @@ private:
 
 	glm::vec2 m_ViewportBounds[2]{{0.0f, 0.0f}, {0.0f, 0.0f}};
 
-	//char projectNameBuffer[512]{};
-	//char directoryPathBuffer[1024]{};
-	//char sceneNameBuffer[256]{};
 	std::shared_ptr<Hzn::Project> m_ActiveProject;
-
-
-
-	
 	//bool request_NewScene = false;
 	bool request_OpenScene = false;
-
 	//bool canCreateProject = false;
-
 };

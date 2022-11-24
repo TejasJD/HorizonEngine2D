@@ -478,10 +478,7 @@ void EditorLayer::onRenderImgui()
 	if (EditorData::s_Scene_Active) {
 		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
-			Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
-			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
-			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
-			Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+			Hzn::displayIfExists(selectedObj, Hzn::AllComponents{});
 		}
 	}
 	ImGui::End();

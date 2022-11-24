@@ -53,7 +53,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/FileManagement/Project.cpp"
 	"src/HorizonEngine/GraphEditor/GraphEditor.cpp"
 	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
-)
+ "src/HorizonEngine/Scripting/ScriptRegistry.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -114,7 +114,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
 	"src/HorizonEngine/Scripting/ScriptEngine.h"
-)
+	"src/HorizonEngine/Scripting/ScriptRegistry.h")
 
 # Add source to this project's executable.
 add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES})
@@ -168,7 +168,7 @@ target_link_libraries(HorizonEngine
 	imguizmo::imguizmo
 	EnTT::EnTT
 	cereal::cereal
-	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/dbg/mono-2.0-sgen.lib
+	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/mono-2.0-sgen.lib
 )
 
 #testing
