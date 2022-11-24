@@ -42,8 +42,8 @@ namespace Hzn
 	/// </summary>
 	struct FrameBufferProps
 	{
-		uint32_t width = 0;
-		uint32_t height = 0;
+		int32_t width = 0;
+		int32_t height = 0;
 		FrameBufferAttachmentSpecification attachments;
 		uint32_t samples = 1;
 		bool isBind = false;
@@ -82,7 +82,7 @@ namespace Hzn
 		///	</summary>
 		///	<param name="width">Width of the frame buffer.</param>
 		///	<param name="height">Height of the frame buffer.</param>
-		virtual void recreate(uint32_t width, uint32_t height) = 0;
+		virtual void recreate(int32_t width, int32_t height) = 0;
 
 		/// <summary>
 		/// Get the Id Color buffer that is attached to the frame buffer.
