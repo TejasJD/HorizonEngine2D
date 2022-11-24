@@ -37,8 +37,47 @@ void ContentBrowser::OnImGuiRender()
 		for (auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
 		{
 
-			if (entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
+			if (entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
 			{
+				continue;
+			}
+
+			if (entry.path().extension().string().find("meta") != std::string::npos)
+			{
+				std::ifstream infile(entry.path().c_str(), std::ifstream::binary);
+				std::string line;
+
+				while (std::getline(infile, line)) {
+					std::istringstream is_line(line);
+					std::string key;
+					if (std::getline(is_line, key, ':'))
+					{
+						std::string value;
+
+						if (std::getline(is_line, value))
+						{
+							Hzn::AssetManager::spriteFormat[key] = value;
+						}
+					}
+				}
+
+				std::string spriteSheetPath = entry.path().parent_path().string() + "\\" + entry.path().filename().replace_extension().string() + ".png";
+
+				if (Hzn::AssetManager::spriteSheetStorage.find(spriteSheetPath) == Hzn::AssetManager::spriteSheetStorage.end())
+				{
+				
+				Hzn::AssetManager::loadSpriteSheet(spriteSheetPath, { std::stof(Hzn::AssetManager::spriteFormat.find("width")->second), std::stof(Hzn::AssetManager::spriteFormat.find("height")->second) });
+
+				for (size_t i = 0; i < std::stoi(Hzn::AssetManager::spriteFormat.find("column")->second); i++)
+				{
+					for (size_t j = 0; j < std::stoi(Hzn::AssetManager::spriteFormat.find("row")->second); j++)
+					{
+						Hzn::AssetManager::loadSprite(spriteSheetPath, { i, j });
+					}
+				}
+
+				}
+
 				continue;
 			}
 

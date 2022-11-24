@@ -33,6 +33,9 @@ namespace Hzn
 		//SpriteStorage
 		static std::map<std::string, std::shared_ptr<Sprite2D>> spriteStorage;
 
+		static std::map<std::string, std::string> spriteFormat;
+
+
 		static void init(const std::filesystem::path& directoryPath);
 		static void destory();
 
@@ -56,22 +59,38 @@ namespace Hzn
 
 		static std::shared_ptr<Texture2D> getTexture(std::string texturePath)
 		{
+			if (textureStorage.find(texturePath) == textureStorage.end())
+			{
+				loadTexture(texturePath);
+			}
+
 			return textureStorage.at(texturePath);
 		}
+
 
 		static std::shared_ptr<Sprite2D> getSprite(std::string sheetPath, const glm::vec2& pos)
 		{
 			std::string sheetPathPos = sheetPath + "-;" + std::to_string(pos.x) + ";" + std::to_string(pos.y);
+
+			if (spriteStorage.find(sheetPathPos) == spriteStorage.end())
+			{
+				loadSprite(sheetPath, pos);
+			}
+
 			return spriteStorage.at(sheetPathPos);
 		}
 
 		static std::shared_ptr<AudioSource> getAudio(std::string audioPath)
 		{
+			if (audioStorage.find(audioPath) == audioStorage.end())
+			{
+				loadAudio(audioPath);
+			}
+
 			return audioStorage.at(audioPath);
 		}
 
 	private:
-		static std::map<std::string, std::string> spriteFormat;
 	};
 
 }

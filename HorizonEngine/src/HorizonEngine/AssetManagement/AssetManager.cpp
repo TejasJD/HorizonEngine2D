@@ -24,7 +24,8 @@ void AssetManager::init(const std::filesystem::path& directoryPath)
 
 			for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
 
-				if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+				if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) 
+				{
 					std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
 					std::string line;
 
