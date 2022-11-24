@@ -8,12 +8,10 @@ namespace Hzn
 {
 	class Project;
 	class SceneManager;
-	class AssetManager;
 
 	class ProjectManager
 	{
 		friend class SceneManager;
-		friend class AssetManager;
 	public:
 		/**
 		 * \brief Creates new, or opens a project depending on the path provided.

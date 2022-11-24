@@ -6,12 +6,13 @@
 #include "imgui_internal.h"
 #include "Modals.h"
 #include "EditorLayer.h"
-#include "AssetManagement/AssetManager.h"
 
 
 
 	std::string Modals::projectRootFolder;
 
+	Hzn::AssetManager Modals::assetManager;
+	std::map<std::string, std::string> Modals::spriteFormat;
 
 	std::shared_ptr<Hzn::Texture> Modals::folderIcon;
 	std::shared_ptr<Hzn::Texture> Modals::fileIcon;
@@ -146,7 +147,67 @@
 				}
 			}
 
-			Hzn::AssetManager::init(projectRootFolder);
 			
-			
+
+			//create texture for image file and sprites from sprite sheets
+			for (const auto& entry : std::filesystem::recursive_directory_iterator(projectRootFolder))
+			{
+
+				/*if (!entry.is_directory() && entry.path().parent_path().string().find("audios") != std::string::npos)
+				{
+					assetManager.LoadAudio(entry.path().string(), entry.path().string());
+				}*/
+
+				if (entry.path().string().find("icons") != std::string::npos)
+				{
+					continue;
+				}
+
+
+				if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
+					assetManager.LoadTexture(entry.path().string(), entry.path().string());
+				}
+
+				if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos) {
+
+					for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
+
+						if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
+							std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
+							std::string line;
+
+							while (std::getline(infile, line)) {
+								std::istringstream is_line(line);
+								std::string key;
+								if (std::getline(is_line, key, ':'))
+								{
+									std::string value;
+
+									if (std::getline(is_line, value))
+									{
+										spriteFormat[key] = value;
+									}
+								}
+							}
+
+						}
+					}
+
+					auto spriteSheet = Hzn::Texture2D::create(entry.path().string());
+
+					int count = 0;
+					for (size_t i = 0; i < std::stoi(spriteFormat.find("column")->second); i++)
+					{
+						for (size_t j = 0; j < std::stoi(spriteFormat.find("row")->second); j++)
+						{
+							assetManager.LoadSpite(entry.path().filename().string(), spriteSheet, { i, j }, { std::stof(spriteFormat.find("width")->second),std::stof(spriteFormat.find("height")->second) });
+							std::shared_ptr<Hzn::Sprite2D> sprite = assetManager.GetSprite(entry.path().filename().string())[count];
+
+							count++;
+						}
+
+					}
+
+				}
+			}
 		}
