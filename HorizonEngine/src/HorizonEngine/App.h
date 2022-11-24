@@ -3,7 +3,6 @@
 #include "HorizonEngine/Window.h"
 #include "HorizonEngine/Events/Event.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
-#include "HorizonEngine/Logging/Logging.h"
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/LayerStack.h"
 #include "HorizonEngine/FileManagement/ProjectFile.h"
