@@ -63,18 +63,20 @@ void ContentBrowser::OnImGuiRender()
 
 				std::string spriteSheetPath = entry.path().parent_path().string() + "\\" + entry.path().filename().replace_extension().string() + ".png";
 
-				if (Hzn::AssetManager::spriteSheetStorage.find(spriteSheetPath) == Hzn::AssetManager::spriteSheetStorage.end())
+				if (Hzn::AssetManager::textureStorage.find(spriteSheetPath) == Hzn::AssetManager::textureStorage.end())
 				{
 				
-				Hzn::AssetManager::loadSpriteSheet(spriteSheetPath, { std::stof(Hzn::AssetManager::spriteFormat.find("width")->second), std::stof(Hzn::AssetManager::spriteFormat.find("height")->second) });
+					Hzn::AssetManager::loadSpriteSheet(spriteSheetPath, 
+						{ std::stof(Hzn::AssetManager::spriteFormat.find("width")->second),
+							std::stof(Hzn::AssetManager::spriteFormat.find("height")->second) });
 
-				for (size_t i = 0; i < std::stoi(Hzn::AssetManager::spriteFormat.find("column")->second); i++)
-				{
-					for (size_t j = 0; j < std::stoi(Hzn::AssetManager::spriteFormat.find("row")->second); j++)
-					{
-						Hzn::AssetManager::loadSprite(spriteSheetPath, { i, j });
-					}
-				}
+					//for (size_t i = 0; i < std::stoi(Hzn::AssetManager::spriteFormat.find("column")->second); i++)
+					//{
+					//	for (size_t j = 0; j < std::stoi(Hzn::AssetManager::spriteFormat.find("row")->second); j++)
+					//	{
+					//		Hzn::AssetManager::loadSprite(spriteSheetPath, { i, j });
+					//	}
+					//}
 
 				}
 

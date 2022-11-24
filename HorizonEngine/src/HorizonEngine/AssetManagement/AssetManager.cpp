@@ -4,8 +4,7 @@
 using namespace Hzn;
 
 std::map<std::string, std::string> AssetManager::spriteFormat;
-std::map<std::string, std::shared_ptr<Texture2D>> AssetManager::textureStorage;
-std::map<std::string, SpriteSheetIdentifier> AssetManager::spriteSheetStorage;
+std::map<std::string, std::pair<std::shared_ptr<Texture2D>, glm::vec2>> AssetManager::textureStorage;
 std::map<std::string, std::shared_ptr<AudioSource>> AssetManager::audioStorage;
 std::map<std::string, std::shared_ptr<Sprite2D>> AssetManager::spriteStorage;
 
@@ -48,14 +47,9 @@ void AssetManager::init(const std::filesystem::path& directoryPath)
 		}
 
 		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos && entry.path().string().find("sprites") != std::string::npos) {
-			loadSpriteSheet(entry.path().string(), { std::stof(spriteFormat.find("width")->second), std::stof(spriteFormat.find("height")->second) });
-
-			for (size_t i = 0; i < std::stoi(spriteFormat.find("column")->second); i++)
+			if (!spriteFormat.empty())
 			{
-				for (size_t j = 0; j < std::stoi(spriteFormat.find("row")->second); j++)
-				{
-					loadSprite(entry.path().string(), { i, j });
-				}
+				loadSpriteSheet(entry.path().string(), { std::stof(spriteFormat.find("width")->second), std::stof(spriteFormat.find("height")->second) });
 			}
 		}
 
@@ -68,9 +62,8 @@ void AssetManager::init(const std::filesystem::path& directoryPath)
 
 }
 
-void AssetManager::destory()
+void AssetManager::destroy()
 {
-	spriteSheetStorage.clear();
 	spriteStorage.clear();
 	textureStorage.clear();
 	audioStorage.clear();

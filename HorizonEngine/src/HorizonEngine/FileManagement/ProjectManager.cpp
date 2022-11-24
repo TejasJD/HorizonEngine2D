@@ -66,7 +66,7 @@ namespace Hzn
 		if (!projectFilePath.empty()) {
 			if (s_Project)
 			{
-				AssetManager::destory();
+				AssetManager::destroy();
 				close();
 			}
 			s_Project = std::make_shared<Project>(projectFilePath);
@@ -92,7 +92,7 @@ namespace Hzn
 		save();
 		if (s_Project && s_Project->m_Scene) {
 			SceneManager::close();
-			AssetManager::destory();
+			AssetManager::destroy();
 			s_Project.reset();
 		}
 	}
