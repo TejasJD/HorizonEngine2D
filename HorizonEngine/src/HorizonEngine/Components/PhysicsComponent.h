@@ -64,20 +64,6 @@ namespace Hzn
 
 	// ------------------------------- Collider 2D -------------------------------
 	struct Collider2DComponent {
-		
-
-		virtual void setShape() = 0;
-
-		virtual void generateBody(GameObject& obj) = 0;
-	};
-
-	// ------------------------------- Box Collider 2D -------------------------------
-	struct BoxCollider2DComponent {
-		BoxCollider2DComponent() {
-			setShape();
-		}
-		~BoxCollider2DComponent() = default;
-
 		b2PolygonShape m_Shape;
 
 		b2Body* m_Body;
@@ -99,6 +85,18 @@ namespace Hzn
 		{
 			ar(m_IsTrigger, m_Offset.x, m_Offset.y, m_Size.x, m_Size.y);
 		}
+
+		virtual void setShape() = 0;
+
+		virtual void generateBody(GameObject& obj) = 0;
+	};
+
+	// ------------------------------- Box Collider 2D -------------------------------
+	struct BoxCollider2DComponent : Collider2DComponent {
+		BoxCollider2DComponent() {
+			setShape();
+		}
+		~BoxCollider2DComponent() = default;
 
 		void setShape() {
 			m_Shape.SetAsBox(m_Size.x, m_Size.y);
