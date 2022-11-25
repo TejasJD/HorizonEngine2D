@@ -13,8 +13,8 @@ set(HZNEDITOR_SOURCE_FILES
 set(HZNEDITOR_HEADER_FILES
  "include/EditorLayer.h"
  "include/NodeEditor.h"
- "include/ContentBrowser.h"
- "include/Modals.h")
+ 
+ "include/Modals.h" "include/ContentBrowser.h")
 
 # 'HznApplication' target which would generate an executable.
 add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES})

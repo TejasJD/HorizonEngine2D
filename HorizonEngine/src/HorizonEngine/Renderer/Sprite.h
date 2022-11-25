@@ -45,16 +45,22 @@ namespace Hzn
 		/// </summary>
 		const std::array<glm::vec2, 4>& getTexCoords() const{ return m_texCoords; }
 
+		/// <summary>
+		/// Get the cellSize
+		/// </summary>
+		const std::array<glm::vec2, 1>& getCellSize() const { return m_cellSize; }
+
 	private:
 		/// <summary>
 		/// Creates a sprite. Private because, we want to return a shared pointer to the sprite,
 		/// and this is done by the create function. Interally the create function uses this constructor
 		/// to create a sprite and returns a shared pointer to this sprite.
 		/// </summary>
-		Sprite2D(const std::shared_ptr<Texture2D>& spriteSheet, const glm::vec2& min, const glm::vec2& max);
+		Sprite2D(const std::shared_ptr<Texture2D>& spriteSheet, const glm::vec2& min, const glm::vec2& max, const glm::vec2& cs);
 
 		std::shared_ptr<Texture2D> m_SpriteSheet;
 		std::array<glm::vec2, 4> m_texCoords;
+		std::array<glm::vec2, 1> m_cellSize;
 	};
 }
 
