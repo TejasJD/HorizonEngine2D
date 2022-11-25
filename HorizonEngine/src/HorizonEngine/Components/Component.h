@@ -11,9 +11,13 @@
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/Renderer/Sprite.h"
+#include "HorizonEngine/Utils/Math.h"
+#include "HorizonEngine/AssetManagement/AssetManager.h"
+
 
 namespace Hzn
 {
+	class AssetManager;
 	class Scene;
 
 	template<typename>
@@ -170,29 +174,74 @@ namespace Hzn
 		glm::vec4 m_Color = glm::vec4(1.0f);
 		std::shared_ptr<Sprite2D> m_Sprite;
 
+		glm::vec2 m_Pos = glm::vec2(0.0f);
+
+
+		std::string texturePath;
+		std::string spritePath;
+
 		template<typename Archive>
 		void load(Archive& ar)
 		{
+			ar(texturePath, spritePath, m_Pos.x, m_Pos.y);
 			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
-
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
+			ar(texturePath, spritePath, m_Pos.x, m_Pos.y);
 			ar(m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 		}
 	};
 
+
+
 	template<>
 	inline void display<RenderComponent>(const GameObject& obj)
 	{
-		auto& colorComponent = obj.getComponent<RenderComponent>();
-
+		auto& renderComponent = obj.getComponent<RenderComponent>();
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Render", flags)) {
-			ImGui::ColorEdit3("Color", glm::value_ptr(colorComponent.m_Color));
+			ImGui::ColorEdit3("Color", glm::value_ptr(renderComponent.m_Color));
+
+			ImGui::Button("Texture", ImVec2(80.0f, 50.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE"))
+				{
+
+					const wchar_t* filepath = (const wchar_t*)payload->Data;
+					std::wstring ws(filepath);
+					std::string str(ws.begin(), ws.end());
+
+					std::string::size_type nPos1 = str.find_last_of(";");
+					std::string::size_type nPos2 = str.find_last_of(";", nPos1 - 1);
+
+					std::string spriteY = str.substr(nPos1 + 1);
+					std::string spriteX = str.substr(nPos2 + 1, nPos1 - nPos2 - 1);
+
+					renderComponent.spritePath = str.substr(0, str.find_last_of("-"));
+					renderComponent.texturePath = "";
+					renderComponent.m_Pos.x = std::stoi(spriteX);
+					renderComponent.m_Pos.y = std::stoi(spriteY);
+
+				}
+				else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* filepath = (const wchar_t*)payload->Data;
+					std::wstring ws(filepath);
+					std::string str(ws.begin(), ws.end());
+
+					renderComponent.texturePath = str;
+					renderComponent.spritePath = "";
+
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			ImGui::TreePop();
 		}
 	}

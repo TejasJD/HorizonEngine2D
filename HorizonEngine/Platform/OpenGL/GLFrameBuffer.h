@@ -21,7 +21,7 @@ namespace Hzn
 		virtual void bind() override;
 		virtual void unbind() override;
 		virtual const FrameBufferProps& getProps() const override { return m_Props; }
-		virtual void recreate(uint32_t width, uint32_t height) override;
+		virtual void recreate(int32_t width, int32_t height) override;
 
 	private:
 		void invalidate();

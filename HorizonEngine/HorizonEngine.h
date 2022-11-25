@@ -20,6 +20,7 @@
 // Reference additional headers your program requires here.
 #include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Logging/Logging.h"
+#include "HorizonEngine/AssetManagement/AssetManager.h"
 #include "HorizonEngine/Core/TimeStep.h"
 #include "HorizonEngine/Events/Event.h"
 #include "HorizonEngine/Events/ApplicationEvent.h"
@@ -47,7 +48,7 @@
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
 
-#include "HorizonEngine/AssetManagement/AssetManager.h"
+
 
 #include "HorizonEngine/Layer.h"
 

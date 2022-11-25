@@ -17,7 +17,7 @@ namespace Hzn
 		void imguiBegin();
 		void imguiEnd();
 		virtual void blockEvents(bool flag) { absorbEvents = flag; }
-
+		void setDarkThemeColors();
 	private:
 		bool absorbEvents = true;
 	};

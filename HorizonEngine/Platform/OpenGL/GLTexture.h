@@ -32,6 +32,7 @@ namespace Hzn
 		void unbind() const override;
 		void setData(void* data, uint32_t size) override;
 		virtual uint32_t getId() const override { return m_TextureId; }
+		virtual const std::string& getPath() const override { return m_Path; }
 
 	private:
 		std::string m_Path;

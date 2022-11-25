@@ -27,7 +27,6 @@ private:
 
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
-	//void openProject();
 	int32_t quads = 10;
 	float quadAngle = 0.0f;
 	float m_AspectRatio = 1.0f;
@@ -46,15 +45,6 @@ private:
 	Hzn::GameObject m_Camera;
 	float m_CameraZoom = 1.0f;
 
-	//Hzn::AssetManager assetManager;
-	//std::map<std::string, std::shared_ptr<Hzn::Sprite2D>> spriteMap;
-	//std::filesystem::path m_CurrentDirectory;
-	//std::shared_ptr<Hzn::Texture> folderIcon;
-	//std::shared_ptr<Hzn::Texture> fileIcon;
-	//std::string projectRootFolder;
-	std::string assetPath;
-	std::string currentScenePath;
-
 	std::vector<std::string> rootObjects;
 
 	std::string selectedObject = "";
@@ -62,7 +52,7 @@ private:
 	Hzn::GameObject copiedGameObject;
 	bool openHierarchyPopup = false;
 
-	glm::vec2 m_ViewportBounds[2]{{0.0f, 0.0f}, {0.0f, 0.0f}};
+	glm::vec2 m_ViewportBounds[2]{ {0.0f, 0.0f}, {0.0f, 0.0f} };
 
 	std::shared_ptr<Hzn::Project> m_ActiveProject;
 	//bool request_NewScene = false;

@@ -22,6 +22,7 @@ namespace Hzn
 		friend class GameObject;
 		friend class SceneManager;
 		friend class ProjectManager;
+		friend class AssetManager;
 	public:
 		Scene();
 		Scene(cereal::JSONInputArchive& inputArchive);
