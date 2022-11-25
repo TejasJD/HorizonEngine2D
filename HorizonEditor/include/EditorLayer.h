@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HorizonEngine.h"
+#include <HorizonEngine.h>
 
 
 struct EditorData {
@@ -23,7 +23,7 @@ public:
 	virtual void openScene(const std::filesystem::path& filepath);
 
 private:
-
+	bool onKeyPressed(Hzn::KeyPressedEvent& e);
 
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
@@ -47,7 +47,6 @@ private:
 
 	std::vector<std::string> rootObjects;
 
-	std::string selectedObject = "";
 	uint32_t selectedObjectId = std::numeric_limits<uint32_t>::max();
 	Hzn::GameObject copiedGameObject;
 	bool openHierarchyPopup = false;
@@ -58,4 +57,5 @@ private:
 	//bool request_NewScene = false;
 	bool request_OpenScene = false;
 	//bool canCreateProject = false;
+	ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::NONE;
 };
