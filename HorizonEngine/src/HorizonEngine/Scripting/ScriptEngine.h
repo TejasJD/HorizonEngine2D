@@ -3,25 +3,34 @@
 #ifndef HZN_SCRIPT_ENGINE_H
 #define HZN_SCRIPT_ENGINE_H
 
-struct _MonoAssembly;
-using MonoAssembly = _MonoAssembly;
+extern "C"
+{
+	struct _MonoAssembly;
+	using MonoAssembly = _MonoAssembly;
+
+	struct _MonoImage;
+	using MonoImage = _MonoImage;
+}
 
 namespace Hzn
 {
 	struct ScriptData;
+
+	class ScriptClass
+	{
+		
+	};
 
 	class ScriptEngine
 	{
 	public:
 		static void init();
 		static void destroy();
+
+		static void LoadAssembly(const std::filesystem::path& path);
 	private:
 		static void initMono();
 		static void destroyMono();
-		static char* ReadBytes(const std::string& filepath, uint32_t* outSize);
-		static MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath);
-		static void PrintAssemblyTypes(MonoAssembly* assembly);
-
 		static ScriptData* s_Data;
 	};
 }

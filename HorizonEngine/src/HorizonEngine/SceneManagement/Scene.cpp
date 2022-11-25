@@ -24,7 +24,7 @@ namespace Hzn
 		m_Valid = true;
 		m_Registry.each([&](auto entity)
 			{
-				m_LocStorage.insert({ entt::to_integral(entity), {entity, this} });
+				m_GameObjectIdMap.insert({ entt::to_integral(entity), entity });
 			});
 		m_Valid = false;
 	}
@@ -49,7 +49,7 @@ namespace Hzn
 	{
 		m_Registry.clear();
 		m_Objects.clear();
-		m_LocStorage.clear();
+		m_GameObjectIdMap.clear();
 		m_Valid = false;
 	}
 
@@ -81,7 +81,7 @@ namespace Hzn
 			for (const auto& entity : sprites)
 			{
 				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-				GameObject obj = getGameObject(entt::to_integral(entity));
+				GameObject obj = getGameObjectById(entt::to_integral(entity));
 
 				if (!renderComponent.texturePath.empty()) {
 					Renderer2D::drawQuad(obj.getTransform(), AssetManager::getTexture(renderComponent.texturePath), renderComponent.m_Color);
@@ -128,7 +128,7 @@ namespace Hzn
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-					GameObject obj = getGameObject(entt::to_integral(entity));
+					GameObject obj = getGameObjectById(entt::to_integral(entity));
 
 					if (!renderComponent.texturePath.empty()) {
 						Renderer2D::drawQuad(obj.getTransform(), AssetManager::getTexture(renderComponent.texturePath), renderComponent.m_Color);
@@ -161,7 +161,7 @@ namespace Hzn
 		obj.addComponent<NameComponent>(name);
 		obj.addComponent<RelationComponent>();
 		/*m_Objects.insert({ name, obj });*/
-		m_LocStorage.insert({ entt::to_integral(obj.m_ObjectId), obj });
+		m_GameObjectIdMap.insert({ entt::to_integral(obj.m_ObjectId), obj.m_ObjectId });
 		return obj;
 	}
 
@@ -189,79 +189,40 @@ namespace Hzn
 		// remove object from the unordered_map.
 
 		/*m_Objects.erase(obj.getComponent<NameComponent>());*/
-		m_LocStorage.erase(entt::to_integral(obj.m_ObjectId));
+		m_GameObjectIdMap.erase(entt::to_integral(obj.m_ObjectId));
 
 		m_Registry.destroy(obj.m_ObjectId);
 		obj.m_ObjectId = entt::null;
 		obj.m_Scene = nullptr;
 	}
 
-	GameObject Scene::getGameObject(const std::string& name) const
+	GameObject Scene::getGameObjectById(uint32_t id)
 	{
 		if (!m_Valid)
 		{
 			throw std::runtime_error("trying to get game objects from invalidated scene!");
 		}
 
-		auto it = m_Objects.find(name);
+		auto it = m_GameObjectIdMap.find(id);
 
-		if (it == m_Objects.end())
+		if (it == m_GameObjectIdMap.end())
 		{
 			throw std::runtime_error("Game object not found!");
 		}
 
-		return it->second;
+		return GameObject{ it->second, this };
 	}
 
-	GameObject Scene::getGameObject(uint32_t id) const
-	{
-		if (!m_Valid)
-		{
-			throw std::runtime_error("trying to get game objects from invalidated scene!");
-		}
-
-		auto it = m_LocStorage.find(id);
-
-		if (it == m_LocStorage.end())
-		{
-			throw std::runtime_error("Game object not found!");
-		}
-
-		return it->second;
-	}
-
-	std::vector<std::string> Scene::allGameObjectNames() const
-	{
-		std::vector<std::string> names;
-		for (const auto& x : m_Objects)
-		{
-			names.emplace_back(x.first);
-		}
-		return names;
-	}
-
-	std::vector<std::string> Scene::getAllRootObjects() const
-	{
-		std::vector<std::string> roots;
-		for (const auto& x : m_Objects)
-		{
-			if (x.second.getParent() == GameObject())
-			{
-				roots.emplace_back(x.first);
-			}
-		}
-		return roots;
-	}
 
 	std::vector<uint32_t> Scene::getAllRootIds() const
 	{
 		std::vector<uint32_t> roots;
-
-		for (const auto& x : m_LocStorage)
-		{
-			if (x.second.getParent() == GameObject())
+		if (m_Valid) {
+			const auto& alls = m_Registry.view<RelationComponent>();
+			for (const auto& entity : alls)
 			{
-				roots.emplace_back(x.first);
+				const auto& parent = m_Registry.get<RelationComponent>(entity).m_Parent;
+				if (parent == entt::null) roots.emplace_back(entt::to_integral(entity));
 			}
 		}
 		return roots;
@@ -270,7 +231,7 @@ namespace Hzn
 	std::vector<uint32_t> Scene::getAllObjectIds() const
 	{
 		std::vector<uint32_t> ids;
-		for (const auto& x : m_LocStorage)
+		for (const auto& x : m_GameObjectIdMap)
 		{
 			ids.emplace_back(x.first);
 		}

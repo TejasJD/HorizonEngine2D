@@ -51,9 +51,8 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/SceneManagement/GameObject.cpp"
 	"src/HorizonEngine/FileManagement/ProjectManager.cpp"
 	"src/HorizonEngine/FileManagement/Project.cpp"
-	"src/HorizonEngine/GraphEditor/GraphEditor.cpp"
 	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
-)
+	"src/HorizonEngine/Scripting/ScriptRegistry.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -114,10 +113,35 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
 	"src/HorizonEngine/Scripting/ScriptEngine.h"
+	"src/HorizonEngine/Scripting/ScriptRegistry.h")
+
+set(IMGUIZMO_FILES
+	"vendor/ImGuizmo/GraphEditor.cpp"
+	"vendor/ImGuizmo/GraphEditor.h"
+	"vendor/ImGuizmo/ImCurveEdit.cpp"
+	"vendor/ImGuizmo/ImCurveEdit.h"
+	"vendor/ImGuizmo/ImGradient.cpp"
+	"vendor/ImGuizmo/ImGradient.h"
+	"vendor/ImGuizmo/ImGuizmo.cpp"
+	"vendor/ImGuizmo/ImGuizmo.h"
+	"vendor/ImGuizmo/ImSequencer.cpp"
+	"vendor/ImGuizmo/ImSequencer.h"
+	"vendor/ImGuizmo/ImZoomSlider.h"
+)
+
+set(IMNODES_FILES
+	"vendor/imnodes/imnodes.cpp"
+	"vendor/imnodes/imnodes.h"
+	"vendor/imnodes/imnodes_internal.h"
 )
 
 # Add source to this project's executable.
-add_library (HorizonEngine ${HZN_SOURCE_FILES} ${HZN_HEADER_FILES} "src/HorizonEngine/ImNodes/imnodes.h" "src/HorizonEngine/ImNodes/imnodes.cpp")
+add_library (HorizonEngine
+	${HZN_SOURCE_FILES}
+	${HZN_HEADER_FILES}
+	${IMGUIZMO_FILES}
+	${IMNODES_FILES}
+)
 
 # compile definitions for 'HorizonEngine' target
 target_compile_definitions(HorizonEngine
@@ -134,6 +158,8 @@ target_include_directories(HorizonEngine
 	src
 	src/HorizonEngine
 	platform
+	vendor/ImGuizmo
+	vendor/imnodes
 	vendor/mono/include
 )
 
@@ -149,7 +175,6 @@ find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
 find_package(openal CONFIG REQUIRED)
 find_package(Sndfile CONFIG REQUIRED)
-find_package(imguizmo CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
 find_package(cereal CONFIG REQUIRED)
@@ -165,14 +190,13 @@ target_link_libraries(HorizonEngine
 	unofficial::sajson::sajson
 	OpenAL::OpenAL
 	SndFile::sndfile
-	imguizmo::imguizmo
 	EnTT::EnTT
 	cereal::cereal
-	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/dbg/mono-2.0-sgen.lib
+	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/mono-2.0-sgen.lib
 )
 
 #testing
-add_executable(SampleTest "tests/SampleTest.cpp" "src/HorizonEngine/GraphEditor/GraphEditor.cpp"  "src/HorizonEngine/ImNodes/imnodes.h" "src/HorizonEngine/ImNodes/imnodes.cpp")
+add_executable(SampleTest "tests/SampleTest.cpp")
 target_include_directories(SampleTest
 	PUBLIC
 	.
@@ -182,7 +206,7 @@ target_include_directories(SampleTest
 	${STB_INCLUDE_DIRS}
 )
 
-add_executable(SampleTest2 "tests/SampleTest2.cpp" "src/HorizonEngine/GraphEditor/GraphEditor.cpp"  "src/HorizonEngine/ImNodes/imnodes.h" "src/HorizonEngine/ImNodes/imnodes.cpp")
+add_executable(SampleTest2 "tests/SampleTest2.cpp")
 target_include_directories(SampleTest2
 	PUBLIC
 	.

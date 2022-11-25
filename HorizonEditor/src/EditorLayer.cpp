@@ -1,14 +1,12 @@
 #include <pch.h>
 #include "EditorLayer.h"
 #include "GraphEditor.h"
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-#include "imgui_internal.h"
+//#define IMGUI_DEFINE_MATH_OPERATORS
+//#include "imgui.h"
+//#include "imgui_internal.h"
 #include "Modals.h"
 #include "ContentBrowser.h"
-
-#include "../../HorizonEngine/src/HorizonEngine/ImNodes/imnodes.h"
-#include "../../HorizonEngine/src/HorizonEngine/ImNodes/imnodes_internal.h"
+#include "ComponentDisplays.h"
 
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
@@ -54,7 +52,7 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
+	if (m_ViewportFocused || m_ViewportHovered && !m_PlayMode) {
 		m_EditorCameraController.onUpdate(ts);
 	}
 
@@ -93,6 +91,10 @@ void EditorLayer::onEvent(Hzn::Event& e)
 	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
 		m_EditorCameraController.onEvent(e);
 	}
+
+	Hzn::EventDispatcher dispatcher(e);
+
+	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
 }
 
 
@@ -170,7 +172,7 @@ void EditorLayer::onRenderImgui()
 	// Options menu
 	if (ImGui::BeginMenuBar())
 	{
-		if (ImGui::BeginMenu("Options"))
+		if (ImGui::BeginMenu("File"))
 		{
 			// Disabling fullscreen would allow the window to be moved to the front of other windows,
 			// which we can't undo at the moment without finer window depth/z control.
@@ -266,18 +268,18 @@ void EditorLayer::onRenderImgui()
 	ImGui::Begin("Components");
 	if (EditorData::s_Scene_Active) {
 		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
-			auto selectedObj = EditorData::s_Scene_Active->getGameObject(selectedObjectId);
-			Hzn::displayIfExists<Hzn::NameComponent>(selectedObj);
-			Hzn::displayIfExists<Hzn::TransformComponent>(selectedObj);
-			Hzn::displayIfExists<Hzn::RenderComponent>(selectedObj);
-			Hzn::displayIfExists<Hzn::CameraComponent>(selectedObj);
+			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+			Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
 		}
 	}
 	ImGui::End();
 	// SETTINGS END.
 
 	//CONTENT BROWSER BEGIN
-	ContentBrowser::ContentBrowser(Modals::projectRootFolder);
+	if (EditorData::m_Project_Active)
+	{
+		ContentBrowser(EditorData::m_Project_Active->getPath().parent_path().string());
+	}
 	// CONTENT BROWSER END
 
 	//Sprites BEGIN
@@ -295,7 +297,7 @@ void EditorLayer::onRenderImgui()
 	if (!ContentBrowser::m_CurrentTexturePath.empty())
 	{
 
-		if (Hzn::AssetManager::spriteStorage.size() > 0)
+		if (!Hzn::AssetManager::spriteStorage.empty())
 		{
 
 			for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
@@ -390,8 +392,8 @@ void EditorLayer::onRenderImgui()
 
 	*/
 	ImNodes::EndNode();
-	
-	
+
+
 
 	ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);
 	ImNodes::EndNodeEditor();
@@ -411,7 +413,7 @@ void EditorLayer::onRenderImgui()
 	m_ViewportHovered = ImGui::IsWindowHovered();
 
 	// ImGui layer will not block the events if the viewport is focused and hovered.
-	Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused || !m_ViewportHovered);
+	Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
 	// if viewport size changes then we re-create the frame buffer.
 	glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
@@ -423,7 +425,7 @@ void EditorLayer::onRenderImgui()
 
 	/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
 
-	ImGui::Image(reinterpret_cast<ImTextureID>(m_FrameBuffer->getColorAttachmentId()),
+	ImGui::Image(reinterpret_cast<ImTextureID>((uint64_t)m_FrameBuffer->getColorAttachmentId()),
 		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
 	if (ImGui::BeginDragDropTarget())
@@ -434,12 +436,52 @@ void EditorLayer::onRenderImgui()
 
 			std::wstring ws(filepath);
 
-			std::string str(ws.begin(), ws.end());
-
-			openScene(std::filesystem::path(str));
+			openScene(std::filesystem::path(ws));
 
 		}
 		ImGui::EndDragDropTarget();
+	}
+
+	if (selectedObjectId != std::numeric_limits<uint32_t>::max())
+	{
+		ImGuizmo::SetOrthographic(true);
+		ImGuizmo::SetDrawlist();
+
+		float windowWidth = ImGui::GetWindowWidth();
+		float windowHeight = ImGui::GetWindowHeight();
+
+		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+		auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+		auto& transformComponent = selectedObj.getComponent<Hzn::TransformComponent>();
+		auto transform = selectedObj.getTransform();
+
+		ImGuizmo::Manipulate(
+			glm::value_ptr(m_EditorCameraController.getCamera().getViewMatrix()),
+			glm::value_ptr(m_EditorCameraController.getCamera().getProjectionMatrix()),
+			m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
+
+		if (ImGuizmo::IsUsing())
+		{
+			if (selectedObj.getParent())
+			{
+				transform = glm::inverse(selectedObj.getParent().getTransform()) * transform;
+			}
+
+			glm::vec3 translation = glm::vec3(0.0f);
+			glm::quat orientation = glm::quat();
+			glm::vec3 scale = glm::vec3(0.0f);
+			glm::vec3 skew = glm::vec3(0.0f);
+			glm::vec4 perspective = glm::vec4(0.0f);
+			glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+			glm::vec3 rotation = glm::eulerAngles(orientation);
+			rotation = glm::degrees(rotation);
+
+			transformComponent.m_Translation = translation;
+			transformComponent.m_Rotation = rotation;
+			transformComponent.m_Scale = scale;
+		}
 	}
 
 
@@ -462,7 +504,7 @@ void EditorLayer::drawHierarchy()
 
 		for (const auto& x : list)
 		{
-			drawObjects(EditorData::s_Scene_Active->getGameObject(x));
+			drawObjects(EditorData::s_Scene_Active->getGameObjectById(x));
 		}
 
 		if (openHierarchyPopup) {
@@ -483,10 +525,10 @@ void EditorLayer::drawHierarchy()
 					// Do stuff here 
 				}
 				if (ImGui::MenuItem("Delete", NULL, false)) {
-					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObject(selectedObjectId);
+					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
 					EditorData::s_Scene_Active->destroyGameObject(obj);
 
-					selectedObject = std::string();
+					/*selectedObject = std::string();*/
 					selectedObjectId = std::numeric_limits<uint32_t>::max();
 				}
 				ImGui::Separator();
@@ -494,7 +536,7 @@ void EditorLayer::drawHierarchy()
 				if (ImGui::MenuItem("Create Empty", NULL, false)) {
 					// Do stuff here
 					Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
-					EditorData::s_Scene_Active->getGameObject(selectedObjectId).addChild(newObject);
+					EditorData::s_Scene_Active->getGameObjectById(selectedObjectId).addChild(newObject);
 					newObject.addComponent<Hzn::TransformComponent>();
 				}
 
@@ -510,7 +552,7 @@ void EditorLayer::drawHierarchy()
 
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-				Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObject((uint32_t) * (const int*)payload->Data);
+				Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
 				receivedObject.setParent(Hzn::GameObject());
 			}
 
@@ -523,7 +565,6 @@ void EditorLayer::drawHierarchy()
 			ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
 		}
 		if (ImGui::BeginPopup("contextHierarchy")) {
-			selectedObject = "";
 			selectedObjectId = std::numeric_limits<uint32_t>::max();
 
 			if (ImGui::MenuItem("Create Empty", NULL, false)) {
@@ -535,7 +576,7 @@ void EditorLayer::drawHierarchy()
 		}
 		// Left click
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-			selectedObject = "";
+			/*selectedObject = "";*/
 			selectedObjectId = std::numeric_limits<uint32_t>::max();
 		}
 	}
@@ -571,12 +612,11 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 		ImGui::Text(nameComponent.m_Name.c_str());
 		ImGui::EndDragDropSource();
 
-		std::vector<std::string> names = EditorData::s_Scene_Active->allGameObjectNames();
 	}
 
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-			Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObject((uint32_t) * (const int*)payload->Data);
+			Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
 			receivedObject.setParent(object);
 		}
 
@@ -613,4 +653,36 @@ void EditorLayer::openScene(const std::filesystem::path& filepath)
 {
 	Hzn::ProjectManager::openScene(filepath);
 	EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
+}
+
+bool EditorLayer::onKeyPressed(Hzn::KeyPressedEvent& e)
+{
+	auto keycode = e.GetKeyCode();
+
+	switch (keycode)
+	{
+	case Hzn::Key::Q:
+	{
+		m_GizmoType = ImGuizmo::OPERATION::NONE;
+		break;
+	}
+	case Hzn::Key::E:
+	{
+		m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+		break;
+	}
+	case Hzn::Key::R:
+	{
+		m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+		break;
+	}
+	case Hzn::Key::T:
+	{
+		m_GizmoType = ImGuizmo::OPERATION::SCALE;
+		break;
+	}
+	default: break;
+	}
+
+	return false;
 }
