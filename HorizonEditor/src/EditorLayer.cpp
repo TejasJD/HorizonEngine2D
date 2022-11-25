@@ -442,7 +442,7 @@ void EditorLayer::onRenderImgui()
 		ImGui::EndDragDropTarget();
 	}
 
-	if (selectedObjectId != std::numeric_limits<uint32_t>::max())
+	if (EditorData::s_Scene_Active && selectedObjectId != std::numeric_limits<uint32_t>::max())
 	{
 		ImGuizmo::SetOrthographic(true);
 		ImGuizmo::SetDrawlist();
@@ -536,8 +536,29 @@ void EditorLayer::drawHierarchy()
 				if (ImGui::MenuItem("Create Empty", NULL, false)) {
 					// Do stuff here
 					Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
-					EditorData::s_Scene_Active->getGameObjectById(selectedObjectId).addChild(newObject);
 					newObject.addComponent<Hzn::TransformComponent>();
+
+					if(selectedObjectId != std::numeric_limits<uint32_t>::max())
+					{
+						Hzn::GameObject selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+						selectedObj.addChild(newObject);
+						auto& transformComponent = newObject.getComponent<Hzn::TransformComponent>();
+						auto transform = selectedObj.getTransform() * transformComponent.getModelMatrix();
+
+						glm::vec3 translation = glm::vec3(0.0f);
+						glm::quat orientation = glm::quat();
+						glm::vec3 scale = glm::vec3(0.0f);
+						glm::vec3 skew = glm::vec3(0.0f);
+						glm::vec4 perspective = glm::vec4(0.0f);
+						glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+						glm::vec3 rotation = glm::eulerAngles(orientation);
+						rotation = glm::degrees(rotation);
+
+						transformComponent.m_Translation = translation;
+						transformComponent.m_Rotation = rotation;
+						transformComponent.m_Scale = scale;
+					}
 				}
 
 				ImGui::EndPopup();
