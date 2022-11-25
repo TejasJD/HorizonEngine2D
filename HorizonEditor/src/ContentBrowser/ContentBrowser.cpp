@@ -63,20 +63,21 @@ void ContentBrowser::OnImGuiRender()
 
 				std::string spriteSheetPath = entry.path().parent_path().string() + "\\" + entry.path().filename().replace_extension().string() + ".png";
 
-				if (Hzn::AssetManager::textureStorage.find(spriteSheetPath) == Hzn::AssetManager::textureStorage.end())
+				if (Hzn::AssetManager::spriteStorage.find(spriteSheetPath) == Hzn::AssetManager::spriteStorage.end())
 				{
 				
-					Hzn::AssetManager::loadSpriteSheet(spriteSheetPath, 
-						{ std::stof(Hzn::AssetManager::spriteFormat.find("width")->second),
-							std::stof(Hzn::AssetManager::spriteFormat.find("height")->second) });
-
-					//for (size_t i = 0; i < std::stoi(Hzn::AssetManager::spriteFormat.find("column")->second); i++)
-					//{
-					//	for (size_t j = 0; j < std::stoi(Hzn::AssetManager::spriteFormat.find("row")->second); j++)
-					//	{
-					//		Hzn::AssetManager::loadSprite(spriteSheetPath, { i, j });
-					//	}
-					//}
+					auto width = Hzn::AssetManager::getTexture(spriteSheetPath)->getWidth();
+					auto height = Hzn::AssetManager::getTexture(spriteSheetPath)->getHeight();
+					// (0, 0) to (width, height).
+					// i * cellsize / width, j * cellsize / height
+					for (int i = 0; i < width / std::stof(Hzn::AssetManager::spriteFormat.find("width")->second); ++i)
+					{
+						for (int j = 0; j < height / std::stof(Hzn::AssetManager::spriteFormat.find("height")->second); ++j)
+						{
+							std::string sheetPathPos = spriteSheetPath + "-;" + std::to_string(i) + ";" + std::to_string(j);
+							Hzn::AssetManager::spriteStorage[sheetPathPos] = Hzn::Sprite2D::create(Hzn::AssetManager::getTexture(spriteSheetPath), { i, j }, { std::stof(Hzn::AssetManager::spriteFormat.find("width")->second) , std::stof(Hzn::AssetManager::spriteFormat.find("height")->second) });
+						}
+					}
 
 				}
 

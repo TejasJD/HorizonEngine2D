@@ -73,8 +73,7 @@ namespace Hzn
 		{
 			if (textureStorage.find(texturePath) == textureStorage.end())
 			{
-				HZN_CORE_ERROR("Couldn't find texture!");
-				return nullptr;
+				loadTexture(texturePath);
 			}
 			return textureStorage.at(texturePath).first;
 		}

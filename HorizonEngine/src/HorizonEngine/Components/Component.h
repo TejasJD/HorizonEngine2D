@@ -290,7 +290,7 @@ namespace Hzn
 					std::string spriteY = str.substr(nPos1 + 1);
 					std::string spriteX = str.substr(nPos2 + 1, nPos1 - nPos2 - 1);
 
-					renderComponent.spritePath = str.substr(0, str.find("-"));
+					renderComponent.spritePath = str.substr(0, str.find_last_of("-"));
 					renderComponent.texturePath = "";
 					renderComponent.m_Pos.x = std::stoi(spriteX);
 					renderComponent.m_Pos.y = std::stoi(spriteY);
