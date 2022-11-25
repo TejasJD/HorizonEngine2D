@@ -2,6 +2,7 @@
 #include "ProjectManager.h"
 
 #include "HorizonEngine/SceneManagement/SceneManager.h"
+#include "AssetManagement/AssetManager.h"
 
 namespace Hzn
 {
@@ -9,7 +10,7 @@ namespace Hzn
 
 	std::shared_ptr<Project> ProjectManager::create(const std::string& name, const std::filesystem::path& directoryPath)
 	{
-		if(s_Project)
+		if (s_Project)
 		{
 			close();
 		}
@@ -19,7 +20,7 @@ namespace Hzn
 
 	void ProjectManager::newScene(const std::string& name)
 	{
-		if(!s_Project)
+		if (!s_Project)
 		{
 			throw std::runtime_error("trying to create new scene outside the project!");
 		}
@@ -27,7 +28,7 @@ namespace Hzn
 		std::filesystem::path sceneDir = projectDir.string() + "\\scenes";
 
 		// create a scenes directory if it doesn't exist.
-		if(!std::filesystem::exists(sceneDir))
+		if (!std::filesystem::exists(sceneDir))
 		{
 			std::filesystem::create_directory(sceneDir);
 		}
@@ -54,7 +55,7 @@ namespace Hzn
 
 	void ProjectManager::saveScene()
 	{
-		if(s_Project && s_Project->m_Scene)
+		if (s_Project && s_Project->m_Scene)
 		{
 			SceneManager::save();
 		}
@@ -65,6 +66,7 @@ namespace Hzn
 		if (!projectFilePath.empty()) {
 			if (s_Project)
 			{
+				AssetManager::destroy();
 				close();
 			}
 			s_Project = std::make_shared<Project>(projectFilePath);
@@ -75,7 +77,7 @@ namespace Hzn
 
 	void ProjectManager::save()
 	{
-		if(s_Project && s_Project->m_Scene)
+		if (s_Project && s_Project->m_Scene)
 		{
 			std::filesystem::path projectFile = s_Project->m_Path;
 			std::ofstream os(projectFile, std::ios::binary);
@@ -90,6 +92,7 @@ namespace Hzn
 		save();
 		if (s_Project && s_Project->m_Scene) {
 			SceneManager::close();
+			AssetManager::destroy();
 			s_Project.reset();
 		}
 	}

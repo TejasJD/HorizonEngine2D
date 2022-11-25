@@ -8,10 +8,12 @@ namespace Hzn
 {
 	class Project;
 	class SceneManager;
+	class AssetManager;
 
 	class ProjectManager
 	{
 		friend class SceneManager;
+		friend class AssetManager;
 	public:
 		/**
 		 * \brief Creates new, or opens a project depending on the path provided.
@@ -20,7 +22,7 @@ namespace Hzn
 		 * and depending on that file, the project is loaded.
 		 * \param name name of the folder to create project.
 		 * \param directoryPath directory in which the project directory should be created.
-		 * \return 
+		 * \return
 		 */
 		static std::shared_ptr<Project> create(const std::string& name, const std::filesystem::path& directoryPath);
 		static std::shared_ptr<Project> open(const std::filesystem::path& projectFilePath);

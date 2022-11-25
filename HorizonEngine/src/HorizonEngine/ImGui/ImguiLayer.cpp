@@ -6,6 +6,8 @@
 #include "HorizonEngine/Layer.h"
 #include "HorizonEngine/App.h"
 #include "HorizonEngine/Renderer/Renderer.h"
+#include "HorizonEngine/ImNodes/imnodes.h"
+#include "HorizonEngine/ImNodes/imnodes_internal.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -34,6 +36,7 @@ namespace Hzn
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		ImNodes::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		(void)io;
 
@@ -73,6 +76,8 @@ namespace Hzn
 	{
 		ImGui_ImplGlfw_Shutdown();
 		ImGui_ImplOpenGL3_Shutdown();
+
+		ImNodes::DestroyContext();
 		ImGui::DestroyContext();
 	}
 

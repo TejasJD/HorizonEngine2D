@@ -5,10 +5,14 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "Modals.h"
+#include "ContentBrowser.h"
+
+#include "../../HorizonEngine/src/HorizonEngine/ImNodes/imnodes.h"
+#include "../../HorizonEngine/src/HorizonEngine/ImNodes/imnodes_internal.h"
 
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
-
+std::string ContentBrowser::m_CurrentTexturePath;
 
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
@@ -91,227 +95,6 @@ void EditorLayer::onEvent(Hzn::Event& e)
 	}
 }
 
-
-
-
-
-
-//// ***** CODE FOR NODE EDITOR *****
-//template <typename T, std::size_t N>
-//
-//struct Array
-//{
-//	T data[N];
-//	const size_t size() const { return N; }
-//
-//	const T operator [] (size_t index) const { return data[index]; }
-//	operator T* () {
-//		T* p = new T[N];
-//		memcpy(p, data, sizeof(data));
-//		return p;
-//	}
-//};
-//
-//template <typename T, typename ... U> Array(T, U...)->Array<T, 1 + sizeof...(U)>;
-//
-//struct GraphEditorDelegate : public GraphEditor::Delegate
-//{
-//	bool AllowedLink(GraphEditor::NodeIndex from, GraphEditor::NodeIndex to) override
-//	{
-//		return true;
-//	}
-//
-//	void SelectNode(GraphEditor::NodeIndex nodeIndex, bool selected) override
-//	{
-//		mNodes[nodeIndex].mSelected = selected;
-//	}
-//
-//	void MoveSelectedNodes(const ImVec2 delta) override
-//	{
-//		for (auto& node : mNodes)
-//		{
-//			if (!node.mSelected)
-//			{
-//				continue;
-//			}
-//			node.x += delta.x;
-//			node.y += delta.y;
-//		}
-//	}
-//
-//	virtual void RightClick(GraphEditor::NodeIndex nodeIndex, GraphEditor::SlotIndex slotIndexInput, GraphEditor::SlotIndex slotIndexOutput) override
-//	{
-//	}
-//
-//	void AddLink(GraphEditor::NodeIndex inputNodeIndex, GraphEditor::SlotIndex inputSlotIndex, GraphEditor::NodeIndex outputNodeIndex, GraphEditor::SlotIndex outputSlotIndex) override
-//	{
-//		mLinks.push_back({ inputNodeIndex, inputSlotIndex, outputNodeIndex, outputSlotIndex });
-//	}
-//
-//	void DelLink(GraphEditor::LinkIndex linkIndex) override
-//	{
-//		mLinks.erase(mLinks.begin() + linkIndex);
-//	}
-//
-//	void CustomDraw(ImDrawList* drawList, ImRect rectangle, GraphEditor::NodeIndex nodeIndex) override
-//	{
-//		drawList->AddLine(rectangle.Min, rectangle.Max, IM_COL32(0, 0, 0, 255));
-//		drawList->AddText(rectangle.Min, IM_COL32(255, 128, 64, 255), "Draw");
-//	}
-//
-//	const size_t GetTemplateCount() override
-//	{
-//		return sizeof(mTemplates) / sizeof(GraphEditor::Template);
-//	}
-//
-//	const GraphEditor::Template GetTemplate(GraphEditor::TemplateIndex index) override
-//	{
-//		return mTemplates[index];
-//	}
-//
-//	const size_t GetNodeCount() override
-//	{
-//		return mNodes.size();
-//	}
-//
-//	const GraphEditor::Node GetNode(GraphEditor::NodeIndex index) override
-//	{
-//		const auto& myNode = mNodes[index];
-//		return GraphEditor::Node
-//		{
-//			myNode.name,
-//			myNode.templateIndex,
-//			ImRect(ImVec2(myNode.x, myNode.y), ImVec2(myNode.x + 200, myNode.y + 200)),
-//			myNode.mSelected
-//		};
-//	}
-//
-//	const size_t GetLinkCount() override
-//	{
-//		return mLinks.size();
-//	}
-//
-//	const GraphEditor::Link GetLink(GraphEditor::LinkIndex index) override
-//	{
-//		return mLinks[index];
-//	}
-//
-//	// Graph datas
-//	static const inline GraphEditor::Template mTemplates[] = {
-//		{
-//			IM_COL32(160, 160, 180, 255),
-//			IM_COL32(100, 100, 140, 255),
-//			IM_COL32(110, 110, 150, 255),
-//			1,
-//			Array{"MyInput"},
-//			nullptr,
-//			2,
-//			Array{"MyOutput0", "MyOuput1"},
-//			nullptr
-//		},
-//
-//		{
-//			IM_COL32(180, 160, 160, 255),
-//			IM_COL32(140, 100, 100, 255),
-//			IM_COL32(150, 110, 110, 255),
-//			3,
-//			nullptr,
-//			Array{ IM_COL32(200,100,100,255), IM_COL32(100,200,100,255), IM_COL32(100,100,200,255) },
-//			1,
-//			Array{"MyOutput0"},
-//			Array{ IM_COL32(200,200,200,255)}
-//		}
-//	};
-//
-//	struct Node
-//	{
-//		const char* name;
-//		GraphEditor::TemplateIndex templateIndex;
-//		float x, y;
-//		bool mSelected;
-//	};
-//
-//	std::vector<Node> mNodes = {
-//		{
-//			"Start Node",
-//			0,
-//			0, 0,
-//			false
-//		},
-//
-//		{
-//			"End Node",
-//			0,
-//			400, 0,
-//			false
-//		},
-//
-//		{
-//			"My Node 2",
-//			1,
-//			400, 400,
-//			false
-//		}
-//	};
-//
-//	std::vector<GraphEditor::Link> mLinks = { {0, 0, 1, 0} };
-//};//End node editor
-
-
-
-
-
-//			2,
-//			Array{"MyOutput0", "MyOuput1"},
-//			nullptr
-//		},
-//
-//		{
-//			IM_COL32(180, 160, 160, 255),
-//			IM_COL32(140, 100, 100, 255),
-//			IM_COL32(150, 110, 110, 255),
-//			3,
-//			nullptr,
-//			Array{ IM_COL32(200,100,100,255), IM_COL32(100,200,100,255), IM_COL32(100,100,200,255) },
-//			1,
-//			Array{"MyOutput0"},
-//			Array{ IM_COL32(200,200,200,255)}
-//		}
-//	};
-//
-//	struct Node
-//	{
-//		const char* name;
-//		GraphEditor::TemplateIndex templateIndex;
-//		float x, y;
-//		bool mSelected;
-//	};
-//
-//	std::vector<Node> mNodes = {
-//		{
-//			"Start Node",
-//			0,
-//			0, 0,
-//			false
-//		},
-//
-//		{
-//			"End Node",
-//			0,
-//			400, 0,
-//			false
-//		},
-//
-//		{
-//			"My Node 2",
-//			1,
-//			400, 400,
-//			false
-//		}
-//	};
-//
-//	std::vector<GraphEditor::Link> mLinks = { {0, 0, 1, 0} };
-//};
 
 void EditorLayer::onRenderImgui()
 {
@@ -410,12 +193,12 @@ void EditorLayer::onRenderImgui()
 			if (ImGui::MenuItem("Open Project"))
 			{
 				std::string str = Hzn::FileDialogs::openFile();
-				if(!str.empty()) {
+				if (!str.empty()) {
 					EditorData::m_Project_Active = Hzn::ProjectManager::open(str);
 					EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 					Modals::openProject();
 				}
-				
+
 			}
 
 			if (EditorData::m_Project_Active)
@@ -424,6 +207,7 @@ void EditorLayer::onRenderImgui()
 				{
 					EditorData::s_Scene_Active.reset();
 					EditorData::m_Project_Active.reset();
+					Modals::projectRootFolder.clear();
 					Hzn::ProjectManager::close();
 				}
 
@@ -493,182 +277,130 @@ void EditorLayer::onRenderImgui()
 	// SETTINGS END.
 
 	//CONTENT BROWSER BEGIN
-	//projectContextObject = m_CurrentDirectory.string();
-	ImGui::Begin("Content Browser");
-
-	if (!Modals::projectRootFolder.empty()) {
-		if (Modals::m_CurrentDirectory != std::filesystem::path(assetPath))
-		{
-			if (ImGui::Button("<-"))
-			{
-				Modals::m_CurrentDirectory = Modals::m_CurrentDirectory.parent_path();
-			}
-		}
-
-		static float padding = 16.0f;
-		static float thumbnailSize = 128.0f;
-		float cellSize = thumbnailSize + padding;
-
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		if (columnCount < 1)
-			columnCount = 1;
-
-		ImGui::Columns(columnCount, 0, false);
-
-		std::map<std::string, std::string> spriteFormat;
-
-		for (auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
-		{
-
-			if (entry.path().extension().string().find("meta") != std::string::npos || entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
-			{
-				continue;
-			}
-
-			const auto& path = entry.path();
-			std::string filenameString = path.filename().string();
-
-			ImGui::PushID(filenameString.c_str());
-
-
-			std::shared_ptr<Hzn::Texture> icon;
-
-			if (entry.is_directory()) {
-				icon = Modals::folderIcon;
-			}
-
-			else if (entry.path().string().find(".png") != std::string::npos)
-			{
-				icon = Modals::assetManager.GetTexture(entry.path().string());
-			}
-
-			else
-			{
-				icon = Modals::fileIcon;
-			}
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-
-			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
-			{
-
-				for (const auto& metaFile : std::filesystem::recursive_directory_iterator(entry.path().parent_path())) {
-
-					if (metaFile.path().string().find(".meta") != std::string::npos && metaFile.path().filename().string().substr(0, metaFile.path().filename().string().find(".")) == entry.path().filename().string().substr(0, entry.path().filename().string().find("."))) {
-						std::ifstream infile(metaFile.path().c_str(), std::ifstream::binary);
-						std::string line;
-
-						while (std::getline(infile, line)) {
-							std::istringstream is_line(line);
-							std::string key;
-							if (std::getline(is_line, key, ':'))
-							{
-								std::string value;
-
-								if (std::getline(is_line, value))
-								{
-									spriteFormat[key] = value;
-								}
-							}
-						}
-
-					}
-				}
-
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
-
-
-				if (ImGui::Button("show sprites")) {
-					ImGui::OpenPopup("showSprites");
-				}
-
-				if (ImGui::BeginPopupModal("showSprites")) {
-
-					ImGui::Columns(columnCount, 0, false);
-					for (size_t i = 0; i < std::stoi(spriteFormat.find("row")->second); i++)
-					{
-						for (size_t j = 0; j < std::stoi(spriteFormat.find("column")->second); j++)
-						{
-							std::string currentSprite = entry.path().string().append("(").append(std::to_string(i)).append(",").append(std::to_string(j)).append(")");
-
-							std::shared_ptr<Hzn::Sprite2D> sprite = Modals::spriteMap.find(currentSprite)->second;
-							ImGui::ImageButton((ImTextureID)sprite->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->getTexCoords()[0].x, sprite->getTexCoords()[2].y }, { sprite->getTexCoords()[2].x, sprite->getTexCoords()[0].y });
-							std::string spriteTexCoords = "(" + std::to_string(i) + "," + std::to_string(j) + ")";
-							ImGui::TextWrapped(spriteTexCoords.c_str());
-							ImGui::NextColumn();
-						}
-					}
-
-					ImGui::Columns(1);
-					if (ImGui::Button("Close", ImVec2(120, 40))) {
-						ImGui::CloseCurrentPopup();
-					}
-
-					ImGui::EndPopup();
-				}
-
-			}
-			else {
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
-			}
-
-			ImGui::PopStyleColor();
-
-			if (ImGui::BeginDragDropSource()) {
-
-				const wchar_t* filename = path.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-				ImGui::EndDragDropSource();
-			}
-
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (entry.is_directory())
-					Modals::m_CurrentDirectory /= path.filename();
-
-			}
-			ImGui::TextWrapped(filenameString.c_str());
-
-			ImGui::NextColumn();
-
-			ImGui::PopID();
-		}
-	}
-	ImGui::Columns(1);
-	ImGui::End();
+	ContentBrowser::ContentBrowser(Modals::projectRootFolder);
 	// CONTENT BROWSER END
 
-	//// VISUAL SCRIPTING BEGIN 
-	//static GraphEditor::Options options;
-	////static GraphEditorDelegate delegate;
-	//static GraphEditor::ViewState viewState;
-	//static GraphEditor::FitOnScreen fit = GraphEditor::Fit_None;
-	//static bool showGraphEditor = true;
+	//Sprites BEGIN
+	ImGui::Begin("Sprites");
+	static float padding = 16.0f;
+	static float thumbnailSize = 128.0f;
+	float cellSize = thumbnailSize + padding;
 
-	//if (ImGui::CollapsingHeader("Graph Editor"))
-	//{
-	//	ImGui::Checkbox("Show GraphEditor", &showGraphEditor);
-	//	GraphEditor::EditOptions(options);
-	//}
+	float panelWidth = ImGui::GetContentRegionAvail().x;
+	int columnCount = (int)(panelWidth / cellSize);
+	if (columnCount < 1)
+		columnCount = 1;
+	ImGui::Columns(columnCount, 0, false);
+	int count = 0;
+	if (!ContentBrowser::m_CurrentTexturePath.empty())
+	{
 
-	//if (showGraphEditor)
-	//{
-	//	ImGui::Begin("Graph Editor", NULL, 0);
-	//	if (ImGui::Button("Fit all nodes"))
-	//	{
-	//		fit = GraphEditor::Fit_AllNodes;
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::Button("Fit selected nodes"))
-	//	{
-	//		fit = GraphEditor::Fit_SelectedNodes;
-	//	}
-	//	//GraphEditor::Show(delegate, options, viewState, true, &fit);
+		if (Hzn::AssetManager::spriteStorage.size() > 0)
+		{
 
-	//	ImGui::End();
-	//}
-	//// VISUAL SCRIPTING END 
+			for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
+			{
+
+				if (sprite->first.find(ContentBrowser::m_CurrentTexturePath) == std::string::npos)
+				{
+					continue;
+				}
+
+				std::string::size_type nPos1 = sprite->first.find_last_of(";");
+				std::string::size_type nPos2 = sprite->first.find_last_of(";", nPos1 - 1);
+
+				std::string spriteY = sprite->first.substr(nPos1 + 1);
+				std::string spriteX = sprite->first.substr(nPos2 + 1, nPos1 - nPos2 - 1);
+
+				std::string spriteTexCoords = "(" + std::to_string(std::stoi(spriteX)) + "," + std::to_string(std::stoi(spriteY)) + ")";
+
+				ImGui::PushID(spriteTexCoords.c_str());
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
+				ImGui::ImageButton((ImTextureID)sprite->second->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->second->getTexCoords()[0].x, sprite->second->getTexCoords()[2].y }, { sprite->second->getTexCoords()[2].x, sprite->second->getTexCoords()[0].y });
+				ImGui::PopStyleColor();
+
+				if (ImGui::BeginDragDropSource()) {
+					std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + spriteX + ";" + spriteY;
+
+					const wchar_t* filename = currentSpritePath.c_str();
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+					ImGui::EndDragDropSource();
+				}
+
+
+
+				ImGui::TextWrapped(spriteTexCoords.c_str());
+				ImGui::NextColumn();
+				ImGui::PopID();
+			}
+		}
+	}
+
+	ImGui::End();
+	//Sprites END
+
+	std::vector<std::pair<int, int>> links;
+	// elsewhere in the code...
+	for (int i = 0; i < links.size(); ++i)
+	{
+		const std::pair<int, int> p = links[i];
+		// in this case, we just use the array index of the link
+		// as the unique identifier
+		ImNodes::Link(i, p.first, p.second);
+	}
+	ImGui::Begin("Node Editor");
+	ImNodes::BeginNodeEditor();
+
+	ImNodes::BeginNode(1);
+	ImNodes::BeginNodeTitleBar();
+	ImGui::TextUnformatted("Start Game Event");
+	ImNodes::EndNodeTitleBar();
+	ImNodes::BeginOutputAttribute(1);
+	ImGui::Text("Output Pin");
+	ImNodes::EndOutputAttribute();
+	ImNodes::EndNode();
+
+	ImNodes::BeginNode(2);
+	ImNodes::BeginNodeTitleBar();
+	ImGui::TextUnformatted("Keyboard Event");
+	ImNodes::EndNodeTitleBar();
+	ImNodes::BeginInputAttribute(1);
+	ImGui::Text("Input Pin");
+	ImNodes::EndInputAttribute();
+	ImNodes::BeginOutputAttribute(2);
+	ImGui::Text("Output Pin");
+	ImNodes::EndOutputAttribute();
+	ImNodes::EndNode();
+
+	ImNodes::BeginNode(3);
+	ImNodes::BeginNodeTitleBar();
+	ImGui::TextUnformatted("Mouse Event");
+	ImNodes::EndNodeTitleBar();
+	/*
+
+	*/
+	ImNodes::EndNode();
+
+	ImNodes::BeginNode(4);
+	ImNodes::BeginNodeTitleBar();
+	ImGui::TextUnformatted("If");
+	ImNodes::EndNodeTitleBar();
+	/*
+
+	*/
+	ImNodes::EndNode();
+	
+	
+
+	ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);
+	ImNodes::EndNodeEditor();
+	int start_attr, end_attr;
+	if (ImNodes::IsLinkCreated(&start_attr, &end_attr))
+	{
+		links.push_back(std::make_pair(start_attr, end_attr));
+	}
+	ImGui::End();
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
@@ -685,6 +417,7 @@ void EditorLayer::onRenderImgui()
 	glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
 	if (lastViewportSize != viewportSize)
 	{
+		/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
 		m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
 	}
 
@@ -881,4 +614,3 @@ void EditorLayer::openScene(const std::filesystem::path& filepath)
 	Hzn::ProjectManager::openScene(filepath);
 	EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 }
-

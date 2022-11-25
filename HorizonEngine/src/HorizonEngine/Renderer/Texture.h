@@ -48,6 +48,11 @@ namespace Hzn
 		/// </summary>
 		virtual uint32_t getId() const = 0;
 
+
+		/// <summary>
+		/// get the texture path.
+		/// </summary>
+		virtual const std::string& getPath() const = 0;
 	};
 
 	/// <summary>
