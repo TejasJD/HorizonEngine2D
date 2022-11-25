@@ -412,7 +412,7 @@ void EditorLayer::onRenderImgui()
 	glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
 	if (lastViewportSize != viewportSize)
 	{
-		HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);
+		/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
 		m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
 	}
 

@@ -129,7 +129,20 @@ namespace Hzn
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 					GameObject obj = getGameObject(entt::to_integral(entity));
-					Renderer2D::drawQuad(obj.getTransform(), renderComponent);
+
+					if (!renderComponent.texturePath.empty()) {
+						Renderer2D::drawQuad(obj.getTransform(), AssetManager::getTexture(renderComponent.texturePath), renderComponent.m_Color);
+					}
+					else if (!renderComponent.spritePath.empty())
+					{
+						Renderer2D::drawSprite(obj.getTransform(), AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y }), renderComponent.m_Color);
+					}
+					else
+					{
+						Renderer2D::drawQuad(obj.getTransform(), renderComponent);
+
+					}
+
 				}
 				Renderer2D::endScene();
 			}
