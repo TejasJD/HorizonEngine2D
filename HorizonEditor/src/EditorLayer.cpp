@@ -43,6 +43,8 @@ void EditorLayer::onAttach()
 	};
 
 	m_FrameBuffer = Hzn::FrameBuffer::create(props);
+
+
 }
 
 void EditorLayer::onDetach()
@@ -154,13 +156,16 @@ void EditorLayer::onRenderImgui()
 
 	// Submit the DockSpace
 	ImGuiIO& io = ImGui::GetIO();
+	ImGuiStyle& style = ImGui::GetStyle();
+	float minWinSizeX = style.WindowMinSize.x;
+	style.WindowMinSize.x = 370.f;
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 	//End Docking here
-
+	style.WindowMinSize.x = minWinSizeX;
 
 	// Options menu
 	if (ImGui::BeginMenuBar())
