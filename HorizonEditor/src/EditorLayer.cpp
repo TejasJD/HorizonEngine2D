@@ -72,7 +72,6 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
 
-	/*Hzn::Renderer2D::beginScene(m_CameraController.getCamera());*/
 	// update the scene.
 	if (EditorData::s_Scene_Active) {
 		if (m_PlayMode)
@@ -80,8 +79,6 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 		else
 			EditorData::s_Scene_Active->onEditorUpdate(m_EditorCameraController.getCamera(), ts);
 	}
-	// unbind the current framebuffer.
-	/*Hzn::Renderer2D::endScene();*/
 
 	// checking if the mouse pointer is hovering on the viewport, and retrieving the right position.
 	auto mousePos = ImGui::GetMousePos();
@@ -90,21 +87,22 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 	auto viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
 
-	if(0 < mousePos.x && mousePos.x < viewportSize.x  && 0 < mousePos.y && mousePos.y < viewportSize.y)
-		HZN_INFO("{0}, {1}", mousePos.x, mousePos.y);
-
+	if (0 < mousePos.x && mousePos.x < viewportSize.x && 0 < mousePos.y && mousePos.y < viewportSize.y)
+	{
+		/*HZN_INFO("{0}, {1}", mousePos.x, mousePos.y);*/
+	}
+	// unbind the current framebuffer.
 	m_FrameBuffer->unbind();
 }
 
 void EditorLayer::onEvent(Hzn::Event& e)
 {
+	Hzn::EventDispatcher dispatcher(e);
+	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
 	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
 		m_EditorCameraController.onEvent(e);
 	}
 
-	Hzn::EventDispatcher dispatcher(e);
-
-	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
 }
 
 
@@ -711,17 +709,17 @@ bool EditorLayer::onKeyPressed(Hzn::KeyPressedEvent& e)
 		m_GizmoType = ImGuizmo::OPERATION::NONE;
 		break;
 	}
-	case Hzn::Key::E:
+	case Hzn::Key::W:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 		break;
 	}
-	case Hzn::Key::R:
+	case Hzn::Key::E:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 		break;
 	}
-	case Hzn::Key::T:
+	case Hzn::Key::R:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::SCALE;
 		break;

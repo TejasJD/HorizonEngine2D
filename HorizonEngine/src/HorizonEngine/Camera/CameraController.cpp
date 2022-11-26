@@ -5,7 +5,7 @@ namespace Hzn
 {
 	void OrthographicCameraController::onUpdate(TimeStep ts)
 	{
-		if (Hzn::Input::keyPressed(Hzn::Key::W))
+		/*if (Hzn::Input::keyPressed(Hzn::Key::W))
 		{
 			m_Position.y += (m_TranslationSpeed * ts);
 		}
@@ -20,45 +20,14 @@ namespace Hzn
 		else if (Hzn::Input::keyPressed(Hzn::Key::D))
 		{
 			m_Position.x += (m_TranslationSpeed * ts);
-		}
+		}*/
 
-
-		if (m_CanRotate)
+		if(m_MousePressed)
 		{
-			if (Hzn::Input::keyPressed(Hzn::Key::Q))
-			{
-				m_Rotation -= (m_RotationSpeed * ts);
-			}
-			else if (Hzn::Input::keyPressed(Hzn::Key::E))
-			{
-				m_Rotation += (m_RotationSpeed * ts);
-			}
-		}
-
-		if (m_MouseDrag)
-		{
-			if (Hzn::Input::mouseButtonPressed(Hzn::Mouse::ButtonLeft))
-			{
-				auto [x, y] = Hzn::Input::getMousePos();
-				if (!mousePressed)
-				{
-					lastX = x;
-					lastY = y;
-					mousePressed = true;
-				}
-
-				float xOffset = lastX - (float)x;
-				float yOffset = lastY - (float)y;
-				lastX = x;
-				lastY = y;
-				HZN_CORE_WARN("({0}, {1})", x, y);
-				HZN_CORE_INFO("({0}, {1})", xOffset, yOffset);
-				m_Position.x += (xOffset * 0.4f * ts);
-				m_Position.y -= (yOffset * 0.4f * ts);
-			}
-			else {
-				mousePressed = false;
-			}
+			glm::vec2 currentMousePos{ Input::getMouseX(), Input::getMouseY() };
+			glm::vec2 mouseDelta = { lastMousePos.x - currentMousePos.x, currentMousePos.y - lastMousePos.y };
+			lastMousePos = currentMousePos;
+			m_Position += m_TranslationSpeed * 0.3f * ts * glm::vec3{ mouseDelta.x, mouseDelta.y, 0.0f };
 		}
 
 		m_Camera.setRotation(m_Rotation);
@@ -72,6 +41,7 @@ namespace Hzn
 		dispatcher.Dispatch<MouseScrolledEvent>(std::bind(&OrthographicCameraController::onMouseScrolled, this, std::placeholders::_1));
 		dispatcher.Dispatch<WindowResizeEvent>(std::bind(&OrthographicCameraController::onWindowResize, this, std::placeholders::_1));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(std::bind(&OrthographicCameraController::onMouseButtonPressed, this, std::placeholders::_1));
+		dispatcher.Dispatch<MouseButtonReleasedEvent>(std::bind(&OrthographicCameraController::onMouseButtonReleased, this, std::placeholders::_1));
 	}
 
 
@@ -98,6 +68,18 @@ namespace Hzn
 	bool OrthographicCameraController::onMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		/*HZN_CORE_INFO("{0}", e.GetMouseButton());*/
+		auto mouseButton = e.GetMouseButton();
+		if(mouseButton == Mouse::ButtonRight)
+		{
+			lastMousePos = { Input::getMouseX(), Input::getMouseY() };
+			m_MousePressed = true;
+		}
+		return false;
+	}
+
+	bool OrthographicCameraController::onMouseButtonReleased(MouseButtonReleasedEvent& e)
+	{
+		m_MousePressed = false;
 		return false;
 	}
 }
