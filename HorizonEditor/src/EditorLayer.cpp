@@ -83,6 +83,16 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	// unbind the current framebuffer.
 	/*Hzn::Renderer2D::endScene();*/
 
+	// checking if the mouse pointer is hovering on the viewport, and retrieving the right position.
+	auto mousePos = ImGui::GetMousePos();
+	mousePos.x = mousePos.x - m_ViewportBounds[0].x;
+	mousePos.y = m_ViewportBounds[0].y - mousePos.y;
+
+	auto viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+
+	if(0 < mousePos.x && mousePos.x < viewportSize.x  && 0 < mousePos.y && mousePos.y < viewportSize.y)
+		HZN_INFO("{0}, {1}", mousePos.x, mousePos.y);
+
 	m_FrameBuffer->unbind();
 }
 
@@ -255,10 +265,6 @@ void EditorLayer::onRenderImgui()
 	//New Scene
 	Modals::getNewScenePopup();
 
-
-
-
-
 	// OBJECT HIERARCHY BEGIN
 	drawHierarchy();
 	// OBJECT HIERARCHY END
@@ -270,6 +276,11 @@ void EditorLayer::onRenderImgui()
 		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
 			Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
+		}
+
+		if(ImGui::Button("Add Component"))
+		{
+			// Show all available components in the dropdown.
 		}
 	}
 	ImGui::End();
@@ -408,6 +419,8 @@ void EditorLayer::onRenderImgui()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::Begin("Viewport");
 
+	/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
+
 	// get the states of the viewport.
 	m_ViewportFocused = ImGui::IsWindowFocused();
 	m_ViewportHovered = ImGui::IsWindowHovered();
@@ -422,11 +435,22 @@ void EditorLayer::onRenderImgui()
 		/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
 		m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
 	}
-
 	/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
 
 	ImGui::Image(reinterpret_cast<ImTextureID>((uint64_t)m_FrameBuffer->getColorAttachmentId()),
 		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+
+	// calculate the minimum and the maximum bounds for the viewport.
+	auto viewportOffset = ImGui::GetCursorPos();
+	auto windowPos = ImGui::GetWindowPos();
+	auto windowSize = ImGui::GetWindowSize();
+
+	windowPos.x += viewportOffset.x;
+	windowPos.y += viewportOffset.y;
+
+	m_ViewportBounds[0] = { windowPos.x, windowPos.y };
+	m_ViewportBounds[1] = { windowPos.x + windowSize.x, windowPos.y + windowSize.y };
+
 
 	if (ImGui::BeginDragDropTarget())
 	{

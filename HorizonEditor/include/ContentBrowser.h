@@ -6,7 +6,8 @@
 #include "HorizonEngine.h"
 
 
-class ContentBrowser {
+class ContentBrowser
+{
 	friend class EditorLayer;
 private:
 	std::string m_ProjectRootFolder;

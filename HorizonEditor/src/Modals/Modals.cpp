@@ -12,7 +12,6 @@
 
 std::string Modals::projectRootFolder;
 
-
 std::shared_ptr<Hzn::Texture> Modals::folderIcon;
 std::shared_ptr<Hzn::Texture> Modals::fileIcon;
 
