@@ -68,13 +68,13 @@ namespace Hzn
 		/// Bind the frame buffer. We bind the frame buffer in every iteration of the
 		/// application loop before we start doing any Render calls.
 		///	</summary>
-		virtual void bind() = 0;
+		virtual void bind() const = 0;
 
 		/// <summary>
 		/// Unbind the frame buffer. We unbind the frame buffer in every iteration of the
 		///	application after we have made all the Render calls.
 		///	</summary>
-		virtual void unbind() = 0;
+		virtual void unbind() const = 0;
 
 		/// <summary>
 		/// Re-creates the frame buffer. Invalidates the previous frame buffer and generates
@@ -91,6 +91,10 @@ namespace Hzn
 		///	</summary>
 		///	<returns>integer with denotes the color attachment Id.</returns>
 		virtual uint32_t getColorAttachmentId(uint32_t index = 0) const = 0;
+
+		virtual int32_t readPixel(uint32_t attachmentIndex, int x, int y) const = 0;
+
+		virtual void clearColorAttachment(uint32_t attachmentIndex, int value) const = 0;
 
 		/// <summary>
 		/// Creates a frame buffer object from the properties in

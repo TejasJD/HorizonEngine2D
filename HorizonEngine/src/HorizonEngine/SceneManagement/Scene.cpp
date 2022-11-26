@@ -1,9 +1,11 @@
 #include "pch.h"
 
 #include "HorizonEngine/Renderer/Renderer2D.h"
-#include "Scene.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/AssetManagement/AssetManager.h"
+#include "Scene.h"
+
 
 namespace Hzn
 {
@@ -82,19 +84,10 @@ namespace Hzn
 			{
 				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 				GameObject obj = getGameObjectById(entt::to_integral(entity));
-
-				if (!renderComponent.texturePath.empty()) {
-					Renderer2D::drawQuad(obj.getTransform(), AssetManager::getTexture(renderComponent.texturePath), renderComponent.m_Color);
-				}
-				else if (!renderComponent.spritePath.empty())
-				{
-					Renderer2D::drawSprite(obj.getTransform(), AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y }), renderComponent.m_Color);
-				}
-				else
-				{
-					Renderer2D::drawQuad(obj.getTransform(), renderComponent);
-
-				}
+				auto sprite = 
+					AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y });
+				renderComponent.m_Sprite = sprite;
+				Renderer2D::drawSprite(obj.getTransform(), renderComponent, (int32_t)entity);
 
 			}
 			Renderer2D::endScene();
@@ -135,12 +128,13 @@ namespace Hzn
 					}
 					else if (!renderComponent.spritePath.empty())
 					{
-						Renderer2D::drawSprite(obj.getTransform(), AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y }), renderComponent.m_Color);
+						Renderer2D::drawSprite(obj.getTransform(),
+							AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y }),
+							renderComponent.m_Color, (int32_t)obj.getObjectId());
 					}
 					else
 					{
-						Renderer2D::drawQuad(obj.getTransform(), renderComponent);
-
+						Renderer2D::drawQuad(obj.getTransform(), renderComponent.m_Color);
 					}
 
 				}

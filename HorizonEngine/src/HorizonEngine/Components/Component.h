@@ -11,8 +11,8 @@
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/Renderer/Sprite.h"
-#include "HorizonEngine/Utils/Math.h"
-#include "HorizonEngine/AssetManagement/AssetManager.h"
+//#include "HorizonEngine/Utils/Math.h"
+//#include "HorizonEngine/AssetManagement/AssetManager.h"
 
 
 namespace Hzn
@@ -140,9 +140,6 @@ namespace Hzn
 		RenderComponent() = default;
 		RenderComponent(const glm::vec4& color) : m_Color(color) {};
 		~RenderComponent() = default;
-		// conversion operator for render component.
-		operator const glm::vec4() const& { return m_Color; }
-		operator glm::vec4()& { return m_Color; }
 
 		glm::vec4 m_Color = glm::vec4(1.0f);
 		std::shared_ptr<Sprite2D> m_Sprite;

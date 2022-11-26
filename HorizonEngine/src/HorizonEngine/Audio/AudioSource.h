@@ -3,8 +3,8 @@
 #ifndef HZN_AUDIOSOURCE_H
 #define HZN_AUDIOSOURCE_H
 
-#include "HorizonEngine/Core/Core.h"
-#include "HorizonEngine/Components/Component.h"
+//#include "HorizonEngine/Core/Core.h"
+//#include "HorizonEngine/Components/Component.h"
 #include <Audio/SoundBuffer.h>
 
 namespace Hzn

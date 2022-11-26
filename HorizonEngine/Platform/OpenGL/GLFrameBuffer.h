@@ -18,10 +18,12 @@ namespace Hzn
 			HZN_CORE_ASSERT(index < m_ColorAttachments.size(), "Index greater than size!");
 			return m_ColorAttachments[index];
 		}
-		virtual void bind() override;
-		virtual void unbind() override;
+		virtual void bind() const override;
+		virtual void unbind() const override;
 		virtual const FrameBufferProps& getProps() const override { return m_Props; }
 		virtual void recreate(int32_t width, int32_t height) override;
+		virtual int32_t readPixel(uint32_t attachmentIndex, int x, int y) const override;
+		virtual void clearColorAttachment(uint32_t attachmentIndex, int value) const override;
 
 	private:
 		void invalidate();

@@ -42,15 +42,15 @@ namespace Hzn
 			{
 				// apply the rigth format.
 
-				if(format == FrameBufferTextureFormat::RGBA8)
+				if (format == FrameBufferTextureFormat::RGBA8)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 				}
-				else if(format == FrameBufferTextureFormat::RED_INTEGER)
+				else if (format == FrameBufferTextureFormat::RED_INTEGER)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
 				}
-				else 
+				else
 				{
 					HZN_CORE_ASSERT(false, "No Color Texture format provided!");
 				}
@@ -100,6 +100,20 @@ namespace Hzn
 			{
 			case FrameBufferTextureFormat::DEPTH24_STENCIL8: return true;
 			default: return false;
+			}
+		}
+
+		static GLenum toGLTextureFormat(FrameBufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FrameBufferTextureFormat::RGBA8: return GL_RGBA8;
+			case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			default:
+			{
+				HZN_CORE_ASSERT(false, "Invalid Texture Format");
+				return GL_NONE;
+			}
 			}
 		}
 	}
@@ -162,7 +176,7 @@ namespace Hzn
 			}
 		}
 
-		if(m_DepthAttachmentSpecs.m_Format != FrameBufferTextureFormat::None)
+		if (m_DepthAttachmentSpecs.m_Format != FrameBufferTextureFormat::None)
 		{
 			Utils::createTextures(&m_DepthAttachment, 1);
 			Utils::bindTexture(multisample, m_DepthAttachment);
@@ -171,7 +185,7 @@ namespace Hzn
 
 
 		// for more color attachments.
-		if(m_ColorAttachments.size() > 1)
+		if (m_ColorAttachments.size() > 1)
 		{
 			HZN_CORE_ASSERT(m_ColorAttachments.size() <= 4, "not more than 4 color attachments supported!");
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
@@ -198,14 +212,32 @@ namespace Hzn
 		}
 	}
 
+	int32_t GLFrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) const
+	{
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+		int32_t pixelData = 0;
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+		return pixelData;
+	}
 
-	void GLFrameBuffer::bind()
+	void GLFrameBuffer::clearColorAttachment(uint32_t attachmentIndex, int value) const
+	{
+		HZN_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "attachment index out of bounds!");
+		auto& spec = m_ColorAttachmentSpecs[attachmentIndex];
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0, Utils::toGLTextureFormat(spec.m_Format), GL_INT, &value);
+	}
+
+
+	void GLFrameBuffer::bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
 		glViewport(0, 0, m_Props.width, m_Props.height);
+
+		int32_t value = -1;
+		glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);
 	}
 
-	void GLFrameBuffer::unbind()
+	void GLFrameBuffer::unbind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
