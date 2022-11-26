@@ -4,9 +4,11 @@
 #define HZN_RENDERER_2D_H
 
 #include "Renderer.h"
+#include "HorizonEngine/Components/Component.h"
 #include "Texture.h"
 #include "Sprite.h"
 #include "HorizonEngine/Camera/Camera.h"
+#include "HorizonEngine/SceneManagement/GameObject.h"
 
 namespace Hzn
 {
@@ -54,9 +56,11 @@ namespace Hzn
 		/// </summary>
 		static void endScene();
 
-		static void drawQuad(const glm::mat4& transform, const glm::vec4& color);
-		static void drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color);
-		static void drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color);
+		static void drawQuad(const glm::mat4& transform, const glm::vec4& color, int id = -1);
+		static void drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color, int id = -1);
+		static void drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color
+		, int id = -1);
+		static void drawSprite(const glm::mat4& transform, const RenderComponent& component, int id = -1);
 
 		/// <summary>
 		/// Render a colored quadrilateral (4-sided shape) on the screen.

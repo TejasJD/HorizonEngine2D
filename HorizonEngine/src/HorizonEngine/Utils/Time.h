@@ -3,8 +3,6 @@
 #ifndef HZN_TIME_H
 #define HZN_TIME_H
 
-#include "HorizonEngine/Components/Component.h"
-
 namespace Hzn {
 	class Time {
 	public:

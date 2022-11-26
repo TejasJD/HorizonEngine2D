@@ -14,6 +14,7 @@ namespace Hzn
 		glm::vec4 color;
 		glm::vec2 texCoord;
 		float texSlot;
+		int entityId;
 	};
 
 	struct RenderData
@@ -98,7 +99,8 @@ namespace Hzn
 			{Hzn::ShaderDataType::Vec3f, "a_Pos"},
 			{Hzn::ShaderDataType::Vec4f, "a_Color"},
 			{Hzn::ShaderDataType::Vec2f, "a_TexCoord"},
-			{Hzn::ShaderDataType::Float, "a_TexSlot"}
+			{Hzn::ShaderDataType::Float, "a_TexSlot"},
+			{Hzn::ShaderDataType::Int, "a_EntityId"}
 		};
 
 		data.vbo->setBufferLayout(layout);
@@ -196,8 +198,9 @@ namespace Hzn
 		submitBatch();
 	}
 
-	void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color)
+	void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color, int id)
 	{
+		/*HZN_WARN(id);*/
 		constexpr float textureIndex = 0.0f;
 
 		if (data.curidx >= Hzn::RenderData::mxindices)
@@ -215,6 +218,7 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = data.quadTexCoords[i];
 			data.ptr->texSlot = textureIndex;
+			data.ptr->entityId = id;
 			data.ptr++;
 		}
 
@@ -222,7 +226,7 @@ namespace Hzn
 		data.quads++;
 	}
 
-	void Renderer2D::drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color)
+	void Renderer2D::drawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const glm::vec4& color, int id)
 	{
 		if (data.curidx >= data.mxindices)
 		{
@@ -258,6 +262,7 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = data.quadTexCoords[i];
 			data.ptr->texSlot = textureIndex;
+			data.ptr->entityId = id;
 			data.ptr++;
 		}
 
@@ -265,7 +270,7 @@ namespace Hzn
 		data.quads++;
 	}
 
-	void Renderer2D::drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color)
+	void Renderer2D::drawSprite(const glm::mat4& transform, const std::shared_ptr<Sprite2D>& sprite, const glm::vec4& color, int id)
 	{
 		if (data.curidx >= data.mxindices)
 		{
@@ -301,11 +306,24 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = sprite->getTexCoords()[i];
 			data.ptr->texSlot = textureIndex;
+			data.ptr->entityId = id;
 			data.ptr++;
 		}
 
 		data.curidx += 6;
 		data.quads++;
+	}
+
+	void Renderer2D::drawSprite(const glm::mat4& transform, const RenderComponent& component, int id)
+	{
+		if (component.m_Sprite)
+		{
+			drawSprite(transform, component.m_Sprite, component.m_Color, id);
+		}
+		else
+		{
+			drawQuad(transform, component.m_Color, id);
+		}
 	}
 
 	void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec3& size, const glm::vec4& color)

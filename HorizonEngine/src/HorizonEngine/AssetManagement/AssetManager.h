@@ -83,11 +83,8 @@ namespace Hzn
 		{
 			std::string sheetPathPos = sheetPath + "-;" + std::to_string((int)pos.x) + ";" + std::to_string((int)pos.y);
 
-			if (spriteStorage.find(sheetPathPos) == spriteStorage.end())
-			{
-				HZN_CORE_ERROR("Couldn't find sprite.");
-				return nullptr;
-			}
+			if (spriteStorage.find(sheetPathPos) == spriteStorage.end()) return nullptr;
+
 			return spriteStorage.at(sheetPathPos);
 		}
 

@@ -41,7 +41,7 @@ namespace Hzn
 		glDeleteVertexArrays(1, &m_VertexArrayId);
 	}
 
-	void GLVertexArray::bind() const 
+	void GLVertexArray::bind() const
 	{
 		glBindVertexArray(m_VertexArrayId);
 	}
@@ -59,16 +59,50 @@ namespace Hzn
 
 		for (const auto& element : vertexBuffer->getBufferLayout())
 		{
-			glVertexAttribPointer(
-				location,
-				element.getCount(),
-				ShaderDataTypeToGLenum(element.m_Type),
-				element.m_Normalized ? GL_TRUE : GL_FALSE,
-				vertexBuffer->getBufferLayout().getStride(),
-				(const void *)(element.m_Offset)
-			);
-
-			glEnableVertexAttribArray(location);
+			switch (element.m_Type)
+			{
+			case Hzn::ShaderDataType::Bool:
+			case Hzn::ShaderDataType::Int:
+			case Hzn::ShaderDataType::Vec2i:
+			case Hzn::ShaderDataType::Vec3i:
+			case Hzn::ShaderDataType::Vec4i:
+			{
+				glEnableVertexAttribArray(location);
+				glVertexAttribIPointer(
+					location,
+					element.getCount(),
+					ShaderDataTypeToGLenum(element.m_Type),
+					vertexBuffer->getBufferLayout().getStride(),
+					(const void*)(element.m_Offset)
+				);
+				break;
+			}
+			case Hzn::ShaderDataType::Float:
+			case Hzn::ShaderDataType::Vec2f:
+			case Hzn::ShaderDataType::Vec3f:
+			case Hzn::ShaderDataType::Vec4f:
+			{
+				glEnableVertexAttribArray(location);
+				glVertexAttribPointer(
+					location,
+					element.getCount(),
+					ShaderDataTypeToGLenum(element.m_Type),
+					element.m_Normalized ? GL_TRUE : GL_FALSE,
+					vertexBuffer->getBufferLayout().getStride(),
+					(const void*)(element.m_Offset)
+				);
+				break;
+			}
+			case Hzn::ShaderDataType::Mat3f:
+			case Hzn::ShaderDataType::Mat4f:
+			case Hzn::ShaderDataType::Mat3i:
+			case Hzn::ShaderDataType::Mat4i:
+			case Hzn::ShaderDataType::None:
+			default:
+			{
+				break;
+			}
+			}
 			++location;
 		}
 

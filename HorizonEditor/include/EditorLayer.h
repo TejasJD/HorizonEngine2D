@@ -24,6 +24,7 @@ public:
 
 private:
 	bool onKeyPressed(Hzn::KeyPressedEvent& e);
+	bool onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e);
 
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
@@ -47,7 +48,9 @@ private:
 
 	std::vector<std::string> rootObjects;
 
-	uint32_t selectedObjectId = std::numeric_limits<uint32_t>::max();
+	uint32_t m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+	int32_t m_HoveredObjectId = -1;
+
 	Hzn::GameObject copiedGameObject;
 	bool openHierarchyPopup = false;
 

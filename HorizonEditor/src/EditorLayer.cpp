@@ -37,12 +37,11 @@ void EditorLayer::onAttach()
 	props.height = Hzn::App::getApp().getAppWindow().getHeight();
 	props.attachments = {
 		Hzn::FrameBufferTextureFormat::RGBA8,
+		Hzn::FrameBufferTextureFormat::RED_INTEGER,
 		Hzn::FrameBufferTextureFormat::DEPTH24_STENCIL8
 	};
 
 	m_FrameBuffer = Hzn::FrameBuffer::create(props);
-
-
 }
 
 void EditorLayer::onDetach()
@@ -52,7 +51,7 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	if (m_ViewportFocused || m_ViewportHovered && !m_PlayMode) {
+	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
 		m_EditorCameraController.onUpdate(ts);
 	}
 
@@ -72,6 +71,9 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
 
+	// clear frame buffer texture attachment that has entity to -1
+	m_FrameBuffer->clearColorAttachment(1, -1);
+
 	// update the scene.
 	if (EditorData::s_Scene_Active) {
 		if (m_PlayMode)
@@ -82,14 +84,19 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 	// checking if the mouse pointer is hovering on the viewport, and retrieving the right position.
 	auto mousePos = ImGui::GetMousePos();
-	mousePos.x = mousePos.x - m_ViewportBounds[0].x;
-	mousePos.y = m_ViewportBounds[0].y - mousePos.y;
+	mousePos.x -= m_ViewportBounds[0].x;
+	mousePos.y -= m_ViewportBounds[0].y;
+	/*mousePos.y = m_ViewportBounds[0].y - mousePos.y;*/
 
 	auto viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+	mousePos.y = viewportSize.y - mousePos.y;
 
 	if (0 < mousePos.x && mousePos.x < viewportSize.x && 0 < mousePos.y && mousePos.y < viewportSize.y)
 	{
-		/*HZN_INFO("{0}, {1}", mousePos.x, mousePos.y);*/
+		//HZN_INFO("{0}, {1}", mousePos.x, mousePos.y);
+		m_HoveredObjectId = m_FrameBuffer->readPixel(1, mousePos.x, mousePos.y);
+		/*HZN_INFO("{}", pixel);*/
+		/*if(m_HoveredObjectId == -1) */
 	}
 	// unbind the current framebuffer.
 	m_FrameBuffer->unbind();
@@ -98,6 +105,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 void EditorLayer::onEvent(Hzn::Event& e)
 {
 	Hzn::EventDispatcher dispatcher(e);
+	dispatcher.Dispatch<Hzn::MouseButtonPressedEvent>(std::bind(&EditorLayer::onMouseButtonPressed, this, std::placeholders::_1));
 	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
 	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
 		m_EditorCameraController.onEvent(e);
@@ -271,8 +279,8 @@ void EditorLayer::onRenderImgui()
 	// SETTINGS BEGIN.
 	ImGui::Begin("Components");
 	if (EditorData::s_Scene_Active) {
-		if (selectedObjectId != std::numeric_limits<uint32_t>::max()) {
-			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
+			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 			Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
 		}
 
@@ -439,16 +447,12 @@ void EditorLayer::onRenderImgui()
 		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 
 	// calculate the minimum and the maximum bounds for the viewport.
-	auto viewportOffset = ImGui::GetCursorPos();
-	auto windowPos = ImGui::GetWindowPos();
-	auto windowSize = ImGui::GetWindowSize();
+	auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+	auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+	auto viewportOffset = ImGui::GetWindowPos();
 
-	windowPos.x += viewportOffset.x;
-	windowPos.y += viewportOffset.y;
-
-	m_ViewportBounds[0] = { windowPos.x, windowPos.y };
-	m_ViewportBounds[1] = { windowPos.x + windowSize.x, windowPos.y + windowSize.y };
-
+	m_ViewportBounds[0] = {viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+	m_ViewportBounds[1] = {viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 	if (ImGui::BeginDragDropTarget())
 	{
@@ -464,17 +468,15 @@ void EditorLayer::onRenderImgui()
 		ImGui::EndDragDropTarget();
 	}
 
-	if (EditorData::s_Scene_Active && selectedObjectId != std::numeric_limits<uint32_t>::max())
+	if (EditorData::s_Scene_Active && m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
 	{
 		ImGuizmo::SetOrthographic(true);
 		ImGuizmo::SetDrawlist();
 
-		float windowWidth = ImGui::GetWindowWidth();
-		float windowHeight = ImGui::GetWindowHeight();
+		auto sz = m_ViewportBounds[1] - m_ViewportBounds[0];
+		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, sz.x, sz.y);
 
-		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-		auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+		auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 		auto& transformComponent = selectedObj.getComponent<Hzn::TransformComponent>();
 		auto transform = selectedObj.getTransform();
 
@@ -547,11 +549,11 @@ void EditorLayer::drawHierarchy()
 					// Do stuff here 
 				}
 				if (ImGui::MenuItem("Delete", NULL, false)) {
-					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 					EditorData::s_Scene_Active->destroyGameObject(obj);
 
 					/*selectedObject = std::string();*/
-					selectedObjectId = std::numeric_limits<uint32_t>::max();
+					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 				}
 				ImGui::Separator();
 
@@ -560,9 +562,9 @@ void EditorLayer::drawHierarchy()
 					Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
 					newObject.addComponent<Hzn::TransformComponent>();
 
-					if(selectedObjectId != std::numeric_limits<uint32_t>::max())
+					if(m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
 					{
-						Hzn::GameObject selectedObj = EditorData::s_Scene_Active->getGameObjectById(selectedObjectId);
+						Hzn::GameObject selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 						selectedObj.addChild(newObject);
 						auto& transformComponent = newObject.getComponent<Hzn::TransformComponent>();
 						auto transform = selectedObj.getTransform() * transformComponent.getModelMatrix();
@@ -608,7 +610,7 @@ void EditorLayer::drawHierarchy()
 			ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
 		}
 		if (ImGui::BeginPopup("contextHierarchy")) {
-			selectedObjectId = std::numeric_limits<uint32_t>::max();
+			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 
 			if (ImGui::MenuItem("Create Empty", NULL, false)) {
 				Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
@@ -620,7 +622,7 @@ void EditorLayer::drawHierarchy()
 		// Left click
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 			/*selectedObject = "";*/
-			selectedObjectId = std::numeric_limits<uint32_t>::max();
+			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 		}
 	}
 
@@ -637,7 +639,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
-	if (selectedObjectId == object.getObjectId()) {
+	if (m_SelectedObjectId == object.getObjectId()) {
 		flags |= ImGuiTreeNodeFlags_Selected;
 	}
 
@@ -668,12 +670,12 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	// Left click
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-		selectedObjectId = object.getObjectId();
+		m_SelectedObjectId = object.getObjectId();
 	}
 
 	// Right click
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-		selectedObjectId = object.getObjectId();
+		m_SelectedObjectId = object.getObjectId();
 
 		ImGui::OpenPopup("HierarchyObjectPopup");
 	}
@@ -725,6 +727,22 @@ bool EditorLayer::onKeyPressed(Hzn::KeyPressedEvent& e)
 		break;
 	}
 	default: break;
+	}
+
+	return false;
+}
+
+bool EditorLayer::onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e)
+{
+	auto mouseButton = e.GetMouseButton();
+
+	if(mouseButton == Hzn::Mouse::ButtonLeft)
+	{
+		auto val = ImGuizmo::IsOver();
+		if (m_ViewportHovered && !val)
+		{
+			m_SelectedObjectId = (uint32_t)m_HoveredObjectId;
+		}
 	}
 
 	return false;
