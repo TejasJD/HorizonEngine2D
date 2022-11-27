@@ -6,10 +6,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <imgui.h>
+#include <entt/entt.hpp>
 
 #include "HorizonEngine/Camera/Camera.h"
-#include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/Renderer/Sprite.h"
 //#include "HorizonEngine/Utils/Math.h"
 //#include "HorizonEngine/AssetManagement/AssetManager.h"
@@ -19,9 +18,7 @@ namespace Hzn
 {
 	class AssetManager;
 	class Scene;
-
-	template<typename>
-	inline void display(const GameObject& obj) {}
+	class GameObject;
 
 	struct RelationComponent
 	{
@@ -99,7 +96,8 @@ namespace Hzn
 			: m_Translation(position), m_Scale(scale) {}
 		TransformComponent(const glm::vec3& position, const::glm::vec3& rotation, const glm::vec3& scale)
 			: m_Translation(position), m_Scale(scale), m_Rotation(rotation) {}
-		TransformComponent(const TransformComponent& rhs) = default;
+		TransformComponent(const TransformComponent& rhs)
+			: m_Translation(rhs.m_Translation), m_Scale(rhs.m_Scale), m_Rotation(rhs.m_Rotation) {} 
 		TransformComponent& operator=(const TransformComponent& rhs) = default;
 		~TransformComponent() = default;
 
@@ -186,6 +184,23 @@ namespace Hzn
 			ar(m_Camera, m_Primary);
 		}
 	};
+
+	struct ScriptComponent
+	{
+		ScriptComponent() = default;
+		ScriptComponent(const char* name) : scriptName(name) {}
+		~ScriptComponent() = default;
+		const char* scriptName = "";
+	};
+
+	template<typename... Component>
+	struct ComponentGroup {};
+
+	using AllComponents = ComponentGroup<NameComponent, RelationComponent, TransformComponent, RenderComponent, CameraComponent>;
+	using SelectableComponents = ComponentGroup<RenderComponent, CameraComponent, ScriptComponent>;
+
+	void addComponent(GameObject& obj, std::string& componentName);
+	bool hasComponent(const GameObject& obj, std::string& componentName);
 }
 
 #endif

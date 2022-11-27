@@ -5,6 +5,7 @@
 
 #include <entt/entt.hpp>
 #include "Scene.h"
+#include "HorizonEngine/Components/Component.h"
 
 namespace Hzn
 {
@@ -71,13 +72,35 @@ namespace Hzn
 		void removeChild(const GameObject& obj);
 		bool isAncestorOf(const GameObject& obj) const;
 		glm::mat4 getTransform() const;
+		GameObject duplicateAsChild();
+		GameObject duplicate();
+
+		template<typename... Component>
+		GameObject cloneComponents(ComponentGroup<Component...>)
+		{
+			isValid();
+			GameObject obj{ m_Scene->m_Registry.create(), m_Scene };
+
+			([&]
+				{
+					if (hasComponent<Component>())
+					{
+						if (typeid(Component) != typeid(RelationComponent))
+						{
+							obj.addComponent<Component>(getComponent<Component>());
+						}
+					}
+				}(), ...);
+			obj.addComponent<RelationComponent>();
+			m_Scene->m_GameObjectIdMap.emplace(entt::to_integral(obj.m_ObjectId), obj.m_ObjectId);
+			auto& transformComponent = m_Scene->m_Registry.get<TransformComponent>(obj.m_ObjectId);
+			HZN_CORE_INFO("{}, {}, {}", transformComponent.m_Translation.x, transformComponent.m_Translation.y, transformComponent.m_Translation.z);
+			return obj;
+		}
 
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
-
-		// if both scenes are not nullptr and both pointers point to the same scene.
-		bool sameScene(const GameObject& rhs) const { return m_Scene && rhs.m_Scene && &*m_Scene == &*rhs.m_Scene; }
 
 		void isValid() const
 		{
@@ -87,6 +110,9 @@ namespace Hzn
 				throw std::runtime_error("Game Object invalidated! Doesn't belong to any scene!");
 			}
 		}
+
+		// if both scenes are not nullptr and both pointers point to the same scene.
+		bool sameScene(const GameObject& rhs) const { return m_Scene && rhs.m_Scene && &*m_Scene == &*rhs.m_Scene; }
 
 		// game object id.
 		entt::entity m_ObjectId = entt::null;

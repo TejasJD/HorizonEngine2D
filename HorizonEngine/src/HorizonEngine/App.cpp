@@ -6,6 +6,8 @@
 
 #include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Scripting/ScriptEngine.h"
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/SceneManagement/FunctionRegistry.h"
 
 namespace Hzn
 {
@@ -26,6 +28,8 @@ namespace Hzn
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);
+
+		RegisterComponentFunctions(AllComponents{});
 	}
 
 	App::~App()

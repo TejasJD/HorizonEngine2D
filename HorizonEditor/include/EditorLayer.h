@@ -60,5 +60,5 @@ private:
 	//bool request_NewScene = false;
 	bool request_OpenScene = false;
 	//bool canCreateProject = false;
-	ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::NONE;
+	ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 };

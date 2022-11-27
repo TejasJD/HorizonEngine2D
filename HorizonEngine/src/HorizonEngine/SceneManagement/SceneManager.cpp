@@ -2,10 +2,10 @@
 
 #include <cereal/archives/json.hpp>
 
-#include "SceneManager.h"
 #include "Scene.h"
-#include "Components/Component.h"
-#include "HorizonEngine/FileManagement/ProjectManager.h"
+#include "GameObject.h"
+#include "HorizonEngine/Components/Component.h"
+#include "SceneManager.h"
 
 namespace Hzn
 {
@@ -100,7 +100,9 @@ namespace Hzn
 		camera.addComponent<Hzn::TransformComponent>();
 
 		object0.addChild(object1);
-		object1.addChild(object3);
+		object1.addChild(object3); // object3 local transform will change. 
+
+		object0.duplicate();
 	}
 
 }

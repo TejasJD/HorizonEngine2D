@@ -1,9 +1,6 @@
 #include <pch.h>
 #include "EditorLayer.h"
 #include "GraphEditor.h"
-//#define IMGUI_DEFINE_MATH_OPERATORS
-//#include "imgui.h"
-//#include "imgui_internal.h"
 #include "Modals.h"
 #include "ContentBrowser.h"
 #include "ComponentDisplays.h"
@@ -116,8 +113,9 @@ void EditorLayer::onEvent(Hzn::Event& e)
 
 void EditorLayer::onRenderImgui()
 {
-	/*static bool showDemo = true;
-	ImGui::ShowDemoWindow(&showDemo);*/
+	/*HZN_INFO(m_SelectedObjectId);*/
+	static bool showDemo = true;
+	ImGui::ShowDemoWindow(&showDemo);
 
 	auto& window = Hzn::App::getApp().getAppWindow();
 	auto stats = Hzn::Renderer2D::getStats();
@@ -280,13 +278,45 @@ void EditorLayer::onRenderImgui()
 	ImGui::Begin("Components");
 	if (EditorData::s_Scene_Active) {
 		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
+			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+			ImGui::BeginChild("ExistingComponents", ImVec2{0, 400}, true, window_flags);
 			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 			Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
+			ImGui::EndChild();
+			ImGui::PopStyleVar();
 		}
-
-		if(ImGui::Button("Add Component"))
+		auto cursorPos = ImGui::GetCursorPosX();
+		auto width = ImGui::GetWindowWidth();
+		static bool showComponentMenu = false;
+		if(m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
 		{
-			// Show all available components in the dropdown.
+			auto val = ImGui::CalcTextSize("Add Component");
+			/*ImGui::SetCursorPosX((width - (val.x + 60)) * 0.5f);*/
+			if(showComponentMenu |= ImGui::Button("Add Component", ImVec2{ -FLT_MIN, val.y + 20 }))
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+				ImGui::BeginChild("ChildR", ImVec2(0, 250), true, window_flags);
+
+				auto list = Hzn::getComponentStringList(Hzn::SelectableComponents{});
+				for(auto& it : list)
+				{
+					std::string_view val = std::string_view(it);
+					auto hzn = val.find("Hzn");
+					std::string componentName = std::string(val.substr(hzn + 5));
+					if(ImGui::Button(componentName.c_str(), ImVec2(-FLT_MIN, 0)))
+					{
+						Hzn::addComponent(EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId), std::string(it));
+					}
+				}
+
+				ImGui::EndChild();
+				ImGui::PopStyleVar();
+
+				if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				{
+					showComponentMenu = false;
+				}
+			}
 		}
 	}
 	ImGui::End();
@@ -546,7 +576,13 @@ void EditorLayer::drawHierarchy()
 					// Do stuff here 
 				}
 				if (ImGui::MenuItem("Duplicate", NULL, false)) {
-					// Do stuff here 
+					// Do stuff here
+					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+					if(obj.getParent())
+					{
+						obj.duplicateAsChild();
+					}
+					else obj.duplicate();
 				}
 				if (ImGui::MenuItem("Delete", NULL, false)) {
 					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
@@ -598,6 +634,7 @@ void EditorLayer::drawHierarchy()
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
 				Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
+				HZN_INFO(receivedObject.getObjectId());
 				receivedObject.setParent(Hzn::GameObject());
 			}
 
@@ -652,7 +689,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	if (ImGui::BeginDragDropSource(src_flags)) {
 		int id = object.getObjectId();
-
+		HZN_ERROR(id);
 		ImGui::SetDragDropPayload("HIERARCHY_PAYLOAD", &id, sizeof(int));
 		ImGui::Text(nameComponent.m_Name.c_str());
 		ImGui::EndDragDropSource();
@@ -662,6 +699,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
 			Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
+			HZN_WARN(receivedObject.getObjectId());
 			receivedObject.setParent(object);
 		}
 
