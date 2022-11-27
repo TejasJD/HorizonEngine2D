@@ -52,7 +52,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.cpp"
 	"src/HorizonEngine/FileManagement/Project.cpp"
 	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
-	"src/HorizonEngine/Scripting/ScriptRegistry.cpp")
+	"src/HorizonEngine/Scripting/ScriptRegistry.cpp" "src/HorizonEngine/Components/Component.cpp" "src/HorizonEngine/SceneManagement/FunctionRegistry.cpp")
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -113,7 +113,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
 	"src/HorizonEngine/Scripting/ScriptEngine.h"
-	"src/HorizonEngine/Scripting/ScriptRegistry.h")
+	"src/HorizonEngine/Scripting/ScriptRegistry.h" "src/HorizonEngine/SceneManagement/FunctionRegistry.h")
 
 set(IMGUIZMO_FILES
 	"vendor/ImGuizmo/GraphEditor.cpp"

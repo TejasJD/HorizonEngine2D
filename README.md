@@ -42,7 +42,7 @@ dropdown to build the project.
 the [CMakePresets.json](CMakePresets.json) file. *x64-debug* and *x64-release*. The command below would configure and generate the project based on the preset
 provided to the `--preset` option. Command: `cmake --preset x64-debug`
         3. Run the following command to build the project: `cd bin\build\x64-debug` and `cmake --build .`
-        4. Run the following command to run the client application: `cd HznApplication\Debug` and then `HznApplication.exe` (or the following for powershell `cd HznApplication\Debug` and then `.\HznApplication.exe`).
+        4. Run the following command to run the client application: `cd HorizonEditor\Debug` and then `.\HznEditor.exe`.
         5. (Grouped up):
 ```
 cmake --preset x64-debug
@@ -56,15 +56,15 @@ cd HorizonEditor\Debug
 Alternatively, you can open the vcpkg directory in the project, through
 command line and write `vcpkg search <package-name>`
 to find out the name of any dependency.
-2. To add a dependency, add it to the **dependencies** field in the
+1. To add a dependency, add it to the **dependencies** field in the
 [vcpkg.json](vcpkg.json) file with the appropriate name.
-3. Update the appropriate *CMakeLists.txt* file with commands of
+1. Update the appropriate *CMakeLists.txt* file with commands of
 following format:
 ```
 find_package(<dependency-name> CONFIG REQUIRED)
 target_link_libraries(<target-name> PUBLIC <dependency-name>)
 ```
-4. A hint is provided as to what the appropriate names to be supplied
+1. A hint is provided as to what the appropriate names to be supplied
 to the above two commands are upon configuring the *CMakeLists.txt* file
 (the configuration first checks (if already installed) and installs the packages added to [vcpkg.json](vcpkg.json)
 and then continues configuring the rest of the project).

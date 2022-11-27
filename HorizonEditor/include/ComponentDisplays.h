@@ -5,10 +5,17 @@
 
 namespace Hzn
 {
-	template<typename... Component>
-	struct ComponentGroup {};
-
-	using AllComponents = ComponentGroup<NameComponent, RelationComponent, TransformComponent, RenderComponent, CameraComponent>;
+	template<typename ...Component>
+	std::vector<const char*> getComponentStringList(ComponentGroup<Component...>)
+	{
+		std::vector<const char*> result;
+		([&]
+		{
+			const char* val = typeid(Component).name();
+			result.emplace_back(val);
+		}(), ...);
+		return result;
+	}
 
 	struct ComponentDisplays
 	{
@@ -30,11 +37,24 @@ namespace Hzn
 	template<>
 	inline void ComponentDisplays::display<NameComponent>(const GameObject& obj)
 	{
-		char nameString[512];
-		memset(nameString, '\0', sizeof(nameString));
-		strcpy(nameString, obj.getComponent<NameComponent>().m_Name.c_str());
-		if (ImGui::InputText("name", nameString, IM_ARRAYSIZE(nameString), ImGuiInputTextFlags_AutoSelectAll)) {
-			obj.getComponent<NameComponent>().m_Name = std::string(nameString);
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick |
+			ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_SpanFullWidth |
+			ImGuiTreeNodeFlags_Selected |
+			ImGuiTreeNodeFlags_DefaultOpen;
+		if(ImGui::TreeNodeEx("Tag", flags))
+		{
+			char nameString[512]{};
+			strcpy(nameString, obj.getComponent<NameComponent>().m_Name.c_str());
+			if (ImGui::InputText("Name", nameString, IM_ARRAYSIZE(nameString), ImGuiInputTextFlags_AutoSelectAll)) {
+				std::string name(nameString);
+				if(!name.empty())
+				{
+					obj.getComponent<NameComponent>().m_Name = name;
+				}
+			}
+			ImGui::TreePop();
 		}
 	}
 
@@ -43,7 +63,12 @@ namespace Hzn
 	{
 		auto& transform = obj.getComponent<TransformComponent>();
 
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick |
+			ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_SpanFullWidth |
+			ImGuiTreeNodeFlags_Selected |
+			ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Transform", flags)) {
 			ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.25f, -50.0f, 50.0f);
@@ -63,7 +88,10 @@ namespace Hzn
 		if (ImGui::TreeNodeEx("Render", flags)) {
 			ImGui::ColorEdit3("Color", glm::value_ptr(renderComponent.m_Color));
 
-			ImGui::Button("Texture", ImVec2(80.0f, 50.0f));
+			auto windowX = ImGui::GetWindowWidth();
+			auto val = ImGui::CalcTextSize("Texture");
+			ImGui::SetCursorPosX((windowX - (val.x + 50.0f)) * 0.5f);
+			ImGui::Button("Texture", ImVec2(val.x + 50.0f, 0));
 			if (ImGui::BeginDragDropTarget())
 			{
 

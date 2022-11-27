@@ -14,6 +14,7 @@ namespace Hzn
 		glm::vec4 color;
 		glm::vec2 texCoord;
 		float texSlot;
+		float tilingFactor;
 		int entityId;
 	};
 
@@ -100,6 +101,7 @@ namespace Hzn
 			{Hzn::ShaderDataType::Vec4f, "a_Color"},
 			{Hzn::ShaderDataType::Vec2f, "a_TexCoord"},
 			{Hzn::ShaderDataType::Float, "a_TexSlot"},
+			{Hzn::ShaderDataType::Float, "a_TilingFactor"},
 			{Hzn::ShaderDataType::Int, "a_EntityId"}
 		};
 
@@ -218,6 +220,7 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = data.quadTexCoords[i];
 			data.ptr->texSlot = textureIndex;
+			data.ptr->tilingFactor = 1.0f;
 			data.ptr->entityId = id;
 			data.ptr++;
 		}
@@ -262,6 +265,7 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = data.quadTexCoords[i];
 			data.ptr->texSlot = textureIndex;
+			data.ptr->tilingFactor = 1.0f;
 			data.ptr->entityId = id;
 			data.ptr++;
 		}
@@ -306,6 +310,7 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = sprite->getTexCoords()[i];
 			data.ptr->texSlot = textureIndex;
+			data.ptr->tilingFactor = 1.0f;
 			data.ptr->entityId = id;
 			data.ptr++;
 		}
