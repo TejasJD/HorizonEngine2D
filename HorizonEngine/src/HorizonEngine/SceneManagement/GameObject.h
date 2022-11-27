@@ -35,7 +35,9 @@ namespace Hzn
 		void removeComponent()
 		{
 			isValid();
-			m_Scene->m_Registry.remove<T>(m_ObjectId);
+			if (hasComponent<T>()) {
+				m_Scene->m_Registry.remove<T>(m_ObjectId);
+			}
 		}
 
 		template<typename T>

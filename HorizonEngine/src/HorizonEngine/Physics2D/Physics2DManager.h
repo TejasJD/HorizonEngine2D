@@ -15,12 +15,13 @@
 #include <HorizonEngine/Core/TimeStep.h>
 
 #include <HorizonEngine/SceneManagement/GameObject.h>
+#include <HorizonEngine/Components/Component.h>
 #include <HorizonEngine/Physics2D/Physics2DContactListener.h>
 
 namespace Hzn
 {
 	class Physics2DManager {
-		friend class ProjectManager;
+		friend class SceneManager;
 	private:
 		static b2Vec2 m_Gravity;
 		static bool m_DoSleep;
@@ -48,19 +49,21 @@ namespace Hzn
 		static void destroy() {
 			if (m_World) 
 			{
-				// Remove and destroy all bodies
-				for (b2Body* b = m_World->GetBodyList(); b; b = b->GetNext())
-				{
-					// Remove and destroy all fixtures of the current body
-					for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
-					{
-						b->DestroyFixture(f);
-					}
-					m_World->DestroyBody(b);
-				}
+				clear();
 
 				// Destroy the world
 				delete m_World;
+			}
+		}
+
+		static void clear() {
+			if (m_World)
+			{
+				// Remove and destroy all bodies
+				for (b2Body* b = m_World->GetBodyList(); b; b = b->GetNext())
+				{
+					removeBody(*b);
+				}
 			}
 		}
 
@@ -79,7 +82,21 @@ namespace Hzn
 		static void onUpdate(TimeStep ts) {
 			m_World->Step(ts, m_VelocityIterations, m_PositionIterations);
 
-			// TODO: Update game objects' transform
+			// Update position and rotation of all physics objects 
+			for (b2Body* b = m_World->GetBodyList(); b; b = b->GetNext())
+			{
+				b2BodyUserData& bodyUserData = b->GetUserData();
+
+				GameObject* go;
+				if (bodyUserData.pointer) {
+					go = reinterpret_cast<GameObject*>(bodyUserData.pointer);
+					auto& t = go->getComponent<TransformComponent>();
+					b2Vec2 pos = b->GetPosition();
+					t.m_Translation = glm::vec3(pos.x, pos.y, t.m_Translation.z);
+
+					// TODO: Set rotation
+				}
+			}
 		}
 
 		static b2Body* addBody(const b2BodyDef& bodyDef) {
@@ -96,6 +113,10 @@ namespace Hzn
 			// Destroy the body
 			m_World->DestroyBody(&body);
 		}
+
+		static void generateBody(GameObject& obj);
+
+		static void setShape(GameObject& obj);
 	};
 }
 

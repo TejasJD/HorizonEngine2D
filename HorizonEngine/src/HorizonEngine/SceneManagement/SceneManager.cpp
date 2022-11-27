@@ -5,7 +5,9 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "Components/Component.h"
+#include "Components/PhysicsComponent.h"
 #include "HorizonEngine/FileManagement/ProjectManager.h"
+#include "HorizonEngine/Physics2D/Physics2DManager.h"
 
 namespace Hzn
 {
@@ -28,6 +30,10 @@ namespace Hzn
 
 		// create a default scene in this case.
 		defaultScene();
+
+		Physics2DManager::destroy();
+		Physics2DManager::init();
+
 		return s_Scene;
 	}
 
@@ -49,6 +55,9 @@ namespace Hzn
 			s_Scene->m_Path = filepath;
 
 			is.close();
+
+			Physics2DManager::destroy();
+			Physics2DManager::init();
 		}
 		return s_Scene;
 	}
@@ -98,6 +107,19 @@ namespace Hzn
 		Hzn::GameObject camera = s_Scene->createGameObject("camera 1");
 		camera.addComponent<Hzn::CameraComponent>();
 		camera.addComponent<Hzn::TransformComponent>();
+
+		Hzn::GameObject object4 = s_Scene->createGameObject("physics 1");
+
+		object4.addComponent<Hzn::TransformComponent>(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+		object4.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+		object4.addComponent<Hzn::BoxCollider2DComponent>();// false, glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+		object4.addComponent<Hzn::Rigidbody2DComponent>();// 0, 1.0f, 0.0f, 0.05f, 1.0f);
+
+		Hzn::GameObject object5 = s_Scene->createGameObject("physics 2");
+
+		object5.addComponent<Hzn::TransformComponent>(glm::vec3(1.0f, -5.0f, 0.0f), glm::vec3(1.0f));
+		object5.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+		object5.addComponent<Hzn::BoxCollider2DComponent>();
 
 		object0.addChild(object1);
 		object1.addChild(object3);

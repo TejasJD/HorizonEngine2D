@@ -29,6 +29,7 @@ namespace Hzn
 
 		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
 		void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts);
+		void onStart();
 		void onUpdate(TimeStep ts);
 		/**
 		 * \brief creates a game object in the scene and returns a valid game object.

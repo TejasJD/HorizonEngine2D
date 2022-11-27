@@ -21,15 +21,21 @@ namespace Hzn
 {
 	// ------------------------------- Rigidbody 2D -------------------------------
 	struct Rigidbody2DComponent {
-		Rigidbody2DComponent() = default;
-		~Rigidbody2DComponent() = default;
-
 		int m_BodyType = 0; // 0 - Dynamic, 1 - Kinematic, 2 - Static
 
 		float m_Mass = 1.0f;
 		float m_LinearDamping = 0.0f;
 		float m_AngularDamping = 0.05f;
 		float m_GravityScale = 1.0f;
+
+		Rigidbody2DComponent() = default;
+		Rigidbody2DComponent(const int bodyType, const float mass, const float linearDamp, const float angularDamp, const float gravityScale) :
+			m_BodyType(bodyType),
+			m_Mass(mass),
+			m_LinearDamping(linearDamp),
+			m_AngularDamping(angularDamp),
+			m_GravityScale(gravityScale) {}
+		~Rigidbody2DComponent() = default;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -62,96 +68,34 @@ namespace Hzn
 		}
 	}
 
-	// ------------------------------- Collider 2D -------------------------------
-	struct Collider2DComponent {
+	// ------------------------------- Box Collider 2D -------------------------------
+	struct BoxCollider2DComponent {
 		b2PolygonShape m_Shape;
 
-		b2Body* m_Body;
-		b2Fixture* m_Fixture;
+		b2Body* m_Body = nullptr;
+		b2Fixture* m_Fixture = nullptr;
 
 		bool m_IsTrigger = false;
 		glm::vec2 m_Offset = glm::vec2(0.0f, 0.0f);
 		glm::vec2 m_Size = glm::vec2(1.0f, 1.0f);
 
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const bool isTrigger, const glm::vec2 offset, const glm::vec2 size) : 
+			m_IsTrigger(isTrigger), 
+			m_Offset(offset), 
+			m_Size(size) {}
+		~BoxCollider2DComponent() = default;
+
 		template<typename Archive>
 		void load(Archive& ar)
 		{
 			ar(m_IsTrigger, m_Offset.x, m_Offset.y, m_Size.x, m_Size.y);
-
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
 			ar(m_IsTrigger, m_Offset.x, m_Offset.y, m_Size.x, m_Size.y);
-		}
-
-		virtual void setShape() = 0;
-
-		virtual void generateBody(GameObject& obj) = 0;
-	};
-
-	// ------------------------------- Box Collider 2D -------------------------------
-	struct BoxCollider2DComponent : Collider2DComponent {
-		BoxCollider2DComponent() {
-			setShape();
-		}
-		~BoxCollider2DComponent() = default;
-
-		void setShape() {
-			m_Shape.SetAsBox(m_Size.x, m_Size.y);
-		}
-
-		void generateBody(GameObject& obj)
-		{
-			auto& transformComponent = obj.getComponent<TransformComponent>();
-
-			b2BodyDef bodyDef;
-			b2FixtureDef fixtureDef;
-
-			// Calculate body initial position and rotation
-			GameObject parent = obj.getParent();
-			glm::vec3 startPosition = transformComponent.m_Translation + glm::vec3(m_Offset.x, m_Offset.y, transformComponent.m_Translation.z);
-			float rotation = transformComponent.m_Rotation.z;
-			while (parent) {
-				auto& t = parent.getComponent<TransformComponent>();
-				startPosition += t.m_Translation;
-				rotation += t.m_Rotation.z;
-
-				parent = parent.getParent();
-			}
-
-			bodyDef.position.Set(startPosition.x, startPosition.y);
-			bodyDef.angle = rotation;
-
-			// Set body options if a rigidbody is present on the object
-			if (obj.hasComponent<Rigidbody2DComponent>()) {
-				auto& rigidbody = obj.getComponent<Rigidbody2DComponent>();
-
-				switch (rigidbody.m_BodyType) {
-				case 0: // Dynamic body
-					bodyDef.type = b2_dynamicBody;
-					break;
-				case 1: // Kinematic body
-					bodyDef.type = b2_kinematicBody;
-					break;
-				case 2: // Static body
-					bodyDef.type = b2_staticBody;
-				}
-
-				bodyDef.gravityScale = rigidbody.m_GravityScale;
-				bodyDef.linearDamping = rigidbody.m_LinearDamping;
-				bodyDef.angularDamping = rigidbody.m_AngularDamping;
-			}
-
-			// Create the body and add it to the world
-			m_Body = Physics2DManager::addBody(bodyDef);
-			m_Body->SetUserData(&obj);
-
-			fixtureDef.isSensor = m_IsTrigger;
-			fixtureDef.shape = &m_Shape;
-
-			m_Fixture = m_Body->CreateFixture(&fixtureDef);
 		}
 	};
 
@@ -164,9 +108,7 @@ namespace Hzn
 		if (ImGui::TreeNodeEx("Box Collider 2D", flags)) {
 			ImGui::Checkbox("Is Trigger", &boxColliderComponent.m_IsTrigger);
 			ImGui::InputFloat2("Offset", glm::value_ptr(boxColliderComponent.m_Offset), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal);
-			if (ImGui::InputFloat2("Size", glm::value_ptr(boxColliderComponent.m_Size), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal)) {
-				boxColliderComponent.setShape();
-			}
+			ImGui::InputFloat2("Size", glm::value_ptr(boxColliderComponent.m_Size), "%.3f", ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsDecimal);
 			ImGui::TreePop();
 		}
 	}

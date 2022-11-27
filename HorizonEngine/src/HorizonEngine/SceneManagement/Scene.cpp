@@ -4,7 +4,6 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
-
 #include "HorizonEngine/Components/PhysicsComponent.h"
 
 namespace Hzn
@@ -94,6 +93,19 @@ namespace Hzn
 		}
 	}
 
+	void Scene::onStart() {
+		// TODO: Loop through all bodies
+		const auto& colliders = m_Registry.view<BoxCollider2DComponent>();
+		HZN_WARN(colliders.size());
+		for (const auto& entity : colliders)
+		{
+			HZN_DEBUG((int)entity);
+			auto& boxCollider2D = m_Registry.get<BoxCollider2DComponent>(entity);
+			GameObject obj = getGameObject(entt::to_integral(entity));
+			Physics2DManager::generateBody(obj);
+		}
+	}
+
 	void Scene::onUpdate(TimeStep ts)
 	{
 		// render objects in the scene through scene update.
@@ -144,6 +156,7 @@ namespace Hzn
 		obj.addComponent<NameComponent>(name);
 		obj.addComponent<RelationComponent>();
 		obj.addComponent<BoxCollider2DComponent>();
+		obj.addComponent<Rigidbody2DComponent>();
 		/*m_Objects.insert({ name, obj });*/
 		m_LocStorage.insert({ entt::to_integral(obj.m_ObjectId), obj });
 		return obj;

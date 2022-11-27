@@ -316,6 +316,9 @@ void EditorLayer::onRenderImgui()
 				if (ImGui::MenuItem("Play"))
 				{
 					m_PlayMode = !m_PlayMode;
+					if (m_PlayMode) {
+						m_Scene->onStart();
+					}
 				}
 			}
 
@@ -323,8 +326,6 @@ void EditorLayer::onRenderImgui()
 			{
 				Hzn::App::getApp().close();
 			}
-
-
 
 			ImGui::EndMenu();
 		}

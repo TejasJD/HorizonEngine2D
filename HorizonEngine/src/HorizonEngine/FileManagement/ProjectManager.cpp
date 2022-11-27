@@ -2,7 +2,6 @@
 #include "ProjectManager.h"
 
 #include "HorizonEngine/SceneManagement/SceneManager.h"
-#include "HorizonEngine/Physics2D/Physics2DManager.h"
 
 namespace Hzn
 {
@@ -51,9 +50,6 @@ namespace Hzn
 		HZN_CORE_ASSERT(std::filesystem::exists(sceneDir), "no scenes directory!");
 
 		s_Project->m_Scene = SceneManager::open(sceneFilePath);
-
-		Physics2DManager::destroy();
-		Physics2DManager::init();
 	}
 
 	void ProjectManager::saveScene()
