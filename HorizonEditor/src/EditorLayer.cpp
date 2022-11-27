@@ -682,7 +682,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	auto& nameComponent = object.getComponent<Hzn::NameComponent>();
 
-	bool open = ImGui::TreeNodeEx(nameComponent.m_Name.c_str(), flags);
+	bool open = ImGui::TreeNodeEx((void*)(intptr_t)object.getObjectId(), flags, nameComponent.m_Name.c_str());
 
 	// Drag and drop
 	ImGuiDragDropFlags src_flags = ImGuiDragDropFlags_SourceNoDisableHover; // | ImGuiDragDropFlags_SourceNoHoldToOpenOthers;
@@ -734,6 +734,7 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 void EditorLayer::openScene(const std::filesystem::path& filepath)
 {
+	m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 	Hzn::ProjectManager::openScene(filepath);
 	EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 }
