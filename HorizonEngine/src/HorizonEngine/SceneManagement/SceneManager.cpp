@@ -2,13 +2,14 @@
 
 #include <cereal/archives/json.hpp>
 
+#include "HorizonEngine/Camera/Camera.h"
 #include "Scene.h"
-#include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
 #include "SceneManager.h"
 
 namespace Hzn
 {
+	extern std::string sceneStringStorage;
 	std::shared_ptr<Scene> SceneManager::s_Scene = nullptr;
 	std::shared_ptr<Scene> SceneManager::create(const std::filesystem::path& filepath)
 	{
@@ -53,19 +54,78 @@ namespace Hzn
 		return s_Scene;
 	}
 
+	void SceneManager::update(OrthographicCamera& camera, TimeStep ts)
+	{
+		if(s_Scene)
+		{
+			if(s_Scene->m_State == SceneState::Play)
+			{
+				s_Scene->onUpdate(ts);
+			}
+			else
+			{
+				s_Scene->onEditorUpdate(camera, ts);
+			}
+			
+		}
+	}
+
+	glm::vec2 SceneManager::resizeViewport(int32_t width, int32_t height)
+	{
+		glm::vec2 viewportSize = {0, 0};
+		if(s_Scene)
+		{
+			viewportSize = s_Scene->onViewportResize(width, height);
+		}
+		return viewportSize;
+	}
+
+	SceneState SceneManager::getSceneState() { return s_Scene->m_State; }
+
+	void SceneManager::setSceneState(const SceneState& state)
+	{
+		s_Scene->m_State = state;
+	}
+
+	void SceneManager::play()
+	{
+		if(s_Scene)
+		{
+			s_Scene->onStart();
+		}
+	}
+
+	void SceneManager::stop()
+	{
+		if(s_Scene)
+		{
+			s_Scene->onStop();
+		}
+	}
+
 
 	void SceneManager::save()
 	{
 		// save only when active scene.
 		if (s_Scene) {
-			std::ofstream os(s_Scene->m_Path, std::ios::binary);
-			HZN_CORE_ASSERT(os, "output file couldn't be generated");
-			cereal::JSONOutputArchive outputArchive(os);
-			// serialize the scene before closing.
-			s_Scene->serialize(outputArchive);
-
-			os << "\n}\n";
-			os.close();
+			// if scene is playing while we save, we serialize from
+			// the snapshot before playing.
+			if(s_Scene->m_State == SceneState::Play)
+			{
+				std::ofstream os(s_Scene->m_Path, std::ios::binary);
+				os << sceneStringStorage;
+				os.close();
+			}
+			else
+			{
+				std::ofstream os(s_Scene->m_Path, std::ios::binary);
+				HZN_CORE_ASSERT(os, "output file couldn't be generated");
+				cereal::JSONOutputArchive outputArchive(os);
+				// serialize the scene before closing.
+				s_Scene->serialize(outputArchive);
+				os << "\n}\n";
+				os.close();
+			}
 		}
 	}
 
@@ -74,6 +134,10 @@ namespace Hzn
 		save();
 		// invalidate any external pointers to the scene.
 		if (s_Scene) {
+			//// if state is play, stop the scene.
+			if (s_Scene->m_State == SceneState::Play) stop();
+
+			// invalid the scene (so that any hanging references are invalidated.
 			s_Scene->invalidate();
 		}
 		s_Scene.reset();
@@ -81,28 +145,10 @@ namespace Hzn
 
 	void SceneManager::defaultScene()
 	{
-		Hzn::GameObject object0 = s_Scene->createGameObject("square 1");
-		object0.addComponent<Hzn::TransformComponent>();
-		object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-		Hzn::GameObject object1 = s_Scene->createGameObject("square 2");
-
-		object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
-		object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-		Hzn::GameObject object3 = s_Scene->createGameObject("square 3");
-
-		object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
-		object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-
-		Hzn::GameObject camera = s_Scene->createGameObject("camera 1");
-		camera.addComponent<Hzn::CameraComponent>();
-		camera.addComponent<Hzn::TransformComponent>();
-
-		object0.addChild(object1);
-		object1.addChild(object3); // object3 local transform will change. 
-
-		object0.duplicate();
+		/*Hzn::GameObject mainCamera = s_Scene->createGameObject("MainCamera");
+		mainCamera.addComponent<CameraComponent>();*/
+		/*Hzn::GameObject obj = s_Scene->createGameObject("SampleObject");
+		obj.addComponent<RenderComponent>();*/
 	}
 
 }

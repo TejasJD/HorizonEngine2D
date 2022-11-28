@@ -233,8 +233,8 @@ namespace Hzn
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
 		glViewport(0, 0, m_Props.width, m_Props.height);
 
-		int32_t value = -1;
-		glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);
+		/*int32_t value = -1;
+		glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);*/
 	}
 
 	void GLFrameBuffer::unbind() const

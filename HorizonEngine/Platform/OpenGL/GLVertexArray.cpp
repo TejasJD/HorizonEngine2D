@@ -61,22 +61,6 @@ namespace Hzn
 		{
 			switch (element.m_Type)
 			{
-			case Hzn::ShaderDataType::Bool:
-			case Hzn::ShaderDataType::Int:
-			case Hzn::ShaderDataType::Vec2i:
-			case Hzn::ShaderDataType::Vec3i:
-			case Hzn::ShaderDataType::Vec4i:
-			{
-				glEnableVertexAttribArray(location);
-				glVertexAttribIPointer(
-					location,
-					element.getCount(),
-					ShaderDataTypeToGLenum(element.m_Type),
-					vertexBuffer->getBufferLayout().getStride(),
-					(const void*)(element.m_Offset)
-				);
-				break;
-			}
 			case Hzn::ShaderDataType::Float:
 			case Hzn::ShaderDataType::Vec2f:
 			case Hzn::ShaderDataType::Vec3f:
@@ -93,6 +77,23 @@ namespace Hzn
 				);
 				break;
 			}
+			case Hzn::ShaderDataType::Bool:
+			case Hzn::ShaderDataType::Int:
+			case Hzn::ShaderDataType::Vec2i:
+			case Hzn::ShaderDataType::Vec3i:
+			case Hzn::ShaderDataType::Vec4i:
+			{
+				glEnableVertexAttribArray(location);
+				glVertexAttribIPointer(
+					location,
+					element.getCount(),
+					ShaderDataTypeToGLenum(element.m_Type),
+					vertexBuffer->getBufferLayout().getStride(),
+					(const void*)(element.m_Offset)
+				);
+				break;
+			}
+
 			case Hzn::ShaderDataType::Mat3f:
 			case Hzn::ShaderDataType::Mat4f:
 			case Hzn::ShaderDataType::Mat3i:

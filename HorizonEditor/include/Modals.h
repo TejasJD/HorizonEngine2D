@@ -28,7 +28,7 @@ private:
 public:
 	static void getCenterWindow();
 	static void getNewProJPopup();
-	static void getNewScenePopup();
+	static bool getNewScenePopup();
 };
 
 #endif // !HZN_MODALS_H
