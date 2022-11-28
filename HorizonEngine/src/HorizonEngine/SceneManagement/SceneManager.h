@@ -12,6 +12,9 @@ namespace Hzn
 	public:
 		static std::shared_ptr<Scene> create(const std::filesystem::path& filepath);
 		static std::shared_ptr<Scene> open(const std::filesystem::path& filepath);
+		static void update(TimeStep ts);
+		static void play();
+		static void stop();
 		static void close();
 		static void save();
 	private:

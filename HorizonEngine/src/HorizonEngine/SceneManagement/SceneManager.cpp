@@ -2,6 +2,7 @@
 
 #include <cereal/archives/json.hpp>
 
+#include "HorizonEngine/Camera/Camera.h"
 #include "Scene.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
@@ -53,6 +54,30 @@ namespace Hzn
 		return s_Scene;
 	}
 
+	void SceneManager::update(TimeStep ts)
+	{
+		/*if(s_Scene)
+		{
+			s_Scene->onEditorUpdate();
+		}*/
+	}
+
+	void SceneManager::play()
+	{
+		if(s_Scene)
+		{
+			s_Scene->onStart();
+		}
+	}
+
+	void SceneManager::stop()
+	{
+		if(s_Scene)
+		{
+			s_Scene->onStop();
+		}
+	}
+
 
 	void SceneManager::save()
 	{
@@ -74,6 +99,10 @@ namespace Hzn
 		save();
 		// invalidate any external pointers to the scene.
 		if (s_Scene) {
+			//// if state is play, stop the scene.
+			//if (s_Scene->m_State == Scene::State::Play) stop();
+
+			// invalid the scene (so that any hanging references are invalidated.
 			s_Scene->invalidate();
 		}
 		s_Scene.reset();

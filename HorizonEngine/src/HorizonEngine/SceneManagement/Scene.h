@@ -26,6 +26,13 @@ namespace Hzn
 		friend class ProjectManager;
 		friend class AssetManager;
 	public:
+
+		enum class State
+		{
+			Edit = 0,
+			Play
+		};
+
 		Scene();
 		Scene(cereal::JSONInputArchive& inputArchive);
 		~Scene();
@@ -64,6 +71,8 @@ namespace Hzn
 		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
 		std::filesystem::path m_Path = std::filesystem::path();
+
+		State m_State = State::Edit;
 	};
 
 }

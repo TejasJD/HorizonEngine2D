@@ -5,6 +5,9 @@
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
 
+#include "cereal/cereal.hpp"
+#include "cereal/archives/json.hpp"
+
 #include "HorizonEngine/Renderer/Renderer2D.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
@@ -14,6 +17,8 @@
 
 namespace Hzn
 {
+	static std::string sceneStringStorage;
+
 	static b2BodyType toBox2DBodyType(RigidBody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
@@ -137,15 +142,57 @@ namespace Hzn
 					body->CreateFixture(&fixtureDef);
 				}
 			}
+
+			std::ostringstream os;
+
+			cereal::JSONOutputArchive outputArchive(os);
+			// serialize data into temporary buffer.
+			serialize(outputArchive);
+
+			os << "\n}\n";
+			sceneStringStorage = os.str();
+
+			// set scene state to Playing.
+			m_State = State::Play;
 		}
 	}
 
 	void Scene::onStop()
 	{
 		if (m_Valid) {
+
+			// clear registries.
+			m_GameObjectIdMap.clear();
+			m_Registry.clear();
+
+			// read from string storage.
+			std::istringstream is(sceneStringStorage);
+			cereal::JSONInputArchive inputArchive(is);
+			entt::snapshot_loader loader(m_Registry);
+			loader.entities(inputArchive).component<
+				NameComponent,
+				RelationComponent,
+				TransformComponent,
+				RigidBody2DComponent,
+				BoxCollider2DComponent,
+				RenderComponent,
+				CameraComponent>(inputArchive);
+
+			// update the maps.
+			m_Registry.each([&](auto entity)
+				{
+					m_GameObjectIdMap.insert({ entt::to_integral(entity), entity });
+				});
+
+			// clear the sceneStringStorage;
+			sceneStringStorage = std::string();
+
 			// delete and set the box 2D world to nullptr.
 			delete m_World;
 			m_World = nullptr;
+
+			// set state back to edit.
+			m_State = State::Edit;
 		}
 	}
 

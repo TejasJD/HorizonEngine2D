@@ -221,6 +221,9 @@ void EditorLayer::onRenderImgui()
 			{
 				if (ImGui::MenuItem("Close Project"))
 				{
+					m_PlayMode = false;
+					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+					m_HoveredObjectId = -1;
 					EditorData::s_Scene_Active.reset();
 					EditorData::m_Project_Active.reset();
 					Modals::projectRootFolder.clear();
