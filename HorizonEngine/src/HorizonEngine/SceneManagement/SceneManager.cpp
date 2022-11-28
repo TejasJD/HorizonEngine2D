@@ -81,28 +81,11 @@ namespace Hzn
 
 	void SceneManager::defaultScene()
 	{
-		Hzn::GameObject object0 = s_Scene->createGameObject("square 1");
-		object0.addComponent<Hzn::TransformComponent>();
-		object0.addComponent<Hzn::RenderComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		Hzn::GameObject mainCamera = s_Scene->createGameObject("MainCamera");
 
-		Hzn::GameObject object1 = s_Scene->createGameObject("square 2");
-
-		object1.addComponent<Hzn::TransformComponent>(glm::vec3(-2.0f, 2.0f, 0.0f), glm::vec3(1.0f));
-		object1.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
-		Hzn::GameObject object3 = s_Scene->createGameObject("square 3");
-
-		object3.addComponent<Hzn::TransformComponent>(glm::vec3(-3.0f, -3.0f, 0.0f), glm::vec3(1.0f));
-		object3.addComponent<Hzn::RenderComponent>(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-
-		Hzn::GameObject camera = s_Scene->createGameObject("camera 1");
-		camera.addComponent<Hzn::CameraComponent>();
-		camera.addComponent<Hzn::TransformComponent>();
-
-		object0.addChild(object1);
-		object1.addChild(object3); // object3 local transform will change. 
-
-		object0.duplicate();
+		mainCamera.addComponent<CameraComponent>();
+		Hzn::GameObject obj = s_Scene->createGameObject("SampleObject");
+		obj.addComponent<RenderComponent>();
 	}
 
 }

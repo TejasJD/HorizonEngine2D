@@ -12,6 +12,8 @@
 #include "HorizonEngine/Core/TimeStep.h"
 #include "HorizonEngine/Camera/CameraController.h"
 
+class b2World;
+
 namespace Hzn
 {
 	class SceneManager;
@@ -29,22 +31,17 @@ namespace Hzn
 		~Scene();
 
 		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
+
+		void onStart();
+		void onStop();
+
 		void onEditorUpdate(OrthographicCamera& camera, TimeStep ts);
 		void onUpdate(TimeStep ts);
-		/**
-		 * \brief creates a game object in the scene and returns a valid game object.
-		 * \return Valid Game Object.
-		 */
+
 		GameObject createGameObject(const std::string& name);
-		/**
-		 * \brief Deletes the game object from the scene, and invalidates the variable that
-		 * represented this Game object.
-		 * \param obj Reference to the Game Object.
-		 */
 		void destroyGameObject(GameObject& obj);
 
 		GameObject getGameObjectById(uint32_t id);
-
 		std::vector<uint32_t> getAllRootIds() const;
 		std::vector<uint32_t> getAllObjectIds() const;
 
@@ -61,8 +58,8 @@ namespace Hzn
 		// entt registry for creating game objects.
 		entt::registry m_Registry;
 
-		// unordered map for retrieving objects by name.
-		std::unordered_map<std::string, GameObject> m_Objects;
+		b2World* m_World = nullptr;
+
 		std::unordered_map<uint32_t, entt::entity> m_GameObjectIdMap;
 		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };

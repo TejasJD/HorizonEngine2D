@@ -1,5 +1,10 @@
 #include "pch.h"
 
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
+
 #include "HorizonEngine/Renderer/Renderer2D.h"
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
@@ -9,6 +14,19 @@
 
 namespace Hzn
 {
+	static b2BodyType toBox2DBodyType(RigidBody2DComponent::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+		case RigidBody2DComponent::BodyType::Static : return b2_staticBody;
+		case RigidBody2DComponent::BodyType::Kinematic : return b2_kinematicBody;
+		case RigidBody2DComponent::BodyType::Dynamic : return b2_dynamicBody;
+		}
+
+		HZN_CORE_ASSERT(false, "Unknown body type");
+		return b2_staticBody;
+	}
+
 	Scene::Scene() : m_Registry(entt::registry()) {}
 
 	Scene::Scene(cereal::JSONInputArchive& inputArchive)
@@ -19,6 +37,8 @@ namespace Hzn
 			NameComponent,
 			RelationComponent,
 			TransformComponent,
+			RigidBody2DComponent,
+			BoxCollider2DComponent,
 			RenderComponent,
 			CameraComponent>(inputArchive);
 
@@ -43,6 +63,8 @@ namespace Hzn
 			.component<NameComponent,
 			RelationComponent,
 			TransformComponent,
+			RigidBody2DComponent,
+			BoxCollider2DComponent,
 			RenderComponent,
 			CameraComponent>(outputArchive);
 	}
@@ -50,7 +72,6 @@ namespace Hzn
 	void Scene::invalidate()
 	{
 		m_Registry.clear();
-		m_Objects.clear();
 		m_GameObjectIdMap.clear();
 		m_Valid = false;
 	}
@@ -76,6 +97,58 @@ namespace Hzn
 		return m_lastViewportSize;
 	}
 
+	void Scene::onStart()
+	{
+		if (m_Valid)
+		{
+			// create box 2D world.
+			m_World = new b2World({ 0.0f, -9.8f });
+
+			auto view = m_Registry.view<RigidBody2DComponent>();
+
+			for (auto entity : view)
+			{
+				GameObject obj = { entity, this };
+				auto& transform = obj.getComponent<TransformComponent>();
+				auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+
+				b2BodyDef bodyDef;
+				bodyDef.type = (b2BodyType)rb2d.m_Type;
+				bodyDef.position.Set(transform.m_Translation.x, transform.m_Translation.y);
+				bodyDef.angle = glm::radians(transform.m_Rotation.z);
+
+				b2Body* body = m_World->CreateBody(&bodyDef);
+				body->SetFixedRotation(rb2d.m_FixedRotation);
+				rb2d.m_RuntimeBody = body;
+
+				if (obj.hasComponent<BoxCollider2DComponent>())
+				{
+					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+					b2PolygonShape polygonShape;
+
+					polygonShape.SetAsBox(transform.m_Scale.x * bc2d.size.x, transform.m_Scale.y * bc2d.size.y);
+
+					b2FixtureDef fixtureDef;
+					fixtureDef.shape = &polygonShape;
+					fixtureDef.density = bc2d.m_Density;
+					fixtureDef.friction = bc2d.m_Friction;
+					fixtureDef.restitution = bc2d.m_Restitution;
+					fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+					body->CreateFixture(&fixtureDef);
+				}
+			}
+		}
+	}
+
+	void Scene::onStop()
+	{
+		if (m_Valid) {
+			// delete and set the box 2D world to nullptr.
+			delete m_World;
+			m_World = nullptr;
+		}
+	}
+
 	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts) {
 		if (m_Valid) {
 			Renderer2D::beginScene(camera);
@@ -98,6 +171,42 @@ namespace Hzn
 	{
 		// render objects in the scene through scene update.
 		if (m_Valid) {
+
+			// update scripts
+			{
+
+
+			}
+
+			// update physics
+			{
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+
+				m_World->Step(ts, velocityIterations, positionIterations);
+
+				auto view = m_Registry.view<RigidBody2DComponent>();
+
+
+				for(auto entity : view) {
+					GameObject obj = { entity, this };
+
+					auto& transform = obj.getComponent<TransformComponent>();
+					auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+
+
+					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+					const auto& position = body->GetPosition();
+
+					transform.m_Translation.x = position.x;
+					transform.m_Translation.y = position.y;
+
+					transform.m_Rotation.z = glm::degrees(body->GetAngle());
+				}
+			}
+
+
+			// scr
 			const SceneCamera2D* activeCamera = nullptr;
 			glm::mat4 cameraTransform = glm::mat4(1.0f);
 
@@ -123,19 +232,7 @@ namespace Hzn
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 					GameObject obj = getGameObjectById(entt::to_integral(entity));
 
-					if (!renderComponent.texturePath.empty()) {
-						Renderer2D::drawQuad(obj.getTransform(), AssetManager::getTexture(renderComponent.texturePath), renderComponent.m_Color);
-					}
-					else if (!renderComponent.spritePath.empty())
-					{
-						Renderer2D::drawSprite(obj.getTransform(),
-							AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y }),
-							renderComponent.m_Color, (int32_t)obj.getObjectId());
-					}
-					else
-					{
-						Renderer2D::drawQuad(obj.getTransform(), renderComponent.m_Color);
-					}
+					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent, entt::to_integral(entity));
 
 				}
 				Renderer2D::endScene();
@@ -154,6 +251,7 @@ namespace Hzn
 		// every valid game object has a name component
 		obj.addComponent<NameComponent>(name);
 		obj.addComponent<RelationComponent>();
+		obj.addComponent<TransformComponent>();
 		/*m_Objects.insert({ name, obj });*/
 		m_GameObjectIdMap.insert({ entt::to_integral(obj.m_ObjectId), obj.m_ObjectId });
 		return obj;

@@ -145,5 +145,70 @@ namespace Hzn
 			ImGui::TreePop();
 		}
 	}
+
+	template<>
+	inline void ComponentDisplays::display<RigidBody2DComponent>(const GameObject& obj)
+	{
+		auto& component = obj.getComponent<RigidBody2DComponent>();
+
+		const char* bodyTypeStrings[] = {"Static", "Kinematic", "Dynamic"};
+		const char* currentBodyTypeString = bodyTypeStrings[(int)component.m_Type];
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick |
+			ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_SpanFullWidth |
+			ImGuiTreeNodeFlags_Selected |
+			ImGuiTreeNodeFlags_DefaultOpen;
+		if (ImGui::TreeNodeEx("Rigid Body 2D", flags))
+		{
+			
+			if(ImGui::BeginCombo("Body Type", currentBodyTypeString))
+			{
+				for(int i = 0; i < 3; ++i)
+				{
+					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+					if(ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					{
+						currentBodyTypeString = bodyTypeStrings[i];
+						component.m_Type = (RigidBody2DComponent::BodyType)i;
+					}
+
+					if(isSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::Checkbox("Fixed Rotation", &component.m_FixedRotation);
+
+			ImGui::TreePop();
+		}
+	}
+
+	template<>
+	inline void ComponentDisplays::display<BoxCollider2DComponent>(const GameObject& obj)
+	{
+		auto& component = obj.getComponent<BoxCollider2DComponent>();
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick |
+			ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_SpanFullWidth |
+			ImGuiTreeNodeFlags_Selected |
+			ImGuiTreeNodeFlags_DefaultOpen;
+		if (ImGui::TreeNodeEx("Box Collider 2D", flags))
+		{
+			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
+			ImGui::DragFloat("Density", &component.m_Density, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Friction", &component.m_Friction, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution", &component.m_Restitution, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Restitution Threshold", &component.m_RestitutionThreshold, 0.01f, 0.0f, 1.0f);
+			ImGui::TreePop();
+		}
+	}
 }
 #endif // !HZN_COMPONENT_DISPLAYS_H

@@ -48,10 +48,6 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
-		m_EditorCameraController.onUpdate(ts);
-	}
-
 	m_FrameBuffer->bind();
 
 	// here, in case if the framebuffer is re-created, and the last known
@@ -75,8 +71,12 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	if (EditorData::s_Scene_Active) {
 		if (m_PlayMode)
 			EditorData::s_Scene_Active->onUpdate(ts);
-		else
+		else {
+			if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
+				m_EditorCameraController.onUpdate(ts);
+			}
 			EditorData::s_Scene_Active->onEditorUpdate(m_EditorCameraController.getCamera(), ts);
+		}
 	}
 
 	// checking if the mouse pointer is hovering on the viewport, and retrieving the right position.
@@ -246,7 +246,14 @@ void EditorLayer::onRenderImgui()
 			{
 				if (ImGui::MenuItem("Play"))
 				{
-					m_PlayMode = !m_PlayMode;
+					if(!m_PlayMode)
+					{
+						sceneStart();
+					}
+					else
+					{
+						sceneStop();
+					}
 				}
 			}
 
@@ -587,8 +594,7 @@ void EditorLayer::drawHierarchy()
 				if (ImGui::MenuItem("Delete", NULL, false)) {
 					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 					EditorData::s_Scene_Active->destroyGameObject(obj);
-
-					/*selectedObject = std::string();*/
+					m_HoveredObjectId = -1;
 					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 				}
 				ImGui::Separator();
@@ -732,9 +738,28 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 	}
 }
 
+void EditorLayer::sceneStart()
+{
+	if(EditorData::s_Scene_Active)
+	{
+		EditorData::s_Scene_Active->onStart();
+		m_PlayMode = true;
+	}
+}
+
+void EditorLayer::sceneStop()
+{
+	if(EditorData::s_Scene_Active)
+	{
+		EditorData::s_Scene_Active->onStop();
+		m_PlayMode = false;
+	}
+}
+
 void EditorLayer::openScene(const std::filesystem::path& filepath)
 {
 	m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+	m_PlayMode = false;
 	Hzn::ProjectManager::openScene(filepath);
 	EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 }

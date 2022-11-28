@@ -10,9 +10,6 @@
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Renderer/Sprite.h"
-//#include "HorizonEngine/Utils/Math.h"
-//#include "HorizonEngine/AssetManagement/AssetManager.h"
-
 
 namespace Hzn
 {
@@ -185,6 +182,59 @@ namespace Hzn
 		}
 	};
 
+	struct RigidBody2DComponent
+	{
+		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const RigidBody2DComponent& body) = default;
+		~RigidBody2DComponent() = default;
+
+		enum class BodyType { Static = 0, Kinematic, Dynamic };
+		BodyType m_Type = BodyType::Static;
+
+		bool m_FixedRotation = false;
+
+		// runtime body opaque-pointer (will be stored at different location).
+		void* m_RuntimeBody = nullptr;
+
+		template<typename Archive>
+		void load(Archive& ar)
+		{
+			ar((BodyType)m_Type, m_FixedRotation);
+		}
+
+		template<typename Archive>
+		void save(Archive& ar) const
+		{
+			ar((int)m_Type, m_FixedRotation);
+		}
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 offset = { 0.0f, 0.0f };
+		glm::vec2 size = { 0.5f, 0.5f };
+
+		float m_Density = 1.0f;
+		float m_Friction = 0.5f;
+		float m_Restitution = 0.0f;
+		float m_RestitutionThreshold = 0.5f;
+
+		// runtime fixture opaque-pointer (will be stored at different location).
+		void* m_RuntimeFixture = nullptr;
+
+		template<typename Archive>
+		void load(Archive& ar)
+		{
+			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold);
+		}
+
+		template<typename Archive>
+		void save(Archive& ar) const
+		{
+			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold);
+		}
+	};
+
 	struct ScriptComponent
 	{
 		ScriptComponent() = default;
@@ -193,11 +243,19 @@ namespace Hzn
 		const char* scriptName = "";
 	};
 
+
 	template<typename... Component>
 	struct ComponentGroup {};
 
-	using AllComponents = ComponentGroup<NameComponent, RelationComponent, TransformComponent, RenderComponent, CameraComponent>;
-	using SelectableComponents = ComponentGroup<RenderComponent, CameraComponent, ScriptComponent>;
+	using AllComponents = ComponentGroup<NameComponent,
+	RelationComponent,
+	TransformComponent,
+	RigidBody2DComponent,
+	BoxCollider2DComponent,
+	RenderComponent,
+	CameraComponent>;
+	using SelectableComponents = ComponentGroup<RenderComponent, RigidBody2DComponent, BoxCollider2DComponent,
+	CameraComponent, ScriptComponent>;
 
 	void addComponent(GameObject& obj, std::string& componentName);
 	bool hasComponent(const GameObject& obj, std::string& componentName);
