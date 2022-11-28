@@ -25,8 +25,8 @@ namespace Hzn
 
 	void GLRendererAPI::drawElements(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count)
 	{
-		int elements = (count == 0) ? vertexArray->getElementBuffer()->size() : count;
-		glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, nullptr);
+		/*int elements = (count == 0) ? vertexArray->getElementBuffer()->size() : count;*/
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
 	void GLRendererAPI::setViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height)

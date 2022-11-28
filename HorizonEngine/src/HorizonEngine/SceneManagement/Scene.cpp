@@ -17,7 +17,7 @@
 
 namespace Hzn
 {
-	static std::string sceneStringStorage;
+	std::string sceneStringStorage;
 
 	static b2BodyType toBox2DBodyType(RigidBody2DComponent::BodyType bodyType)
 	{
@@ -81,24 +81,20 @@ namespace Hzn
 		m_Valid = false;
 	}
 
-	glm::vec2 Scene::onViewportResize(uint32_t width, uint32_t height)
+	glm::vec2 Scene::onViewportResize(int32_t width, int32_t height)
 	{
 		// update all the camera components on viewport resize.
-		if (glm::vec2(width, height) != m_lastViewportSize)
+		if (m_Valid)
 		{
-			if (m_Valid)
+			const auto& view = m_Registry.view<CameraComponent>();
+
+			for (const auto& entity : view)
 			{
-				const auto& view = m_Registry.view<CameraComponent>();
-
-				for (const auto& entity : view)
-				{
-					auto& camera = view.get<CameraComponent>(entity).m_Camera;
-					camera.setAspectRatio((float)width / height);
-				}
+				auto& camera = view.get<CameraComponent>(entity).m_Camera;
+				camera.setAspectRatio((float)width / height);
 			}
-
-			m_lastViewportSize = glm::vec2(width, height);
 		}
+		m_lastViewportSize = glm::vec2(width, height);
 		return m_lastViewportSize;
 	}
 
@@ -143,6 +139,8 @@ namespace Hzn
 				}
 			}
 
+			std::cout << m_GameObjectIdMap.size() << std::endl;
+
 			std::ostringstream os;
 
 			cereal::JSONOutputArchive outputArchive(os);
@@ -151,16 +149,15 @@ namespace Hzn
 
 			os << "\n}\n";
 			sceneStringStorage = os.str();
-
 			// set scene state to Playing.
-			m_State = State::Play;
+			m_State = SceneState::Play;
 		}
 	}
 
 	void Scene::onStop()
 	{
 		if (m_Valid) {
-
+			std::cout << m_GameObjectIdMap.size() << std::endl;
 			// clear registries.
 			m_GameObjectIdMap.clear();
 			m_Registry.clear();
@@ -192,24 +189,48 @@ namespace Hzn
 			m_World = nullptr;
 
 			// set state back to edit.
-			m_State = State::Edit;
+			m_State = SceneState::Edit;
 		}
+	}
+
+	GameObject Scene::getActiveCamera()
+	{
+
+		auto cameras = m_Registry.view<CameraComponent>();
+
+		GameObject activeCamera;
+
+		for (const auto& entity : cameras)
+		{
+			GameObject camera = { entity, this };
+			auto& cameraComponent = camera.getComponent<CameraComponent>();
+
+			if(cameraComponent.m_Primary)
+			{
+				activeCamera = camera;
+				break;
+			}
+		}
+
+		return activeCamera;
 	}
 
 	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts) {
 		if (m_Valid) {
 			Renderer2D::beginScene(camera);
-			const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
+
+			auto sprites = m_Registry.view<RenderComponent, TransformComponent>();
 			for (const auto& entity : sprites)
 			{
-				auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
-				GameObject obj = getGameObjectById(entt::to_integral(entity));
+				GameObject obj = { entity, this };
+				auto& renderComponent = obj.getComponent<RenderComponent>();
 				auto sprite = 
 					AssetManager::getSprite(renderComponent.spritePath, { renderComponent.m_Pos.x, renderComponent.m_Pos.y });
 				renderComponent.m_Sprite = sprite;
-				Renderer2D::drawSprite(obj.getTransform(), renderComponent, (int32_t)entity);
+				Renderer2D::drawSprite(obj.getTransform(), renderComponent, (int)entity);
 
 			}
+
 			Renderer2D::endScene();
 		}
 	}
@@ -279,7 +300,7 @@ namespace Hzn
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 					GameObject obj = getGameObjectById(entt::to_integral(entity));
 
-					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent, entt::to_integral(entity));
+					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent, (int)entity);
 
 				}
 				Renderer2D::endScene();

@@ -19,6 +19,12 @@ namespace Hzn
 	class SceneManager;
 	class ProjectManager;
 
+	enum class SceneState
+	{
+		Edit = 0,
+		Play = 1
+	};
+
 	class Scene
 	{
 		friend class GameObject;
@@ -27,32 +33,28 @@ namespace Hzn
 		friend class AssetManager;
 	public:
 
-		enum class State
-		{
-			Edit = 0,
-			Play
-		};
-
 		Scene();
 		Scene(cereal::JSONInputArchive& inputArchive);
 		~Scene();
 
-		glm::vec2 onViewportResize(uint32_t width, uint32_t height);
+		glm::vec2 onViewportResize(int32_t width, int32_t height);
 
 		void onStart();
 		void onStop();
+
+		GameObject getActiveCamera();
 
 		void onEditorUpdate(OrthographicCamera& camera, TimeStep ts);
 		void onUpdate(TimeStep ts);
 
 		GameObject createGameObject(const std::string& name);
 		void destroyGameObject(GameObject& obj);
-
 		GameObject getGameObjectById(uint32_t id);
 		std::vector<uint32_t> getAllRootIds() const;
 		std::vector<uint32_t> getAllObjectIds() const;
 
 		std::filesystem::path getFilePath() const { return m_Path; }
+
 
 	private:
 		int gameObjectCounter = 0;
@@ -72,7 +74,7 @@ namespace Hzn
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
 		std::filesystem::path m_Path = std::filesystem::path();
 
-		State m_State = State::Edit;
+		SceneState m_State = SceneState::Edit;
 	};
 
 }

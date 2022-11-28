@@ -3,18 +3,29 @@
 #ifndef HZN_SCENE_MANAGER_H
 #define HZN_SCENE_MANAGER_H
 
+#include <glm/glm.hpp>
+
 namespace Hzn
 {
+	class OrthographicCamera;
 	class Scene;
+	enum class SceneState;
 
 	class SceneManager
 	{
 	public:
 		static std::shared_ptr<Scene> create(const std::filesystem::path& filepath);
 		static std::shared_ptr<Scene> open(const std::filesystem::path& filepath);
-		static void update(TimeStep ts);
+		static glm::vec2 resizeViewport(int32_t width, int32_t height);
+
+		static bool isOpen() { return s_Scene != nullptr; }
+		static SceneState getSceneState();
+		static void setSceneState(const SceneState& state);
+
 		static void play();
+		static void update(OrthographicCamera& camera, TimeStep ts);
 		static void stop();
+
 		static void close();
 		static void save();
 	private:

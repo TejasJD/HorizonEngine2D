@@ -53,6 +53,14 @@ namespace Hzn
 		s_Project->m_Scene = SceneManager::open(sceneFilePath);
 	}
 
+	void ProjectManager::closeScene()
+	{
+		if(s_Project && s_Project->m_Scene)
+		{
+			SceneManager::close();
+		}
+	}
+
 	void ProjectManager::saveScene()
 	{
 		if (s_Project && s_Project->m_Scene)
