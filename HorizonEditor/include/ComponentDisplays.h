@@ -136,7 +136,7 @@ namespace Hzn
 	inline void ComponentDisplays::display<CameraComponent>(const GameObject& obj)
 	{
 		auto& cameraComponent = obj.getComponent<CameraComponent>();
-		static float m_CameraZoom = cameraComponent.m_Camera.getZoom();
+		float m_CameraZoom = cameraComponent.m_Camera.getZoom();
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (ImGui::TreeNodeEx("Camera", flags)) {
