@@ -93,7 +93,7 @@ void EditorLayer::onEvent(Hzn::Event& e)
 	Hzn::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Hzn::MouseButtonPressedEvent>(std::bind(&EditorLayer::onMouseButtonPressed, this, std::placeholders::_1));
 	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
-	if (m_ViewportFocused && m_ViewportHovered && !m_PlayMode) {
+	if (m_ViewportFocused && m_ViewportHovered) {
 		m_EditorCameraController.onEvent(e);
 	}
 
@@ -224,8 +224,9 @@ void EditorLayer::onRenderImgui()
 					EditorData::m_Project_Active = Hzn::ProjectManager::open(str);
 					EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 					Modals::openProject();
+					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+					m_HoveredObjectId = -1;
 				}
-
 			}
 
 			if (EditorData::m_Project_Active)
@@ -269,7 +270,11 @@ void EditorLayer::onRenderImgui()
 
 			if (ImGui::MenuItem("Exit"))
 			{
-				Hzn::ProjectManager::close();
+				if(Hzn::ProjectManager::close())
+				{
+					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+					m_HoveredObjectId = -1;
+				}
 				Hzn::App::getApp().close();
 			}
 
@@ -284,7 +289,14 @@ void EditorLayer::onRenderImgui()
 	//Scene pop-ups
 	Modals::getCenterWindow();
 	//new project
-	Modals::getNewProJPopup();
+	{
+		bool newProjectOpen = Modals::getNewProJPopup();
+		if(newProjectOpen)
+		{
+			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+			m_HoveredObjectId = -1;
+		}
+	}
 	//New Scene
 	{
 		bool newSceneOpen = Modals::getNewScenePopup();
@@ -611,22 +623,22 @@ void EditorLayer::drawHierarchy()
 			ImGui::OpenPopup("HierarchyObjectPopup");
 
 			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-				if (ImGui::MenuItem("Copy", NULL, false)) {
+				if (ImGui::MenuItem("Copy", "Ctrl + C", false)) {
 					copyObject();
 				}
-				if (ImGui::MenuItem("Paste", NULL, false)) {
+				if (ImGui::MenuItem("Paste", "Ctrl + V", false)) {
 					pasteObject();
 				}
-				if (ImGui::MenuItem("Duplicate", NULL, false)) {
+				if (ImGui::MenuItem("Duplicate", "Ctrl + D", false)) {
 					// Do stuff here
 					duplicateObject();
 				}
-				if (ImGui::MenuItem("Delete", NULL, false)) {
+				if (ImGui::MenuItem("Delete", "Del", false)) {
 					deleteObject();
 				}
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("Create Empty", NULL, false)) {
+				if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
 					createObject();
 				}
 
@@ -658,7 +670,7 @@ void EditorLayer::drawHierarchy()
 		if (ImGui::BeginPopup("contextHierarchy")) {
 			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 
-			if (ImGui::MenuItem("Create Empty", NULL, false)) {
+			if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
 				Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
 			}
 

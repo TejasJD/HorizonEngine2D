@@ -28,12 +28,12 @@ namespace Hzn
 		static std::shared_ptr<Project> open(const std::filesystem::path& projectFilePath);
 		static bool isOpen() { return s_Project != nullptr; }
 
-		static void newScene(const std::string& name);
-		static void openScene(const std::filesystem::path& sceneFilePath);
-		static void closeScene();
-		static void saveScene();
-		static void save();
-		static void close();
+		static bool newScene(const std::string& name);
+		static bool openScene(const std::filesystem::path& sceneFilePath);
+		static bool closeScene();
+		static bool saveScene();
+		static bool save();
+		static bool close();
 
 	private:
 		static std::shared_ptr<Project> s_Project;

@@ -29,9 +29,6 @@ private:
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
 
-	void sceneStart();
-	void sceneStop();
-
 	void copyObject();
 	void pasteObject();
 	void duplicateObject();
@@ -45,8 +42,6 @@ private:
 	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
-
-	bool m_PlayMode = false;
 
 	std::shared_ptr<Hzn::Scene> m_Scene;
 	Hzn::GameObject m_SquareObject;
