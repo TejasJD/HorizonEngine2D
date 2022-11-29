@@ -29,9 +29,6 @@ private:
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
 
-	void sceneStart();
-	void sceneStop();
-
 	float m_AspectRatio = 1.0f;
 	glm::vec2 lastViewportSize = { 0, 0 };
 	Hzn::OrthographicCameraController m_EditorCameraController;
@@ -39,8 +36,6 @@ private:
 	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
-
-	bool m_PlayMode = false;
 
 	std::shared_ptr<Hzn::Scene> m_Scene;
 	Hzn::GameObject m_SquareObject;
