@@ -623,22 +623,22 @@ void EditorLayer::drawHierarchy()
 			ImGui::OpenPopup("HierarchyObjectPopup");
 
 			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-				if (ImGui::MenuItem("Copy", NULL, false)) {
+				if (ImGui::MenuItem("Copy", "Ctrl + C", false)) {
 					copyObject();
 				}
-				if (ImGui::MenuItem("Paste", NULL, false)) {
+				if (ImGui::MenuItem("Paste", "Ctrl + V", false)) {
 					pasteObject();
 				}
-				if (ImGui::MenuItem("Duplicate", NULL, false)) {
+				if (ImGui::MenuItem("Duplicate", "Ctrl + D", false)) {
 					// Do stuff here
 					duplicateObject();
 				}
-				if (ImGui::MenuItem("Delete", NULL, false)) {
+				if (ImGui::MenuItem("Delete", "Del", false)) {
 					deleteObject();
 				}
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("Create Empty", NULL, false)) {
+				if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
 					createObject();
 				}
 
@@ -670,7 +670,7 @@ void EditorLayer::drawHierarchy()
 		if (ImGui::BeginPopup("contextHierarchy")) {
 			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 
-			if (ImGui::MenuItem("Create Empty", NULL, false)) {
+			if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
 				Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
 			}
 

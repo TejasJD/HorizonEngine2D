@@ -29,9 +29,6 @@ private:
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
 
-	void sceneStart();
-	void sceneStop();
-
 	void copyObject();
 	void pasteObject();
 	void duplicateObject();
