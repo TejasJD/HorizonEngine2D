@@ -29,8 +29,11 @@ private:
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
 
-	void sceneStart();
-	void sceneStop();
+	void copyObject();
+	void pasteObject();
+	void duplicateObject();
+	void createObject();
+	void deleteObject();
 
 	float m_AspectRatio = 1.0f;
 	glm::vec2 lastViewportSize = { 0, 0 };
@@ -39,8 +42,6 @@ private:
 	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
-
-	bool m_PlayMode = false;
 
 	std::shared_ptr<Hzn::Scene> m_Scene;
 	Hzn::GameObject m_SquareObject;
@@ -52,7 +53,7 @@ private:
 	uint32_t m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 	int32_t m_HoveredObjectId = -1;
 
-	Hzn::GameObject copiedGameObject;
+	uint32_t m_CopiedObjectId = std::numeric_limits<uint32_t>::max();
 	bool openHierarchyPopup = false;
 
 	glm::vec2 m_ViewportBounds[2]{ {0.0f, 0.0f}, {0.0f, 0.0f} };

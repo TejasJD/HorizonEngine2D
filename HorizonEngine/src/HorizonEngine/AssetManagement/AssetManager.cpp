@@ -8,10 +8,9 @@ std::map<std::string, std::pair<std::shared_ptr<Texture2D>, glm::vec2>> AssetMan
 std::map<std::string, std::shared_ptr<AudioSource>> AssetManager::audioStorage;
 std::map<std::string, std::shared_ptr<Sprite2D>> AssetManager::spriteStorage;
 
-void AssetManager::init(const std::filesystem::path& directoryPath)
+bool AssetManager::init(const std::filesystem::path& directoryPath)
 {
 	// load assets
-
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))
 	{
 		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
@@ -59,7 +58,7 @@ void AssetManager::init(const std::filesystem::path& directoryPath)
 		}
 
 	}
-
+	return true;
 }
 
 void AssetManager::destroy()

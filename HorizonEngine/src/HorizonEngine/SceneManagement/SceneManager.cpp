@@ -4,6 +4,7 @@
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "Scene.h"
+#include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
 #include "SceneManager.h"
 
@@ -104,7 +105,7 @@ namespace Hzn
 	}
 
 
-	void SceneManager::save()
+	bool SceneManager::save()
 	{
 		// save only when active scene.
 		if (s_Scene) {
@@ -126,29 +127,32 @@ namespace Hzn
 				os << "\n}\n";
 				os.close();
 			}
+			return true;
 		}
+		return false;
 	}
 
-	void SceneManager::close()
+	bool SceneManager::close()
 	{
-		save();
 		// invalidate any external pointers to the scene.
-		if (s_Scene) {
+		if (save() && s_Scene) {
 			//// if state is play, stop the scene.
 			if (s_Scene->m_State == SceneState::Play) stop();
 
 			// invalid the scene (so that any hanging references are invalidated.
 			s_Scene->invalidate();
+			s_Scene.reset();
+			return true;
 		}
-		s_Scene.reset();
+		return false;
 	}
 
 	void SceneManager::defaultScene()
 	{
-		/*Hzn::GameObject mainCamera = s_Scene->createGameObject("MainCamera");
-		mainCamera.addComponent<CameraComponent>();*/
-		/*Hzn::GameObject obj = s_Scene->createGameObject("SampleObject");
-		obj.addComponent<RenderComponent>();*/
+		Hzn::GameObject mainCamera = s_Scene->createGameObject("MainCamera");
+		mainCamera.addComponent<CameraComponent>();
+		Hzn::GameObject obj = s_Scene->createGameObject("WhiteBox");
+		obj.addComponent<RenderComponent>();
 	}
 
 }

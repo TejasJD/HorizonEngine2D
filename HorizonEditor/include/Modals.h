@@ -27,7 +27,7 @@ private:
 
 public:
 	static void getCenterWindow();
-	static void getNewProJPopup();
+	static bool getNewProJPopup();
 	static bool getNewScenePopup();
 };
 
