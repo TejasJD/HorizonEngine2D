@@ -2,12 +2,12 @@
 
 #include <HorizonEngine.h>
 
-class EditorLayer : public Hzn::Layer
+class GameLayer : public Hzn::Layer
 {
 public:
 
-	EditorLayer(const char* name = "Game Layer");
-	virtual ~EditorLayer();
+	GameLayer(const char* name = "Game Layer");
+	virtual ~GameLayer();
 	virtual void onAttach() override;
 	virtual void onDetach() override;
 	virtual void onUpdate(Hzn::TimeStep deltaTime) override;
@@ -15,9 +15,6 @@ public:
 	virtual void onRenderImgui() override;
 
 private:
-	bool onKeyPressed(Hzn::KeyPressedEvent& e);
-	bool onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e);
-
 	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
 
 	std::vector<std::string> sceneNames{ "mainMenu.scene", "level1.scene", "level2.scene", "level3.scene" };

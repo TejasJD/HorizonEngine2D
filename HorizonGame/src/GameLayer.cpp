@@ -33,17 +33,17 @@ void GameLayer::onDetach()
 	Hzn::ProjectManager::close();
 }
 
-void GameLayer::onUpdate() {
+void GameLayer::onUpdate(Hzn::TimeStep ts) 
+{
 
 }
 
 void GameLayer::onEvent(Hzn::Event& e)
 {
-	Hzn::EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<Hzn::MouseButtonPressedEvent>(std::bind(&GameLayer::onMouseButtonPressed, this, std::placeholders::_1));
-	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&GameLayer::onKeyPressed, this, std::placeholders::_1));
+
 }
 
 void GameLayer::onRenderImgui()
 {
+	
 }

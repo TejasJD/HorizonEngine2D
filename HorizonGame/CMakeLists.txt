@@ -9,7 +9,7 @@ set(HZGAME_SOURCE_FILES
  )
 
 set(HZGAME_HEADER_FILES
-	"src/GameLayer.h"
+	"include/GameLayer.h"
 )
 
 # 'HznApplication' target which would generate an executable.
@@ -30,3 +30,48 @@ target_include_directories(HorizonGame PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 # 	${CMAKE_BINARY_DIR}/HorizonEngine/$<CONFIG>
 # 	$<TARGET_FILE_DIR:HorizonGame>
 # )
+
+add_custom_command(
+	TARGET HorizonGame
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	$<TARGET_FILE_DIR:HorizonEngine>/mono-2.0-sgen.dll
+	$<TARGET_FILE_DIR:HorizonGame>/mono-2.0-sgen.dll
+)
+
+add_custom_command(
+	TARGET HorizonGame
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	${CMAKE_CURRENT_LIST_DIR}/mono/lib
+	$<TARGET_FILE_DIR:HorizonGame>/../lib
+)
+
+add_custom_command(
+	TARGET HorizonGame
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	${CMAKE_CURRENT_LIST_DIR}/Scripts
+	$<TARGET_FILE_DIR:HorizonGame>/Scripts
+)
+
+add_custom_command(
+	TARGET HorizonGame
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	${CMAKE_CURRENT_LIST_DIR}/assets
+	$<TARGET_FILE_DIR:HorizonGame>/assets
+)
+
+add_custom_command(
+	TARGET HorizonGame
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy_directory
+	$<TARGET_FILE_DIR:HorizonEngine>/api_assets
+	$<TARGET_FILE_DIR:HorizonGame>/api_assets
+)
