@@ -92,7 +92,7 @@ namespace Hzn
 		{
 			//HZN_CORE_INFO("Calculating projection matrix...");
 			m_ProjectionMatrix = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom
-				, -m_Zoom, m_Zoom, -1.0f, 1.0f);
+				, -m_Zoom, m_Zoom, -100.0f, 100.0f);
 		}
 
 		virtual void setProjectionMatrix(const glm::mat4& mat) override
@@ -354,7 +354,7 @@ namespace Hzn
 
 		void calculateProjectionMatrix()
 		{
-			m_Projection = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom, -1.0f, 1.0f);
+			m_Projection = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom, -100.0f, 100.0f);
 		}
 
 		float getAspectRatio() const { return m_AspectRatio; }
