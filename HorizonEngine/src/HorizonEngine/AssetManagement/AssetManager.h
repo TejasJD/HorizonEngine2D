@@ -34,7 +34,7 @@ namespace Hzn
 		static std::map<std::string, std::string> spriteFormat;
 
 
-		static void init(const std::filesystem::path& directoryPath);
+		static bool init(const std::filesystem::path& directoryPath);
 		static void destroy();
 		static void loadAudio(std::string path);
 

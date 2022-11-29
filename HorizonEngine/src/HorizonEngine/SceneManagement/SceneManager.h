@@ -26,8 +26,8 @@ namespace Hzn
 		static void update(OrthographicCamera& camera, TimeStep ts);
 		static void stop();
 
-		static void close();
-		static void save();
+		static bool close();
+		static bool save();
 	private:
 		static void defaultScene();
 		static std::shared_ptr<Scene> s_Scene;

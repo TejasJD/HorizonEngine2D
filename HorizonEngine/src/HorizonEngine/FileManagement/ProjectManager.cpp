@@ -18,11 +18,12 @@ namespace Hzn
 		return s_Project;
 	}
 
-	void ProjectManager::newScene(const std::string& name)
+	bool ProjectManager::newScene(const std::string& name)
 	{
 		if (!s_Project)
 		{
-			throw std::runtime_error("trying to create new scene outside the project!");
+			HZN_CORE_ASSERT(false, "trying to create new Scene in empty project!");
+			return false;
 		}
 		std::filesystem::path projectDir = s_Project->m_Path.parent_path();
 		std::filesystem::path sceneDir = projectDir.string() + "\\scenes";
@@ -35,15 +36,17 @@ namespace Hzn
 
 		// create a scene file.
 		std::filesystem::path sceneFilePath = sceneDir.string() + "\\" + name + ".scene";
-
 		s_Project->m_Scene = SceneManager::create(sceneFilePath);
+
+		return s_Project->m_Scene != nullptr;
 	}
 
-	void ProjectManager::openScene(const std::filesystem::path& sceneFilePath)
+	bool ProjectManager::openScene(const std::filesystem::path& sceneFilePath)
 	{
 		if (!s_Project)
 		{
-			throw std::runtime_error("trying to create new scene outside the project!");
+			HZN_CORE_ASSERT(false, "trying to open Scene in an empty project!");
+			return false;
 		}
 		std::filesystem::path projectDir = s_Project->m_Path.parent_path();
 		std::filesystem::path sceneDir = projectDir.string() + "\\scenes";
@@ -51,22 +54,25 @@ namespace Hzn
 		HZN_CORE_ASSERT(std::filesystem::exists(sceneDir), "no scenes directory!");
 
 		s_Project->m_Scene = SceneManager::open(sceneFilePath);
+		return s_Project->m_Scene != nullptr;
 	}
 
-	void ProjectManager::closeScene()
+	bool ProjectManager::closeScene()
 	{
 		if(s_Project && s_Project->m_Scene)
 		{
-			SceneManager::close();
+			return SceneManager::close();
 		}
+		return false;
 	}
 
-	void ProjectManager::saveScene()
+	bool ProjectManager::saveScene()
 	{
 		if (s_Project && s_Project->m_Scene)
 		{
-			SceneManager::save();
+			return SceneManager::save();
 		}
+		return false;
 	}
 
 	std::shared_ptr<Project> ProjectManager::open(const std::filesystem::path& projectFilePath)
@@ -83,25 +89,28 @@ namespace Hzn
 		return s_Project;
 	}
 
-	void ProjectManager::save()
+	bool ProjectManager::save()
 	{
+		bool result = true;
 		if (s_Project && s_Project->m_Scene)
 		{
 			std::filesystem::path projectFile = s_Project->m_Path;
 			std::ofstream os(projectFile, std::ios::binary);
 			os << "ActiveScene" << " " << ":" << " " << s_Project->m_Scene->m_Path.string();
 			os.close();
-			SceneManager::save();
+			result = SceneManager::save();
 		}
+		return result;
 	}
 
-	void ProjectManager::close()
+	bool ProjectManager::close()
 	{
-		save();
+		bool result = save();
 		if (s_Project && s_Project->m_Scene) {
-			SceneManager::close();
+			result = SceneManager::close();
 			AssetManager::destroy();
 			s_Project.reset();
 		}
+		return result;
 	}
 }
