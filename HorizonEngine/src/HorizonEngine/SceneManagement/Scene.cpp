@@ -300,7 +300,7 @@ namespace Hzn
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 					GameObject obj = getGameObjectById(entt::to_integral(entity));
 
-					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent, (int)entity);
+					Renderer2D::drawSprite(obj.getTransform(), renderComponent, (int)entity);
 
 				}
 				Renderer2D::endScene();
