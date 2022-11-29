@@ -20,7 +20,7 @@ public:
 	virtual void onUpdate(Hzn::TimeStep deltaTime) override;
 	virtual void onEvent(Hzn::Event& event) override;
 	virtual void onRenderImgui() override;
-	virtual void openScene(const std::filesystem::path& filepath);
+	void openScene(const std::filesystem::path& filepath);
 
 private:
 	bool onKeyPressed(Hzn::KeyPressedEvent& e);
@@ -28,8 +28,10 @@ private:
 
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
-	int32_t quads = 10;
-	float quadAngle = 0.0f;
+
+	void sceneStart();
+	void sceneStop();
+
 	float m_AspectRatio = 1.0f;
 	glm::vec2 lastViewportSize = { 0, 0 };
 	Hzn::OrthographicCameraController m_EditorCameraController;
@@ -44,7 +46,6 @@ private:
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
-	float m_CameraZoom = 1.0f;
 
 	std::vector<std::string> rootObjects;
 
@@ -57,8 +58,5 @@ private:
 	glm::vec2 m_ViewportBounds[2]{ {0.0f, 0.0f}, {0.0f, 0.0f} };
 
 	std::shared_ptr<Hzn::Project> m_ActiveProject;
-	//bool request_NewScene = false;
-	bool request_OpenScene = false;
-	//bool canCreateProject = false;
 	ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 };

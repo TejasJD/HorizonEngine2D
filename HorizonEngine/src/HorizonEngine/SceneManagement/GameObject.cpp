@@ -8,7 +8,7 @@ namespace Hzn
 {
 	static std::unordered_set<uint32_t> allUnder;
 
-	void GameObject::setParent(GameObject& obj) const 
+	void GameObject::setParent(GameObject& obj)
 	{
 		isValid();
 
@@ -17,6 +17,7 @@ namespace Hzn
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
 		if (obj) {
+			auto& objrelationComponent = m_Scene->m_Registry.get<RelationComponent>(obj.m_ObjectId);
 			if (!isAncestorOf(obj)) {
 				if (getComponent<Hzn::RelationComponent>().hasParent()) {
 					getParent().removeChild(*this);
@@ -89,7 +90,7 @@ namespace Hzn
 		return m_Scene->m_Registry.get<RelationComponent>(m_ObjectId).m_ChildCount;
 	}
 
-	void GameObject::addChild(const GameObject& obj)
+	void GameObject::addChild(GameObject& obj)
 	{
 		// if this game object itself is valid.
 		isValid();
@@ -100,6 +101,11 @@ namespace Hzn
 		}
 		// if 'obj' and 'this' are the same objects.
 		if (obj == *this) return;
+
+		if(obj.getParent())
+		{
+			obj.getParent().removeChild(obj);
+		}
 
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 		auto curr = relationComponent.m_FirstChild;
@@ -143,7 +149,7 @@ namespace Hzn
 		childTransform.m_Scale = scale;
 	}
 
-	void GameObject::removeChild(const GameObject& obj)
+	void GameObject::removeChild(GameObject& obj)
 	{
 		isValid();
 		if (!sameScene(obj))
@@ -234,6 +240,7 @@ namespace Hzn
 		auto clonedObject = duplicate();
 		auto& clonedRel = m_Scene->m_Registry.get<RelationComponent>(clonedObject.m_ObjectId);
 		auto& originalParentRel = getParent().getComponent<RelationComponent>();
+		originalParentRel.m_ChildCount++;
 		auto curr = originalParentRel.m_FirstChild;
 		auto prev = curr;
 
@@ -274,6 +281,7 @@ namespace Hzn
 			}
 			prev = clonedChild.m_ObjectId;
 			childRel.m_Parent = clonedParent.m_ObjectId;
+			parentRel.m_ChildCount++;
 		}
 
 		return clonedParent;

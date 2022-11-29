@@ -93,8 +93,9 @@ void Modals::getNewProJPopup() {
 
 
 
-void Modals::getNewScenePopup() {
+bool Modals::getNewScenePopup() {
 	//Begin new scene - pop up modal
+	bool success = false;
 	if (request_NewScene)
 		ImGui::OpenPopup("New Scene");
 
@@ -115,10 +116,12 @@ void Modals::getNewScenePopup() {
 				EditorData::s_Scene_Active = EditorData::m_Project_Active->getActiveScene();
 				memset(sceneNameBuffer, '\0', sizeof(sceneNameBuffer));
 				request_NewScene = false;
+				success = true;
 			}
 		}
 		ImGui::EndPopup();
 	}//END New Scene
+	return success;
 }
 
 
@@ -146,6 +149,4 @@ void Modals::openProject()
 	}
 
 	Hzn::AssetManager::init(projectRootFolder);
-
-
 }

@@ -61,15 +61,15 @@ namespace Hzn
 
 		uint32_t getObjectId() const { return entt::to_integral(m_ObjectId); }
 
-		void setParent(GameObject& obj) const;
+		void setParent(GameObject& obj);
 		GameObject getParent() const;
 		GameObject getNextSibling() const;
 		GameObject getPrevSibling() const;
 		std::vector<GameObject> getChildren() const;
 		size_t getChildCount() const;
 		std::vector<GameObject> getChildrenAll() const;
-		void addChild(const GameObject& obj);
-		void removeChild(const GameObject& obj);
+		void addChild(GameObject& obj);
+		void removeChild(GameObject& obj);
 		bool isAncestorOf(const GameObject& obj) const;
 		glm::mat4 getTransform() const;
 		GameObject duplicateAsChild();

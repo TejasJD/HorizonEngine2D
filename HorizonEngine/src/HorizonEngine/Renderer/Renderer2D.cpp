@@ -10,12 +10,11 @@ namespace Hzn
 
 	struct Vertex
 	{
-		glm::vec3 position;
-		glm::vec4 color;
-		glm::vec2 texCoord;
-		float texSlot;
-		float tilingFactor;
-		int entityId;
+		glm::vec3 position = {0.0f, 0.0f, 0.0f};
+		glm::vec4 color = {0.0f, 0.0f, 0.0f, 0.0f};
+		glm::vec2 texCoord = {0.0f, 0.0f};
+		int texSlot = 0;
+		int entityId = -1;
 	};
 
 	struct RenderData
@@ -97,12 +96,11 @@ namespace Hzn
 
 		BufferLayout layout =
 		{
-			{Hzn::ShaderDataType::Vec3f, "a_Pos"},
-			{Hzn::ShaderDataType::Vec4f, "a_Color"},
-			{Hzn::ShaderDataType::Vec2f, "a_TexCoord"},
-			{Hzn::ShaderDataType::Float, "a_TexSlot"},
-			{Hzn::ShaderDataType::Float, "a_TilingFactor"},
-			{Hzn::ShaderDataType::Int, "a_EntityId"}
+			{ShaderDataType::Vec3f, "a_Pos"},
+			{ShaderDataType::Vec4f, "a_Color"},
+			{ShaderDataType::Vec2f, "a_TexCoord"},
+			{ShaderDataType::Int, "a_TexSlot"},
+			{ShaderDataType::Int, "a_EntityId"}
 		};
 
 		data.vbo->setBufferLayout(layout);
@@ -135,6 +133,7 @@ namespace Hzn
 	{
 		data.ptr = nullptr;
 		delete[] data.buffer;
+		data.buffer = nullptr;
 	}
 
 	void Renderer2D::beginScene(const OrthographicCamera& camera)
@@ -203,7 +202,6 @@ namespace Hzn
 	void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color, int id)
 	{
 		/*HZN_WARN(id);*/
-		constexpr float textureIndex = 0.0f;
 
 		if (data.curidx >= Hzn::RenderData::mxindices)
 		{
@@ -219,8 +217,7 @@ namespace Hzn
 			data.ptr->position = transform * data.quadPositions[i];
 			data.ptr->color = color;
 			data.ptr->texCoord = data.quadTexCoords[i];
-			data.ptr->texSlot = textureIndex;
-			data.ptr->tilingFactor = 1.0f;
+			data.ptr->texSlot = 0;
 			data.ptr->entityId = id;
 			data.ptr++;
 		}
@@ -237,7 +234,7 @@ namespace Hzn
 			beginBatch();
 		}
 		// texture slot that the quad will be using.
-		float textureIndex = 0.0f;
+		int textureIndex = 0.0f;
 
 		// if this texture is already one of the bound textures, we just use that texture slot for
 		// this quad.
@@ -245,7 +242,7 @@ namespace Hzn
 		{
 			if (data.textureSlots[i] == texture)
 			{
-				textureIndex = (float)i;
+				textureIndex = i;
 				break;
 			}
 		}
@@ -265,7 +262,6 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = data.quadTexCoords[i];
 			data.ptr->texSlot = textureIndex;
-			data.ptr->tilingFactor = 1.0f;
 			data.ptr->entityId = id;
 			data.ptr++;
 		}
@@ -283,7 +279,7 @@ namespace Hzn
 		}
 
 		// texture slot that the quad will be using.
-		float textureIndex = 0.0f;
+		int textureIndex = 0;
 
 		// if this texture is already one of the bound textures, we just use that texture slot for
 		// this quad.
@@ -291,14 +287,14 @@ namespace Hzn
 		{
 			if (data.textureSlots[i] == sprite->getSpriteSheet())
 			{
-				textureIndex = (float)i;
+				textureIndex = i;
 				break;
 			}
 		}
 
 		// if this is found to be a new texture, we bind it to the available slot and increment
 		// the slot pointer.
-		if (textureIndex == 0.0f)
+		if (textureIndex == 0)
 		{
 			textureIndex = data.textureidx;
 			data.textureSlots[data.textureidx++] = sprite->getSpriteSheet();
@@ -310,7 +306,6 @@ namespace Hzn
 			data.ptr->color = color;
 			data.ptr->texCoord = sprite->getTexCoords()[i];
 			data.ptr->texSlot = textureIndex;
-			data.ptr->tilingFactor = 1.0f;
 			data.ptr->entityId = id;
 			data.ptr++;
 		}
