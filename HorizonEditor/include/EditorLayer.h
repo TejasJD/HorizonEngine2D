@@ -32,6 +32,12 @@ private:
 	void sceneStart();
 	void sceneStop();
 
+	void copyObject();
+	void pasteObject();
+	void duplicateObject();
+	void createObject();
+	void deleteObject();
+
 	float m_AspectRatio = 1.0f;
 	glm::vec2 lastViewportSize = { 0, 0 };
 	Hzn::OrthographicCameraController m_EditorCameraController;
@@ -52,7 +58,7 @@ private:
 	uint32_t m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 	int32_t m_HoveredObjectId = -1;
 
-	Hzn::GameObject copiedGameObject;
+	uint32_t m_CopiedObjectId = std::numeric_limits<uint32_t>::max();
 	bool openHierarchyPopup = false;
 
 	glm::vec2 m_ViewportBounds[2]{ {0.0f, 0.0f}, {0.0f, 0.0f} };

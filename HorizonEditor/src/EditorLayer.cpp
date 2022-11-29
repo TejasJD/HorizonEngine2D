@@ -97,6 +97,28 @@ void EditorLayer::onEvent(Hzn::Event& e)
 		m_EditorCameraController.onEvent(e);
 	}
 
+	if (Hzn::Input::keyPressed(Hzn::Key::LeftControl))
+	{
+		if (Hzn::Input::keyPressed(Hzn::Key::C)) {
+			copyObject();
+		}
+
+		if (Hzn::Input::keyPressed(Hzn::Key::V)) {
+			pasteObject();
+		}
+
+		if (Hzn::Input::keyPressed(Hzn::Key::D)) {
+			duplicateObject();
+		}
+
+		if (Hzn::Input::keyPressed(Hzn::Key::N)) {
+			createObject();
+		}
+	}
+
+	if (Hzn::Input::keyPressed(Hzn::Key::Delete)) {
+		deleteObject();
+	}
 }
 
 
@@ -590,53 +612,22 @@ void EditorLayer::drawHierarchy()
 
 			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
 				if (ImGui::MenuItem("Copy", NULL, false)) {
-					/*copiedGameObject = EditorData::s_Scene_Active->getGameObject(selectedObject);*/
+					copyObject();
 				}
 				if (ImGui::MenuItem("Paste", NULL, false)) {
-					// Do stuff here 
+					pasteObject();
 				}
 				if (ImGui::MenuItem("Duplicate", NULL, false)) {
 					// Do stuff here
-					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-					if(obj.getParent())
-					{
-						obj.duplicateAsChild();
-					}
-					else obj.duplicate();
+					duplicateObject();
 				}
 				if (ImGui::MenuItem("Delete", NULL, false)) {
-					Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-					EditorData::s_Scene_Active->destroyGameObject(obj);
-					m_HoveredObjectId = -1;
-					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+					deleteObject();
 				}
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("Create Empty", NULL, false)) {
-					// Do stuff here
-					Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
-
-					if(m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
-					{
-						Hzn::GameObject selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-						selectedObj.addChild(newObject);
-						auto& transformComponent = newObject.getComponent<Hzn::TransformComponent>();
-						auto transform = selectedObj.getTransform() * transformComponent.getModelMatrix();
-
-						glm::vec3 translation = glm::vec3(0.0f);
-						glm::quat orientation = glm::quat();
-						glm::vec3 scale = glm::vec3(0.0f);
-						glm::vec3 skew = glm::vec3(0.0f);
-						glm::vec4 perspective = glm::vec4(0.0f);
-						glm::decompose(transform, scale, orientation, translation, skew, perspective);
-
-						glm::vec3 rotation = glm::eulerAngles(orientation);
-						rotation = glm::degrees(rotation);
-
-						transformComponent.m_Translation = translation;
-						transformComponent.m_Rotation = rotation;
-						transformComponent.m_Scale = scale;
-					}
+					createObject();
 				}
 
 				ImGui::EndPopup();
@@ -805,4 +796,70 @@ bool EditorLayer::onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e)
 	}
 
 	return false;
+}
+
+void EditorLayer::copyObject() 
+{
+	if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
+		m_CopiedObjectId = m_SelectedObjectId;
+	}
+}
+
+void EditorLayer::pasteObject()
+{
+	if (m_CopiedObjectId != std::numeric_limits<uint32_t>::max() && EditorData::s_Scene_Active->getGameObjectById(m_CopiedObjectId)) {
+		Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_CopiedObjectId);
+		if (obj.getParent())
+		{
+			obj.duplicateAsChild();
+		}
+		else obj.duplicate();
+	}
+}
+
+void EditorLayer::duplicateObject()
+{
+	Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+	if (obj.getParent())
+	{
+		obj.duplicateAsChild();
+	}
+	else obj.duplicate();
+}
+
+void EditorLayer::createObject()
+{
+	Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
+
+	if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
+	{
+		Hzn::GameObject selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+		selectedObj.addChild(newObject);
+		auto& transformComponent = newObject.getComponent<Hzn::TransformComponent>();
+		auto transform = selectedObj.getTransform() * transformComponent.getModelMatrix();
+
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+		glm::vec3 rotation = glm::eulerAngles(orientation);
+		rotation = glm::degrees(rotation);
+
+		transformComponent.m_Translation = translation;
+		transformComponent.m_Rotation = rotation;
+		transformComponent.m_Scale = scale;
+	}
+}
+
+void EditorLayer::deleteObject()
+{
+	if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
+		Hzn::GameObject obj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+		EditorData::s_Scene_Active->destroyGameObject(obj);
+		m_HoveredObjectId = -1;
+		m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+	}
 }
