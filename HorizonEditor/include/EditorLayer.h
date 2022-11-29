@@ -46,8 +46,6 @@ private:
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
 
-	bool m_PlayMode = false;
-
 	std::shared_ptr<Hzn::Scene> m_Scene;
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;

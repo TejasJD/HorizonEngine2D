@@ -110,13 +110,24 @@ namespace Hzn
 			for (auto entity : view)
 			{
 				GameObject obj = { entity, this };
-				auto& transform = obj.getComponent<TransformComponent>();
+				auto transform = obj.getTransform();
+				auto& transformComponent = obj.getComponent<TransformComponent>();
 				auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+
+				glm::vec3 translation = glm::vec3(0.0f);
+				glm::quat orientation = glm::quat();
+				glm::vec3 scale = glm::vec3(0.0f);
+				glm::vec3 skew = glm::vec3(0.0f);
+				glm::vec4 perspective = glm::vec4(0.0f);
+				glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+				glm::vec3 rotation = glm::eulerAngles(orientation);
+				rotation = glm::degrees(rotation);
 
 				b2BodyDef bodyDef;
 				bodyDef.type = (b2BodyType)rb2d.m_Type;
-				bodyDef.position.Set(transform.m_Translation.x, transform.m_Translation.y);
-				bodyDef.angle = glm::radians(transform.m_Rotation.z);
+				bodyDef.position.Set(translation.x, translation.y);
+				bodyDef.angle = glm::radians(rotation.z);
 
 				b2Body* body = m_World->CreateBody(&bodyDef);
 				body->SetFixedRotation(rb2d.m_FixedRotation);
@@ -127,7 +138,23 @@ namespace Hzn
 					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
 					b2PolygonShape polygonShape;
 
-					polygonShape.SetAsBox(transform.m_Scale.x * bc2d.size.x, transform.m_Scale.y * bc2d.size.y);
+					polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+					b2FixtureDef fixtureDef;
+					fixtureDef.shape = &polygonShape;
+					fixtureDef.density = bc2d.m_Density;
+					fixtureDef.friction = bc2d.m_Friction;
+					fixtureDef.restitution = bc2d.m_Restitution;
+					fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+					body->CreateFixture(&fixtureDef);
+				}
+				else
+				{
+					obj.addComponent<BoxCollider2DComponent>();
+					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+					b2PolygonShape polygonShape;
+
+					polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
 
 					b2FixtureDef fixtureDef;
 					fixtureDef.shape = &polygonShape;
@@ -265,11 +292,34 @@ namespace Hzn
 
 					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 					const auto& position = body->GetPosition();
+					if(obj.getParent())
+					{
+						auto objLocalMat = glm::mat4(1.0f);
+						objLocalMat = glm::translate(objLocalMat, glm::vec3(position.x, position.y, transform.m_Translation.z));
+						objLocalMat = glm::rotate(objLocalMat, glm::radians(body->GetAngle()), glm::vec3(0, 0, 1));
+						auto modelMat = obj.getParent().getTransform();
+						modelMat = glm::inverse(modelMat) * objLocalMat;
 
-					transform.m_Translation.x = position.x;
-					transform.m_Translation.y = position.y;
+						glm::vec3 translation = glm::vec3(0.0f);
+						glm::quat orientation = glm::quat();
+						glm::vec3 scale = glm::vec3(0.0f);
+						glm::vec3 skew = glm::vec3(0.0f);
+						glm::vec4 perspective = glm::vec4(0.0f);
+						glm::decompose(modelMat, scale, orientation, translation, skew, perspective);
 
-					transform.m_Rotation.z = glm::degrees(body->GetAngle());
+						glm::vec3 rotation = glm::eulerAngles(orientation);
+
+						transform.m_Translation.x = translation.x;
+						transform.m_Translation.y = translation.y;
+						transform.m_Rotation.z = glm::degrees(rotation.z);
+
+					}
+					else
+					{
+						transform.m_Translation.x = position.x;
+						transform.m_Translation.y = position.y;
+						transform.m_Rotation.z = glm::degrees(body->GetAngle());
+					}
 				}
 			}
 
@@ -300,7 +350,7 @@ namespace Hzn
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);
 					GameObject obj = getGameObjectById(entt::to_integral(entity));
 
-					Renderer2D::drawSprite(transformComponent.getModelMatrix(), renderComponent, (int)entity);
+					Renderer2D::drawSprite(obj.getTransform(), renderComponent, (int)entity);
 
 				}
 				Renderer2D::endScene();

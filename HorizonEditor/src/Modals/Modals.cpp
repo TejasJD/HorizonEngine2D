@@ -36,8 +36,9 @@ void Modals::getCenterWindow() {
 }
 
 
-void Modals::getNewProJPopup() {
+bool Modals::getNewProJPopup() {
 	//Begin New Project - popup modal
+	bool result = false;
 	if (request_NewProject)
 		ImGui::OpenPopup("New Project");
 
@@ -81,12 +82,14 @@ void Modals::getNewProJPopup() {
 				memset(projectNameBuffer, '\0', sizeof(projectNameBuffer));
 				memset(directoryPathBuffer, '\0', sizeof(directoryPathBuffer));
 				openProject();
+				result = true;
 			}
 			ImGui::CloseCurrentPopup();
 			request_NewProject = false;
 		}
 		ImGui::EndPopup();
 	}//End new project
+	return result;
 }
 
 
