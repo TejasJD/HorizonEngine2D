@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Project.h"
 #include "HorizonEngine/SceneManagement/SceneManager.h"
+#include "HorizonEngine/Scripting/ScriptEngine.h"
 
 namespace fs = std::filesystem;
 
@@ -25,8 +26,21 @@ namespace Hzn
 		fs::create_directory(m_Path.parent_path().string() + "\\scenes");
 		fs::copy(fs::current_path().string() + "\\icons", m_Path.parent_path().string() + "\\icons");
 
+		// set up script directories and files.
+		fs::create_directories(m_Path.parent_path().string() + "\\ScriptAppLib\\Source");
+		std::ofstream os(m_Path.parent_path().string() + "\\ScriptAppLib\\Source\\Player.cs");
+		os.close();
+
+		// copy lua file from executable to the project directory.
+		fs::copy(fs::current_path().string() + "\\premake5.lua", m_Path.parent_path().string() + "\\premake5.lua");
+
+		// execute premake with the project's lua file as --file argument.
+		std::string premake = "premake5 --file=";
+		std::string command = premake + m_Path.parent_path().string() + "\\premake5.lua" + " vs2022";
+		system(command.c_str());
+
 		// create file.
-		std::ofstream os(m_Path);
+		os.open(m_Path);
 		os.close();
 		
 	}
@@ -48,6 +62,9 @@ namespace Hzn
 		}
 
 		is.close();
+		// load Script App Assemblies.
+		/*ScriptEngine::LoadAppAssembly(m_Path.parent_path().string() + "\\bin\\ScriptAppLib.dll");
+		ScriptEngine::PrintAppAssemblyTypes();*/
 	}
 
 	bool Project::setActiveScene(const std::filesystem::path& filepath)

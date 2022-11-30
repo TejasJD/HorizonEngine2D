@@ -52,7 +52,10 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.cpp"
 	"src/HorizonEngine/FileManagement/Project.cpp"
 	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
-	"src/HorizonEngine/Scripting/ScriptRegistry.cpp" "src/HorizonEngine/Components/Component.cpp" "src/HorizonEngine/SceneManagement/FunctionRegistry.cpp")
+	"src/HorizonEngine/Scripting/ScriptRegistry.cpp"
+	"src/HorizonEngine/Components/Component.cpp"
+	"src/HorizonEngine/SceneManagement/FunctionRegistry.cpp"
+)
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -113,7 +116,8 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
 	"src/HorizonEngine/Scripting/ScriptEngine.h"
-	"src/HorizonEngine/Scripting/ScriptRegistry.h" "src/HorizonEngine/SceneManagement/FunctionRegistry.h")
+	"src/HorizonEngine/Scripting/ScriptRegistry.h"
+	"src/HorizonEngine/SceneManagement/FunctionRegistry.h")
 
 set(IMGUIZMO_FILES
 	"vendor/ImGuizmo/GraphEditor.cpp"
@@ -135,12 +139,17 @@ set(IMNODES_FILES
 	"vendor/imnodes/imnodes_internal.h"
 )
 
+set(FILEWATCH_FILES
+	"vendor/filewatch/FileWatch.hpp"
+)
+
 # Add source to this project's executable.
 add_library (HorizonEngine
 	${HZN_SOURCE_FILES}
 	${HZN_HEADER_FILES}
 	${IMGUIZMO_FILES}
 	${IMNODES_FILES}
+	${FILEWATCH_FILES}
 )
 
 # compile definitions for 'HorizonEngine' target
@@ -161,6 +170,7 @@ target_include_directories(HorizonEngine
 	vendor/ImGuizmo
 	vendor/imnodes
 	vendor/mono/include
+	vendor/filewatch
 )
 
 # precompiled headers to target 'HorizonEngine'

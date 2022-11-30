@@ -193,6 +193,8 @@ namespace Hzn
 
 		bool m_FixedRotation = false;
 
+		// will store the force, impulse, torque and angular impulse on the body as primitive values.
+
 		// runtime body opaque-pointer (will be stored at different location).
 		void* m_RuntimeBody = nullptr;
 

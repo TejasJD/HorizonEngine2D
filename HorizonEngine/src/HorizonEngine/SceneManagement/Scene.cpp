@@ -291,6 +291,12 @@ namespace Hzn
 
 
 					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+
+					// retrieve parameters from the rigidbody component.
+					// apply those parameters on the body.
+
+					
+					// retrieve the new position.
 					const auto& position = body->GetPosition();
 					if(obj.getParent())
 					{

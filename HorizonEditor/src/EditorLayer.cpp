@@ -48,47 +48,49 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
-	m_FrameBuffer->bind();
-
-	// here, in case if the framebuffer is re-created, and the last known
-	// viewport size does not match the viewport size of the new framebuffer, then
-	// we update all the camera components to the proper aspect ratio, and update the last known viewport size.
-	auto& props = m_FrameBuffer->getProps();
-	if (Hzn::SceneManager::isOpen()) {
-		lastViewportSize = EditorData::s_Scene_Active->onViewportResize(props.width, props.height);
-		m_EditorCameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
-	}
-
-	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-	Hzn::RenderCall::submitClear();
-
-	// clear frame buffer texture attachment that has entity to -1
-	m_FrameBuffer->clearColorAttachment(1, -1);
-
-	if (m_ViewportFocused && m_ViewportHovered &&
-		Hzn::SceneManager::isOpen() &&
-		Hzn::SceneManager::getSceneState() == Hzn::SceneState::Edit)
+	if (Hzn::SceneManager::isOpen())
 	{
-		m_EditorCameraController.onUpdate(ts);
-	}
+		m_FrameBuffer->bind();
+		// here, in case if the framebuffer is re-created, and the last known
+		// viewport size does not match the viewport size of the new framebuffer, then
+		// we update all the camera components to the proper aspect ratio, and update the last known viewport size.
+		auto& props = m_FrameBuffer->getProps();
+		if (Hzn::SceneManager::isOpen()) {
+			lastViewportSize = EditorData::s_Scene_Active->onViewportResize(props.width, props.height);
+			m_EditorCameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
+		}
 
-	Hzn::SceneManager::update(m_EditorCameraController.getCamera(), ts);
-	// checking if the mouse pointer is hovering on the viewport, and retrieving the right position.
-	auto mousePos = ImGui::GetMousePos();
-	mousePos.x -= m_ViewportBounds[0].x;
-	mousePos.y -= m_ViewportBounds[0].y;
-	/*mousePos.y = m_ViewportBounds[0].y - mousePos.y;*/
-	auto viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-	mousePos.y = viewportSize.y - mousePos.y;
-	if (0 < mousePos.x && mousePos.x < viewportSize.x && 0 < mousePos.y && mousePos.y < viewportSize.y)
-	{
-		m_HoveredObjectId = m_FrameBuffer->readPixel(1, mousePos.x, mousePos.y);
+		Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Hzn::RenderCall::submitClear();
+
+		// clear frame buffer texture attachment that has entity to -1
+		m_FrameBuffer->clearColorAttachment(1, -1);
+
+		if (m_ViewportFocused && m_ViewportHovered &&
+			Hzn::SceneManager::isOpen() &&
+			Hzn::SceneManager::getSceneState() == Hzn::SceneState::Edit)
+		{
+			m_EditorCameraController.onUpdate(ts);
+		}
+
+		Hzn::SceneManager::update(m_EditorCameraController.getCamera(), ts);
+		// checking if the mouse pointer is hovering on the viewport, and retrieving the right position.
+		auto mousePos = ImGui::GetMousePos();
+		mousePos.x -= m_ViewportBounds[0].x;
+		mousePos.y -= m_ViewportBounds[0].y;
+		/*mousePos.y = m_ViewportBounds[0].y - mousePos.y;*/
+		auto viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		mousePos.y = viewportSize.y - mousePos.y;
+		if (0 < mousePos.x && mousePos.x < viewportSize.x && 0 < mousePos.y && mousePos.y < viewportSize.y)
+		{
+			m_HoveredObjectId = m_FrameBuffer->readPixel(1, mousePos.x, mousePos.y);
+		}
+		// unbind the current framebuffer.
+		m_FrameBuffer->unbind();
 	}
-	// unbind the current framebuffer.
-	m_FrameBuffer->unbind();
 }
 
-void EditorLayer::onEvent(Hzn::Event& e)
+void EditorLayer::onEvent(Hzn::Event & e)
 {
 	Hzn::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Hzn::MouseButtonPressedEvent>(std::bind(&EditorLayer::onMouseButtonPressed, this, std::placeholders::_1));
@@ -504,16 +506,19 @@ void EditorLayer::onRenderImgui()
 	Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
 	// if viewport size changes then we re-create the frame buffer.
-	glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
-	if (lastViewportSize != viewportSize)
+	if (Hzn::SceneManager::isOpen())
 	{
-		/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
-		m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
-	}
-	/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
+		glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
+		if (lastViewportSize != viewportSize)
+		{
+			/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
+			m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
+		}
+		/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
 
-	ImGui::Image((ImTextureID)(uint64_t)m_FrameBuffer->getColorAttachmentId(),
-		{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+		ImGui::Image((ImTextureID)(uint64_t)m_FrameBuffer->getColorAttachmentId(),
+			{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+	}
 
 	// calculate the minimum and the maximum bounds for the viewport.
 	auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
