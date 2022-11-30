@@ -17,6 +17,17 @@
 
 namespace Hzn
 {
+
+	struct TagComponent
+	{
+		std::string Tag;
+
+		TagComponent() = default;
+		TagComponent(const TagComponent&) = default;
+		TagComponent(const std::string& tag)
+			: Tag(tag) {}
+	};
+
 	std::string sceneStringStorage;
 
 	static b2BodyType toBox2DBodyType(RigidBody2DComponent::BodyType bodyType)
@@ -73,6 +84,8 @@ namespace Hzn
 			RenderComponent,
 			CameraComponent>(outputArchive);
 	}
+
+	
 
 	void Scene::invalidate()
 	{
@@ -421,6 +434,18 @@ namespace Hzn
 		}
 
 		return GameObject{ it->second, this };
+	}
+
+	GameObject Scene::getGameObjectByName(std::string_view name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto gameObject : view)
+		{
+			const TagComponent& tc = view.get<TagComponent>(gameObject);
+			if (tc.Tag == name)
+				return GameObject{ gameObject, this };
+		}
+		return {};
 	}
 
 

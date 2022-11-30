@@ -4,6 +4,7 @@
 
 #include "ScriptEngine.h"
 #include "ScriptRegistry.h"
+#include <SceneManagement/Scene.h>
 
 namespace Hzn
 {
@@ -14,6 +15,9 @@ namespace Hzn
 
 		MonoAssembly* coreAssembly = nullptr;
 		MonoImage* coreAssemblyImage = nullptr;
+
+		Scene* SceneContext = nullptr;
+		std::unordered_map<uint32_t, std::shared_ptr<ScriptInstance>> GameObjectInstances;
 	};
 
 	ScriptData* ScriptEngine::s_Data = nullptr;
@@ -164,5 +168,15 @@ namespace Hzn
 		mono_domain_unload(s_Data->appDomain);
 		s_Data->appDomain = nullptr;
 		s_Data->rootDomain = nullptr;
+	}
+
+	Scene* ScriptEngine::GetSceneContext()
+	{
+		return s_Data->SceneContext;
+	}
+
+	MonoObject* ScriptEngine::GetManagedInstance(uint32_t uuid)
+	{
+		return s_Data->GameObjectInstances.at(uuid)->GetManagedObject();
 	}
 }
