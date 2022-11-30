@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ScriptCoreLib</RootNamespace>
     <AssemblyName>ScriptCoreLib</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,11 +45,18 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\Input.cs" />
     <Compile Include="Source\InternalCalls.cs" />
     <Compile Include="Source\Core.cs" />
+    <Compile Include="Source\Camera.cs" />
+    <Compile Include="Source\KeyCode.cs" />
+    <Compile Include="Source\Player.cs" />
+    <Compile Include="Source\Scene\Components.cs" />
+    <Compile Include="Source\Scene\GameObject.cs" />
+    <Compile Include="Source\Vector2.cs" />
+    <Compile Include="Source\Vector3.cs" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

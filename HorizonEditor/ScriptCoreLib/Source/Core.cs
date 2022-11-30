@@ -8,8 +8,7 @@ namespace Hzn
 
         public Main()
         {
-            Console.WriteLine("Main Constructor!");
-            InternalCalls.Greet();
+            Console.WriteLine("Main Constructor!1233333333333");
         }
 
         public void PrintMessage()
@@ -31,6 +30,12 @@ namespace Hzn
         public void PrintCustomMessage(string message)
         {
             Console.WriteLine($"C# says : {message}");
+        }
+
+        public void PrintKeyCode(KeyCode code)
+        {
+            InternalCalls.Input_IsKeyDown(code);
+
         }
     }
 }
