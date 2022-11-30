@@ -27,7 +27,10 @@ namespace Hzn
 		static void init();
 		static void destroy();
 
-		static void LoadAssembly(const std::filesystem::path& path);
+		static void LoadCoreAssembly(const std::filesystem::path& path);
+		static void LoadAppAssembly(const std::filesystem::path& path);
+		static void PrintCoreAssemblyTypes();
+		static void PrintAppAssemblyTypes();
 	private:
 		static void initMono();
 		static void destroyMono();
