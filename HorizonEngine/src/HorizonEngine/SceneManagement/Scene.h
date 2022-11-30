@@ -50,6 +50,7 @@ namespace Hzn
 		GameObject createGameObject(const std::string& name);
 		void destroyGameObject(GameObject& obj);
 		GameObject getGameObjectById(uint32_t id);
+		GameObject getGameObjectByName(const std::string& name);
 		std::vector<uint32_t> getAllRootIds() const;
 		std::vector<uint32_t> getAllObjectIds() const;
 

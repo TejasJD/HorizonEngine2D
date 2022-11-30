@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "box2d/b2_math.h"
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
@@ -133,37 +134,23 @@ namespace Hzn
 				body->SetFixedRotation(rb2d.m_FixedRotation);
 				rb2d.m_RuntimeBody = body;
 
-				if (obj.hasComponent<BoxCollider2DComponent>())
-				{
-					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
-					b2PolygonShape polygonShape;
-
-					polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
-
-					b2FixtureDef fixtureDef;
-					fixtureDef.shape = &polygonShape;
-					fixtureDef.density = bc2d.m_Density;
-					fixtureDef.friction = bc2d.m_Friction;
-					fixtureDef.restitution = bc2d.m_Restitution;
-					fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
-					body->CreateFixture(&fixtureDef);
-				}
-				else
+				if (!obj.hasComponent<BoxCollider2DComponent>())
 				{
 					obj.addComponent<BoxCollider2DComponent>();
-					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
-					b2PolygonShape polygonShape;
-
-					polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
-
-					b2FixtureDef fixtureDef;
-					fixtureDef.shape = &polygonShape;
-					fixtureDef.density = bc2d.m_Density;
-					fixtureDef.friction = bc2d.m_Friction;
-					fixtureDef.restitution = bc2d.m_Restitution;
-					fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
-					body->CreateFixture(&fixtureDef);
 				}
+
+				auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+				b2PolygonShape polygonShape;
+
+				polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &polygonShape;
+				fixtureDef.density = bc2d.m_Density;
+				fixtureDef.friction = bc2d.m_Friction;
+				fixtureDef.restitution = bc2d.m_Restitution;
+				fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
 			}
 
 			std::cout << m_GameObjectIdMap.size() << std::endl;
@@ -276,7 +263,7 @@ namespace Hzn
 			// update physics
 			{
 				const int32_t velocityIterations = 6;
-				const int32_t positionIterations = 2;
+				const int32_t positionIterations = 3;
 
 				m_World->Step(ts, velocityIterations, positionIterations);
 
@@ -289,8 +276,14 @@ namespace Hzn
 					auto& transform = obj.getComponent<TransformComponent>();
 					auto& rb2d = obj.getComponent<RigidBody2DComponent>();
 
-
 					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+
+					// Apply forces
+					body->ApplyForceToCenter(b2Vec2(rb2d.m_Force.x, rb2d.m_Force.y), true);
+					body->ApplyLinearImpulseToCenter(b2Vec2(rb2d.m_ImpulseForce.x, rb2d.m_ImpulseForce.y), true);
+					body->ApplyTorque(rb2d.m_Torque, true);
+					rb2d.resetForces();
+
 					const auto& position = body->GetPosition();
 					if(obj.getParent())
 					{
@@ -421,6 +414,24 @@ namespace Hzn
 		}
 
 		return GameObject{ it->second, this };
+	}
+
+	GameObject Scene::getGameObjectByName(const std::string& name) {
+		if (!m_Valid)
+		{
+			throw std::runtime_error("trying to get game objects from invalidated scene!");
+		}
+
+		std::vector<uint32_t> allIds = getAllObjectIds();
+		for (int i = 0; i < allIds.size(); i++) {
+			GameObject obj = getGameObjectById(allIds.at(i));
+
+			auto& nameComponent = obj.getComponent<NameComponent>();
+			if (nameComponent.m_Name == name) return GameObject{ m_GameObjectIdMap.find(allIds.at(i))->second, this };
+		}
+
+		// Object not found
+		throw std::runtime_error("Game object not found!");
 	}
 
 

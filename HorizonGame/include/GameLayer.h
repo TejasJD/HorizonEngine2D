@@ -15,7 +15,9 @@ public:
 	virtual void onRenderImgui() override;
 
 private:
-	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
+	std::shared_ptr<Hzn::Scene> m_ActiveScene;
+
+	int32_t m_PlayerObjectId = std::numeric_limits<uint32_t>::max();
 
 	std::vector<std::string> sceneNames{ "mainMenu.scene", "level1.scene", "level2.scene", "level3.scene" };
 };

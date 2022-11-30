@@ -185,6 +185,8 @@ namespace Hzn
 
 			ImGui::Checkbox("Fixed Rotation", &component.m_FixedRotation);
 
+			ImGui::DragFloat("Mass", &component.m_Mass, 0.01f, 0.0f, 10000.0f);
+
 			ImGui::TreePop();
 		}
 	}

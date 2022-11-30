@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "Component.h"
 #include "HorizonEngine/SceneManagement/FunctionRegistry.h"
 
