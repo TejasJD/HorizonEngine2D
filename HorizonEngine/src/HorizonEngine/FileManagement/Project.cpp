@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Project.h"
 #include "HorizonEngine/SceneManagement/SceneManager.h"
-#include "HorizonEngine/Scripting/ScriptEngine.h"
+#include "HorizonEngine/App.h"
 
 namespace fs = std::filesystem;
 
@@ -10,7 +10,6 @@ namespace Hzn
 	Project::Project(const std::string& name, const fs::path& directoryPath)
 	{
 		// then this is the a new project.
-		auto currentPath = fs::current_path().string();
 		HZN_CORE_ASSERT(fs::is_directory(directoryPath), "Provided path isn't a directory!");
 		
 		m_Path = fs::path(directoryPath.string() + "\\" + name);
@@ -25,7 +24,7 @@ namespace Hzn
 		fs::create_directory(m_Path.parent_path().string() + "\\sprites");
 		fs::create_directory(m_Path.parent_path().string() + "\\audios");
 		fs::create_directory(m_Path.parent_path().string() + "\\scenes");
-		fs::copy(currentPath + "\\icons", m_Path.parent_path().string() + "\\icons");
+		fs::copy(fs::current_path().string() + "\\icons", m_Path.parent_path().string() + "\\icons");
 
 		// set up script directories and files.
 		fs::create_directories(m_Path.parent_path().string() + "\\ScriptAppLib\\Source");
@@ -40,10 +39,10 @@ namespace Hzn
 		os.close();
 
 		// copy lua file from executable to the project directory.
-		fs::copy(currentPath + "\\premake5.lua", m_Path.parent_path().string() + "\\premake5.lua");
+		fs::copy(fs::current_path().string() + "\\premake5.lua", m_Path.parent_path().string() + "\\premake5.lua");
 
 		// execute premake with the project's lua file as --file argument.
-		std::string premake = "premake5 --file=";
+		std::string premake = Hzn::App::getApp().getExecutablePath().string() + "\\premake5 --file=";
 		std::string command = premake + m_Path.parent_path().string() + "\\premake5.lua" + " vs2022";
 		system(command.c_str());
 

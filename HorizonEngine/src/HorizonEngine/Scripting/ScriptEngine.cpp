@@ -1,6 +1,8 @@
 #include "pch.h"
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/mono-debug.h>
+#include <mono/metadata/threads.h>
 
 #include "HorizonEngine/FileManagement/ProjectManager.h"
 #include "ScriptEngine.h"
@@ -20,7 +22,7 @@ namespace Hzn
 		MonoAssembly* appAssembly = nullptr;
 		MonoImage* appAssemblyImage = nullptr;
 		std::filesystem::path appAssemblyPath;
-		bool appAssemblyLoaded = false;
+		bool reloadPending = false;
 	};
 
 	ScriptData* ScriptEngine::s_Data = nullptr;
@@ -105,7 +107,6 @@ namespace Hzn
 		std::cout << std::filesystem::absolute(path) << std::endl;
 		s_Data->appAssembly = Utils::LoadCSharpAssembly(path.string());
 		s_Data->appAssemblyImage = mono_assembly_get_image(s_Data->appAssembly);
-		s_Data->appAssemblyLoaded = true;
 	}
 
 	std::filesystem::path ScriptEngine::GetCoreAssemblyPath()
@@ -145,11 +146,17 @@ namespace Hzn
 			}
 		}
 		HZN_CORE_INFO("Reload Successful!");
+		s_Data->reloadPending = false;
 	}
 
-	bool ScriptEngine::isProjectLoaded()
+	void ScriptEngine::startReload()
 	{
-		return s_Data->appAssemblyLoaded;
+		s_Data->reloadPending = true;
+	}
+
+	bool ScriptEngine::isReloadPending()
+	{
+		return s_Data->reloadPending;
 	}
 
 
@@ -206,6 +213,7 @@ namespace Hzn
 
 		s_Data->rootDomain = mono_jit_init("HorizonScriptRuntime");
 		HZN_CORE_ASSERT(s_Data->rootDomain, "Root Domain is null!");
+		mono_thread_set_main(mono_thread_current());
 	}
 
 	void ScriptEngine::destroyMono()

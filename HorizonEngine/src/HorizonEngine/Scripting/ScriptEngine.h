@@ -23,6 +23,7 @@ namespace Hzn
 
 	class ScriptEngine
 	{
+		friend class ProjectManager;
 	public:
 		static void init();
 		static void destroy();
@@ -33,11 +34,12 @@ namespace Hzn
 		static std::filesystem::path GetCoreAssemblyPath();
 
 		static void ReloadAssembly();
-		static bool isProjectLoaded();
-
 		static void PrintCoreAssemblyTypes();
 		static void PrintAppAssemblyTypes();
 	private:
+		static void startReload();
+		static bool isReloadPending();
+
 		static void initMono();
 		static void destroyMono();
 		static ScriptData* s_Data;

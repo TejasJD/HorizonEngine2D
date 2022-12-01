@@ -15,7 +15,8 @@ namespace Hzn
 	//! App class constructor, initializes the application
 	App::App() : m_Running(true)
 	{
-		/*HZN_CORE_ASSERT(false, "application already initialized");*/
+		m_ExecutablePath = std::filesystem::current_path();
+		HZN_CORE_CRITICAL("ExecutablePath: {}", m_ExecutablePath.string());
 		m_Instance = this;
 		m_Window = Window::create(800, 600, "HorizonEngine");
 		// set the App on event function as callback for the widow class.
@@ -48,6 +49,8 @@ namespace Hzn
 			const auto currentFrameTime = static_cast<const float>(glfwGetTime());
 			const TimeStep deltaTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
+
+			executeMainThreadQueue();
 
 			//! general layer update
 			if (!m_Minimized) 
