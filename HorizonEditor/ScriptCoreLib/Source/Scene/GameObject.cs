@@ -42,16 +42,6 @@ namespace Hzn
             return component;
         }
 
-        public GameObject GetGameObjectByName(string name)
-        {
-            ulong GameObjectID = InternalCalls.GameObject_GetGameObjectByName(name);
-            if (GameObjectID == 0)
-                return null;
-
-            return new GameObject(GameObjectID);
-        }
-
-
         public T As<T>() where T : GameObject, new()
         {
             object instance = InternalCalls.GetScriptInstance(ID);

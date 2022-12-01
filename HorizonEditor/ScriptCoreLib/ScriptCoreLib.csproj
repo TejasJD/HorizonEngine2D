@@ -48,7 +48,6 @@
     <Compile Include="Source\Input.cs" />
     <Compile Include="Source\InternalCalls.cs" />
     <Compile Include="Source\Core.cs" />
-    <Compile Include="Source\Camera.cs" />
     <Compile Include="Source\KeyCode.cs" />
     <Compile Include="Source\Player.cs" />
     <Compile Include="Source\Scene\Components.cs" />

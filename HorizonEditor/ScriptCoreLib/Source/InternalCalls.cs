@@ -12,9 +12,6 @@ namespace Hzn
         internal extern static bool Input_IsKeyDown(KeyCode keycode);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static ulong GameObject_GetGameObjectByName(string name);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool GameObject_HasComponent(ulong gameObjectID, Type componentType);
         
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

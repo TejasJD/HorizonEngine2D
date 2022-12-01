@@ -436,19 +436,6 @@ namespace Hzn
 		return GameObject{ it->second, this };
 	}
 
-	GameObject Scene::getGameObjectByName(std::string_view name)
-	{
-		auto view = m_Registry.view<TagComponent>();
-		for (auto gameObject : view)
-		{
-			const TagComponent& tc = view.get<TagComponent>(gameObject);
-			if (tc.Tag == name)
-				return GameObject{ gameObject, this };
-		}
-		return {};
-	}
-
-
 	std::vector<uint32_t> Scene::getAllRootIds() const
 	{
 		std::vector<uint32_t> roots;

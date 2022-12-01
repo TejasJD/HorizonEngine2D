@@ -53,23 +53,6 @@ namespace Hzn
 
             }
 
-            GameObject cameraObject = GetGameObjectByName("Camera");
-            if (cameraObject != null)
-            {
-                Camera camera = cameraObject.As<Camera>();
-
-                //Control camera distance based on keyboard input
-                if (Input.IsKeyDown(KeyCode.Q))
-                {
-                    camera.DistanceFromPlayer += speed * 2.0f * ts;
-
-                }
-                else if (Input.IsKeyDown(KeyCode.E))
-                {
-                    camera.DistanceFromPlayer -= speed * 2.0f * ts;
-                }
-            }
-
             velocity *= speed * ts;
 
             m_Rigidbody.ApplyLinearImpulse(velocity.XY, true);

@@ -27,20 +27,6 @@ namespace Hzn
 		return Input::keyPressed(keycode);
 	}
 
-	static uint64_t GameObject_GetGameObjectByName(MonoString* name)
-	{
-		char* nameCStr = mono_string_to_utf8(name);
-
-		Scene* scene = ScriptEngine::GetSceneContext();
-		GameObject gameObject = scene->getGameObjectByName(nameCStr);
-		mono_free(nameCStr);
-
-		if (!gameObject)
-			return 0;
-
-		return gameObject.getObjectId();
-	}
-
 	static bool GameObject_HasComponent(uint32_t gameObjectID, MonoReflectionType* componentType)
 	{
 
@@ -97,7 +83,6 @@ namespace Hzn
 	{
 		HZN_ADD_INTERNAL_CALL(Greet);
 		HZN_ADD_INTERNAL_CALL(Input_IsKeyDown);
-		HZN_ADD_INTERNAL_CALL(GameObject_GetGameObjectByName);
 		HZN_ADD_INTERNAL_CALL(GameObject_HasComponent);
 		HZN_ADD_INTERNAL_CALL(GetScriptInstance);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);

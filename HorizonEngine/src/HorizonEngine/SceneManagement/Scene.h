@@ -48,7 +48,6 @@ namespace Hzn
 		void onUpdate(TimeStep ts);
 
 		GameObject createGameObject(const std::string& name);
-		GameObject getGameObjectByName(std::string_view name);
 		void destroyGameObject(GameObject& obj);
 		GameObject getGameObjectById(uint32_t id);
 		std::vector<uint32_t> getAllRootIds() const;
