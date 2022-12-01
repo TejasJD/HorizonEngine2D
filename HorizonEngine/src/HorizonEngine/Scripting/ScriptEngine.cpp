@@ -1,7 +1,10 @@
 #include "pch.h"
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/mono-debug.h>
+#include <mono/metadata/threads.h>
 
+#include "HorizonEngine/FileManagement/ProjectManager.h"
 #include "ScriptEngine.h"
 #include "ScriptRegistry.h"
 
@@ -14,51 +17,25 @@ namespace Hzn
 
 		MonoAssembly* coreAssembly = nullptr;
 		MonoImage* coreAssemblyImage = nullptr;
+		std::filesystem::path coreAssemblyPath;
 
 		MonoAssembly* appAssembly = nullptr;
 		MonoImage* appAssemblyImage = nullptr;
+		std::filesystem::path appAssemblyPath;
+		bool reloadPending = false;
 	};
 
 	ScriptData* ScriptEngine::s_Data = nullptr;
 
 	namespace Utils
 	{
-		static char* ReadBytes(const std::string& filepath, uint32_t* outSize)
-		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
-
-			if (!stream)
-			{
-				// Failed to open the file
-				return nullptr;
-			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint32_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				// File is empty
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = size;
-			return buffer;
-		}
-
 		static MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath)
 		{
 			uint32_t fileSize = 0;
-			char* fileData = Utils::ReadBytes(assemblyPath, &fileSize);
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_full(assemblyPath.c_str(), &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -70,8 +47,6 @@ namespace Hzn
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.c_str(), &status, 0);
 			mono_image_close(image);
 
-			// Don't forget to free the file data
-			delete[] fileData;
 
 			return assembly;
 		}
@@ -119,29 +94,81 @@ namespace Hzn
 		s_Data->appDomain = mono_domain_create_appdomain("HorizonScriptCoreDomain", nullptr);
 		mono_domain_set(s_Data->appDomain, true);
 
-		HZN_DEBUG("Scripting Engine initialized!");
 		// function to load the mono C# assembly.
+		s_Data->coreAssemblyPath = path;
+		std::cout << std::filesystem::absolute(path) << std::endl;
 		s_Data->coreAssembly = Utils::LoadCSharpAssembly(path.string());
 		s_Data->coreAssemblyImage = mono_assembly_get_image(s_Data->coreAssembly);
 	}
 
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& path)
 	{
+		s_Data->appAssemblyPath = path;
+		std::cout << std::filesystem::absolute(path) << std::endl;
 		s_Data->appAssembly = Utils::LoadCSharpAssembly(path.string());
 		s_Data->appAssemblyImage = mono_assembly_get_image(s_Data->appAssembly);
 	}
 
+	std::filesystem::path ScriptEngine::GetCoreAssemblyPath()
+	{
+		return s_Data->coreAssemblyPath;
+	}
+
+	void ScriptEngine::ReloadAssembly()
+	{
+		HZN_CORE_WARN("Reload Starting");
+		mono_domain_unload(s_Data->appDomain);
+		mono_domain_set(mono_get_root_domain(), false);
+		// load core assembly.
+		LoadCoreAssembly(s_Data->coreAssemblyPath);
+		PrintCoreAssemblyTypes();
+
+		auto project = Hzn::ProjectManager::getActiveProject();
+		if (project)
+		{
+			// copy the recompiled dll from bin to temp.
+			auto binPath = project->getPath().parent_path().string() + "\\bin\\ScriptAppLib.dll";
+			auto loadPath = project->getPath().parent_path().string() + "\\load_target\\ScriptAppLib.dll";
+
+			// bin path needs to exist for app assembly to be reloaded.
+			if (std::filesystem::exists(binPath))
+			{
+				// create directory if load_target doesn't exist.
+				if(!std::filesystem::exists(std::filesystem::path(loadPath).parent_path()))
+				{
+					std::filesystem::create_directory(std::filesystem::path(loadPath).parent_path());
+				}
+
+				std::filesystem::copy(binPath, loadPath, std::filesystem::copy_options::overwrite_existing);
+				// load app assembly.
+				LoadAppAssembly(loadPath);
+				PrintAppAssemblyTypes();
+			}
+		}
+		HZN_CORE_INFO("Reload Successful!");
+		s_Data->reloadPending = false;
+	}
+
+	void ScriptEngine::startReload()
+	{
+		s_Data->reloadPending = true;
+	}
+
+	bool ScriptEngine::isReloadPending()
+	{
+		return s_Data->reloadPending;
+	}
 
 
 	void ScriptEngine::init()
 	{
 		s_Data = new ScriptData();
 		initMono();
-		LoadCoreAssembly("Scripts/ScriptCoreLib.dll");
-
+		s_Data->coreAssemblyPath = std::filesystem::current_path().string() + "\\Scripts\\ScriptCoreLib.dll";
+		LoadCoreAssembly(s_Data->coreAssemblyPath);
+		PrintCoreAssemblyTypes();
 		ScriptRegistry::registerFunctions();
 		// get mono class from the image.
-		PrintCoreAssemblyTypes();
 		/*MonoClass* monoClass = mono_class_from_name(s_Data->coreAssemblyImage, "Hzn", "Main");*/
 
 		//// initialize the object from default constructor.
@@ -186,12 +213,16 @@ namespace Hzn
 
 		s_Data->rootDomain = mono_jit_init("HorizonScriptRuntime");
 		HZN_CORE_ASSERT(s_Data->rootDomain, "Root Domain is null!");
+		mono_thread_set_main(mono_thread_current());
 	}
 
 	void ScriptEngine::destroyMono()
 	{
+		mono_domain_set(mono_get_root_domain(), false);
 		mono_domain_unload(s_Data->appDomain);
 		s_Data->appDomain = nullptr;
+
+		mono_jit_cleanup(s_Data->rootDomain);
 		s_Data->rootDomain = nullptr;
 	}
 }

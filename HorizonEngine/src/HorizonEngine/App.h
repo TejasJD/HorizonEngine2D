@@ -41,6 +41,11 @@ namespace Hzn
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() const { return *m_Window; }
 
+		void executeMainThreadQueue();
+		void submitMainThreadQueue(const std::function<void()>& fn);
+
+		std::filesystem::path getExecutablePath() const { return m_ExecutablePath; }
+
 	protected:
 		static App* m_Instance;
 
@@ -49,6 +54,9 @@ namespace Hzn
 		bool m_Minimized = false;
 
 		std::shared_ptr<Window> m_Window;
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueLock;
+		std::filesystem::path m_ExecutablePath;
 
 		ImguiLayer* m_ImguiLayer;
 		LayerStack m_Layers;
