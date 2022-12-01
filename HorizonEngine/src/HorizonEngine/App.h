@@ -41,6 +41,9 @@ namespace Hzn
 		static App& getApp() { return *m_Instance; }
 		Window& getAppWindow() const { return *m_Window; }
 
+		void executeMainThreadQueue();
+		void submitMainThreadQueue(const std::function<void()>& fn);
+
 	protected:
 		static App* m_Instance;
 
@@ -49,6 +52,8 @@ namespace Hzn
 		bool m_Minimized = false;
 
 		std::shared_ptr<Window> m_Window;
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueLock;
 
 		ImguiLayer* m_ImguiLayer;
 		LayerStack m_Layers;

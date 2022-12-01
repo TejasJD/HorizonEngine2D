@@ -48,6 +48,7 @@ namespace Hzn
 			const auto currentFrameTime = static_cast<const float>(glfwGetTime());
 			const TimeStep deltaTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
+
 			//! general layer update
 			if (!m_Minimized) 
 			{
@@ -87,6 +88,21 @@ namespace Hzn
 		Renderer::onWindowResize(e.GetWidth(), e.GetHeight());
 		m_Minimized = false;
 		return false;
+	}
+
+	void App::executeMainThreadQueue()
+	{
+		for(auto& fn : m_MainThreadQueue)
+		{
+			fn();
+		}
+		m_MainThreadQueue.clear();
+	}
+
+	void App::submitMainThreadQueue(const std::function<void()>& fn)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueLock);
+		m_MainThreadQueue.emplace_back(fn);
 	}
 
 	//! the onEvent function of application class that handles any events coming to the application

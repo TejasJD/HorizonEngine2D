@@ -51,8 +51,6 @@
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
 
-
-
 #include "HorizonEngine/Layer.h"
 
 #include "HorizonEngine/Renderer/RenderCall.h"
@@ -68,6 +66,8 @@
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Camera/CameraController.h"
+
+#include "HorizonEngine/Scripting/ScriptEngine.h"
 
 #include "Platform/OpenGL/FDWindows.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 

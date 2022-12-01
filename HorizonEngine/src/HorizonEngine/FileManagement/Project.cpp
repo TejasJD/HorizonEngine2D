@@ -10,6 +10,7 @@ namespace Hzn
 	Project::Project(const std::string& name, const fs::path& directoryPath)
 	{
 		// then this is the a new project.
+		auto currentPath = fs::current_path().string();
 		HZN_CORE_ASSERT(fs::is_directory(directoryPath), "Provided path isn't a directory!");
 		
 		m_Path = fs::path(directoryPath.string() + "\\" + name);
@@ -24,15 +25,22 @@ namespace Hzn
 		fs::create_directory(m_Path.parent_path().string() + "\\sprites");
 		fs::create_directory(m_Path.parent_path().string() + "\\audios");
 		fs::create_directory(m_Path.parent_path().string() + "\\scenes");
-		fs::copy(fs::current_path().string() + "\\icons", m_Path.parent_path().string() + "\\icons");
+		fs::copy(currentPath + "\\icons", m_Path.parent_path().string() + "\\icons");
 
 		// set up script directories and files.
 		fs::create_directories(m_Path.parent_path().string() + "\\ScriptAppLib\\Source");
+
+		// directory for binaries (the dll is watched by the filewatcher in this library).
+		fs::create_directory(m_Path.parent_path().string() + "\\bin");
+		// directory from which we load dlls (they are copied from bin to load upon rebuild).
+		fs::create_directory(m_Path.parent_path().string() + "\\load_target");
+
+		// sample file for now.
 		std::ofstream os(m_Path.parent_path().string() + "\\ScriptAppLib\\Source\\Player.cs");
 		os.close();
 
 		// copy lua file from executable to the project directory.
-		fs::copy(fs::current_path().string() + "\\premake5.lua", m_Path.parent_path().string() + "\\premake5.lua");
+		fs::copy(currentPath + "\\premake5.lua", m_Path.parent_path().string() + "\\premake5.lua");
 
 		// execute premake with the project's lua file as --file argument.
 		std::string premake = "premake5 --file=";
@@ -42,7 +50,6 @@ namespace Hzn
 		// create file.
 		os.open(m_Path);
 		os.close();
-		
 	}
 
 	Project::Project(const std::filesystem::path& projectFilePath)

@@ -29,6 +29,12 @@ namespace Hzn
 
 		static void LoadCoreAssembly(const std::filesystem::path& path);
 		static void LoadAppAssembly(const std::filesystem::path& path);
+
+		static std::filesystem::path GetCoreAssemblyPath();
+
+		static void ReloadAssembly();
+		static bool isProjectLoaded();
+
 		static void PrintCoreAssemblyTypes();
 		static void PrintAppAssemblyTypes();
 	private:

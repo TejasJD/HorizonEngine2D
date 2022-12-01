@@ -191,6 +191,10 @@ find_package(cereal CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
+	# Ws2_32.lib
+	# Winmm.lib
+	# Version.lib
+	# Bcrypt.lib
 	glfw
 	glm::glm
 	glad::glad
@@ -203,6 +207,7 @@ target_link_libraries(HorizonEngine
 	EnTT::EnTT
 	cereal::cereal
 	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/mono-2.0-sgen.lib
+	# ${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/libmono-static-sgen.lib
 )
 
 #testing

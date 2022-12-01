@@ -283,6 +283,15 @@ void EditorLayer::onRenderImgui()
 			ImGui::EndMenu();
 		}
 
+		if(ImGui::BeginMenu("Script"))
+		{
+			if(ImGui::MenuItem("Reload"))
+			{
+				Hzn::ScriptEngine::ReloadAssembly();
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMenuBar();
 	}
 	// MENU BAR END

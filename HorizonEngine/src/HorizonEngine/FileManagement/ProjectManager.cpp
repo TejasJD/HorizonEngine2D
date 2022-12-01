@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "ProjectManager.h"
 
+#include <FileWatch.hpp>
+
 #include "HorizonEngine/SceneManagement/SceneManager.h"
 #include "AssetManagement/AssetManager.h"
 
 namespace Hzn
 {
+	static std::unique_ptr<filewatch::FileWatch<std::wstring>> watch;
 	std::shared_ptr<Project> ProjectManager::s_Project = nullptr;
 
 	std::shared_ptr<Project> ProjectManager::create(const std::string& name, const std::filesystem::path& directoryPath)
@@ -15,6 +18,35 @@ namespace Hzn
 			close();
 		}
 		s_Project = std::make_shared<Project>(name, directoryPath);
+		/*watch.reset(new filewatch::FileWatch<std::wstring>(s_Project->m_Path.parent_path().wstring(), [&]
+		(const std::wstring& path, const filewatch::Event& fileEvent)
+			{
+				switch (fileEvent)
+				{
+				case filewatch::Event::added: {
+					break;
+				}
+				case filewatch::Event::removed: {
+					break;
+				}
+				case filewatch::Event::modified: {
+					break;
+				}
+				case filewatch::Event::renamed_old: {
+					break;
+				}
+				case filewatch::Event::renamed_new: {
+					break;
+				}
+				default: {
+					break;
+				}
+				}
+			}));*/
+		if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\bin\\ScriptAppLib.dll"))
+		{
+			ScriptEngine::ReloadAssembly();
+		}
 		return s_Project;
 	}
 
@@ -59,7 +91,7 @@ namespace Hzn
 
 	bool ProjectManager::closeScene()
 	{
-		if(s_Project && s_Project->m_Scene)
+		if (s_Project && s_Project->m_Scene)
 		{
 			return SceneManager::close();
 		}
@@ -80,10 +112,17 @@ namespace Hzn
 		if (!projectFilePath.empty()) {
 			if (s_Project)
 			{
-				AssetManager::destroy();
+				//AssetManager::destroy();
 				close();
 			}
 			s_Project = std::make_shared<Project>(projectFilePath);
+
+			// here we will be starting the file watcher on this location if the path exists.
+			if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\bin\\ScriptAppLib.dll"))
+			{
+				ScriptEngine::ReloadAssembly();
+				// we start it after reloading.
+			}
 		}
 
 		return s_Project;
@@ -109,6 +148,7 @@ namespace Hzn
 		if (s_Project && s_Project->m_Scene) {
 			result = SceneManager::close();
 			AssetManager::destroy();
+			// here we should close the previous file watcher if it exists.
 			s_Project.reset();
 		}
 		return result;
