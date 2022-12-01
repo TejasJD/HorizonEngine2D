@@ -1217,74 +1217,62 @@
     "value351": 44,
     "value352": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value353": 45,
     "value354": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value355": 1048631,
     "value356": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value357": 1048630,
     "value358": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value359": 2097153,
     "value360": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value361": 39,
     "value362": {
         "value0": 2,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value363": 40,
     "value364": {
         "value0": 2,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value365": 41,
     "value366": {
         "value0": 2,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value367": 42,
     "value368": {
         "value0": 2,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value369": 3145746,
     "value370": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value371": 4194326,
     "value372": {
         "value0": 0,
-        "value1": false,
-        "value2": 1.0
+        "value1": false
     },
     "value373": 4194317,
     "value374": {
         "value0": 2,
-        "value1": true,
-        "value2": 1.0
+        "value1": true
     },
     "value375": 12,
     "value376": 44,

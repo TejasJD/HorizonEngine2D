@@ -13,6 +13,8 @@
 #include "HorizonEngine/Camera/CameraController.h"
 
 class b2World;
+class b2ContactListener;
+class b2Body;
 
 namespace Hzn
 {
@@ -69,6 +71,7 @@ namespace Hzn
 		entt::registry m_Registry;
 
 		b2World* m_World = nullptr;
+		b2ContactListener* m_Listener = nullptr;
 
 		std::unordered_map<uint32_t, entt::entity> m_GameObjectIdMap;
 		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.

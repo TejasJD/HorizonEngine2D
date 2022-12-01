@@ -192,8 +192,6 @@ namespace Hzn
 
 		bool m_FixedRotation = false;
 
-		float m_Mass = 1.0f;
-
 		glm::vec2 m_Velocity { 0.0f, 0.0f };
 
 		// runtime body opaque-pointer (will be stored at different location).
@@ -206,13 +204,13 @@ namespace Hzn
 		template<typename Archive>
 		void load(Archive& ar)
 		{
-			ar((BodyType)m_Type, m_FixedRotation, m_Mass);
+			ar((BodyType)m_Type, m_FixedRotation);
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
-			ar((int)m_Type, m_FixedRotation, m_Mass);
+			ar((int)m_Type, m_FixedRotation);
 		}
 
 		void addForce(glm::vec2 force) {

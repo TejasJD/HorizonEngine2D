@@ -302,4 +302,24 @@ namespace Hzn
 
 		return result;
 	}
+
+	void GameObject::onCollisionEnter(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+
+		for (int i = 0; i < collisionEnterCallbacks.size(); i++) {
+			collisionEnterCallbacks.at(i)(other);
+		}
+	}
+
+	void GameObject::onCollisionExit(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+	}
+
+	void GameObject::onTriggerEnter(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+	}
+
+	void GameObject::onTriggerExit(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+	}
 }

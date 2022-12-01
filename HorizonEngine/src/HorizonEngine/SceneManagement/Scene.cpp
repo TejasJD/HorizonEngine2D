@@ -14,7 +14,7 @@
 #include "HorizonEngine/Components/Component.h"
 #include "HorizonEngine/AssetManagement/AssetManager.h"
 #include "Scene.h"
-
+#include "HorizonEngine/Physics2D/ContactListener.h"
 
 namespace Hzn
 {
@@ -103,8 +103,12 @@ namespace Hzn
 	{
 		if (m_Valid)
 		{
+			// TODO: Add callbacks for game object collision detection
+
 			// create box 2D world.
+			m_Listener = new ContactListener();
 			m_World = new b2World({ 0.0f, -9.8f });
+			m_World->SetContactListener(m_Listener);
 
 			auto view = m_Registry.view<RigidBody2DComponent>();
 
@@ -129,6 +133,8 @@ namespace Hzn
 				bodyDef.type = (b2BodyType)rb2d.m_Type;
 				bodyDef.position.Set(translation.x, translation.y);
 				bodyDef.angle = glm::radians(rotation.z);
+				auto v = &m_GameObjectIdMap[entt::to_integral(entity)];
+				bodyDef.userData.pointer = (uintptr_t)&m_GameObjectIdMap[entt::to_integral(entity)];
 
 				b2Body* body = m_World->CreateBody(&bodyDef);
 				body->SetFixedRotation(rb2d.m_FixedRotation);
@@ -201,6 +207,9 @@ namespace Hzn
 			// delete and set the box 2D world to nullptr.
 			delete m_World;
 			m_World = nullptr;
+
+			delete m_Listener;
+			m_Listener = nullptr;
 
 			// set state back to edit.
 			m_State = SceneState::Edit;

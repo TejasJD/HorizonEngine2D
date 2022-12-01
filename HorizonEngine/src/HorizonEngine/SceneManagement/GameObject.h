@@ -98,6 +98,11 @@ namespace Hzn
 			return obj;
 		}
 
+		void onCollisionEnter(GameObject &other);
+		void onCollisionExit(GameObject& other);
+		void onTriggerEnter(GameObject& other);
+		void onTriggerExit(GameObject& other);
+
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
@@ -118,6 +123,8 @@ namespace Hzn
 		entt::entity m_ObjectId = entt::null;
 		// holds a weak reference to the scene.
 		Scene* m_Scene = nullptr;
+
+		std::vector<std::function<void(GameObject)>> collisionEnterCallbacks;
 	};
 
 	inline bool operator==(const GameObject& lhs, const GameObject& rhs)
