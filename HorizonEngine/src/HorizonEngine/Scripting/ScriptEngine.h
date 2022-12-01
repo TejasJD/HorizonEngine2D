@@ -84,7 +84,10 @@ namespace Hzn
 		static void init();
 		static void destroy();
 
-		static void LoadAssembly(const std::filesystem::path& path);
+		static void LoadCoreAssembly(const std::filesystem::path& path);
+		static void LoadAppAssembly(const std::filesystem::path& path);
+		static void PrintCoreAssemblyTypes();
+		static void PrintAppAssemblyTypes();
 		static Scene* GetSceneContext();
 		static MonoObject* GetManagedInstance(uint32_t uuid);
 	private:

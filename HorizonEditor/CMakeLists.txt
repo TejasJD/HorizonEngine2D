@@ -79,3 +79,21 @@ add_custom_command(
 	${CMAKE_CURRENT_LIST_DIR}/Scripts
 	$<TARGET_FILE_DIR:HznEditor>/Scripts
 )
+
+add_custom_command(
+	TARGET HznEditor
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${CMAKE_CURRENT_LIST_DIR}/premake5.exe
+	$<TARGET_FILE_DIR:HznEditor>/premake5.exe
+)
+
+add_custom_command(
+	TARGET HznEditor
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${CMAKE_CURRENT_LIST_DIR}/utils/premake5.lua
+	$<TARGET_FILE_DIR:HznEditor>/premake5.lua
+)

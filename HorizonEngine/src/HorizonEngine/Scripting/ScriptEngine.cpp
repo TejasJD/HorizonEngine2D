@@ -16,6 +16,9 @@ namespace Hzn
 		MonoAssembly* coreAssembly = nullptr;
 		MonoImage* coreAssemblyImage = nullptr;
 
+		MonoAssembly* appAssembly = nullptr;
+		MonoImage* appAssemblyImage = nullptr;
+
 		Scene* SceneContext = nullptr;
 		std::unordered_map<uint32_t, std::shared_ptr<ScriptInstance>> GameObjectInstances;
 	};
@@ -52,24 +55,6 @@ namespace Hzn
 			return buffer;
 		}
 
-		static void PrintAssemblyTypes(MonoAssembly* assembly)
-		{
-			MonoImage* image = mono_assembly_get_image(assembly);
-			const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
-			int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-
-			for (int32_t i = 0; i < numTypes; i++)
-			{
-				uint32_t cols[MONO_TYPEDEF_SIZE];
-				mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
-
-				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-
-				HZN_CORE_TRACE("{0}, {1}", nameSpace, name);
-			}
-		}
-
 		static MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath)
 		{
 			uint32_t fileSize = 0;
@@ -97,9 +82,45 @@ namespace Hzn
 
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& path)
+	void ScriptEngine::PrintCoreAssemblyTypes()
 	{
-		s_Data->appDomain = mono_domain_create_appdomain("HorizonScriptCoreAppDomain", nullptr);
+		MonoImage* image = mono_assembly_get_image(s_Data->coreAssembly);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+		for (int32_t i = 0; i < numTypes; i++)
+		{
+			uint32_t cols[MONO_TYPEDEF_SIZE];
+			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+
+			HZN_CORE_TRACE("{0}, {1}", nameSpace, name);
+		}
+	}
+
+	void ScriptEngine::PrintAppAssemblyTypes()
+	{
+		MonoImage* image = mono_assembly_get_image(s_Data->appAssembly);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+		for (int32_t i = 0; i < numTypes; i++)
+		{
+			uint32_t cols[MONO_TYPEDEF_SIZE];
+			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+
+			HZN_CORE_TRACE("{0}, {1}", nameSpace, name);
+		}
+	}
+
+	void ScriptEngine::LoadCoreAssembly(const std::filesystem::path& path)
+	{
+		s_Data->appDomain = mono_domain_create_appdomain("HorizonScriptCoreDomain", nullptr);
 		mono_domain_set(s_Data->appDomain, true);
 
 		HZN_DEBUG("Scripting Engine initialized!");
@@ -108,45 +129,53 @@ namespace Hzn
 		s_Data->coreAssemblyImage = mono_assembly_get_image(s_Data->coreAssembly);
 	}
 
+	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& path)
+	{
+		s_Data->appAssembly = Utils::LoadCSharpAssembly(path.string());
+		s_Data->appAssemblyImage = mono_assembly_get_image(s_Data->appAssembly);
+	}
+
+
 
 	void ScriptEngine::init()
 	{
 		s_Data = new ScriptData();
 		initMono();
-		LoadAssembly("Scripts/ScriptCoreLib.dll");
+		LoadCoreAssembly("Scripts/ScriptCoreLib.dll");
 
 		ScriptRegistry::registerFunctions();
 		// get mono class from the image.
-		MonoClass* monoClass = mono_class_from_name(s_Data->coreAssemblyImage, "Hzn", "Main");
+		PrintCoreAssemblyTypes();
+		/*MonoClass* monoClass = mono_class_from_name(s_Data->coreAssemblyImage, "Hzn", "Main");*/
 
-		// initialize the object from default constructor.
-		MonoObject* instance = mono_object_new(s_Data->appDomain, monoClass);
-		mono_runtime_object_init(instance);
+		//// initialize the object from default constructor.
+		//MonoObject* instance = mono_object_new(s_Data->appDomain, monoClass);
+		//mono_runtime_object_init(instance);
 
-		// invoke function with no params.
-		MonoMethod* PrintMessage = mono_class_get_method_from_name(monoClass, "PrintMessage", 0);
-		mono_runtime_invoke(PrintMessage, instance, nullptr, nullptr);
+		//// invoke function with no params.
+		//MonoMethod* PrintMessage = mono_class_get_method_from_name(monoClass, "PrintMessage", 0);
+		//mono_runtime_invoke(PrintMessage, instance, nullptr, nullptr);
 
-		// invoke function with params.
-		MonoMethod* PrintInt = mono_class_get_method_from_name(monoClass, "PrintInt", 1);
-		int value = 7;
+		//// invoke function with params.
+		//MonoMethod* PrintInt = mono_class_get_method_from_name(monoClass, "PrintInt", 1);
+		//int value = 7;
 
-		void* params[1] = { &value };
-		mono_runtime_invoke(PrintInt, instance, params, nullptr);
+		//void* params[1] = { &value };
+		//mono_runtime_invoke(PrintInt, instance, params, nullptr);
 
-		MonoMethod* PrintInts = mono_class_get_method_from_name(monoClass, "PrintInts", 2);
+		//MonoMethod* PrintInts = mono_class_get_method_from_name(monoClass, "PrintInts", 2);
 
-		int value1 = 7, value2 = 8;
-		void* printIntParams[2] = { &value1, &value2 };
-		mono_runtime_invoke(PrintInts, instance, printIntParams, nullptr);
+		//int value1 = 7, value2 = 8;
+		//void* printIntParams[2] = { &value1, &value2 };
+		//mono_runtime_invoke(PrintInts, instance, printIntParams, nullptr);
 
-		MonoString* stringParam = mono_string_new(s_Data->appDomain, "Hello world!");
+		//MonoString* stringParam = mono_string_new(s_Data->appDomain, "Hello world!");
 
-		MonoMethod* PrintCustomMessage = mono_class_get_method_from_name(monoClass, "PrintCustomMessage", 1);
+		//MonoMethod* PrintCustomMessage = mono_class_get_method_from_name(monoClass, "PrintCustomMessage", 1);
 
-		void* customMessage[1] = { stringParam };
+		//void* customMessage[1] = { stringParam };
 
-		mono_runtime_invoke(PrintCustomMessage, instance, customMessage, nullptr);
+		//mono_runtime_invoke(PrintCustomMessage, instance, customMessage, nullptr);
 	}
 
 	void ScriptEngine::destroy()
@@ -175,8 +204,8 @@ namespace Hzn
 		return s_Data->SceneContext;
 	}
 
-	MonoObject* ScriptEngine::GetManagedInstance(uint32_t uuid)
+	MonoObject* ScriptEngine::GetManagedInstance(uint32_t gameObjectID)
 	{
-		return s_Data->GameObjectInstances.at(uuid)->GetManagedObject();
+		return s_Data->GameObjectInstances.at(gameObjectID)->GetManagedObject();
 	}
 }

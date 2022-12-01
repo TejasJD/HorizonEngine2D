@@ -15,7 +15,7 @@ namespace Hzn
 
 	public:
 		Project() = default;
-		Project(const std::string& name, const std::filesystem::path& rootDirectoryPath);
+		Project(const std::string& name, const std::filesystem::path& directoryPath);
 		Project(const std::filesystem::path& projectFilePath);
 		~Project() = default;
 
