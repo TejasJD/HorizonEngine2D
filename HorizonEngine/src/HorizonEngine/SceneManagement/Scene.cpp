@@ -467,4 +467,53 @@ namespace Hzn
 		}
 		return ids;
 	}
+
+
+
+
+
+	void Scene::addBody(GameObject& obj) {
+		auto transform = obj.getTransform();
+		auto& transformComponent = obj.getComponent<TransformComponent>();
+		auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+		glm::vec3 rotation = glm::eulerAngles(orientation);
+		rotation = glm::degrees(rotation);
+
+		b2BodyDef bodyDef;
+		bodyDef.type = (b2BodyType)rb2d.m_Type;
+		bodyDef.position.Set(translation.x, translation.y);
+		bodyDef.angle = glm::radians(rotation.z);
+		bodyDef.userData.pointer = (uintptr_t)&m_GameObjectIdMap[obj.getObjectId()];
+
+		b2Body* body = m_World->CreateBody(&bodyDef);
+		body->SetFixedRotation(rb2d.m_FixedRotation);
+		rb2d.m_RuntimeBody = body;
+
+		if (!obj.hasComponent<BoxCollider2DComponent>())
+		{
+			obj.addComponent<BoxCollider2DComponent>();
+		}
+
+		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+		b2PolygonShape polygonShape;
+
+		polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &polygonShape;
+		fixtureDef.density = bc2d.m_Density;
+		fixtureDef.friction = bc2d.m_Friction;
+		fixtureDef.restitution = bc2d.m_Restitution;
+		fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+		fixtureDef.isSensor = true;
+		body->CreateFixture(&fixtureDef);
+	}
 }

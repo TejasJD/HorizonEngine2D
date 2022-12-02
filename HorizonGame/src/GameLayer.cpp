@@ -32,6 +32,9 @@ void GameLayer::onAttach()
 
 	m_PlayerObjectId = m_ActiveScene->getGameObjectByName("Player").getObjectId();
 
+	// Add collision callbacks
+	//m_ActiveScene->getGameObjectById(m_PlayerObjectId).addCollisionEnetrCallback();
+
 	m_ActiveScene->onStart();
 }
 
@@ -49,26 +52,56 @@ void GameLayer::onUpdate(Hzn::TimeStep ts)
 	Hzn::RenderCall::setClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	Hzn::RenderCall::submitClear();
 
+	for (int i = 0; i < attackTimers.size(); i++)
+	if (attackTimers.at(i) <= 0.0f) {
+		attackTimers.at(i) = 1.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 2));;
+
+		Hzn::GameObject p = m_ActiveScene->createGameObject("Projectile");
+		p.getComponent<Hzn::TransformComponent>().m_Translation = m_ActiveScene->getGameObjectByName("Enemy " + std::to_string(i + 1)).getComponent<Hzn::TransformComponent>().m_Translation;
+		p.getComponent<Hzn::TransformComponent>().m_Scale = glm::vec3(0.5f, 0.5f, 1.0f);
+		p.addComponent<Hzn::BoxCollider2DComponent>();
+		p.addComponent<Hzn::RigidBody2DComponent>();
+		p.addComponent<Hzn::RenderComponent>();
+
+		p.getComponent<Hzn::RigidBody2DComponent>().m_Type = Hzn::RigidBody2DComponent::BodyType::Dynamic;
+		m_ActiveScene->addBody(p);
+		p.getComponent<Hzn::RigidBody2DComponent>().addImpulseForce(glm::vec2(-1.0f, 1.0f));
+	}
+	else {
+		attackTimers.at(i) -= ts;
+	}
+
 	m_ActiveScene->onUpdate(ts);
-	//Hzn::Renderer2D::beginScene()
 }
 
 void GameLayer::onEvent(Hzn::Event& e)
 {
 	if (Hzn::Input::keyPressed(Hzn::Key::W) || Hzn::Input::keyPressed(Hzn::Key::Up)) {
-		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addForce(glm::vec2(0.0f, 1500.0f));
+		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addImpulseForce(glm::vec2(0.0f, 8.0f));
 	}
 
 	if (Hzn::Input::keyPressed(Hzn::Key::A) || Hzn::Input::keyPressed(Hzn::Key::Left)) {
-		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addForce(glm::vec2(-200.0f, 0.0f));
+		// Set rigidbody velocity instead of adding force
+		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addImpulseForce(glm::vec2(-2.0f, 0.0f));
 	}
 
 	if (Hzn::Input::keyPressed(Hzn::Key::D) || Hzn::Input::keyPressed(Hzn::Key::Right)) {
-		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addForce(glm::vec2(200.0f, 0.0f));
+		// Set rigidbody velocity instead of adding force
+		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addImpulseForce(glm::vec2(2.0f, 0.0f));
 	}
 }
 
 void GameLayer::onRenderImgui()
 {
 	
+}
+
+void GameLayer::playerCollisionCallback(Hzn::GameObject obj) {
+	if (obj.getComponent<Hzn::NameComponent>().m_Name.find("Enemy") != std::string::npos) {
+		// Destroy enemy
+	}
+	else if (obj.getComponent<Hzn::NameComponent>().m_Name == "Projectile") {
+		// Maybe reduce player's health instead of killing them instantly
+		m_ActiveScene = Hzn::SceneManager::open("assets/scenes/Level2.scene");
+	}
 }

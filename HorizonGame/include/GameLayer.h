@@ -19,5 +19,9 @@ private:
 
 	int32_t m_PlayerObjectId = std::numeric_limits<uint32_t>::max();
 
+	std::vector<float> attackTimers{ 1.0f, 1.0f, 1.0f, 1.0f };
+
 	std::vector<std::string> sceneNames{ "mainMenu.scene", "level1.scene", "level2.scene", "level3.scene" };
+
+	void playerCollisionCallback(Hzn::GameObject obj);
 };

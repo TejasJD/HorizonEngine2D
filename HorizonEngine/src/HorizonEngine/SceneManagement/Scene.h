@@ -59,6 +59,10 @@ namespace Hzn
 		std::filesystem::path getFilePath() const { return m_Path; }
 
 
+
+		void addBody(GameObject& obj);
+
+
 	private:
 		int gameObjectCounter = 0;
 		void serialize(cereal::JSONOutputArchive& outputArchive);

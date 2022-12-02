@@ -103,6 +103,13 @@ namespace Hzn
 		void onTriggerEnter(GameObject& other);
 		void onTriggerExit(GameObject& other);
 
+
+		// The 4 methods below are added for the sake of the game. Delete later!
+		void addCollisionEnetrCallback(void (*f)(GameObject));
+		void addCollisionExitCallback(std::function<void(GameObject)> &f);
+		void addTriggerEnetrCallback(std::function<void(GameObject)> &f);
+		void addTriggerExitCallback(std::function<void(GameObject)> &f);
+
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
@@ -124,7 +131,7 @@ namespace Hzn
 		// holds a weak reference to the scene.
 		Scene* m_Scene = nullptr;
 
-		std::vector<std::function<void(GameObject)>> collisionEnterCallbacks;
+		std::vector<std::function<void(GameObject)>*> collisionEnterCallbacks;
 	};
 
 	inline bool operator==(const GameObject& lhs, const GameObject& rhs)
