@@ -60,4 +60,7 @@ private:
 
 	std::shared_ptr<Hzn::Project> m_ActiveProject;
 	ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+
+	// key press combination check
+	bool m_CtrlPressed = false;
 };

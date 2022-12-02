@@ -240,9 +240,21 @@ namespace Hzn
 	struct ScriptComponent
 	{
 		ScriptComponent() = default;
-		ScriptComponent(const char* name) : scriptName(name) {}
+		ScriptComponent(const std::string& scriptName) : m_ScriptName(scriptName) {}
 		~ScriptComponent() = default;
-		const char* scriptName = "";
+		std::string m_ScriptName;
+
+		template<typename Archive>
+		void load(Archive& ar)
+		{
+			ar(cereal::make_nvp("ScriptName", m_ScriptName));
+		}
+
+		template<typename Archive>
+		void save(Archive& ar) const
+		{
+			ar(cereal::make_nvp("ScriptName", m_ScriptName));
+		}
 	};
 
 
@@ -255,7 +267,8 @@ namespace Hzn
 	RigidBody2DComponent,
 	BoxCollider2DComponent,
 	RenderComponent,
-	CameraComponent>;
+	CameraComponent,
+	ScriptComponent>;
 	using SelectableComponents = ComponentGroup<RenderComponent, RigidBody2DComponent, BoxCollider2DComponent,
 	CameraComponent, ScriptComponent>;
 

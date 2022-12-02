@@ -44,11 +44,16 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\InternalCalls.cs" />
-    <Compile Include="Source\Core.cs" />
+    <Compile Include="Source\Core\InternalCalls.cs" />
+    <Compile Include="Source\Core\Input.cs" />
+    <Compile Include="Source\Core\KeyCode.cs" />
+    <Compile Include="Source\Core\Main.cs" />
+    <Compile Include="Source\ECS\Components.cs" />
+    <Compile Include="Source\ECS\GameObject.cs" />
+    <Compile Include="Source\Math\Vector2.cs" />
+    <Compile Include="Source\Math\Vector3.cs" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
