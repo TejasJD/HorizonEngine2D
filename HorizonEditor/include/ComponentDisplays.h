@@ -318,7 +318,7 @@ namespace Hzn
 
 
 	template<>
-	inline void ComponentDisplays::display<ScriptComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<ScriptComponent>(GameObject& obj)
 	{
 		auto& component = obj.getComponent<ScriptComponent>();
 		std::string selectedScriptName = component.m_ScriptName;
