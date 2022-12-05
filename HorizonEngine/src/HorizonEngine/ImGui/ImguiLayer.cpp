@@ -13,7 +13,6 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <ImGuizmo.h>
-
 #include <imnodes.h>
 
 #include "ImguiLayer.h"

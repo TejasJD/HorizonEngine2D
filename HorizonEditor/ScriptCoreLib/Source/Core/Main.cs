@@ -1,20 +1,12 @@
-using System;
+﻿using System;
 
 namespace Hzn
 {
     public class Main
     {
-        public float FloatVar { get; set; }
-
         public Main()
         {
-            Console.WriteLine("Main Constructor!");
-            InternalCalls.Greet();
-        }
-
-        public void PrintMessage()
-        {
-            Console.WriteLine("Hello from C# world!");
+            Console.WriteLine("From Main Constructor");
         }
 
         public void PrintInt(int number)
@@ -31,6 +23,12 @@ namespace Hzn
         public void PrintCustomMessage(string message)
         {
             Console.WriteLine($"C# says : {message}");
+        }
+
+        public void PrintKeyCode(KeyCode code)
+        {
+            InternalCalls.Input_IsKeyDown(code);
+
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Hzn
 	{
 	public:
 		static void registerFunctions();
+		static void registerComponents();
 	};
 }
 

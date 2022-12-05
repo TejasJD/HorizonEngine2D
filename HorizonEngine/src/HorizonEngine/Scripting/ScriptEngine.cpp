@@ -4,9 +4,14 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/threads.h>
 
+#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/SceneManagement/GameObject.h"
+#include "HorizonEngine/SceneManagement/Scene.h"
 #include "HorizonEngine/FileManagement/ProjectManager.h"
+
 #include "ScriptEngine.h"
 #include "ScriptRegistry.h"
+#include "SceneManagement/SceneManager.h"
 
 namespace Hzn
 {
@@ -23,6 +28,10 @@ namespace Hzn
 		MonoImage* appAssemblyImage = nullptr;
 		std::filesystem::path appAssemblyPath;
 		bool reloadPending = false;
+
+		std::shared_ptr<ScriptClass> gameObjectClass;
+		std::unordered_map<std::string, std::shared_ptr<ScriptClass>> gameObjectSubClasses;
+		std::unordered_map<uint32_t, std::shared_ptr<ScriptObject>> gameObjectScriptInstances;
 	};
 
 	ScriptData* ScriptEngine::s_Data = nullptr;
@@ -53,6 +62,68 @@ namespace Hzn
 
 	}
 
+	// Script Reflection Method Implementations.
+	ScriptClass::ScriptClass(const std::string& nameSpace, const std::string& name, bool isCore)
+	{
+		if(!isCore)
+		{
+			m_MonoClass = mono_class_from_name(ScriptEngine::s_Data->appAssemblyImage, nameSpace.c_str(), name.c_str());
+		}
+		else
+		{
+			m_MonoClass = mono_class_from_name(ScriptEngine::s_Data->coreAssemblyImage, nameSpace.c_str(), name.c_str());
+		}
+	}
+
+	MonoObject* ScriptClass::instantiate() const
+	{
+		return ScriptEngine::InstantiateClass(m_MonoClass);
+	}
+
+	MonoMethod* ScriptClass::getMethod(const std::string& name, int paramCount) const
+	{
+		return mono_class_get_method_from_name(m_MonoClass, name.c_str(), paramCount);
+	}
+
+	MonoObject* ScriptClass::invokeMethod(MonoObject* instance, MonoMethod* method, void** params) const
+	{
+		MonoObject* exception = nullptr;
+		return mono_runtime_invoke(method, instance, params, &exception);
+	}
+
+	ScriptObject::ScriptObject(const std::shared_ptr<ScriptClass>& scriptClass, const GameObject& obj)
+		: m_ScriptClass(scriptClass)
+	{
+		m_Object = m_ScriptClass->instantiate();
+
+		m_Constructor = ScriptEngine::s_Data->gameObjectClass->getMethod(".ctor", 1);
+		m_OnCreate= scriptClass->getMethod("OnCreate", 0);
+		m_OnUpdate = scriptClass->getMethod("OnUpdate", 1);
+
+		{
+			uint32_t id = obj.getObjectId();
+			void* param = &id;
+			m_ScriptClass->invokeMethod(m_Object, m_Constructor, &param);
+		}
+	}
+
+	void ScriptObject::invokeOnCreate()
+	{
+		if(m_OnCreate)
+		{
+			m_ScriptClass->invokeMethod(m_Object, m_OnCreate, nullptr);
+		}
+	}
+
+	void ScriptObject::invokeOnUpdate(float ts)
+	{
+		if(m_OnUpdate)
+		{
+			void* param = &ts;
+			m_ScriptClass->invokeMethod(m_Object, m_OnUpdate, &param);
+		}
+	}
+
 	void ScriptEngine::PrintCoreAssemblyTypes()
 	{
 		MonoImage* image = mono_assembly_get_image(s_Data->coreAssembly);
@@ -71,10 +142,13 @@ namespace Hzn
 		}
 	}
 
-	void ScriptEngine::PrintAppAssemblyTypes()
+	void ScriptEngine::LoadScripts()
 	{
-		MonoImage* image = mono_assembly_get_image(s_Data->appAssembly);
-		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		s_Data->gameObjectSubClasses.clear();
+
+		MonoClass* gameObjectClass = mono_class_from_name(s_Data->coreAssemblyImage, "Hzn", "GameObject");
+
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(s_Data->appAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
 		for (int32_t i = 0; i < numTypes; i++)
@@ -82,11 +156,97 @@ namespace Hzn
 			uint32_t cols[MONO_TYPEDEF_SIZE];
 			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-
+			const char* nameSpace = mono_metadata_string_heap(s_Data->appAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(s_Data->appAssemblyImage, cols[MONO_TYPEDEF_NAME]);
 			HZN_CORE_TRACE("{0}, {1}", nameSpace, name);
+			// get info of all the OnUpdate and OnCreate methods.
+			std::string fullName;
+			if (strlen(nameSpace) != 0)
+				fullName = fmt::format("{}.{}", nameSpace, name);
+			else
+				fullName = name;
+
+			MonoClass* monoClass = mono_class_from_name(s_Data->appAssemblyImage, nameSpace, name);
+
+			if (monoClass == gameObjectClass)
+				continue;
+
+			bool isGameObject = mono_class_is_subclass_of(monoClass, gameObjectClass, false);
+			if (!isGameObject)
+				continue;
+
+			std::shared_ptr<ScriptClass> scriptClass = std::make_shared<ScriptClass>(nameSpace, name);
+			s_Data->gameObjectSubClasses[fullName] = scriptClass;
 		}
+	}
+
+	std::shared_ptr<ScriptClass> ScriptEngine::GetGameObjectSubClass(const std::string& name)
+	{
+		if (s_Data->gameObjectSubClasses.find(name) == s_Data->gameObjectSubClasses.end())
+			return nullptr;
+
+		return s_Data->gameObjectSubClasses.at(name);
+	}
+
+	std::unordered_map<std::string, std::shared_ptr<ScriptClass>> ScriptEngine::GetGameObjectSubClasses()
+	{
+		return s_Data->gameObjectSubClasses;
+	}
+
+	std::shared_ptr<ScriptObject> ScriptEngine::GetGameObjectScriptInstance(uint32_t id)
+	{
+		if (s_Data->gameObjectScriptInstances.find(id) == s_Data->gameObjectScriptInstances.end())
+			return nullptr;
+
+		return s_Data->gameObjectScriptInstances.at(id);
+	}
+
+	bool ScriptEngine::GameObjectSubClassExists(const std::string fullName)
+	{
+		return s_Data->gameObjectSubClasses.find(fullName) != s_Data->gameObjectSubClasses.end();
+	}
+
+	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
+	{
+		MonoObject* instance = mono_object_new(s_Data->appDomain, monoClass);
+		mono_runtime_object_init(instance);
+		return instance;
+	}
+
+	MonoObject* ScriptEngine::GetManagedInstance(uint32_t id)
+	{
+		HZN_CORE_ASSERT(s_Data->gameObjectScriptInstances.find(id) != s_Data->gameObjectScriptInstances.end(),
+			"Cannot find Script Instance attached to the object");
+		return s_Data->gameObjectScriptInstances.at(id)->m_Object;
+	}
+
+	void ScriptEngine::OnStop()
+	{
+		s_Data->gameObjectScriptInstances.clear();
+	}
+
+	void ScriptEngine::OnCreateGameObject(const GameObject& obj)
+	{
+		const auto& scriptComponent = obj.getComponent<ScriptComponent>();
+		if(GameObjectSubClassExists(scriptComponent.m_ScriptName))
+		{
+			uint32_t id = obj.getObjectId();
+			std::shared_ptr<ScriptObject> instance = std::make_shared<ScriptObject>(
+				s_Data->gameObjectSubClasses[scriptComponent.m_ScriptName], obj);
+			s_Data->gameObjectScriptInstances[id] = instance;
+
+			instance->invokeOnCreate();
+		}
+	}
+
+	void ScriptEngine::OnUpdateGameObject(const GameObject& obj, TimeStep ts)
+	{
+		uint32_t id = obj.getObjectId();
+		if (s_Data->gameObjectScriptInstances.find(id) != s_Data->gameObjectScriptInstances.end())
+		{
+			s_Data->gameObjectScriptInstances[id]->invokeOnUpdate(ts);
+		}
+		else HZN_CORE_ERROR("Couldn't find script component attached to {}", id);
 	}
 
 	void ScriptEngine::LoadCoreAssembly(const std::filesystem::path& path)
@@ -114,13 +274,23 @@ namespace Hzn
 		return s_Data->coreAssemblyPath;
 	}
 
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->coreAssemblyImage;
+	}
+
 	void ScriptEngine::ReloadAssembly()
 	{
+		s_Data->gameObjectScriptInstances.clear();
+		s_Data->gameObjectSubClasses.clear();
+
 		HZN_CORE_WARN("Reload Starting");
 		mono_domain_unload(s_Data->appDomain);
 		mono_domain_set(mono_get_root_domain(), false);
 		// load core assembly.
 		LoadCoreAssembly(s_Data->coreAssemblyPath);
+		ScriptRegistry::registerComponents();
+		s_Data->gameObjectClass.reset(new ScriptClass("Hzn", "GameObject", true));
 		PrintCoreAssemblyTypes();
 
 		auto project = Hzn::ProjectManager::getActiveProject();
@@ -142,7 +312,7 @@ namespace Hzn
 				std::filesystem::copy(binPath, loadPath, std::filesystem::copy_options::overwrite_existing);
 				// load app assembly.
 				LoadAppAssembly(loadPath);
-				PrintAppAssemblyTypes();
+				LoadScripts();
 			}
 		}
 		HZN_CORE_INFO("Reload Successful!");
@@ -168,8 +338,17 @@ namespace Hzn
 		LoadCoreAssembly(s_Data->coreAssemblyPath);
 		PrintCoreAssemblyTypes();
 		ScriptRegistry::registerFunctions();
+
+		s_Data->gameObjectClass = std::make_shared<ScriptClass>("Hzn", "GameObject", true);
 		// get mono class from the image.
 		/*MonoClass* monoClass = mono_class_from_name(s_Data->coreAssemblyImage, "Hzn", "Main");*/
+		ScriptRegistry::registerComponents();
+
+		/*std::shared_ptr<ScriptClass> mainClass = std::make_shared<ScriptClass>("Hzn", "Main", true);
+		auto instance = mainClass->instantiate();
+
+		auto method = mainClass->getMethod(".ctor", 0);
+		mainClass->invokeMethod(instance, method, nullptr);*/
 
 		//// initialize the object from default constructor.
 		//MonoObject* instance = mono_object_new(s_Data->appDomain, monoClass);

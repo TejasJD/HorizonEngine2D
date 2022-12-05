@@ -39,15 +39,21 @@ void EditorLayer::onAttach()
 	};
 
 	m_FrameBuffer = Hzn::FrameBuffer::create(props);
+	Hzn::ScriptEngine::init();
 }
 
 void EditorLayer::onDetach()
 {
 	Hzn::ProjectManager::close();
+	Hzn::ScriptEngine::destroy();
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
+	// input.
+	if (Hzn::Input::keyPressed(Hzn::Key::LeftControl) || Hzn::Input::keyPressed(Hzn::Key::RightControl)) m_CtrlPressed = true;
+	else m_CtrlPressed = false;
+
 	if (Hzn::SceneManager::isOpen())
 	{
 		m_FrameBuffer->bind();
@@ -90,36 +96,14 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 	}
 }
 
-void EditorLayer::onEvent(Hzn::Event & e)
+void EditorLayer::onEvent(Hzn::Event& e)
 {
 	Hzn::EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<Hzn::MouseButtonPressedEvent>(std::bind(&EditorLayer::onMouseButtonPressed, this, std::placeholders::_1));
 	dispatcher.Dispatch<Hzn::KeyPressedEvent>(std::bind(&EditorLayer::onKeyPressed, this, std::placeholders::_1));
-	if (m_ViewportFocused && m_ViewportHovered) {
-		m_EditorCameraController.onEvent(e);
-	}
-
-	if (Hzn::Input::keyPressed(Hzn::Key::LeftControl))
+	if (m_ViewportFocused && m_ViewportHovered)
 	{
-		if (Hzn::Input::keyPressed(Hzn::Key::C)) {
-			copyObject();
-		}
-
-		if (Hzn::Input::keyPressed(Hzn::Key::V)) {
-			pasteObject();
-		}
-
-		if (Hzn::Input::keyPressed(Hzn::Key::D)) {
-			duplicateObject();
-		}
-
-		if (Hzn::Input::keyPressed(Hzn::Key::N)) {
-			createObject();
-		}
-	}
-
-	if (Hzn::Input::keyPressed(Hzn::Key::Delete)) {
-		deleteObject();
+		m_EditorCameraController.onEvent(e);
 	}
 }
 
@@ -257,9 +241,9 @@ void EditorLayer::onRenderImgui()
 					Modals::request_NewScene = true;
 				}
 
-				if(Hzn::SceneManager::isOpen())
+				if (Hzn::SceneManager::isOpen())
 				{
-					if(Hzn::SceneManager::getSceneState() == Hzn::SceneState::Play)
+					if (Hzn::SceneManager::getSceneState() == Hzn::SceneState::Play)
 					{
 						if (ImGui::MenuItem("Stop")) Hzn::SceneManager::stop();
 					}
@@ -272,7 +256,7 @@ void EditorLayer::onRenderImgui()
 
 			if (ImGui::MenuItem("Exit"))
 			{
-				if(Hzn::ProjectManager::close())
+				if (Hzn::ProjectManager::close())
 				{
 					m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 					m_HoveredObjectId = -1;
@@ -283,9 +267,9 @@ void EditorLayer::onRenderImgui()
 			ImGui::EndMenu();
 		}
 
-		if(ImGui::BeginMenu("Script"))
+		if (ImGui::BeginMenu("Script"))
 		{
-			if(ImGui::MenuItem("Reload"))
+			if (ImGui::MenuItem("Reload"))
 			{
 				Hzn::ScriptEngine::ReloadAssembly();
 			}
@@ -302,7 +286,7 @@ void EditorLayer::onRenderImgui()
 	//new project
 	{
 		bool newProjectOpen = Modals::getNewProJPopup();
-		if(newProjectOpen)
+		if (newProjectOpen)
 		{
 			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 			m_HoveredObjectId = -1;
@@ -329,7 +313,7 @@ void EditorLayer::onRenderImgui()
 	if (EditorData::s_Scene_Active) {
 		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-			ImGui::BeginChild("ExistingComponents", ImVec2{0, 400}, true, window_flags);
+			ImGui::BeginChild("ExistingComponents", ImVec2{ 0, 400 }, true, window_flags);
 			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
 			Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
 			ImGui::EndChild();
@@ -338,22 +322,22 @@ void EditorLayer::onRenderImgui()
 		auto cursorPos = ImGui::GetCursorPosX();
 		auto width = ImGui::GetWindowWidth();
 		static bool showComponentMenu = false;
-		if(m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
+		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
 		{
 			auto val = ImGui::CalcTextSize("Add Component");
 			/*ImGui::SetCursorPosX((width - (val.x + 60)) * 0.5f);*/
-			if(showComponentMenu |= ImGui::Button("Add Component", ImVec2{ -FLT_MIN, val.y + 20 }))
+			if (showComponentMenu |= ImGui::Button("Add Component", ImVec2{ -FLT_MIN, val.y + 20 }))
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
 				ImGui::BeginChild("ChildR", ImVec2(0, 250), true, window_flags);
 
 				auto list = Hzn::getComponentStringList(Hzn::SelectableComponents{});
-				for(auto& it : list)
+				for (auto& it : list)
 				{
 					std::string_view val = std::string_view(it);
 					auto hzn = val.find("Hzn");
 					std::string componentName = std::string(val.substr(hzn + 5));
-					if(ImGui::Button(componentName.c_str(), ImVec2(-FLT_MIN, 0)))
+					if (ImGui::Button(componentName.c_str(), ImVec2(-FLT_MIN, 0)))
 					{
 						Hzn::addComponent(EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId), std::string(it));
 					}
@@ -501,6 +485,40 @@ void EditorLayer::onRenderImgui()
 	//}
 	//ImGui::End();
 
+	// NODE EDITOR BEGIN
+	ImGui::Begin("Node Editor");
+
+	ImNodes::BeginNodeEditor();
+
+	ImNodes::PushColorStyle(
+		ImNodesCol_TitleBar, IM_COL32(0.8, 0, 0, 255));
+	ImNodes::PushColorStyle(
+		ImNodesCol_TitleBarSelected, IM_COL32(1, 0, 0, 255));
+
+	int hardcoded_node_id = 1;
+	ImNodes::BeginNode(hardcoded_node_id);
+
+	ImNodes::BeginNodeTitleBar();
+	ImGui::TextUnformatted("output node");
+	ImNodes::EndNodeTitleBar();
+
+	const int output_attr_id = 2;
+	ImNodes::BeginOutputAttribute(output_attr_id);
+	// in between Begin|EndAttribute calls, you can call ImGui
+	// UI functions
+	ImGui::Text("output pin");
+	ImNodes::EndOutputAttribute();
+
+	ImNodes::EndNode();
+
+	ImNodes::PopColorStyle();
+	ImNodes::PopColorStyle();
+
+	ImNodes::EndNodeEditor();
+	ImGui::End();
+
+	// NODE EDITOR END
+
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::Begin("Viewport");
@@ -534,8 +552,8 @@ void EditorLayer::onRenderImgui()
 	auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
 	auto viewportOffset = ImGui::GetWindowPos();
 
-	m_ViewportBounds[0] = {viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-	m_ViewportBounds[1] = {viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+	m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+	m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 	if (ImGui::BeginDragDropTarget())
 	{
@@ -780,27 +798,82 @@ bool EditorLayer::onKeyPressed(Hzn::KeyPressedEvent& e)
 
 	switch (keycode)
 	{
+	case Hzn::Key::LeftControl:
+	{
+		m_CtrlPressed = true;
+		break;
+	}
+	case Hzn::Key::C:
+	{
+		if (m_CtrlPressed)
+		{
+			copyObject();
+			m_CtrlPressed = false;
+		}
+		break;
+	}
+	case Hzn::Key::V:
+	{
+		if (m_CtrlPressed)
+		{
+			pasteObject();
+			m_CtrlPressed = false;
+		}
+		break;
+	}
+	case Hzn::Key::D:
+	{
+		if (m_CtrlPressed)
+		{
+			duplicateObject();
+			m_CtrlPressed = false;
+		}
+		break;
+	}
+	case Hzn::Key::N:
+	{
+		if (m_CtrlPressed)
+		{
+			createObject();
+			m_CtrlPressed = false;
+		}
+		break;
+	}
 	case Hzn::Key::Q:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::NONE;
+		m_CtrlPressed = false;
 		break;
 	}
 	case Hzn::Key::W:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+		m_CtrlPressed = false;
 		break;
 	}
 	case Hzn::Key::E:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+		m_CtrlPressed = false;
 		break;
 	}
 	case Hzn::Key::R:
 	{
 		m_GizmoType = ImGuizmo::OPERATION::SCALE;
+		m_CtrlPressed = false;
 		break;
 	}
-	default: break;
+	case Hzn::Key::Delete:
+	{
+		deleteObject();
+		m_CtrlPressed = false;
+		break;
+	}
+	default: 
+	{
+		m_CtrlPressed = false;
+		break;
+	}
 	}
 
 	return false;
@@ -810,7 +883,7 @@ bool EditorLayer::onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e)
 {
 	auto mouseButton = e.GetMouseButton();
 
-	if(mouseButton == Hzn::Mouse::ButtonLeft)
+	if (mouseButton == Hzn::Mouse::ButtonLeft)
 	{
 		if (Hzn::SceneManager::isOpen())
 		{
@@ -824,7 +897,7 @@ bool EditorLayer::onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e)
 	return false;
 }
 
-void EditorLayer::copyObject() 
+void EditorLayer::copyObject()
 {
 	if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 		m_CopiedObjectId = m_SelectedObjectId;

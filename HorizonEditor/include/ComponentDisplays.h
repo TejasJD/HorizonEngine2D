@@ -210,5 +210,44 @@ namespace Hzn
 			ImGui::TreePop();
 		}
 	}
+
+
+	template<>
+	inline void ComponentDisplays::display<ScriptComponent>(const GameObject& obj)
+	{
+		auto& component = obj.getComponent<ScriptComponent>();
+		std::string selectedScriptName = component.m_ScriptName;
+
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick |
+			ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_SpanFullWidth |
+			ImGuiTreeNodeFlags_Selected |
+			ImGuiTreeNodeFlags_DefaultOpen;
+		auto val = ScriptEngine::GetGameObjectSubClasses();
+
+		if(ImGui::TreeNodeEx("Scripts", flags))
+		{
+			if(ImGui::BeginCombo("Script", selectedScriptName.c_str()))
+			{
+				for (const auto& script : val)
+				{
+					bool isSelected = selectedScriptName == script.first;
+					if(ImGui::Selectable(script.first.c_str(), isSelected))
+					{
+						component.m_ScriptName = selectedScriptName = script.first;
+					}
+
+					if (isSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+			ImGui::TreePop();
+		}
+	}
 }
 #endif // !HZN_COMPONENT_DISPLAYS_H
