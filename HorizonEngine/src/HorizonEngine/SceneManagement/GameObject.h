@@ -40,6 +40,12 @@ namespace Hzn
 		}
 
 		template<typename T>
+		void removeComponent() {
+			isValid();
+			m_Scene->m_Registry.erase<T>(m_ObjectId);
+		}
+
+		template<typename T>
 		bool hasComponent() const
 		{
 			isValid();
