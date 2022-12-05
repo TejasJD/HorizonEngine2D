@@ -205,6 +205,20 @@ void ContentBrowser::OnImGuiRender()
 
 			if (newName.empty()) ImGui::Text("new name field is empty!");
 
+			bool exist = false;
+			for (const auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
+			{
+				if (std::filesystem::exists((Modals::m_CurrentDirectory.string() + "\\" + newName)))
+				{
+					exist = true;
+				}
+			}
+
+			if (!newName.empty() && exist)
+			{
+				ImGui::Text("file or folder name already exists!");
+			}
+
 			ImGui::Separator();
 			if (ImGui::Button("Close", ImVec2(120, 0))) {
 				request_Rename = false;
@@ -216,7 +230,7 @@ void ContentBrowser::OnImGuiRender()
 			if (ImGui::Button("confirm", ImVec2(120, 0)))
 			{
 				// create new project and set it as active project.
-				if (!newName.empty()) {
+				if (!newName.empty() && !exist) {
 					std::filesystem::rename(selected_file, std::filesystem::path(selected_file).parent_path().string() + +"\\" + newName);
 					memset(fileNameBuffer, '\0', sizeof(fileNameBuffer));
 					request_Rename = false;
