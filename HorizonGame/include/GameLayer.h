@@ -18,6 +18,10 @@ private:
 	std::shared_ptr<Hzn::Scene> m_ActiveScene;
 
 	int32_t m_PlayerObjectId = std::numeric_limits<uint32_t>::max();
+	std::vector<int32_t> m_EnemyIds;
+	std::vector<int32_t> m_PlatformIds;
+
+	bool m_AllowJump = true;
 
 	std::vector<float> attackTimers{ 1.0f, 1.0f, 1.0f, 1.0f };
 

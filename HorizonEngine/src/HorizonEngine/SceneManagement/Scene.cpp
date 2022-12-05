@@ -513,7 +513,7 @@ namespace Hzn
 		fixtureDef.friction = bc2d.m_Friction;
 		fixtureDef.restitution = bc2d.m_Restitution;
 		fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
-		fixtureDef.isSensor = true;
+		fixtureDef.isSensor = true; // TODO: Change/remove this
 		body->CreateFixture(&fixtureDef);
 	}
 }

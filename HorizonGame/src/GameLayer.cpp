@@ -32,6 +32,15 @@ void GameLayer::onAttach()
 
 	m_PlayerObjectId = m_ActiveScene->getGameObjectByName("Player").getObjectId();
 
+	m_PlatformIds.push_back(m_ActiveScene->getGameObjectByName("Ground").getObjectId());
+	m_PlatformIds.push_back(m_ActiveScene->getGameObjectByName("Platform 1").getObjectId());
+	m_PlatformIds.push_back(m_ActiveScene->getGameObjectByName("Platform 2").getObjectId());
+
+	m_EnemyIds.push_back(m_ActiveScene->getGameObjectByName("Enemy 1").getObjectId());
+	m_EnemyIds.push_back(m_ActiveScene->getGameObjectByName("Enemy 2").getObjectId());
+	m_EnemyIds.push_back(m_ActiveScene->getGameObjectByName("Enemy 3").getObjectId());
+	m_EnemyIds.push_back(m_ActiveScene->getGameObjectByName("Enemy 4").getObjectId());
+
 	// Add collision callbacks
 	//m_ActiveScene->getGameObjectById(m_PlayerObjectId).addCollisionEnetrCallback();
 
@@ -71,13 +80,22 @@ void GameLayer::onUpdate(Hzn::TimeStep ts)
 		attackTimers.at(i) -= ts;
 	}
 
+	/*Hzn::GameObject player = m_ActiveScene->getGameObjectById(m_PlayerObjectId);
+	auto& playerTransform = player.getComponent<Hzn::TransformComponent>();
+	for (int i = 0; i < m_EnemyIds.size(); i++) {
+		if (playerTransform.m_Translation.x)
+	}*/
+
 	m_ActiveScene->onUpdate(ts);
 }
 
 void GameLayer::onEvent(Hzn::Event& e)
 {
 	if (Hzn::Input::keyPressed(Hzn::Key::W) || Hzn::Input::keyPressed(Hzn::Key::Up)) {
-		m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addImpulseForce(glm::vec2(0.0f, 8.0f));
+		if (m_AllowJump) {
+			m_ActiveScene->getGameObjectById(m_PlayerObjectId).getComponent<Hzn::RigidBody2DComponent>().addImpulseForce(glm::vec2(0.0f, 8.0f));
+			//m_AllowJump = false;
+		}
 	}
 
 	if (Hzn::Input::keyPressed(Hzn::Key::A) || Hzn::Input::keyPressed(Hzn::Key::Left)) {
