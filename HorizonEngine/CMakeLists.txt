@@ -135,6 +135,25 @@ set(IMGUIZMO_FILES
 	"vendor/ImGuizmo/ImZoomSlider.h"
 )
 
+set(IMGUI_FILES
+	"vendor/imgui/imconfig.h"
+	"vendor/imgui/imgui.cpp"
+	"vendor/imgui/imgui.h"
+	"vendor/imgui/imgui_demo.cpp"
+	"vendor/imgui/imgui_draw.cpp"
+	"vendor/imgui/imgui_impl_glfw.cpp"
+	"vendor/imgui/imgui_impl_glfw.h"
+	"vendor/imgui/imgui_impl_opengl3.cpp"
+	"vendor/imgui/imgui_impl_opengl3.h"
+	"vendor/imgui/imgui_impl_opengl3_loader.h"
+	"vendor/imgui/imgui_internal.h"
+	"vendor/imgui/imgui_tables.cpp"
+	"vendor/imgui/imgui_widgets.cpp"
+	"vendor/imgui/imstb_rectpack.h"
+	"vendor/imgui/imstb_textedit.h"
+	"vendor/imgui/imstb_truetype.h"
+)
+
 set(IMNODES_FILES
 	"vendor/imnodes/imnodes.cpp"
 	"vendor/imnodes/imnodes.h"
@@ -145,10 +164,12 @@ set(FILEWATCH_FILES
 	"vendor/filewatch/FileWatch.hpp"
 )
 
+
 # Add source to this project's executable.
 add_library (HorizonEngine
 	${HZN_SOURCE_FILES}
 	${HZN_HEADER_FILES}
+	${IMGUI_FILES}
 	${IMGUIZMO_FILES}
 	${IMNODES_FILES}
 	${FILEWATCH_FILES}
@@ -173,6 +194,7 @@ target_include_directories(HorizonEngine
 	vendor/imnodes
 	vendor/mono/include
 	vendor/filewatch
+	vendor/imgui
 )
 
 # precompiled headers to target 'HorizonEngine'
@@ -181,7 +203,6 @@ target_precompile_headers(HorizonEngine PUBLIC pch.h)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
@@ -200,7 +221,6 @@ target_link_libraries(HorizonEngine
 	glfw
 	glm::glm
 	glad::glad
-	imgui::imgui
 	spdlog::spdlog_header_only
 	box2d::box2d
 	unofficial::sajson::sajson

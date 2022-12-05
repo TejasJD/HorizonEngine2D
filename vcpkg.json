@@ -5,15 +5,6 @@
     "glfw3",
     "glm",
     "glad",
-    {
-      "name": "imgui",
-      "default-features": false,
-      "features": [
-        "opengl3-binding",
-        "glfw-binding",
-        "docking-experimental"
-      ]
-    },
     "spdlog",
     "box2d",
     "gtest",

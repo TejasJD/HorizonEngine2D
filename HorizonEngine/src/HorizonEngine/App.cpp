@@ -25,7 +25,6 @@ namespace Hzn
 		m_Window->setVsync(true);
 
 		Renderer::init();
-		ScriptEngine::init();
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);
@@ -33,10 +32,7 @@ namespace Hzn
 		RegisterComponentFunctions(AllComponents{});
 	}
 
-	App::~App()
-	{
-		ScriptEngine::destroy();
-	}
+	App::~App() {}
 
 	//! the main App run loop. This loop keeps the application running and updates and renders
 	//! different layers

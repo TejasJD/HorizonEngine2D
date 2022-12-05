@@ -39,11 +39,13 @@ void EditorLayer::onAttach()
 	};
 
 	m_FrameBuffer = Hzn::FrameBuffer::create(props);
+	Hzn::ScriptEngine::init();
 }
 
 void EditorLayer::onDetach()
 {
 	Hzn::ProjectManager::close();
+	Hzn::ScriptEngine::destroy();
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
@@ -482,6 +484,40 @@ void EditorLayer::onRenderImgui()
 	//	links.push_back(std::make_pair(start_attr, end_attr));
 	//}
 	//ImGui::End();
+
+	// NODE EDITOR BEGIN
+	ImGui::Begin("Node Editor");
+
+	ImNodes::BeginNodeEditor();
+
+	ImNodes::PushColorStyle(
+		ImNodesCol_TitleBar, IM_COL32(0.8, 0, 0, 255));
+	ImNodes::PushColorStyle(
+		ImNodesCol_TitleBarSelected, IM_COL32(1, 0, 0, 255));
+
+	int hardcoded_node_id = 1;
+	ImNodes::BeginNode(hardcoded_node_id);
+
+	ImNodes::BeginNodeTitleBar();
+	ImGui::TextUnformatted("output node");
+	ImNodes::EndNodeTitleBar();
+
+	const int output_attr_id = 2;
+	ImNodes::BeginOutputAttribute(output_attr_id);
+	// in between Begin|EndAttribute calls, you can call ImGui
+	// UI functions
+	ImGui::Text("output pin");
+	ImNodes::EndOutputAttribute();
+
+	ImNodes::EndNode();
+
+	ImNodes::PopColorStyle();
+	ImNodes::PopColorStyle();
+
+	ImNodes::EndNodeEditor();
+	ImGui::End();
+
+	// NODE EDITOR END
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
