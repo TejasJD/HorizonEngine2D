@@ -2,21 +2,27 @@
 
 #ifndef HZN_EVENT_H
 #define HZN_EVENT_H
-/*
-Events are currently utilising blocking.
-A new iteration may involve using the observer pattern
-https://refactoring.guru/design-patterns/observer
-Code that could be used can be found open source:
-https://github.com/dquist/EventBus
-*/
 
 #include "HorizonEngine/Core/Core.h"
 #include "fmt/ostream.h"
 
 #define BIT(x) (1 << (x))
-
+/// <summary>
+/// Events are currently utilising blocking.
+/// A new iteration may involve using the observer pattern
+/// https://refactoring.guru/design-patterns/observer
+/// Code that could be used can be found open source :
+/// https://github.com/dquist/EventBus
+/// </summary>
 namespace Hzn {
 
+	/// <summary>
+	/// enum class to store the type of events ie.
+	/// Window Events
+	/// Key Event
+	/// Mouse Events
+	/// Application Events
+	/// </summary>
 	enum class TypeOfEvent
 	{
 		None = 0,
@@ -33,6 +39,9 @@ namespace Hzn {
 		AppTick, AppUpdate, AppRender
 	};
 
+	/// <summary>
+	/// 
+	/// </summary>
 	enum EventCategory
 	{
 		None = 0,
@@ -43,18 +52,28 @@ namespace Hzn {
 		EventCategoryMouseButton = BIT(4) // 16
 	};
 
+//
 #define EVENT_CLASS_TYPE(type) static TypeOfEvent GetStaticType() { return TypeOfEvent::type; }\
 								virtual TypeOfEvent GetTypeOfEvent() const override { return GetStaticType(); }\
 								virtual const char* GetName() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
+	/// <summary>
+	/// Event class
+	/// </summary>
 	class Event
 	{
+	
 	public:
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		virtual ~Event() = default;
 
+		
 		bool Handled = false;
+
 
 		virtual TypeOfEvent GetTypeOfEvent() const = 0;
 		virtual const char* GetName() const = 0;

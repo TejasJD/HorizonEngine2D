@@ -29,13 +29,14 @@ namespace Hzn {
 		int cursorRow, cursorCol;
 
 
-		//These methods check if the buffer stream has been opened and throw an error if not
+		//!This method will check if the buffer stream has been opened and throw an error if not
 		void in_check() {
 			if (!in.is_open()) {
 				throw std::runtime_error("in buf Error");
 			}
 		}
 
+		//!This method will check if the buffer stream has been opened and throw an error if not
 		void out_check() {
 			if (!out.is_open()) {
 				throw std::runtime_error("out buf Error");

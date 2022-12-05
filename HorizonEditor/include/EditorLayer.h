@@ -2,17 +2,21 @@
 
 #include <HorizonEngine.h>
 
-
+/// <summary>
+/// EditorData struct declared active scene & active project
+/// </summary>
 struct EditorData {
 	static std::shared_ptr<Hzn::Scene> s_Scene_Active;
 	static std::shared_ptr<Hzn::Project> m_Project_Active;
 };
 
-
+/// <summary>
+/// EditorLayer class declaration, inherits layer
+/// </summary>
 class EditorLayer : public Hzn::Layer
 {
 public:
-
+	
 	EditorLayer(const char* name = "Editor Layer");
 	virtual ~EditorLayer();
 	virtual void onAttach() override;

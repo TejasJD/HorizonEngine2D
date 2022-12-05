@@ -15,6 +15,7 @@ namespace Hzn
 {
 	class AudioSource;
 
+
 	struct SpriteSheetIdentifier
 	{
 		std::shared_ptr<Texture2D> spriteSheet;
@@ -24,13 +25,13 @@ namespace Hzn
 	class AssetManager
 	{
 	public:
-		// Texture storage
+		//! Texture storage
 		static std::map<std::string, std::pair<std::shared_ptr<Texture2D>, glm::vec2>> textureStorage;
-		//Audio storage
+		//! Audio storage
 		static std::map<std::string, std::shared_ptr<AudioSource>> audioStorage;
-		//SpriteStorage
+		//! SpriteStorage
 		static std::map<std::string, std::shared_ptr<Sprite2D>> spriteStorage;
-
+		//! 
 		static std::map<std::string, std::string> spriteFormat;
 
 

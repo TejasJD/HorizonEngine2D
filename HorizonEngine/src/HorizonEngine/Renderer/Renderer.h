@@ -15,8 +15,11 @@ namespace Hzn
 	class Renderer
 	{
 	public:
+		//! Calss to init th renderer from the supplying graphics library (OpenGL)
 		static void init();
+		//! Resizes the window
 		static void onWindowResize(unsigned int width, unsigned int height);
+		//! retrieves the renderAPI
 		inline static RendererAPI::API getAPI() { return RendererAPI::getAPI(); }
 	};
 }

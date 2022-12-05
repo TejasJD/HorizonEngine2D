@@ -8,6 +8,7 @@ namespace Hzn
 	bool Renderer2D::s_Initialized = false;
 	Renderer2DStats Renderer2D::s_Stats;
 
+	//! Draw a vertex by providing position, colour & coordinates
 	struct Vertex
 	{
 		glm::vec3 position = {0.0f, 0.0f, 0.0f};
@@ -17,6 +18,7 @@ namespace Hzn
 		int entityId = -1;
 	};
 
+	//! renders the data
 	struct RenderData
 	{
 		std::shared_ptr<VertexArray> vao;
@@ -32,13 +34,13 @@ namespace Hzn
 
 		Vertex* ptr = nullptr;
 		uint32_t curidx = 0;
-		// 0 is bound to default texture.
+		//! 0 is bound to default texture.
 		uint32_t textureidx = 1;
 		uint32_t draws = 0;
 		uint32_t quads = 0;
 
 		Vertex* buffer = nullptr;
-		// each texture is bound to one of the texture slots in this.
+		//! each texture is bound to one of the texture slots in this.
 		std::array<std::shared_ptr<Texture2D>, mxtextureSlots> textureSlots; // TODO: have a UUID that represent assets.
 		std::array<glm::vec4, 4> quadPositions =
 		{

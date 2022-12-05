@@ -6,11 +6,13 @@
 
 namespace Hzn
 {
+	//!Communicating from c++ to c#
 	static void Greet()
 	{
 		std::cout << "Hello called from C++" << std::endl;
 	}
 
+	//! calls greet a function to test if c# registers functions
 	void ScriptRegistry::registerFunctions()
 	{
 		HZN_ADD_INTERNAL_CALL(Greet);

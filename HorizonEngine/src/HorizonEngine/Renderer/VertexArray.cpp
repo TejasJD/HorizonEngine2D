@@ -7,6 +7,11 @@
 
 namespace Hzn
 {
+	/// <summary>
+	/// Function to create a vertex array.
+	/// return pointer to GLVertexArray if OpenGl case is selected.
+	/// </summary>
+	/// <returns></returns>
 	std::shared_ptr<VertexArray> VertexArray::create()
 	{
 		switch (RendererAPI::getAPI())

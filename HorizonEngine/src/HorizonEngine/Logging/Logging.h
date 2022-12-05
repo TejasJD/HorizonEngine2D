@@ -17,9 +17,12 @@ namespace Hzn
 	class Logging
 	{
 	public:
+		//!initialise Logging class
 		static void Init();
 
+		//! Getter for Core Logger
 		static std::shared_ptr<spdlog::logger>& GetCoreLogger();
+		//! Getter for App Logger
 		static std::shared_ptr<spdlog::logger>& GetAppLogger();
 	private:
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
@@ -28,6 +31,7 @@ namespace Hzn
 
 }
 
+//
 #define HZN_CORE_TRACE(...)      ::Hzn::Logging::GetCoreLogger()->trace(__VA_ARGS__)
 #define HZN_CORE_INFO(...)       ::Hzn::Logging::GetCoreLogger()->info(__VA_ARGS__)
 #define HZN_CORE_WARN(...)       ::Hzn::Logging::GetCoreLogger()->warn(__VA_ARGS__)

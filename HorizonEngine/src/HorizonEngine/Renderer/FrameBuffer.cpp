@@ -7,6 +7,7 @@
 
 namespace Hzn
 {
+	//! Implementation of the FrameBuffer create
 	std::shared_ptr<FrameBuffer> FrameBuffer::create(const FrameBufferProps& props)
 	{
 		switch (RendererAPI::getAPI())

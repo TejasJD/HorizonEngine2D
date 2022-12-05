@@ -7,6 +7,7 @@ namespace Hzn
 {
 	std::unique_ptr<RendererAPI> RenderCall::m_Api = RenderCall::create();
 
+	//!Create will return the render API - in this case OpenGL
 	std::unique_ptr<RendererAPI> RenderCall::create()
 	{
 		switch (RendererAPI::getAPI())

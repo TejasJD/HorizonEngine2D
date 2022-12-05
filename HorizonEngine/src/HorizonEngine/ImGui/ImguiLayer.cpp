@@ -20,16 +20,21 @@
 
 namespace Hzn
 {
+	//! Constructor - Log Imgui layer attached
 	ImguiLayer::ImguiLayer() : Layer("ImGui Layer")
 	{
 		HZN_CORE_INFO("Imgui Layer Attached!");
 	}
 
+	//!Destructor
 	ImguiLayer::~ImguiLayer()
 	{
 		onDetach();
 	}
 
+	/// <summary>
+	/// Method to call when you want to  attach ImGui layer to render on screen
+	/// </summary>
 	void ImguiLayer::onAttach()
 	{
 		IMGUI_CHECKVERSION();
@@ -38,12 +43,12 @@ namespace Hzn
 		ImGuiIO& io = ImGui::GetIO();
 		(void)io;
 
-		// turning on certain viewport flags
+		//! turning on certain viewport flags
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		// Setup Dear ImGui style
+		//! Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 
 		// a workaround, so that window rounding is consistent.
@@ -68,8 +73,10 @@ namespace Hzn
 		ImGui_ImplOpenGL3_Init("#version 420");
 	}
 
+	//! onUpdate ImGui
 	void ImguiLayer::onUpdate(TimeStep ts) {}
 
+	//! Detach ImGui
 	void ImguiLayer::onDetach()
 	{
 		ImGui_ImplGlfw_Shutdown();
@@ -79,6 +86,10 @@ namespace Hzn
 		ImGui::DestroyContext();
 	}
 
+	/// <summary>
+	/// Handle roducing Imgui contents when imGui begins
+	/// ie. what imgui contents goes into the window.
+	/// </summary>
 	void ImguiLayer::imguiBegin()
 	{
 		ImGui_ImplGlfw_NewFrame();
@@ -89,6 +100,7 @@ namespace Hzn
 		auto& colors = ImGui::GetStyle().Colors;
 		colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, colors[ImGuiCol_WindowBg]);
+
 		// Headers
 		colors[ImGuiCol_Header] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
 		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
@@ -134,6 +146,9 @@ namespace Hzn
 		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, colors[ImGuiCol_TitleBgCollapsed]);
 	}
 
+	/// <summary>
+	/// Handle ImGUI contents when ended.
+	/// </summary>
 	void ImguiLayer::imguiEnd()
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -156,6 +171,10 @@ namespace Hzn
 		}
 	}
 
+	/// <summary>
+	/// Handle ImGui Keybord and mouse events
+	/// </summary>
+	/// <param name="e"></param>
 	void ImguiLayer::onEvent(Event& e)
 	{
 		if(absorbEvents)
@@ -173,6 +192,9 @@ namespace Hzn
 		}
 	}
 
+	/// <summary>
+	/// Set the colour themes for ImGui
+	/// </summary>
 	void ImguiLayer::setDarkThemeColors()
 	{
 		auto& colors = ImGui::GetStyle().Colors;

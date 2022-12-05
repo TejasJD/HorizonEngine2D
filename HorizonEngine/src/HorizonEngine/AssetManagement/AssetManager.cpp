@@ -10,7 +10,7 @@ std::map<std::string, std::shared_ptr<Sprite2D>> AssetManager::spriteStorage;
 
 bool AssetManager::init(const std::filesystem::path& directoryPath)
 {
-	// load assets
+	//! load assets
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))
 	{
 		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {

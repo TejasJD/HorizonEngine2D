@@ -12,6 +12,7 @@ namespace Hzn
 	class GLContext : public RenderContext
 	{
 	public:
+		//! Give GL the window handle to take control
 		GLContext(GLFWwindow *const& handle);
 
 		// Inherited via RenderContext
