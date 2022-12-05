@@ -61,10 +61,11 @@ namespace Hzn
 
 		HZN_CORE_ASSERT(is, "failed to open project file!");
 
-		std::string key, sep, value;
-		is >> key >> sep >> value;
-		if (!value.empty() && std::filesystem::exists(value) && std::filesystem::is_regular_file(value)) {
-			m_Scene = SceneManager::open(value);
+		std::string key, sep;
+		std::filesystem::path scenePath;
+		is >> key >> sep >> scenePath;
+		if (!scenePath.empty() && std::filesystem::exists(scenePath) && std::filesystem::is_regular_file(scenePath)) {
+			m_Scene = SceneManager::open(scenePath);
 		}
 
 		is.close();
