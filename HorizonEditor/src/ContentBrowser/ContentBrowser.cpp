@@ -6,6 +6,12 @@
 #include "EditorLayer.h"
 #include "Modals.h"
 
+char ContentBrowser::fileNameBuffer[256]{};
+bool ContentBrowser::request_NewFile = false;
+bool ContentBrowser::request_NewFolder = false;
+bool ContentBrowser::request_Rename = false;
+std::string ContentBrowser::selected_file;
+
 void ContentBrowser::OnImGuiRender()
 {
 
@@ -13,6 +19,12 @@ void ContentBrowser::OnImGuiRender()
 	ImGui::Begin("Content Browser");
 
 	if (!Modals::projectRootFolder.empty()) {
+
+		if (ImGui::Button("File"))
+		{
+			ImGui::OpenPopup("ContentBrowserPopup");
+		}
+
 		if (Modals::m_CurrentDirectory != std::filesystem::path(m_ProjectRootFolder))
 		{
 			if (ImGui::Button("<-"))
@@ -32,7 +44,7 @@ void ContentBrowser::OnImGuiRender()
 
 		ImGui::Columns(columnCount, 0, false);
 
-		std::vector fileFilter{ 
+		std::vector fileFilter{
 			".ini",
 			".hzn",
 			".sln",
@@ -74,7 +86,7 @@ void ContentBrowser::OnImGuiRender()
 
 				if (Hzn::AssetManager::spriteStorage.find(spriteSheetPath) == Hzn::AssetManager::spriteStorage.end())
 				{
-				
+
 					auto width = Hzn::AssetManager::getTexture(spriteSheetPath)->getWidth();
 					auto height = Hzn::AssetManager::getTexture(spriteSheetPath)->getHeight();
 					// (0, 0) to (width, height).
@@ -149,14 +161,180 @@ void ContentBrowser::OnImGuiRender()
 					Modals::m_CurrentDirectory /= path.filename();
 
 			}
+
+			// Right click on the item
+			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+				selected_file = path.string();
+				ImGui::OpenPopup("fileFolderPopup");
+			}
+
+			if (ImGui::BeginPopup("fileFolderPopup")) {
+
+				if (ImGui::MenuItem("Delete", false)) {
+					std::filesystem::remove_all(path);
+				}
+				if (ImGui::MenuItem("Rename", false)) {
+					request_Rename = true;
+				}
+
+
+				ImGui::EndPopup();
+			}
+
 			ImGui::TextWrapped(filenameString.c_str());
 
 			ImGui::NextColumn();
 
 			ImGui::PopID();
+
+
+
 		}
+
+
+
+		//Rename popup
+		if (request_Rename)
+			ImGui::OpenPopup("Rename");
+
+		if (ImGui::BeginPopupModal("Rename", &request_Rename, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+
+			ImGui::InputText("New Name", fileNameBuffer, 256);
+			std::string newName = std::string(fileNameBuffer);
+
+			if (newName.empty()) ImGui::Text("new name field is empty!");
+
+			ImGui::Separator();
+			if (ImGui::Button("Close", ImVec2(120, 0))) {
+				request_Rename = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("confirm", ImVec2(120, 0)))
+			{
+				// create new project and set it as active project.
+				if (!newName.empty()) {
+					std::filesystem::rename(selected_file, std::filesystem::path(selected_file).parent_path().string() + +"\\" + newName);
+					memset(fileNameBuffer, '\0', sizeof(fileNameBuffer));
+					request_Rename = false;
+				}
+			}
+			ImGui::EndPopup();
+		}
+
 	}
+
 	ImGui::Columns(1);
+
+	if (ImGui::BeginPopup("ContentBrowserPopup")) {
+		if (ImGui::MenuItem("create new file", false)) {
+			request_NewFile = true;
+
+		}
+		if (ImGui::MenuItem("create new folder", false)) {
+			request_NewFolder = true;
+		}
+
+		ImGui::EndPopup();
+	}
+	//new file popup
+	if (request_NewFile)
+		ImGui::OpenPopup("NewFile");
+
+	if (ImGui::BeginPopupModal("NewFile", &request_NewFile, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		ImGui::InputText("File Name", fileNameBuffer, 256);
+		std::string fileName = std::string(fileNameBuffer);
+
+		if (fileName.empty()) ImGui::Text("file name field is empty!");
+
+		bool exist = false;
+		for (const auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
+		{
+			if (std::filesystem::exists((Modals::m_CurrentDirectory.string() + "\\" + fileName)))
+			{
+				exist = true;
+			}
+		}
+
+		if (!fileName.empty() && exist)
+		{
+			ImGui::Text("file or folder name already exists!");
+		}
+
+		ImGui::Separator();
+		if (ImGui::Button("Close", ImVec2(120, 0))) {
+			request_NewFile = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Create", ImVec2(120, 0)))
+		{
+			// create new project and set it as active project.
+			if (!fileName.empty() && !exist) {
+
+				std::ofstream os(Modals::m_CurrentDirectory.string() + "\\" + fileName);
+				os.close();
+				memset(fileNameBuffer, '\0', sizeof(fileNameBuffer));
+				request_NewFile = false;
+			}
+		}
+		ImGui::EndPopup();
+	}
+
+	//new folder popup
+	if (request_NewFolder)
+		ImGui::OpenPopup("NewFolder");
+
+	if (ImGui::BeginPopupModal("NewFolder", &request_NewFolder, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+
+		ImGui::InputText("Folder Name", fileNameBuffer, 256);
+		std::string folderName = std::string(fileNameBuffer);
+
+		if (folderName.empty()) ImGui::Text("folder name field is empty!");
+
+		bool exist = false;
+		for (const auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
+		{
+			if (std::filesystem::exists((Modals::m_CurrentDirectory.string() + "\\" + folderName)))
+			{
+				exist = true;
+			}
+		}
+
+		if (!folderName.empty() && exist)
+		{
+			ImGui::Text("file or folder name already exists!");
+		}
+
+		ImGui::Separator();
+		if (ImGui::Button("Close", ImVec2(120, 0))) {
+			request_NewFolder = false;
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Create", ImVec2(120, 0)))
+		{
+			// create new project and set it as active project.
+			if (!folderName.empty() && !exist) {
+				std::filesystem::create_directory(Modals::m_CurrentDirectory.string() + "\\" + folderName);
+				memset(fileNameBuffer, '\0', sizeof(fileNameBuffer));
+				request_NewFolder = false;
+
+			}
+		}
+		ImGui::EndPopup();
+	}
+
 	ImGui::End();
 
 }
