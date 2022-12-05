@@ -32,12 +32,21 @@ void ContentBrowser::OnImGuiRender()
 
 		ImGui::Columns(columnCount, 0, false);
 
-
+		std::vector fileFilter{ 
+			".ini",
+			".hzn",
+			".sln",
+			".csproj",
+			".lua",
+		};
 
 		for (auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
 		{
-
-			if (entry.path().extension().string().find("ini") != std::string::npos || entry.path().extension().string().find("hzn") != std::string::npos || entry.path().string().find("icons") != std::string::npos)
+			if (std::find(fileFilter.begin(), fileFilter.end(), entry.path().extension().string()) != fileFilter.end())
+			{
+				continue;
+			}
+			if (entry.is_directory() && entry.path().string().find("bin") != std::string::npos || entry.path().string().find("icons") != std::string::npos || entry.path().string().find("load_target") != std::string::npos)
 			{
 				continue;
 			}
