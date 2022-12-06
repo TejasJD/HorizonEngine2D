@@ -74,6 +74,8 @@ namespace Hzn
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
 		std::filesystem::path m_Path = std::filesystem::path();
 
+		std::vector<uint32_t> m_ObjectsToDelete;
+
 		SceneState m_State = SceneState::Edit;
 	};
 
