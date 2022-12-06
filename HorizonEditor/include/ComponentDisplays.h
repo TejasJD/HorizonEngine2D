@@ -328,11 +328,35 @@ namespace Hzn
 			ImGuiTreeNodeFlags_SpanAvailWidth |
 			ImGuiTreeNodeFlags_SpanFullWidth |
 			ImGuiTreeNodeFlags_Selected |
-			ImGuiTreeNodeFlags_DefaultOpen;
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap;
+
+		bool treeOpen = ImGui::TreeNodeEx("Scripts", flags);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		if (ImGui::Button("...", ImVec2(30, 18))) ImGui::OpenPopup("ScriptProperties");
+		ImGui::PopStyleColor(1);
+
+		bool componentRemoved = false;
+		if (ImGui::BeginPopup("ScriptProperties")) {
+			if (ImGui::MenuItem("Remove")) {
+				obj.removeComponent<ScriptComponent>();
+				componentRemoved = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (componentRemoved) {
+			if (treeOpen)
+				ImGui::TreePop();
+			return;
+		}
+
 		auto val = ScriptEngine::GetGameObjectSubClasses();
 
-		if(ImGui::TreeNodeEx("Scripts", flags))
-		{
+		if (treeOpen) {
 			if(ImGui::BeginCombo("Script", selectedScriptName.c_str()))
 			{
 				for (const auto& script : val)
