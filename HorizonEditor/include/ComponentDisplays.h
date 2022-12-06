@@ -43,7 +43,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_SpanFullWidth |
 			ImGuiTreeNodeFlags_Selected |
 			ImGuiTreeNodeFlags_DefaultOpen;
-		if(ImGui::TreeNodeEx("Tag", flags))
+		if(ImGui::TreeNodeEx(ICON_FA_SHAPES " Tag", flags))
 		{
 			char nameString[512]{};
 			strcpy(nameString, obj.getComponent<NameComponent>().m_Name.c_str());
@@ -70,7 +70,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_Selected |
 			ImGuiTreeNodeFlags_DefaultOpen;
 
-		if (ImGui::TreeNodeEx("Transform", flags)) {
+		if (ImGui::TreeNodeEx(ICON_FA_SHAPES " Transform", flags)) {
 			ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.25f, -50.0f, 50.0f);
 			ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.25f, 1.0f, 50.0f);
 			ImGui::DragFloat3("Rotation", glm::value_ptr(transform.m_Rotation), 1.0f,
@@ -91,7 +91,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_DefaultOpen |
 			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		bool treeOpen = ImGui::TreeNodeEx("Render", flags);
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Render", flags);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
@@ -174,7 +174,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_DefaultOpen |
 			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		bool treeOpen = ImGui::TreeNodeEx("Camera", flags);
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Camera", flags);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
@@ -219,7 +219,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_DefaultOpen |
 			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		bool treeOpen = ImGui::TreeNodeEx("Rigidbody 2D", flags);
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Rigidbody 2D", flags);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
@@ -282,7 +282,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_DefaultOpen |
 			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		bool treeOpen = ImGui::TreeNodeEx("Box Collider 2D", flags);
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Box Collider 2D", flags);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
@@ -331,7 +331,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_DefaultOpen |
 			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		bool treeOpen = ImGui::TreeNodeEx("Scripts", flags);
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Scripts", flags);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });

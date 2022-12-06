@@ -7,6 +7,13 @@
 
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
+bool EditorData::s_ShowViewportPanel = true;
+bool EditorData::s_ShowNodeEditorPanel = true;
+bool EditorData::s_ShowObjectHierarchyPanel = true;
+bool EditorData::s_ShowComponentsPanel = true;
+bool EditorData::s_ShowSpritesPanel = true;
+bool EditorData::s_ShowContentBrowserPanel = true;
+
 std::string ContentBrowser::m_CurrentTexturePath;
 
 EditorLayer::EditorLayer(const char* name) :
@@ -275,12 +282,8 @@ void EditorLayer::onRenderImgui()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Script"))
+		if (ImGui::BeginMenu("View"))
 		{
-			if (ImGui::MenuItem("Reload"))
-			{
-				Hzn::ScriptEngine::ReloadAssembly();
-			}
 			ImGui::EndMenu();
 		}
 
@@ -317,7 +320,7 @@ void EditorLayer::onRenderImgui()
 
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
-	ImGui::Begin(ICON_FA_GAMEPAD  " Components");
+	ImGui::Begin(ICON_FA_SHAPES " Components");
 	if (EditorData::s_Scene_Active) {
 		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
@@ -376,7 +379,7 @@ void EditorLayer::onRenderImgui()
 	// CONTENT BROWSER END
 
 	//Sprites BEGIN
-	ImGui::Begin("Sprites");
+	ImGui::Begin(ICON_FA_ROBOT " Sprites");
 	static float padding = 16.0f;
 	static float thumbnailSize = 128.0f;
 	float cellSize = thumbnailSize + padding;
@@ -498,7 +501,7 @@ void EditorLayer::onRenderImgui()
 	//ImGui::End();
 	static std::vector<std::pair<int, int>> links;
 	// NODE EDITOR BEGIN
-	ImGui::Begin("Node Editor");
+	ImGui::Begin(ICON_FA_CODE_BRANCH " Node Editor");
 
 	/*ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);*/
 	ImNodes::BeginNodeEditor();
@@ -570,7 +573,7 @@ void EditorLayer::onRenderImgui()
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-	ImGui::Begin("Viewport");
+	ImGui::Begin(ICON_FA_TV " Viewport");
 
 	/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
 
@@ -783,9 +786,14 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	auto& nameComponent = object.getComponent<Hzn::NameComponent>();
 	std::string objectName = std::string(ICON_FA_DICE_D6) + " " + nameComponent.m_Name.c_str();
-	if(flags & ImGuiTreeNodeFlags_Selected) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
+	
+	if (flags & ImGuiTreeNodeFlags_Selected) 
+	{
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
+	}
 	bool open = ImGui::TreeNodeEx((void*)(intptr_t)object.getObjectId(), flags, objectName.c_str());
-	if(flags & ImGuiTreeNodeFlags_Selected) ImGui::PopStyleColor();
+	if(flags & ImGuiTreeNodeFlags_Selected) ImGui::PopStyleColor(2);
 
 	// Drag and drop
 	ImGuiDragDropFlags src_flags = ImGuiDragDropFlags_SourceNoDisableHover; // | ImGuiDragDropFlags_SourceNoHoldToOpenOthers;
