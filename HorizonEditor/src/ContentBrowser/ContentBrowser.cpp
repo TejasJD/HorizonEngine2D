@@ -14,16 +14,13 @@ std::string ContentBrowser::selected_file;
 
 void ContentBrowser::OnImGuiRender()
 {
-
+	bool itemWasSelected = false;
+	bool emptySpaceClicked = false;
 
 	ImGui::Begin("Content Browser");
 
-	if (!Modals::projectRootFolder.empty()) {
-
-		if (ImGui::Button("File"))
-		{
-			ImGui::OpenPopup("ContentBrowserPopup");
-		}
+	if (!Modals::projectRootFolder.empty()) 
+	{
 
 		if (Modals::m_CurrentDirectory != std::filesystem::path(m_ProjectRootFolder))
 		{
@@ -108,7 +105,7 @@ void ContentBrowser::OnImGuiRender()
 			const auto& path = entry.path();
 			std::string filenameString = path.filename().string();
 
-			ImGui::PushID(filenameString.c_str());
+			/*ImGui::PushID(filenameString.c_str());*/
 
 
 			std::shared_ptr<Hzn::Texture> icon;
@@ -131,7 +128,7 @@ void ContentBrowser::OnImGuiRender()
 			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
 			{
 
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 
 				if (ImGui::Button("show sprites")) {
@@ -141,7 +138,14 @@ void ContentBrowser::OnImGuiRender()
 			}
 			else {
 				m_CurrentTexturePath = "";
-				ImGui::ImageButton((ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				{
+					HZN_WARN("item");
+					itemWasSelected = true;
+					selected_file = filenameString;
+				}
 			}
 
 			ImGui::PopStyleColor();
@@ -161,36 +165,32 @@ void ContentBrowser::OnImGuiRender()
 					Modals::m_CurrentDirectory /= path.filename();
 
 			}
-
-			// Right click on the item
-			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-				selected_file = path.string();
-				ImGui::OpenPopup("fileFolderPopup");
-			}
-
-			if (ImGui::BeginPopup("fileFolderPopup")) {
-
-				if (ImGui::MenuItem("Delete", false)) {
-					std::filesystem::remove_all(path);
-				}
-				if (ImGui::MenuItem("Rename", false)) {
-					request_Rename = true;
-				}
-
-
-				ImGui::EndPopup();
-			}
-
 			ImGui::TextWrapped(filenameString.c_str());
 
 			ImGui::NextColumn();
 
-			ImGui::PopID();
-
-
-
+			/*ImGui::PopID();*/
 		}
 
+		//// Right click on the item
+		if (itemWasSelected) {
+			ImGui::OpenPopup("fileFolderPopup");
+		}
+		if (!itemWasSelected && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		{
+			ImGui::OpenPopup("ContentBrowserPopup");
+		}
+
+		if (ImGui::BeginPopup("fileFolderPopup")) {
+
+			if (ImGui::MenuItem("Delete", false)) {
+				std::filesystem::remove_all(selected_file);
+			}
+			if (ImGui::MenuItem("Rename", false)) {
+				request_Rename = true;
+			}
+			ImGui::EndPopup();
+		}
 
 
 		//Rename popup
