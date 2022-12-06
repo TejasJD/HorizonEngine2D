@@ -7,6 +7,13 @@
 
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
+bool EditorData::s_ShowViewportPanel = true;
+bool EditorData::s_ShowNodeEditorPanel = true;
+bool EditorData::s_ShowObjectHierarchyPanel = true;
+bool EditorData::s_ShowComponentsPanel = true;
+bool EditorData::s_ShowSpritesPanel = true;
+bool EditorData::s_ShowContentBrowserPanel = true;
+
 std::string ContentBrowser::m_CurrentTexturePath;
 
 EditorLayer::EditorLayer(const char* name) :
@@ -50,6 +57,7 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
+	m_Ts = ts;
 	// input.
 	if (Hzn::Input::keyPressed(Hzn::Key::LeftControl) || Hzn::Input::keyPressed(Hzn::Key::RightControl)) m_CtrlPressed = true;
 	else m_CtrlPressed = false;
@@ -177,9 +185,16 @@ void EditorLayer::onRenderImgui()
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
+
+	// STATS BEGIN
+	/*ImGui::Begin("stats");
+	ImGui::Text("Frame time: %.3f", m_Ts);
+	ImGui::End();*/
+	// STATS END
+
+
 	//End Docking here
 	style.WindowMinSize.x = minWinSizeX;
-
 	// MENU BAR BEGIN
 	if (ImGui::BeginMenuBar())
 	{
@@ -267,12 +282,8 @@ void EditorLayer::onRenderImgui()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Script"))
+		if (ImGui::BeginMenu("View"))
 		{
-			if (ImGui::MenuItem("Reload"))
-			{
-				Hzn::ScriptEngine::ReloadAssembly();
-			}
 			ImGui::EndMenu();
 		}
 
@@ -309,7 +320,7 @@ void EditorLayer::onRenderImgui()
 
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
-	ImGui::Begin("Components");
+	ImGui::Begin(ICON_FA_SHAPES " Components");
 	if (EditorData::s_Scene_Active) {
 		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
@@ -368,7 +379,7 @@ void EditorLayer::onRenderImgui()
 	// CONTENT BROWSER END
 
 	//Sprites BEGIN
-	ImGui::Begin("Sprites");
+	ImGui::Begin(ICON_FA_ROBOT " Sprites");
 	static float padding = 16.0f;
 	static float thumbnailSize = 128.0f;
 	float cellSize = thumbnailSize + padding;
@@ -488,44 +499,81 @@ void EditorLayer::onRenderImgui()
 	//	links.push_back(std::make_pair(start_attr, end_attr));
 	//}
 	//ImGui::End();
-
+	static std::vector<std::pair<int, int>> links;
 	// NODE EDITOR BEGIN
-	ImGui::Begin("Node Editor");
+	ImGui::Begin(ICON_FA_CODE_BRANCH " Node Editor");
 
+	/*ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);*/
 	ImNodes::BeginNodeEditor();
-
-	ImNodes::PushColorStyle(
-		ImNodesCol_TitleBar, IM_COL32(0.8, 0, 0, 255));
-	ImNodes::PushColorStyle(
-		ImNodesCol_TitleBarSelected, IM_COL32(1, 0, 0, 255));
-
 	int hardcoded_node_id = 1;
 	ImNodes::BeginNode(hardcoded_node_id);
 
+	// Node Titlebar.
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
 	ImNodes::BeginNodeTitleBar();
-	ImGui::TextUnformatted("output node");
+	ImGui::Text(ICON_FA_DIRECTIONS " Switch");
 	ImNodes::EndNodeTitleBar();
+	ImGui::PopStyleColor();
+
+	// Data pins style
+	const int input_attr_id = 1;
+	ImNodes::BeginInputAttribute(input_attr_id, ImNodesPinShape_CircleFilled);
+	ImGui::Text(ICON_FA_ARROW_RIGHT " In");
+	ImNodes::EndInputAttribute();
+
+	ImGui::SameLine();
 
 	const int output_attr_id = 2;
-	ImNodes::BeginOutputAttribute(output_attr_id);
-	// in between Begin|EndAttribute calls, you can call ImGui
-	// UI functions
-	ImGui::Text("output pin");
+	ImNodes::BeginOutputAttribute(output_attr_id, ImNodesPinShape_CircleFilled);
+	ImGui::Text("Out " ICON_FA_ARROW_RIGHT);
 	ImNodes::EndOutputAttribute();
-
 	ImNodes::EndNode();
 
-	ImNodes::PopColorStyle();
-	ImNodes::PopColorStyle();
+	ImNodes::BeginNode(2);
+
+	// Node Titlebar.
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
+	ImNodes::BeginNodeTitleBar();
+	ImGui::Text(ICON_FA_DIRECTIONS " Switch");
+	ImNodes::EndNodeTitleBar();
+	ImGui::PopStyleColor();
+
+	// Data pins style
+	ImNodes::BeginInputAttribute(3, ImNodesPinShape_CircleFilled);
+	ImGui::Text(ICON_FA_ARROW_RIGHT " In");
+	ImNodes::EndInputAttribute();
+	ImGui::SameLine();
+
+	ImNodes::BeginOutputAttribute(4, ImNodesPinShape_CircleFilled);
+	ImGui::Text("Out " ICON_FA_ARROW_RIGHT);
+	ImNodes::EndOutputAttribute();
+	ImNodes::EndNode();
+
+	// elsewhere in the code...
+	for (int i = 0; i < links.size(); ++i)
+	{
+		const std::pair<int, int> p = links[i];
+		// in this case, we just use the array index of the link
+		// as the unique identifier
+		ImNodes::Link(i, p.first, p.second);
+	}
+
+	ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomRight);
 
 	ImNodes::EndNodeEditor();
-	ImGui::End();
 
+	int start_attr = INT_MAX, end_attr = INT_MAX;
+	if (ImNodes::IsLinkCreated(&start_attr, &end_attr))
+	{
+		links.push_back(std::make_pair(start_attr, end_attr));
+	}
+	
+	ImGui::End();
 	// NODE EDITOR END
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-	ImGui::Begin("Viewport");
+	ImGui::Begin(ICON_FA_TV " Viewport");
 
 	/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
 
@@ -639,7 +687,7 @@ void EditorLayer::onRenderImgui()
 
 void EditorLayer::drawHierarchy()
 {
-	ImGui::Begin("Object Hierarchy");
+	ImGui::Begin(ICON_FA_DICE_D6 " Object Hierarchy");
 	if (Hzn::SceneManager::isOpen()) {
 		auto list = EditorData::s_Scene_Active->getAllRootIds();
 
@@ -737,8 +785,15 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 	}
 
 	auto& nameComponent = object.getComponent<Hzn::NameComponent>();
-
-	bool open = ImGui::TreeNodeEx((void*)(intptr_t)object.getObjectId(), flags, nameComponent.m_Name.c_str());
+	std::string objectName = std::string(ICON_FA_DICE_D6) + " " + nameComponent.m_Name.c_str();
+	
+	if (flags & ImGuiTreeNodeFlags_Selected) 
+	{
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
+	}
+	bool open = ImGui::TreeNodeEx((void*)(intptr_t)object.getObjectId(), flags, objectName.c_str());
+	if(flags & ImGuiTreeNodeFlags_Selected) ImGui::PopStyleColor(2);
 
 	// Drag and drop
 	ImGuiDragDropFlags src_flags = ImGuiDragDropFlags_SourceNoDisableHover; // | ImGuiDragDropFlags_SourceNoHoldToOpenOthers;

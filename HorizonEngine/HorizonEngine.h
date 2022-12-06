@@ -17,6 +17,7 @@
 #include "imgui_impl_opengl3.h"
 #include "ImGuizmo.h"
 #include "imnodes.h"
+#include "IconsFontAwesome5.h"
 
 // Reference additional headers your program requires here.
 #include "HorizonEngine/Core/Core.h"

@@ -6,6 +6,12 @@
 struct EditorData {
 	static std::shared_ptr<Hzn::Scene> s_Scene_Active;
 	static std::shared_ptr<Hzn::Project> m_Project_Active;
+	static bool s_ShowViewportPanel;
+	static bool s_ShowNodeEditorPanel;
+	static bool s_ShowObjectHierarchyPanel;
+	static bool s_ShowComponentsPanel;
+	static bool s_ShowSpritesPanel;
+	static bool s_ShowContentBrowserPanel;
 };
 
 
@@ -47,6 +53,7 @@ private:
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
+	float m_Ts = 0.0f;
 
 	std::vector<std::string> rootObjects;
 
