@@ -144,7 +144,7 @@ void ContentBrowser::OnImGuiRender()
 				{
 					HZN_WARN("item");
 					itemWasSelected = true;
-					selected_file = filenameString;
+					selected_file = path.string();
 				}
 			}
 
@@ -172,7 +172,7 @@ void ContentBrowser::OnImGuiRender()
 			/*ImGui::PopID();*/
 		}
 
-		//// Right click on the item
+		// Right click on the item
 		if (itemWasSelected) {
 			ImGui::OpenPopup("fileFolderPopup");
 		}
