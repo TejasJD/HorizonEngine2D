@@ -284,6 +284,15 @@ namespace Hzn
 		// render objects in the scene through scene update.
 		if (m_Valid) {
 
+			// delete object
+			{
+				for (int i = 0; i < m_ObjectsToDelete.size(); i++) {
+					destroyGameObject(getGameObjectById(m_ObjectsToDelete.at(i)));
+				}
+
+				m_ObjectsToDelete.clear();
+			}
+
 			// update scripts
 			{
 				// C# Entity OnUpdate

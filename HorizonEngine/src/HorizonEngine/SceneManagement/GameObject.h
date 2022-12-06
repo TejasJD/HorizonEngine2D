@@ -40,6 +40,12 @@ namespace Hzn
 		}
 
 		template<typename T>
+		void removeComponent() {
+			isValid();
+			m_Scene->m_Registry.erase<T>(m_ObjectId);
+		}
+
+		template<typename T>
 		bool hasComponent() const
 		{
 			isValid();
@@ -74,6 +80,7 @@ namespace Hzn
 		glm::mat4 getTransform() const;
 		GameObject duplicateAsChild();
 		GameObject duplicate();
+		void destroy();
 
 		template<typename... Component>
 		GameObject cloneComponents(ComponentGroup<Component...>)
