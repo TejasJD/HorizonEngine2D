@@ -369,6 +369,10 @@ void EditorLayer::onRenderImgui()
 	{
 		ContentBrowser(EditorData::m_Project_Active->getPath().parent_path().string());
 	}
+	else
+	{
+		ContentBrowser("");
+	}
 	// CONTENT BROWSER END
 
 	//Sprites BEGIN
