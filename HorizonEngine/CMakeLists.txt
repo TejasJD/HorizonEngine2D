@@ -195,6 +195,7 @@ target_include_directories(HorizonEngine
 	vendor/mono/include
 	vendor/filewatch
 	vendor/imgui
+	vendor/IconsFontAwesome
 )
 
 # precompiled headers to target 'HorizonEngine'

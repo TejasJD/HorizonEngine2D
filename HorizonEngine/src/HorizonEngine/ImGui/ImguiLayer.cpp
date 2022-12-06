@@ -15,6 +15,7 @@
 #include <ImGuizmo.h>
 #include <imnodes.h>
 
+#include <IconsFontAwesome5.h>
 #include "ImguiLayer.h"
 
 namespace Hzn
@@ -45,6 +46,23 @@ namespace Hzn
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 
+		// Imnodes style color
+		ImNodes::StyleColorsDark();
+
+		// imnodes style confi
+		auto& nodeStyle = ImNodes::GetStyle();
+		nodeStyle.PinOffset = 8.0f;
+		nodeStyle.Colors[ImNodesCol_Pin] = IM_COL32(227, 255, 20, 255);
+		nodeStyle.Colors[ImNodesCol_PinHovered] = IM_COL32_WHITE;
+		nodeStyle.Colors[ImNodesCol_Link] = IM_COL32(227, 255, 20, 255);
+		nodeStyle.Colors[ImNodesCol_LinkHovered] = IM_COL32_WHITE;
+		nodeStyle.Colors[ImNodesCol_LinkSelected] = IM_COL32_WHITE;
+		nodeStyle.Colors[ImNodesCol_TitleBar] = IM_COL32(30, 30, 30, 255);
+		nodeStyle.Colors[ImNodesCol_TitleBarHovered] = IM_COL32(50, 50, 50, 255);
+		nodeStyle.Colors[ImNodesCol_TitleBarSelected] = IM_COL32(50, 50, 50, 255);
+
+
+
 		// a workaround, so that window rounding is consistent.
 		ImGuiStyle& style = ImGui::GetStyle();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -58,9 +76,16 @@ namespace Hzn
 		// Fonts stored with Index values from 0..n 
 
 		// Regular Styled Font [0]
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 18.0f);
-		// Bold Styled Font [1]
-		 io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f);
+		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f);
+		ImFontConfig config;
+		config.MergeMode = true;
+		//config.GlyphMaxAdvanceX = -2.0f;
+		//config.PixelSnapH = true;
+		config.PixelSnapH = true;
+		config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+		static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+		auto val = io.Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
+		io.FontDefault = io.Fonts->Fonts[0];
 
 		auto window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
