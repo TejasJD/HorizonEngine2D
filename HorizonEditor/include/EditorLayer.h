@@ -47,6 +47,7 @@ private:
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
+	float m_Ts = 0.0f;
 
 	std::vector<std::string> rootObjects;
 

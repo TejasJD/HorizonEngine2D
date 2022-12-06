@@ -50,6 +50,7 @@ void EditorLayer::onDetach()
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
 {
+	m_Ts = ts;
 	// input.
 	if (Hzn::Input::keyPressed(Hzn::Key::LeftControl) || Hzn::Input::keyPressed(Hzn::Key::RightControl)) m_CtrlPressed = true;
 	else m_CtrlPressed = false;
@@ -177,9 +178,16 @@ void EditorLayer::onRenderImgui()
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
+
+	// STATS BEGIN
+	/*ImGui::Begin("stats");
+	ImGui::Text("Frame time: %.3f", m_Ts);
+	ImGui::End();*/
+	// STATS END
+
+
 	//End Docking here
 	style.WindowMinSize.x = minWinSizeX;
-
 	// MENU BAR BEGIN
 	if (ImGui::BeginMenuBar())
 	{
@@ -309,7 +317,7 @@ void EditorLayer::onRenderImgui()
 
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
-	ImGui::Begin("Components");
+	ImGui::Begin(ICON_FA_GAMEPAD  " Components");
 	if (EditorData::s_Scene_Active) {
 		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
@@ -554,10 +562,7 @@ void EditorLayer::onRenderImgui()
 	}
 	
 	ImGui::End();
-
 	// NODE EDITOR END
-	static bool demoshow = true;
-	ImGui::ShowDemoWindow(&demoshow);
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
@@ -675,7 +680,7 @@ void EditorLayer::onRenderImgui()
 
 void EditorLayer::drawHierarchy()
 {
-	ImGui::Begin("Object Hierarchy");
+	ImGui::Begin(ICON_FA_DICE_D6 " Object Hierarchy");
 	if (Hzn::SceneManager::isOpen()) {
 		auto list = EditorData::s_Scene_Active->getAllRootIds();
 

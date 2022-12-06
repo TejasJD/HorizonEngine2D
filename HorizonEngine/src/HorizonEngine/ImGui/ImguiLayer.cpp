@@ -49,6 +49,36 @@ namespace Hzn
 		// Imnodes style color
 		ImNodes::StyleColorsDark();
 
+		auto& colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
+
+		// Headers
+		colors[ImGuiCol_Header] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
+		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
+
+		// Buttons
+		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_Button] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_Button] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+		// Frame Bg
+		colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.105f, 0.151f, 1.0f };
+
+		// Tabs
+		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.105f, 0.151f, 1.0f };
+		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
+		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
+		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+
+		// Title 
+		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
 		// imnodes style confi
 		auto& nodeStyle = ImNodes::GetStyle();
 		nodeStyle.PinOffset = 8.0f;
@@ -110,52 +140,51 @@ namespace Hzn
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
 
-		auto& colors = ImGui::GetStyle().Colors;
-		colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, colors[ImGuiCol_WindowBg]);
-		// Headers
-		colors[ImGuiCol_Header] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
-		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
-		ImGui::PushStyleColor(ImGuiCol_Header, colors[ImGuiCol_Header]);
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, colors[ImGuiCol_HeaderHovered]);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, colors[ImGuiCol_HeaderActive]);
+		///*ImGui::PushStyleColor(ImGuiCol_WindowBg, colors[ImGuiCol_WindowBg]);*/
+		//auto& colors = ImGui::GetStyle().Colors;
+		//// Headers
+		//colors[ImGuiCol_Header] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
+		//colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		//colors[ImGuiCol_HeaderActive] = ImVec4{ 0.1f, 0.105f, 0.1f, 1.0f };
+		//ImGui::PushStyleColor(ImGuiCol_Header, colors[ImGuiCol_Header]);
+		//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, colors[ImGuiCol_HeaderHovered]);
+		//ImGui::PushStyleColor(ImGuiCol_HeaderActive, colors[ImGuiCol_HeaderActive]);
 
-		// Buttons
-		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		ImGui::PushStyleColor(ImGuiCol_Button, colors[ImGuiCol_Button]);
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, colors[ImGuiCol_ButtonActive]);
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colors[ImGuiCol_ButtonHovered]);
+		//// Buttons
+		//colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		//colors[ImGuiCol_ButtonActive] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		//colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		//ImGui::PushStyleColor(ImGuiCol_Button, colors[ImGuiCol_Button]);
+		//ImGui::PushStyleColor(ImGuiCol_ButtonActive, colors[ImGuiCol_ButtonActive]);
+		//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colors[ImGuiCol_ButtonHovered]);
 
-		// Frame Bg
-		colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.105f, 0.151f, 1.0f };
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, colors[ImGuiCol_Button]);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, colors[ImGuiCol_FrameBgHovered]);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, colors[ImGuiCol_FrameBgActive]);
+		//// Frame Bg
+		//colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		//colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		//colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.105f, 0.151f, 1.0f };
+		//ImGui::PushStyleColor(ImGuiCol_FrameBg, colors[ImGuiCol_Button]);
+		//ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, colors[ImGuiCol_FrameBgHovered]);
+		//ImGui::PushStyleColor(ImGuiCol_FrameBgActive, colors[ImGuiCol_FrameBgActive]);
 
-		// Tabs
-		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.105f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
-		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
-		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		ImGui::PushStyleColor(ImGuiCol_Tab, colors[ImGuiCol_Tab]);
-		ImGui::PushStyleColor(ImGuiCol_TabHovered, colors[ImGuiCol_TabHovered]);
-		ImGui::PushStyleColor(ImGuiCol_TabActive, colors[ImGuiCol_TabActive]);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, colors[ImGuiCol_TabUnfocused]);
-		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, colors[ImGuiCol_TabUnfocusedActive]);
+		//// Tabs
+		//colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.105f, 0.151f, 1.0f };
+		//colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
+		//colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
+		//colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		//colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		//ImGui::PushStyleColor(ImGuiCol_Tab, colors[ImGuiCol_Tab]);
+		//ImGui::PushStyleColor(ImGuiCol_TabHovered, colors[ImGuiCol_TabHovered]);
+		//ImGui::PushStyleColor(ImGuiCol_TabActive, colors[ImGuiCol_TabActive]);
+		//ImGui::PushStyleColor(ImGuiCol_TabUnfocused, colors[ImGuiCol_TabUnfocused]);
+		//ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, colors[ImGuiCol_TabUnfocusedActive]);
 
-		//// Title 
-		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, colors[ImGuiCol_TitleBg]);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, colors[ImGuiCol_TitleBgActive]);
-		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, colors[ImGuiCol_TitleBgCollapsed]);
+		////// Title 
+		//colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		//colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		//colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		//ImGui::PushStyleColor(ImGuiCol_TitleBg, colors[ImGuiCol_TitleBg]);
+		//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, colors[ImGuiCol_TitleBgActive]);
+		//ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, colors[ImGuiCol_TitleBgCollapsed]);
 	}
 
 	void ImguiLayer::imguiEnd()
@@ -163,7 +192,7 @@ namespace Hzn
 		ImGuiIO& io = ImGui::GetIO();
 		GLFWwindow* window = (GLFWwindow*)App::getApp().getAppWindow().getPlatformRawWindow();
 
-		ImGui::PopStyleColor(18);
+		/*ImGui::PopStyleColor(17);*/
 
 		ImGui::Render();
 		int display_w, display_h;
