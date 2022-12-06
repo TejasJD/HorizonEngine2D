@@ -175,6 +175,9 @@ void EditorLayer::onRenderImgui()
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+
+		dockWidgets(dockspace_id);
+
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 	//End Docking here
@@ -307,9 +310,13 @@ void EditorLayer::onRenderImgui()
 	drawHierarchy();
 	// OBJECT HIERARCHY END
 
+	// PROJECT SCENES VIEW BEGIN
+	drawProjectScenes();
+	// PROJECT SCENES VIEW END
+
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
-	ImGui::Begin("Components");
+	ImGui::Begin(VIEW_COMPONENTS.c_str());
 	if (EditorData::s_Scene_Active) {
 		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
@@ -364,7 +371,7 @@ void EditorLayer::onRenderImgui()
 	// CONTENT BROWSER END
 
 	//Sprites BEGIN
-	ImGui::Begin("Sprites");
+	ImGui::Begin(VIEW_SPRITES.c_str());
 	static float padding = 16.0f;
 	static float thumbnailSize = 128.0f;
 	float cellSize = thumbnailSize + padding;
@@ -486,7 +493,7 @@ void EditorLayer::onRenderImgui()
 	//ImGui::End();
 
 	// NODE EDITOR BEGIN
-	ImGui::Begin("Node Editor");
+	ImGui::Begin(VIEW_NODE_EDITOR.c_str());
 
 	ImNodes::BeginNodeEditor();
 
@@ -521,7 +528,7 @@ void EditorLayer::onRenderImgui()
 
 	// VIEWPORT BEGIN
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-	ImGui::Begin("Viewport");
+	ImGui::Begin(VIEW_SCENE.c_str());
 
 	/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
 
@@ -635,7 +642,7 @@ void EditorLayer::onRenderImgui()
 
 void EditorLayer::drawHierarchy()
 {
-	ImGui::Begin("Object Hierarchy");
+	ImGui::Begin(VIEW_HIERARCHY.c_str());
 	if (Hzn::SceneManager::isOpen()) {
 		auto list = EditorData::s_Scene_Active->getAllRootIds();
 
@@ -722,10 +729,14 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 {
 	std::vector<Hzn::GameObject> list = object.getChildren();
 
-	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+		ImGuiTreeNodeFlags_OpenOnDoubleClick |
+		ImGuiTreeNodeFlags_SpanAvailWidth | 
+		ImGuiTreeNodeFlags_SpanFullWidth;
 
 	if (list.size() == 0) {
-		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		flags |= ImGuiTreeNodeFlags_Leaf | 
+			ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
 	if (m_SelectedObjectId == object.getObjectId()) {
@@ -961,4 +972,41 @@ void EditorLayer::deleteObject()
 		m_HoveredObjectId = -1;
 		m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 	}
+}
+
+void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
+	if (ImGui::DockBuilderGetNode(dockspace_id) == nullptr) {
+		// Clear out existing layout
+		ImGui::DockBuilderRemoveNode(dockspace_id);
+		// Add empty node
+		ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
+		// Main node should cover entire window
+		ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
+		// Build dock layout
+		ImGuiID center = dockspace_id;
+		ImGuiID left = ImGui::DockBuilderSplitNode(center, ImGuiDir_Left, 0.2f, nullptr, &center);
+		ImGuiID right = ImGui::DockBuilderSplitNode(center, ImGuiDir_Right, 0.2f, nullptr, &center);
+		ImGuiID down = ImGui::DockBuilderSplitNode(center, ImGuiDir_Down, 0.2f, nullptr, &center);
+
+		//ImGuiID downCenter = ImGui::DockBuilderSplitNode(down, ImGuiDir_Up, 0.5f, nullptr, &down);
+
+		ImGui::DockBuilderDockWindow(VIEW_NODE_EDITOR.c_str(), center);
+		ImGui::DockBuilderDockWindow(VIEW_SCENE.c_str(), center);
+		ImGui::DockBuilderDockWindow(VIEW_HIERARCHY.c_str(), left);
+		ImGui::DockBuilderDockWindow(VIEW_COMPONENTS.c_str(), right);
+		ImGui::DockBuilderDockWindow(VIEW_SPRITES.c_str(), down);
+		ImGui::DockBuilderDockWindow(VIEW_CONTENT_BROWSER.c_str(), down);
+
+		ImGui::DockBuilderFinish(dockspace_id);
+	}
+}
+
+void EditorLayer::drawProjectScenes() {
+	ImGui::Begin(VIEW_PROJECT_SCENES.c_str());
+
+	std::vector<std::string> names = Hzn::ProjectManager::getAllScenes();
+	if (names.size() > 0)
+	HZN_CORE_DEBUG(names[0]);
+
+	ImGui::End();
 }

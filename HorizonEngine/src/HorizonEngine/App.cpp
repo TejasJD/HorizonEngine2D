@@ -18,7 +18,8 @@ namespace Hzn
 		m_ExecutablePath = std::filesystem::current_path();
 		HZN_CORE_CRITICAL("ExecutablePath: {}", m_ExecutablePath.string());
 		m_Instance = this;
-		m_Window = Window::create(800, 600, "HorizonEngine");
+
+		m_Window = Window::create(1920, 1080, "HorizonEngine");
 		// set the App on event function as callback for the widow class.
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
 

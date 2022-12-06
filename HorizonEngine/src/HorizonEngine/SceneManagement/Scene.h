@@ -54,6 +54,7 @@ namespace Hzn
 		std::vector<uint32_t> getAllObjectIds() const;
 
 		std::filesystem::path getFilePath() const { return m_Path; }
+		std::string getName() const { return getFilePath().filename().string(); }
 
 
 	private:

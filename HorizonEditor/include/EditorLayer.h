@@ -26,8 +26,11 @@ private:
 	bool onKeyPressed(Hzn::KeyPressedEvent& e);
 	bool onMouseButtonPressed(Hzn::MouseButtonPressedEvent& e);
 
+	void dockWidgets(ImGuiID dockspace_id);
+
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
+	void drawProjectScenes();
 
 	void copyObject();
 	void pasteObject();
@@ -63,4 +66,12 @@ private:
 
 	// key press combination check
 	bool m_CtrlPressed = false;
+
+	const std::string VIEW_SCENE = "Viewport";
+	const std::string VIEW_NODE_EDITOR = "Node Editor";
+	const std::string VIEW_COMPONENTS = "Components";
+	const std::string VIEW_HIERARCHY = "Object Hierarchy";
+	const std::string VIEW_CONTENT_BROWSER = "Content Browser";
+	const std::string VIEW_SPRITES = "Sprites";
+	const std::string VIEW_PROJECT_SCENES = "Project Scenes";
 };
