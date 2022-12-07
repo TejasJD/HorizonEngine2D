@@ -284,6 +284,12 @@ void EditorLayer::onRenderImgui()
 
 		if (ImGui::BeginMenu("View"))
 		{
+			if (ImGui::MenuItem("Components")) EditorData::s_ShowComponentsPanel = !EditorData::s_ShowComponentsPanel;
+			if (ImGui::MenuItem("Object Hierarchy")) EditorData::s_ShowObjectHierarchyPanel = !EditorData::s_ShowObjectHierarchyPanel;
+			if (ImGui::MenuItem("Viewport")) EditorData::s_ShowViewportPanel = !EditorData::s_ShowViewportPanel;
+			if (ImGui::MenuItem("Sprites")) EditorData::s_ShowSpritesPanel = !EditorData::s_ShowSpritesPanel;
+			if (ImGui::MenuItem("Content Browser")) EditorData::s_ShowContentBrowserPanel = !EditorData::s_ShowContentBrowserPanel;
+
 			ImGui::EndMenu();
 		}
 
@@ -315,127 +321,140 @@ void EditorLayer::onRenderImgui()
 	// MODALS END
 
 	// OBJECT HIERARCHY BEGIN
-	drawHierarchy();
+	if (EditorData::s_ShowObjectHierarchyPanel)
+	{
+		drawHierarchy();
+	}
 	// OBJECT HIERARCHY END
 
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
-	ImGui::Begin(ICON_FA_SHAPES " Components");
-	if (EditorData::s_Scene_Active) {
-		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
-			ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-			ImGui::BeginChild("ExistingComponents", ImVec2{ 0, 400 }, true, window_flags);
-			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-			Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
-			ImGui::EndChild();
-			ImGui::PopStyleVar();
-		}
-		auto cursorPos = ImGui::GetCursorPosX();
-		auto width = ImGui::GetWindowWidth();
-		static bool showComponentMenu = false;
-		if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
-		{
-			auto val = ImGui::CalcTextSize("Add Component");
-			/*ImGui::SetCursorPosX((width - (val.x + 60)) * 0.5f);*/
-			if (showComponentMenu |= ImGui::Button("Add Component", ImVec2{ -FLT_MIN, val.y + 20 }))
-			{
+	if (EditorData::s_ShowComponentsPanel)
+	{
+		ImGui::Begin(ICON_FA_SHAPES " Components", &EditorData::s_ShowComponentsPanel);
+		if (EditorData::s_Scene_Active) {
+			if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 				ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-				ImGui::BeginChild("ChildR", ImVec2(0, 250), true, window_flags);
-
-				auto list = Hzn::getComponentStringList(Hzn::SelectableComponents{});
-				for (auto& it : list)
-				{
-					std::string_view val = std::string_view(it);
-					auto hzn = val.find("Hzn");
-					std::string componentName = std::string(val.substr(hzn + 5));
-					if (ImGui::Button(componentName.c_str(), ImVec2(-FLT_MIN, 0)))
-					{
-						Hzn::addComponent(EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId), std::string(it));
-					}
-				}
-
+				ImGui::BeginChild("ExistingComponents", ImVec2{ 0, 400 }, true, window_flags);
+				auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+				Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
-
-				if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			}
+			auto cursorPos = ImGui::GetCursorPosX();
+			auto width = ImGui::GetWindowWidth();
+			static bool showComponentMenu = false;
+			if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
+			{
+				auto val = ImGui::CalcTextSize("Add Component");
+				/*ImGui::SetCursorPosX((width - (val.x + 60)) * 0.5f);*/
+				if (showComponentMenu |= ImGui::Button("Add Component", ImVec2{ -FLT_MIN, val.y + 20 }))
 				{
-					showComponentMenu = false;
+					ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+					ImGui::BeginChild("ChildR", ImVec2(0, 250), true, window_flags);
+
+					auto list = Hzn::getComponentStringList(Hzn::SelectableComponents{});
+					for (auto& it : list)
+					{
+						std::string_view val = std::string_view(it);
+						auto hzn = val.find("Hzn");
+						std::string componentName = std::string(val.substr(hzn + 5));
+						if (ImGui::Button(componentName.c_str(), ImVec2(-FLT_MIN, 0)))
+						{
+							Hzn::addComponent(EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId), std::string(it));
+						}
+					}
+
+					ImGui::EndChild();
+					ImGui::PopStyleVar();
+
+					if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+					{
+						showComponentMenu = false;
+					}
 				}
 			}
 		}
+		ImGui::End();
 	}
-	ImGui::End();
 	// COMPONENTS END.
 
 	//CONTENT BROWSER BEGIN
-	if (EditorData::m_Project_Active)
+	if (EditorData::s_ShowContentBrowserPanel)
 	{
-		ContentBrowser(EditorData::m_Project_Active->getPath().parent_path().string());
-	}
-	else
-	{
-		ContentBrowser("");
-	}
-	// CONTENT BROWSER END
-
-	//Sprites BEGIN
-	ImGui::Begin(ICON_FA_ROBOT " Sprites");
-	static float padding = 16.0f;
-	static float thumbnailSize = 128.0f;
-	float cellSize = thumbnailSize + padding;
-
-	float panelWidth = ImGui::GetContentRegionAvail().x;
-	int columnCount = (int)(panelWidth / cellSize);
-	if (columnCount < 1)
-		columnCount = 1;
-	ImGui::Columns(columnCount, 0, false);
-	int count = 0;
-	if (!ContentBrowser::m_CurrentTexturePath.empty())
-	{
-
-		if (!Hzn::AssetManager::spriteStorage.empty())
+		if (EditorData::m_Project_Active)
 		{
-
-			for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
-			{
-
-				if (sprite->first.find(ContentBrowser::m_CurrentTexturePath) == std::string::npos)
-				{
-					continue;
-				}
-
-				std::string::size_type nPos1 = sprite->first.find_last_of(";");
-				std::string::size_type nPos2 = sprite->first.find_last_of(";", nPos1 - 1);
-
-				std::string spriteY = sprite->first.substr(nPos1 + 1);
-				std::string spriteX = sprite->first.substr(nPos2 + 1, nPos1 - nPos2 - 1);
-
-				std::string spriteTexCoords = "(" + std::to_string(std::stoi(spriteX)) + "," + std::to_string(std::stoi(spriteY)) + ")";
-
-				ImGui::PushID(spriteTexCoords.c_str());
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-
-				ImGui::ImageButton((ImTextureID)sprite->second->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->second->getTexCoords()[0].x, sprite->second->getTexCoords()[2].y }, { sprite->second->getTexCoords()[2].x, sprite->second->getTexCoords()[0].y });
-				ImGui::PopStyleColor();
-
-				if (ImGui::BeginDragDropSource()) {
-					std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + spriteX + ";" + spriteY;
-
-					const wchar_t* filename = currentSpritePath.c_str();
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
-					ImGui::EndDragDropSource();
-				}
-
-
-
-				ImGui::TextWrapped(spriteTexCoords.c_str());
-				ImGui::NextColumn();
-				ImGui::PopID();
-			}
+			ContentBrowser(EditorData::m_Project_Active->getPath().parent_path().string());
+		}
+		else
+		{
+			ContentBrowser("");
 		}
 	}
+	// CONTENT BROWSER END
+	/*static bool show = true;
+	ImGui::ShowDemoWindow(&show);*/
+	//Sprites BEGIN
+	if (EditorData::s_ShowSpritesPanel)
+	{
+		ImGui::Begin(ICON_FA_ROBOT " Sprites", &EditorData::s_ShowSpritesPanel);
+		static float padding = 16.0f;
+		static float thumbnailSize = 128.0f;
+		float cellSize = thumbnailSize + padding;
 
-	ImGui::End();
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		int columnCount = (int)(panelWidth / cellSize);
+		if (columnCount < 1)
+			columnCount = 1;
+		ImGui::Columns(columnCount, 0, false);
+		int count = 0;
+		if (!ContentBrowser::m_CurrentTexturePath.empty())
+		{
+
+			if (!Hzn::AssetManager::spriteStorage.empty())
+			{
+
+				for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
+				{
+
+					if (sprite->first.find(ContentBrowser::m_CurrentTexturePath) == std::string::npos)
+					{
+						continue;
+					}
+
+					std::string::size_type nPos1 = sprite->first.find_last_of(";");
+					std::string::size_type nPos2 = sprite->first.find_last_of(";", nPos1 - 1);
+
+					std::string spriteY = sprite->first.substr(nPos1 + 1);
+					std::string spriteX = sprite->first.substr(nPos2 + 1, nPos1 - nPos2 - 1);
+
+					std::string spriteTexCoords = "(" + std::to_string(std::stoi(spriteX)) + "," + std::to_string(std::stoi(spriteY)) + ")";
+
+					ImGui::PushID(spriteTexCoords.c_str());
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
+					ImGui::ImageButton((ImTextureID)sprite->second->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->second->getTexCoords()[0].x, sprite->second->getTexCoords()[2].y }, { sprite->second->getTexCoords()[2].x, sprite->second->getTexCoords()[0].y });
+					ImGui::PopStyleColor();
+
+					if (ImGui::BeginDragDropSource()) {
+						std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + spriteX + ";" + spriteY;
+
+						const wchar_t* filename = currentSpritePath.c_str();
+						ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+						ImGui::EndDragDropSource();
+					}
+
+
+
+					ImGui::TextWrapped(spriteTexCoords.c_str());
+					ImGui::NextColumn();
+					ImGui::PopID();
+				}
+			}
+		}
+
+		ImGui::End();
+	}
 	//Sprites END
 
 	//std::vector<std::pair<int, int>> links;
@@ -567,118 +586,121 @@ void EditorLayer::onRenderImgui()
 	{
 		links.push_back(std::make_pair(start_attr, end_attr));
 	}
-	
+
 	ImGui::End();
 	// NODE EDITOR END
 
 	// VIEWPORT BEGIN
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-	ImGui::Begin(ICON_FA_TV " Viewport");
-
-	/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
-
-	// get the states of the viewport.
-	m_ViewportFocused = ImGui::IsWindowFocused();
-	m_ViewportHovered = ImGui::IsWindowHovered();
-
-	// ImGui layer will not block the events if the viewport is focused and hovered.
-	Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused && !m_ViewportHovered);
-
-	// if viewport size changes then we re-create the frame buffer.
-	if (Hzn::SceneManager::isOpen())
+	if (EditorData::s_ShowViewportPanel)
 	{
-		glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
-		if (lastViewportSize != viewportSize)
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
+		ImGui::Begin(ICON_FA_TV " Viewport", &EditorData::s_ShowViewportPanel);
+
+		/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
+
+		// get the states of the viewport.
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+
+		// ImGui layer will not block the events if the viewport is focused and hovered.
+		Hzn::App::getApp().getImguiLayer()->blockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+		// if viewport size changes then we re-create the frame buffer.
+		if (Hzn::SceneManager::isOpen())
 		{
-			/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
-			m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
-		}
-		/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
-
-		ImGui::Image((ImTextureID)(uint64_t)m_FrameBuffer->getColorAttachmentId(),
-			{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
-	}
-
-	// calculate the minimum and the maximum bounds for the viewport.
-	auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
-	auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-	auto viewportOffset = ImGui::GetWindowPos();
-
-	m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-	m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-		{
-			const wchar_t* filepath = (const wchar_t*)payload->Data;
-
-			std::wstring ws(filepath);
-
-			openScene(std::filesystem::path(ws));
-
-		}
-		ImGui::EndDragDropTarget();
-	}
-
-	if (Hzn::SceneManager::isOpen() && m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
-	{
-		ImGuizmo::SetOrthographic(true);
-		ImGuizmo::SetDrawlist();
-
-		auto sz = m_ViewportBounds[1] - m_ViewportBounds[0];
-		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, sz.x, sz.y);
-
-		auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-		auto& transformComponent = selectedObj.getComponent<Hzn::TransformComponent>();
-		auto transform = selectedObj.getTransform();
-
-		if (Hzn::SceneManager::getSceneState() == Hzn::SceneState::Edit)
-		{
-			ImGuizmo::Manipulate(
-				glm::value_ptr(m_EditorCameraController.getCamera().getViewMatrix()),
-				glm::value_ptr(m_EditorCameraController.getCamera().getProjectionMatrix()),
-				m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
-		}
-		else
-		{
-			Hzn::GameObject obj;
-			if (obj = EditorData::s_Scene_Active->getActiveCamera())
+			glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
+			if (lastViewportSize != viewportSize)
 			{
-				auto& cameraComponent = obj.getComponent<Hzn::CameraComponent>();
+				/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
+				m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
+			}
+			/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
+
+			ImGui::Image((ImTextureID)(uint64_t)m_FrameBuffer->getColorAttachmentId(),
+				{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+		}
+
+		// calculate the minimum and the maximum bounds for the viewport.
+		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+		auto viewportOffset = ImGui::GetWindowPos();
+
+		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* filepath = (const wchar_t*)payload->Data;
+
+				std::wstring ws(filepath);
+
+				openScene(std::filesystem::path(ws));
+
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		if (Hzn::SceneManager::isOpen() && m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
+		{
+			ImGuizmo::SetOrthographic(true);
+			ImGuizmo::SetDrawlist();
+
+			auto sz = m_ViewportBounds[1] - m_ViewportBounds[0];
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, sz.x, sz.y);
+
+			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+			auto& transformComponent = selectedObj.getComponent<Hzn::TransformComponent>();
+			auto transform = selectedObj.getTransform();
+
+			if (Hzn::SceneManager::getSceneState() == Hzn::SceneState::Edit)
+			{
 				ImGuizmo::Manipulate(
-					glm::value_ptr(glm::inverse(obj.getTransform())),
-					glm::value_ptr(cameraComponent.m_Camera.getProjectionMatrix()),
+					glm::value_ptr(m_EditorCameraController.getCamera().getViewMatrix()),
+					glm::value_ptr(m_EditorCameraController.getCamera().getProjectionMatrix()),
 					m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
 			}
-		}
-
-		if (ImGuizmo::IsUsing())
-		{
-			if (selectedObj.getParent())
+			else
 			{
-				transform = glm::inverse(selectedObj.getParent().getTransform()) * transform;
+				Hzn::GameObject obj;
+				if (obj = EditorData::s_Scene_Active->getActiveCamera())
+				{
+					auto& cameraComponent = obj.getComponent<Hzn::CameraComponent>();
+					ImGuizmo::Manipulate(
+						glm::value_ptr(glm::inverse(obj.getTransform())),
+						glm::value_ptr(cameraComponent.m_Camera.getProjectionMatrix()),
+						m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
+				}
 			}
 
-			glm::vec3 translation = glm::vec3(0.0f);
-			glm::quat orientation = glm::quat();
-			glm::vec3 scale = glm::vec3(0.0f);
-			glm::vec3 skew = glm::vec3(0.0f);
-			glm::vec4 perspective = glm::vec4(0.0f);
-			glm::decompose(transform, scale, orientation, translation, skew, perspective);
+			if (ImGuizmo::IsUsing())
+			{
+				if (selectedObj.getParent())
+				{
+					transform = glm::inverse(selectedObj.getParent().getTransform()) * transform;
+				}
 
-			glm::vec3 rotation = glm::eulerAngles(orientation);
-			rotation = glm::degrees(rotation);
+				glm::vec3 translation = glm::vec3(0.0f);
+				glm::quat orientation = glm::quat();
+				glm::vec3 scale = glm::vec3(0.0f);
+				glm::vec3 skew = glm::vec3(0.0f);
+				glm::vec4 perspective = glm::vec4(0.0f);
+				glm::decompose(transform, scale, orientation, translation, skew, perspective);
 
-			transformComponent.m_Translation = translation;
-			transformComponent.m_Rotation = rotation;
-			transformComponent.m_Scale = scale;
+				glm::vec3 rotation = glm::eulerAngles(orientation);
+				rotation = glm::degrees(rotation);
+
+				transformComponent.m_Translation = translation;
+				transformComponent.m_Rotation = rotation;
+				transformComponent.m_Scale = scale;
+			}
 		}
+
+
+		ImGui::End();
+		ImGui::PopStyleVar();
 	}
-
-
-	ImGui::End();
-	ImGui::PopStyleVar();
 	// VIEWPORT END.
 
 	ImGui::End();
@@ -687,7 +709,7 @@ void EditorLayer::onRenderImgui()
 
 void EditorLayer::drawHierarchy()
 {
-	ImGui::Begin(ICON_FA_DICE_D6 " Object Hierarchy");
+	ImGui::Begin(ICON_FA_DICE_D6 " Object Hierarchy", &EditorData::s_ShowObjectHierarchyPanel);
 	if (Hzn::SceneManager::isOpen()) {
 		auto list = EditorData::s_Scene_Active->getAllRootIds();
 
@@ -786,14 +808,14 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	auto& nameComponent = object.getComponent<Hzn::NameComponent>();
 	std::string objectName = std::string(ICON_FA_DICE_D6) + " " + nameComponent.m_Name.c_str();
-	
-	if (flags & ImGuiTreeNodeFlags_Selected) 
+
+	if (flags & ImGuiTreeNodeFlags_Selected)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
 	}
 	bool open = ImGui::TreeNodeEx((void*)(intptr_t)object.getObjectId(), flags, objectName.c_str());
-	if(flags & ImGuiTreeNodeFlags_Selected) ImGui::PopStyleColor(2);
+	if (flags & ImGuiTreeNodeFlags_Selected) ImGui::PopStyleColor(2);
 
 	// Drag and drop
 	ImGuiDragDropFlags src_flags = ImGuiDragDropFlags_SourceNoDisableHover; // | ImGuiDragDropFlags_SourceNoHoldToOpenOthers;
@@ -928,7 +950,7 @@ bool EditorLayer::onKeyPressed(Hzn::KeyPressedEvent& e)
 		m_CtrlPressed = false;
 		break;
 	}
-	default: 
+	default:
 	{
 		m_CtrlPressed = false;
 		break;
