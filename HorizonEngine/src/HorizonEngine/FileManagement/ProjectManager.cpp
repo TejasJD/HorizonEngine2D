@@ -183,12 +183,12 @@ namespace Hzn
 		return result;
 	}
 
-	std::vector<std::string> ProjectManager::getAllScenes() {
-		std::vector<std::string> sceneNames;
+	std::vector<std::filesystem::path> ProjectManager::getAllScenes() {
+		std::vector<std::filesystem::path> sceneNames;
 
 		if (s_Project) {
-			for (auto& entry : std::filesystem::directory_iterator(s_Project->getPath() / "scenes")) {
-				sceneNames.push_back(entry.path().string());
+			for (auto& entry : std::filesystem::directory_iterator(s_Project->getPath().parent_path().string() + "\\scenes")) {
+				sceneNames.push_back(entry.path());
 			}
 		}
 

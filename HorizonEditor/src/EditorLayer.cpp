@@ -988,7 +988,7 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 		ImGuiID right = ImGui::DockBuilderSplitNode(center, ImGuiDir_Right, 0.2f, nullptr, &center);
 		ImGuiID down = ImGui::DockBuilderSplitNode(center, ImGuiDir_Down, 0.2f, nullptr, &center);
 
-		//ImGuiID downCenter = ImGui::DockBuilderSplitNode(down, ImGuiDir_Up, 0.5f, nullptr, &down);
+		ImGuiID leftDown = ImGui::DockBuilderSplitNode(left, ImGuiDir_Down, 0.2f, nullptr, &left);
 
 		ImGui::DockBuilderDockWindow(VIEW_NODE_EDITOR.c_str(), center);
 		ImGui::DockBuilderDockWindow(VIEW_SCENE.c_str(), center);
@@ -996,6 +996,7 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 		ImGui::DockBuilderDockWindow(VIEW_COMPONENTS.c_str(), right);
 		ImGui::DockBuilderDockWindow(VIEW_SPRITES.c_str(), down);
 		ImGui::DockBuilderDockWindow(VIEW_CONTENT_BROWSER.c_str(), down);
+		ImGui::DockBuilderDockWindow(VIEW_PROJECT_SCENES.c_str(), leftDown);
 
 		ImGui::DockBuilderFinish(dockspace_id);
 	}
@@ -1004,9 +1005,24 @@ void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
 void EditorLayer::drawProjectScenes() {
 	ImGui::Begin(VIEW_PROJECT_SCENES.c_str());
 
-	std::vector<std::string> names = Hzn::ProjectManager::getAllScenes();
-	if (names.size() > 0)
-	HZN_CORE_DEBUG(names[0]);
+	std::vector<std::filesystem::path> names = Hzn::ProjectManager::getAllScenes();
+	for (int i = 0; i < names.size(); i++) {
+		ImGuiSelectableFlags flags = ImGuiSelectableFlags_SpanAvailWidth;
+		std::string name = names[i].filename().string().substr(0, names[i].filename().string().size() - 6);
+		bool isSelected = EditorData::s_Scene_Active && names[i].filename() == EditorData::s_Scene_Active->getName();
+		if (isSelected) {
+			ImGui::PushStyleColor(ImGuiCol_Header, { 0.3f, 0.305f, 0.31f, 1.0f });
+			ImGui::PushStyleColor(ImGuiCol_Text, { 0.89f, 1.0f, 0.1f, 1.0f });
+		}
+		if (ImGui::Selectable(name.c_str(), isSelected, flags)) {
+			HZN_CORE_DEBUG(names[i].string());
+
+			openScene(names[i]);
+		}
+		if (isSelected) {
+			ImGui::PopStyleColor(2);
+		}
+	}
 
 	ImGui::End();
 }
