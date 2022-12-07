@@ -163,7 +163,7 @@ namespace Hzn
 		{
 			std::filesystem::path projectFile = s_Project->m_Path;
 			std::ofstream os(projectFile, std::ios::binary);
-			os << "ActiveScene" << " " << ":" << " " << s_Project->m_Scene->m_Path.string();
+			os << "ActiveScene" << " " << ":" << " " << s_Project->m_Scene->m_Path;
 			os.close();
 			result = SceneManager::save();
 		}

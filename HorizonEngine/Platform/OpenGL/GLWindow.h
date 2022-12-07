@@ -13,7 +13,7 @@ namespace Hzn
 	{
 	public:
 		// Constructor creates window and initializes the object
-		GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title);
+		GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title, bool maximized);
 		~GLWindow();
 
 		// Inherited via Window
@@ -42,6 +42,7 @@ namespace Hzn
 		WindowData m_Data;
 		GLFWwindow* m_Window;
 		bool m_Vsync = false;
+		bool m_Maximized = false;
 
 		std::shared_ptr<RenderContext> m_Context;
 	};

@@ -18,8 +18,8 @@ namespace Hzn
 		HZN_CORE_CRITICAL("{0}: {1}", error_code, description);
 	}
 
-	GLWindow::GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title)
-		: m_Data{ width, height, title }
+	GLWindow::GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title, bool maximized)
+		: m_Data{ width, height, title }, m_Maximized(maximized)
 	{
 		init();
 	}
@@ -40,6 +40,8 @@ namespace Hzn
 	{
 		int glfwSuccess = glfwInit();
 		HZN_CORE_ASSERT(glfwSuccess, "Failed to initialize GLFW!");
+
+		if(m_Maximized) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 		m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title, nullptr, nullptr);
 		m_Context = RenderContext::create(m_Window);

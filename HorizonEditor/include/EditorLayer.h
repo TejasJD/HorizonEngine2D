@@ -6,6 +6,13 @@
 struct EditorData {
 	static std::shared_ptr<Hzn::Scene> s_Scene_Active;
 	static std::shared_ptr<Hzn::Project> m_Project_Active;
+	static bool s_ShowViewportPanel;
+	static bool s_ShowNodeEditorPanel;
+	static bool s_ShowObjectHierarchyPanel;
+	static bool s_ShowComponentsPanel;
+	static bool s_ShowSpritesPanel;
+	static bool s_ShowContentBrowserPanel;
+	static bool s_ShowProjectScenesPanel;
 };
 
 
@@ -50,6 +57,7 @@ private:
 	Hzn::GameObject m_SquareObject;
 	Hzn::GameObject m_SquareObject2;
 	Hzn::GameObject m_Camera;
+	float m_Ts = 0.0f;
 
 	std::vector<std::string> rootObjects;
 
@@ -67,11 +75,11 @@ private:
 	// key press combination check
 	bool m_CtrlPressed = false;
 
-	const std::string VIEW_SCENE = "Viewport";
-	const std::string VIEW_NODE_EDITOR = "Node Editor";
-	const std::string VIEW_COMPONENTS = "Components";
-	const std::string VIEW_HIERARCHY = "Object Hierarchy";
-	const std::string VIEW_CONTENT_BROWSER = "Content Browser";
-	const std::string VIEW_SPRITES = "Sprites";
-	const std::string VIEW_PROJECT_SCENES = "Project Scenes";
+	const std::string VIEW_SCENE = ICON_FA_TV " Viewport";
+	const std::string VIEW_NODE_EDITOR = ICON_FA_CODE_BRANCH " Node Editor";
+	const std::string VIEW_COMPONENTS = ICON_FA_SHAPES " Components";
+	const std::string VIEW_HIERARCHY = ICON_FA_DICE_D6 " Object Hierarchy";
+	const std::string VIEW_CONTENT_BROWSER = ICON_FA_FOLDER_OPEN " Content Browser";
+	const std::string VIEW_SPRITES = ICON_FA_ROBOT " Sprites";
+	const std::string VIEW_PROJECT_SCENES = ICON_FA_VIDEO " Project Scenes";
 };
