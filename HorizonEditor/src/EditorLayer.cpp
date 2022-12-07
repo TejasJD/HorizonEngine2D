@@ -13,6 +13,7 @@ bool EditorData::s_ShowObjectHierarchyPanel = true;
 bool EditorData::s_ShowComponentsPanel = true;
 bool EditorData::s_ShowSpritesPanel = true;
 bool EditorData::s_ShowContentBrowserPanel = true;
+bool EditorData::s_ShowProjectScenesPanel = true;
 
 std::string ContentBrowser::m_CurrentTexturePath;
 
@@ -183,6 +184,9 @@ void EditorLayer::onRenderImgui()
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+
+		dockWidgets(dockspace_id);
+
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
@@ -289,6 +293,7 @@ void EditorLayer::onRenderImgui()
 			if (ImGui::MenuItem("Viewport")) EditorData::s_ShowViewportPanel = !EditorData::s_ShowViewportPanel;
 			if (ImGui::MenuItem("Sprites")) EditorData::s_ShowSpritesPanel = !EditorData::s_ShowSpritesPanel;
 			if (ImGui::MenuItem("Content Browser")) EditorData::s_ShowContentBrowserPanel = !EditorData::s_ShowContentBrowserPanel;
+			if (ImGui::MenuItem("Project Scenes")) EditorData::s_ShowProjectScenesPanel = !EditorData::s_ShowProjectScenesPanel;
 
 			ImGui::EndMenu();
 		}
@@ -327,11 +332,15 @@ void EditorLayer::onRenderImgui()
 	}
 	// OBJECT HIERARCHY END
 
+	// PROJECT SCENES VIEW BEGIN
+	drawProjectScenes();
+	// PROJECT SCENES VIEW END
+
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
 	if (EditorData::s_ShowComponentsPanel)
 	{
-		ImGui::Begin(ICON_FA_SHAPES " Components", &EditorData::s_ShowComponentsPanel);
+		ImGui::Begin(VIEW_COMPONENTS.c_str(), &EditorData::s_ShowComponentsPanel);
 		if (EditorData::s_Scene_Active) {
 			if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
 				ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
@@ -395,9 +404,10 @@ void EditorLayer::onRenderImgui()
 	/*static bool show = true;
 	ImGui::ShowDemoWindow(&show);*/
 	//Sprites BEGIN
+
 	if (EditorData::s_ShowSpritesPanel)
 	{
-		ImGui::Begin(ICON_FA_ROBOT " Sprites", &EditorData::s_ShowSpritesPanel);
+		ImGui::Begin(VIEW_SPRITES.c_str(), &EditorData::s_ShowSpritesPanel);
 		static float padding = 16.0f;
 		static float thumbnailSize = 128.0f;
 		float cellSize = thumbnailSize + padding;
@@ -520,7 +530,7 @@ void EditorLayer::onRenderImgui()
 	//ImGui::End();
 	static std::vector<std::pair<int, int>> links;
 	// NODE EDITOR BEGIN
-	ImGui::Begin(ICON_FA_CODE_BRANCH " Node Editor");
+	ImGui::Begin(VIEW_NODE_EDITOR.c_str());
 
 	/*ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);*/
 	ImNodes::BeginNodeEditor();
@@ -594,7 +604,7 @@ void EditorLayer::onRenderImgui()
 	if (EditorData::s_ShowViewportPanel)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
-		ImGui::Begin(ICON_FA_TV " Viewport", &EditorData::s_ShowViewportPanel);
+		ImGui::Begin(VIEW_SCENE.c_str(), &EditorData::s_ShowViewportPanel);
 
 		/*HZN_DEBUG("{0}, {1}", cursorPos.x, cursorPos.y);*/
 
@@ -700,106 +710,112 @@ void EditorLayer::onRenderImgui()
 
 		ImGui::End();
 		ImGui::PopStyleVar();
+		// VIEWPORT END.
 	}
-	// VIEWPORT END.
-
 	ImGui::End();
 	// DOCKING END.
 }
 
 void EditorLayer::drawHierarchy()
 {
-	ImGui::Begin(ICON_FA_DICE_D6 " Object Hierarchy", &EditorData::s_ShowObjectHierarchyPanel);
-	if (Hzn::SceneManager::isOpen()) {
-		auto list = EditorData::s_Scene_Active->getAllRootIds();
+	if (EditorData::s_ShowObjectHierarchyPanel)
+	{
+		ImGui::Begin(VIEW_HIERARCHY.c_str(), &EditorData::s_ShowObjectHierarchyPanel);
+		if (Hzn::SceneManager::isOpen()) {
+			auto list = EditorData::s_Scene_Active->getAllRootIds();
 
-		/*openHierarchyPopup = false;*/
-		openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
+			/*openHierarchyPopup = false;*/
+			openHierarchyPopup = ImGui::IsPopupOpen("HierarchyObjectPopup");
 
-		for (const auto& x : list)
-		{
-			drawObjects(EditorData::s_Scene_Active->getGameObjectById(x));
-		}
-
-		if (openHierarchyPopup) {
-			if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
-				ImGui::CloseCurrentPopup();
+			for (const auto& x : list)
+			{
+				drawObjects(EditorData::s_Scene_Active->getGameObjectById(x));
 			}
 
-			ImGui::OpenPopup("HierarchyObjectPopup");
+			if (openHierarchyPopup) {
+				if (ImGui::IsPopupOpen("HierarchyObjectPopup")) {
+					ImGui::CloseCurrentPopup();
+				}
 
-			if (ImGui::BeginPopup("HierarchyObjectPopup")) {
-				if (ImGui::MenuItem("Copy", "Ctrl + C", false)) {
-					copyObject();
+				ImGui::OpenPopup("HierarchyObjectPopup");
+
+				if (ImGui::BeginPopup("HierarchyObjectPopup")) {
+					if (ImGui::MenuItem("Copy", "Ctrl + C", false)) {
+						copyObject();
+					}
+					if (ImGui::MenuItem("Paste", "Ctrl + V", false)) {
+						pasteObject();
+					}
+					if (ImGui::MenuItem("Duplicate", "Ctrl + D", false)) {
+						// Do stuff here
+						duplicateObject();
+					}
+					if (ImGui::MenuItem("Delete", "Del", false)) {
+						deleteObject();
+					}
+					ImGui::Separator();
+
+					if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
+						createObject();
+					}
+
+					ImGui::EndPopup();
 				}
-				if (ImGui::MenuItem("Paste", "Ctrl + V", false)) {
-					pasteObject();
+			}
+
+			// Right-click
+			ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
+			if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
+			if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
+			ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
+					Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
+					HZN_INFO(receivedObject.getObjectId());
+					receivedObject.setParent(Hzn::GameObject());
 				}
-				if (ImGui::MenuItem("Duplicate", "Ctrl + D", false)) {
-					// Do stuff here
-					duplicateObject();
-				}
-				if (ImGui::MenuItem("Delete", "Del", false)) {
-					deleteObject();
-				}
-				ImGui::Separator();
+
+				ImGui::EndDragDropTarget();
+			}
+
+			// Context menu (under default mouse threshold)
+			ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+			if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
+				ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
+			}
+			if (ImGui::BeginPopup("contextHierarchy")) {
+				m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 
 				if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
-					createObject();
+					Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
 				}
 
 				ImGui::EndPopup();
 			}
-		}
-
-		// Right-click
-		ImVec2 emptySpaceSize = ImGui::GetContentRegionAvail();
-		if (emptySpaceSize.x < 50) emptySpaceSize.x = 50;
-		if (emptySpaceSize.y < 50) emptySpaceSize.y = 50;
-		ImGui::InvisibleButton("canvas", emptySpaceSize, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-
-		if (ImGui::BeginDragDropTarget()) {
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
-				Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
-				HZN_INFO(receivedObject.getObjectId());
-				receivedObject.setParent(Hzn::GameObject());
+			// Left click
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+				/*selectedObject = "";*/
+				m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
 			}
-
-			ImGui::EndDragDropTarget();
 		}
 
-		// Context menu (under default mouse threshold)
-		ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-		if (drag_delta.x == 0.0f && drag_delta.y == 0.0f) {
-			ImGui::OpenPopupOnItemClick("contextHierarchy", ImGuiPopupFlags_MouseButtonRight);
-		}
-		if (ImGui::BeginPopup("contextHierarchy")) {
-			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
-
-			if (ImGui::MenuItem("Create Empty", "Ctrl + N", false)) {
-				Hzn::GameObject newObject = EditorData::s_Scene_Active->createGameObject("Game Object");
-			}
-
-			ImGui::EndPopup();
-		}
-		// Left click
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-			/*selectedObject = "";*/
-			m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
-		}
+		ImGui::End();
 	}
-
-	ImGui::End();
 }
 
 void EditorLayer::drawObjects(Hzn::GameObject& object)
 {
 	std::vector<Hzn::GameObject> list = object.getChildren();
 
-	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+		ImGuiTreeNodeFlags_OpenOnDoubleClick |
+		ImGuiTreeNodeFlags_SpanAvailWidth | 
+		ImGuiTreeNodeFlags_SpanFullWidth;
 
 	if (list.size() == 0) {
-		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		flags |= ImGuiTreeNodeFlags_Leaf | 
+			ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
 	if (m_SelectedObjectId == object.getObjectId()) {
@@ -1041,5 +1057,62 @@ void EditorLayer::deleteObject()
 		EditorData::s_Scene_Active->destroyGameObject(obj);
 		m_HoveredObjectId = -1;
 		m_SelectedObjectId = std::numeric_limits<uint32_t>::max();
+	}
+}
+
+void EditorLayer::dockWidgets(ImGuiID dockspace_id) {
+	if (ImGui::DockBuilderGetNode(dockspace_id) == nullptr) {
+		// Clear out existing layout
+		ImGui::DockBuilderRemoveNode(dockspace_id);
+		// Add empty node
+		ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
+		// Main node should cover entire window
+		ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
+		// Build dock layout
+		ImGuiID center = dockspace_id;
+		ImGuiID left = ImGui::DockBuilderSplitNode(center, ImGuiDir_Left, 0.2f, nullptr, &center);
+		ImGuiID right = ImGui::DockBuilderSplitNode(center, ImGuiDir_Right, 0.2f, nullptr, &center);
+		ImGuiID down = ImGui::DockBuilderSplitNode(center, ImGuiDir_Down, 0.2f, nullptr, &center);
+
+		ImGuiID leftDown = ImGui::DockBuilderSplitNode(left, ImGuiDir_Down, 0.2f, nullptr, &left);
+
+		ImGui::DockBuilderDockWindow(VIEW_NODE_EDITOR.c_str(), center);
+		ImGui::DockBuilderDockWindow(VIEW_SCENE.c_str(), center);
+		ImGui::DockBuilderDockWindow(VIEW_HIERARCHY.c_str(), left);
+		ImGui::DockBuilderDockWindow(VIEW_COMPONENTS.c_str(), right);
+		ImGui::DockBuilderDockWindow(VIEW_SPRITES.c_str(), down);
+		ImGui::DockBuilderDockWindow(VIEW_CONTENT_BROWSER.c_str(), down);
+		ImGui::DockBuilderDockWindow(VIEW_PROJECT_SCENES.c_str(), leftDown);
+
+		ImGui::DockBuilderFinish(dockspace_id);
+	}
+}
+
+void EditorLayer::drawProjectScenes() {
+	if (EditorData::s_ShowProjectScenesPanel)
+	{
+		ImGui::Begin(VIEW_PROJECT_SCENES.c_str(), &EditorData::s_ShowProjectScenesPanel);
+
+		std::vector<std::filesystem::path> names = Hzn::ProjectManager::getAllScenes();
+		for (int i = 0; i < names.size(); i++) {
+			ImGuiSelectableFlags flags = ImGuiSelectableFlags_SpanAvailWidth;
+			std::string name = names[i].filename().string().substr(0, names[i].filename().string().size() - 6);
+			bool isSelected = EditorData::s_Scene_Active && names[i].filename() == EditorData::s_Scene_Active->getName();
+			if (isSelected) {
+				ImGui::PushStyleColor(ImGuiCol_Header, { 0.3f, 0.305f, 0.31f, 1.0f });
+				ImGui::PushStyleColor(ImGuiCol_Text, { 0.89f, 1.0f, 0.1f, 1.0f });
+			}
+			std::string showName = std::string(ICON_FA_FILE_VIDEO) + " " + name.c_str();
+			if (ImGui::Selectable(showName.c_str(), isSelected, flags)) {
+				HZN_CORE_DEBUG(names[i].string());
+
+				openScene(names[i]);
+			}
+			if (isSelected) {
+				ImGui::PopStyleColor(2);
+			}
+		}
+
+		ImGui::End();
 	}
 }
