@@ -11,15 +11,19 @@ bool ContentBrowser::request_NewFile = false;
 bool ContentBrowser::request_NewFolder = false;
 bool ContentBrowser::request_Rename = false;
 std::string ContentBrowser::selected_file;
+bool ContentBrowser::request_emptyError = false;
+bool ContentBrowser::request_existsError = false;
+bool ContentBrowser::request_delete = false;
+
 
 void ContentBrowser::OnImGuiRender()
 {
-	bool itemWasSelected = false;
+	bool itemWasHovered = false;
 	bool emptySpaceClicked = false;
 
 	ImGui::Begin(ICON_FA_FOLDER_OPEN " Content Browser", &EditorData::s_ShowContentBrowserPanel);
 
-	if (!Modals::projectRootFolder.empty()) 
+	if (!Modals::projectRootFolder.empty())
 	{
 
 		if (Modals::m_CurrentDirectory != std::filesystem::path(m_ProjectRootFolder))
@@ -131,7 +135,7 @@ void ContentBrowser::OnImGuiRender()
 				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 
-				if (ImGui::Button("show sprites")) {
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 					m_CurrentTexturePath = entry.path().string();
 				}
 
@@ -140,10 +144,9 @@ void ContentBrowser::OnImGuiRender()
 				m_CurrentTexturePath = "";
 				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				if (ImGui::IsItemHovered())
 				{
-					HZN_WARN("item");
-					itemWasSelected = true;
+					itemWasHovered = true;
 					selected_file = path.string();
 				}
 			}
@@ -157,15 +160,62 @@ void ContentBrowser::OnImGuiRender()
 				ImGui::EndDragDropSource();
 
 			}
-
-
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (entry.is_directory())
 					Modals::m_CurrentDirectory /= path.filename();
 
 			}
-			ImGui::TextWrapped(filenameString.c_str());
+
+			if (request_Rename && selected_file == path.string())
+			{
+				strcpy(fileNameBuffer, filenameString.c_str());
+				ImGui::InputText(" ", fileNameBuffer, 256);
+				std::string newName = std::string(fileNameBuffer);
+
+				bool exist = false;
+				for (const auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
+				{
+					if (std::filesystem::exists((Modals::m_CurrentDirectory.string() + "\\" + newName)))
+					{
+						exist = true;
+					}
+				}
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+				{
+
+				}
+				else if (ImGui::IsKeyPressed(ImGuiKey_Enter) || ImGui::IsMouseClicked(ImGuiMouseButton_Right) || ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+				{
+					if (!newName.empty() && path.filename().string() == newName)
+					{
+						request_Rename = false;
+					}
+					else if (newName.empty())
+					{
+						request_emptyError = true;
+						request_Rename = false;
+					}
+					else if (exist)
+					{
+						request_existsError = true;
+						request_Rename = false;
+					}
+					else
+					{
+						std::filesystem::rename(selected_file, std::filesystem::path(selected_file).parent_path().string() + "\\" + newName);
+						memset(fileNameBuffer, '\0', sizeof(fileNameBuffer));
+						request_Rename = false;
+					}
+
+				}
+
+			}
+			else
+			{
+				ImGui::TextWrapped(filenameString.c_str());
+			}
 
 			ImGui::NextColumn();
 
@@ -173,10 +223,10 @@ void ContentBrowser::OnImGuiRender()
 		}
 
 		// Right click on the item
-		if (itemWasSelected) {
+		if (itemWasHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 			ImGui::OpenPopup("fileFolderPopup");
 		}
-		if (!itemWasSelected && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		if (!itemWasHovered && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 		{
 			ImGui::OpenPopup("ContentBrowserPopup");
 		}
@@ -184,7 +234,7 @@ void ContentBrowser::OnImGuiRender()
 		if (ImGui::BeginPopup("fileFolderPopup")) {
 
 			if (ImGui::MenuItem("Delete", false)) {
-				std::filesystem::remove_all(selected_file);
+				request_delete = true;
 			}
 			if (ImGui::MenuItem("Rename", false)) {
 				request_Rename = true;
@@ -192,53 +242,79 @@ void ContentBrowser::OnImGuiRender()
 			ImGui::EndPopup();
 		}
 
+		//error popup - file/folder name empty
+		if(request_emptyError)
+			ImGui::OpenPopup("Rename error - empty");
 
-		//Rename popup
-		if (request_Rename)
-			ImGui::OpenPopup("Rename");
+		if (ImGui::BeginPopupModal("Rename error - empty", &request_emptyError)) {
+			ImGui::SetWindowSize(ImVec2(400, 120));
+			std::string text = "file or folder name field is empty!";
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto windowHeight = ImGui::GetWindowSize().y;
+			auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+			auto textHeight = ImGui::CalcTextSize(text.c_str()).y;
 
-		if (ImGui::BeginPopupModal("Rename", &request_Rename, ImGuiWindowFlags_AlwaysAutoResize))
-		{
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
 
-			ImGui::InputText("New Name", fileNameBuffer, 256);
-			std::string newName = std::string(fileNameBuffer);
+			ImGui::Text(text.c_str());
+			ImGui::EndPopup();
+		}
 
-			if (newName.empty()) ImGui::Text("new name field is empty!");
+		//error popup - file or folder name already exists
+		if (request_existsError)
+			ImGui::OpenPopup("Rename error - exists");
 
-			bool exist = false;
-			for (const auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
-			{
-				if (std::filesystem::exists((Modals::m_CurrentDirectory.string() + "\\" + newName)))
-				{
-					exist = true;
-				}
-			}
+		if (ImGui::BeginPopupModal("Rename error - exists", &request_existsError)) {
+			ImGui::SetWindowSize(ImVec2(400, 120));
+			std::string text = "file or folder name already exists!";
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto windowHeight = ImGui::GetWindowSize().y;
+			auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+			auto textHeight = ImGui::CalcTextSize(text.c_str()).y;
 
-			if (!newName.empty() && exist)
-			{
-				ImGui::Text("file or folder name already exists!");
-			}
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
 
+			ImGui::Text(text.c_str());
+			ImGui::EndPopup();
+		}
+
+		//delete file or folder popup
+		if (request_delete)
+			ImGui::OpenPopup("delete file or folder");
+
+		if (ImGui::BeginPopupModal("delete file or folder", &request_delete)) {
+			ImGui::SetWindowSize(ImVec2(400, 170));
+			std::string text = "The selected item will be deleted permanently!";
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto windowHeight = ImGui::GetWindowSize().y;
+			auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::SetCursorPosY(windowHeight * 0.3f);
+
+			ImGui::Text(text.c_str());
+
+			ImGui::SetCursorPosY(windowHeight * 0.7f);
 			ImGui::Separator();
-			if (ImGui::Button("Close", ImVec2(120, 0))) {
-				request_Rename = false;
+			ImGui::SetCursorPosY(windowHeight * 0.8f);
+			ImGui::SetCursorPosX(windowWidth * 0.17f);
+			if (ImGui::Button("Cancle", ImVec2(120, 0))) {
+				request_delete = false;
 				ImGui::CloseCurrentPopup();
 			}
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("confirm", ImVec2(120, 0)))
+			if (ImGui::Button("OK", ImVec2(120, 0)))
 			{
-				// create new project and set it as active project.
-				if (!newName.empty() && !exist) {
-					std::filesystem::rename(selected_file, std::filesystem::path(selected_file).parent_path().string() + +"\\" + newName);
-					memset(fileNameBuffer, '\0', sizeof(fileNameBuffer));
-					request_Rename = false;
-				}
+				std::filesystem::remove_all(selected_file);
+				request_delete = false;
+				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
-
 	}
 
 	ImGui::Columns(1);

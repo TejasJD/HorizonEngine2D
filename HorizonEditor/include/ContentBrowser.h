@@ -16,7 +16,11 @@ private:
 	static bool request_NewFile;
 	static bool request_NewFolder;
 	static bool request_Rename;
+	static bool request_emptyError;
+	static bool request_existsError;
+	static bool request_delete;
 	static std::string selected_file;
+	
 public:
 
 	ContentBrowser(const std::string projectRootFolder)
