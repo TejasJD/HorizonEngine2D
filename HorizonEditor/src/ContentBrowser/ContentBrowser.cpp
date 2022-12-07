@@ -21,7 +21,7 @@ void ContentBrowser::OnImGuiRender()
 	bool itemWasSelected = false;
 	bool emptySpaceClicked = false;
 
-	ImGui::Begin("Content Browser");
+	ImGui::Begin(ICON_FA_FOLDER_OPEN " Content Browser", &EditorData::s_ShowContentBrowserPanel);
 
 	if (!Modals::projectRootFolder.empty())
 	{
