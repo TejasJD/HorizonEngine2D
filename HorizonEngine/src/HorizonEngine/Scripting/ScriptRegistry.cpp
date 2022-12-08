@@ -63,6 +63,75 @@ namespace Hzn
 		obj.getComponent<TransformComponent>().m_Translation = *translation;
 	}
 
+	static void TransformComponent_GetRotation(uint32_t id, glm::vec3* outRotation)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		*outRotation = obj.getComponent<TransformComponent>().m_Rotation;
+	}
+
+	static void TransformComponent_SetRotation(uint32_t id, glm::vec3* rotation)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		obj.getComponent<TransformComponent>().m_Rotation = *rotation;
+	}
+
+	static void TransformComponent_GetScale(uint32_t id, glm::vec3* outScale)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		*outScale = obj.getComponent<TransformComponent>().m_Scale;
+	}
+
+	static void TransformComponent_SetScale(uint32_t id, glm::vec3* scale)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		obj.getComponent<TransformComponent>().m_Scale = *scale;
+	}
+
+	static void RigidBody2DComponent_GetLinearVelocity(uint32_t id, glm::vec2* velocity)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		GameObject obj = scene->getGameObjectById(id);
+		
+		b2Body* body = (b2Body*)obj.getComponent<RigidBody2DComponent>().m_RuntimeBody;
+		auto b2Velocity = body->GetLinearVelocity();
+
+		*velocity = { b2Velocity.x, b2Velocity.y };
+	}
+
+	static void RigidBody2DComponent_SetLinearVelocity(uint32_t id, glm::vec2* velocity)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		GameObject obj = scene->getGameObjectById(id);
+
+		b2Body* body = (b2Body*)obj.getComponent<RigidBody2DComponent>().m_RuntimeBody;
+		body->SetLinearVelocity(b2Vec2{velocity->x, velocity->y});
+	}
+
+	static void RigidBody2DComponent_GetAngle(uint32_t id, float* angle)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		GameObject obj = scene->getGameObjectById(id);
+
+		b2Body* body = (b2Body*)obj.getComponent<RigidBody2DComponent>().m_RuntimeBody;
+		*angle = body->GetAngle();
+	}
+
 	static void RigidBody2DComponent_ApplyLinearImpulse(uint32_t id, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
 		auto scene = Hzn::SceneManager::getActiveScene();
@@ -98,6 +167,13 @@ namespace Hzn
 		HZN_ADD_INTERNAL_CALL(GameObject_HasComponent);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
+		HZN_ADD_INTERNAL_CALL(TransformComponent_GetRotation);
+		HZN_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
+		HZN_ADD_INTERNAL_CALL(TransformComponent_GetScale);
+		HZN_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
+		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_SetLinearVelocity);
+		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_GetAngle);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
 	}
