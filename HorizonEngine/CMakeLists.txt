@@ -53,7 +53,10 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.cpp"
 	"src/HorizonEngine/FileManagement/Project.cpp"
 	"src/HorizonEngine/Scripting/ScriptEngine.cpp"
-	"src/HorizonEngine/Scripting/ScriptRegistry.cpp" "src/HorizonEngine/Components/Component.cpp" "src/HorizonEngine/SceneManagement/FunctionRegistry.cpp")
+	"src/HorizonEngine/Scripting/ScriptRegistry.cpp"
+	"src/HorizonEngine/Components/Component.cpp"
+	"src/HorizonEngine/SceneManagement/FunctionRegistry.cpp"
+ )
 
 set(HZN_HEADER_FILES
 	"HorizonEngine.h"
@@ -115,7 +118,10 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/FileManagement/ProjectManager.h"
 	"src/HorizonEngine/FileManagement/Project.h"
 	"src/HorizonEngine/Scripting/ScriptEngine.h"
-	"src/HorizonEngine/Scripting/ScriptRegistry.h" "src/HorizonEngine/SceneManagement/FunctionRegistry.h")
+	"src/HorizonEngine/Scripting/ScriptRegistry.h"
+	"src/HorizonEngine/SceneManagement/FunctionRegistry.h"
+	"src/HorizonEngine/Scripting/ScriptReflection.h"
+)
 
 set(IMGUIZMO_FILES
 	"vendor/ImGuizmo/GraphEditor.cpp"
@@ -131,18 +137,44 @@ set(IMGUIZMO_FILES
 	"vendor/ImGuizmo/ImZoomSlider.h"
 )
 
+set(IMGUI_FILES
+	"vendor/imgui/imconfig.h"
+	"vendor/imgui/imgui.cpp"
+	"vendor/imgui/imgui.h"
+	"vendor/imgui/imgui_demo.cpp"
+	"vendor/imgui/imgui_draw.cpp"
+	"vendor/imgui/imgui_impl_glfw.cpp"
+	"vendor/imgui/imgui_impl_glfw.h"
+	"vendor/imgui/imgui_impl_opengl3.cpp"
+	"vendor/imgui/imgui_impl_opengl3.h"
+	"vendor/imgui/imgui_impl_opengl3_loader.h"
+	"vendor/imgui/imgui_internal.h"
+	"vendor/imgui/imgui_tables.cpp"
+	"vendor/imgui/imgui_widgets.cpp"
+	"vendor/imgui/imstb_rectpack.h"
+	"vendor/imgui/imstb_textedit.h"
+	"vendor/imgui/imstb_truetype.h"
+)
+
 set(IMNODES_FILES
 	"vendor/imnodes/imnodes.cpp"
 	"vendor/imnodes/imnodes.h"
 	"vendor/imnodes/imnodes_internal.h"
 )
 
+set(FILEWATCH_FILES
+	"vendor/filewatch/FileWatch.hpp"
+)
+
+
 # Add source to this project's executable.
 add_library (HorizonEngine
 	${HZN_SOURCE_FILES}
 	${HZN_HEADER_FILES}
+	${IMGUI_FILES}
 	${IMGUIZMO_FILES}
 	${IMNODES_FILES}
+	${FILEWATCH_FILES}
 )
 
 # compile definitions for 'HorizonEngine' target
@@ -163,6 +195,9 @@ target_include_directories(HorizonEngine
 	vendor/ImGuizmo
 	vendor/imnodes
 	vendor/mono/include
+	vendor/filewatch
+	vendor/imgui
+	vendor/IconsFontAwesome
 )
 
 # precompiled headers to target 'HorizonEngine'
@@ -171,7 +206,6 @@ target_precompile_headers(HorizonEngine PUBLIC pch.h)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
 find_package(unofficial-sajson CONFIG REQUIRED)
@@ -183,10 +217,13 @@ find_package(cereal CONFIG REQUIRED)
 
 target_link_libraries(HorizonEngine 
 	PUBLIC
+	# Ws2_32.lib
+	# Winmm.lib
+	# Version.lib
+	# Bcrypt.lib
 	glfw
 	glm::glm
 	glad::glad
-	imgui::imgui
 	spdlog::spdlog_header_only
 	box2d::box2d
 	unofficial::sajson::sajson
@@ -195,6 +232,7 @@ target_link_libraries(HorizonEngine
 	EnTT::EnTT
 	cereal::cereal
 	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/mono-2.0-sgen.lib
+	# ${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/libmono-static-sgen.lib
 )
 
 #testing

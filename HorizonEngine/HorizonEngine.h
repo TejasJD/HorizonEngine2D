@@ -16,9 +16,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "ImGuizmo.h"
-
 #include "imnodes.h"
-#include "imnodes_internal.h"
+#include "IconsFontAwesome5.h"
 
 // Reference additional headers your program requires here.
 #include "HorizonEngine/Core/Core.h"
@@ -51,8 +50,6 @@
 #include "HorizonEngine/Utils/Math.h"
 #include "HorizonEngine/Utils/Time.h"
 
-
-
 #include "HorizonEngine/Layer.h"
 
 #include "HorizonEngine/Renderer/RenderCall.h"
@@ -68,6 +65,8 @@
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Camera/CameraController.h"
+
+#include "HorizonEngine/Scripting/ScriptEngine.h"
 
 #include "Platform/OpenGL/FDWindows.h"
 #include "HorizonEngine/ImGui/ImguiLayer.h" 

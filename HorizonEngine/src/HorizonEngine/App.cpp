@@ -15,16 +15,17 @@ namespace Hzn
 	//! App class constructor, initializes the application
 	App::App() : m_Running(true)
 	{
-		/*HZN_CORE_ASSERT(false, "application already initialized");*/
+		m_ExecutablePath = std::filesystem::current_path();
+		HZN_CORE_CRITICAL("ExecutablePath: {}", m_ExecutablePath.string());
 		m_Instance = this;
-		m_Window = Window::create(800, 600, "HorizonEngine");
+
+		m_Window = Window::create(1366, 768, "HorizonEngine", true);
 		// set the App on event function as callback for the widow class.
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
 
 		m_Window->setVsync(true);
 
 		Renderer::init();
-		ScriptEngine::init();
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);
@@ -32,10 +33,7 @@ namespace Hzn
 		RegisterComponentFunctions(AllComponents{});
 	}
 
-	App::~App()
-	{
-		ScriptEngine::destroy();
-	}
+	App::~App() {}
 
 	//! the main App run loop. This loop keeps the application running and updates and renders
 	//! different layers
@@ -48,6 +46,9 @@ namespace Hzn
 			const auto currentFrameTime = static_cast<const float>(glfwGetTime());
 			const TimeStep deltaTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
+
+			executeMainThreadQueue();
+
 			//! general layer update
 			if (!m_Minimized) 
 			{
@@ -87,6 +88,21 @@ namespace Hzn
 		Renderer::onWindowResize(e.GetWidth(), e.GetHeight());
 		m_Minimized = false;
 		return false;
+	}
+
+	void App::executeMainThreadQueue()
+	{
+		for(auto& fn : m_MainThreadQueue)
+		{
+			fn();
+		}
+		m_MainThreadQueue.clear();
+	}
+
+	void App::submitMainThreadQueue(const std::function<void()>& fn)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueLock);
+		m_MainThreadQueue.emplace_back(fn);
 	}
 
 	//! the onEvent function of application class that handles any events coming to the application

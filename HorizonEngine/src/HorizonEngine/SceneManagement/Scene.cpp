@@ -46,7 +46,8 @@ namespace Hzn
 			RigidBody2DComponent,
 			BoxCollider2DComponent,
 			RenderComponent,
-			CameraComponent>(inputArchive);
+			CameraComponent,
+			ScriptComponent>(inputArchive);
 
 		// since all valid objects have name components we create a view on name components
 		m_Valid = true;
@@ -72,7 +73,8 @@ namespace Hzn
 			RigidBody2DComponent,
 			BoxCollider2DComponent,
 			RenderComponent,
-			CameraComponent>(outputArchive);
+			CameraComponent,
+			ScriptComponent>(outputArchive);
 	}
 
 	void Scene::invalidate()
@@ -160,6 +162,17 @@ namespace Hzn
 				body->CreateFixture(&fixtureDef);
 			}
 
+			// scripts
+			{
+				auto view = m_Registry.view<ScriptComponent>();
+
+				for(auto entity : view)
+				{
+					GameObject obj = { entity, this };
+					ScriptEngine::OnCreateGameObject(obj);
+				}
+			}
+
 			std::cout << m_GameObjectIdMap.size() << std::endl;
 
 			std::ostringstream os;
@@ -194,7 +207,8 @@ namespace Hzn
 				RigidBody2DComponent,
 				BoxCollider2DComponent,
 				RenderComponent,
-				CameraComponent>(inputArchive);
+				CameraComponent,
+				ScriptComponent>(inputArchive);
 
 			// update the maps.
 			m_Registry.each([&](auto entity)
@@ -209,6 +223,8 @@ namespace Hzn
 			delete m_World;
 			m_World = nullptr;
 
+			// stop script engine.
+			ScriptEngine::OnStop();
 			delete m_Listener;
 			m_Listener = nullptr;
 
@@ -264,11 +280,26 @@ namespace Hzn
 		// render objects in the scene through scene update.
 		if (m_Valid) {
 
+			// delete object
+			{
+				for (int i = 0; i < m_ObjectsToDelete.size(); i++) {
+					destroyGameObject(getGameObjectById(m_ObjectsToDelete.at(i)));
+				}
+
+				m_ObjectsToDelete.clear();
+			}
+
 			// update scripts
 			{
-
-
+				// C# Entity OnUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto entity : view)
+				{
+					GameObject obj = { entity, this };
+					ScriptEngine::OnUpdateGameObject(obj, ts);
+				}
 			}
+
 
 			// update physics
 			{
