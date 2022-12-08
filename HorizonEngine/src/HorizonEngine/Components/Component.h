@@ -241,6 +241,7 @@ namespace Hzn
 		float m_Friction = 0.5f;
 		float m_Restitution = 0.0f;
 		float m_RestitutionThreshold = 0.5f;
+		bool m_IsSensor = false;
 
 		// runtime fixture opaque-pointer (will be stored at different location).
 		void* m_RuntimeFixture = nullptr;

@@ -156,6 +156,7 @@ namespace Hzn
 				fixtureDef.friction = bc2d.m_Friction;
 				fixtureDef.restitution = bc2d.m_Restitution;
 				fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+				fixtureDef.isSensor = bc2d.m_IsSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 
@@ -443,6 +444,23 @@ namespace Hzn
 		throw std::runtime_error("Game object not found!");
 	}
 
+	std::vector<GameObject> Scene::getGameObjectsByName(const std::string& name) {
+		if (!m_Valid)
+		{
+			throw std::runtime_error("trying to get game objects from invalidated scene!");
+		}
+
+		std::vector<uint32_t> allIds = getAllObjectIds();
+		std::vector<GameObject> objects;
+		for (int i = 0; i < allIds.size(); i++) {
+			GameObject obj = getGameObjectById(allIds.at(i));
+
+			auto& nameComponent = obj.getComponent<NameComponent>();
+			if (nameComponent.m_Name == name) objects.push_back(GameObject{ m_GameObjectIdMap.find(allIds.at(i))->second, this });
+		}
+
+		return objects;
+	}
 
 	std::vector<uint32_t> Scene::getAllRootIds() const
 	{
