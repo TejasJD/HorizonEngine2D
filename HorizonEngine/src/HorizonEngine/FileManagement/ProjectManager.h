@@ -36,8 +36,14 @@ namespace Hzn
 		static std::shared_ptr<Project> create(const std::string& name, const std::filesystem::path& directoryPath);
 		static std::shared_ptr<Project> open(const std::filesystem::path& projectFilePath);
 		static bool isOpen() { return s_Project != nullptr; }
+		//! returns active project
 		static std::shared_ptr<Project> getActiveProject() { return s_Project; }
 
+		/// <summary>
+		/// File handling functionality
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		static bool newScene(const std::string& name);
 		static bool openScene(const std::filesystem::path& sceneFilePath);
 		static bool closeScene();
@@ -46,6 +52,7 @@ namespace Hzn
 		static bool close();
 
 	private:
+		//!	Current project variable
 		static std::shared_ptr<Project> s_Project;
 	};
 }

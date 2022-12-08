@@ -26,21 +26,21 @@ namespace Hzn {
 	enum class TypeOfEvent
 	{
 		None = 0,
-		// Window Events 
+		//! Window Events 
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 
-		// Key Events
+		//! Key Events
 		KeyPressed, KeyReleased, KeyTyped,
 
-		// Mouse Events
+		//! Mouse Events
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 
-		// Application Events
+		//! Application Events
 		AppTick, AppUpdate, AppRender
 	};
 
 	/// <summary>
-	/// 
+	/// Set of enumerations for categorising events.
 	/// </summary>
 	enum EventCategory
 	{
@@ -52,11 +52,12 @@ namespace Hzn {
 		EventCategoryMouseButton = BIT(4) // 16
 	};
 
-//
+//Event class type macro defined - Get the type of event
 #define EVENT_CLASS_TYPE(type) static TypeOfEvent GetStaticType() { return TypeOfEvent::type; }\
 								virtual TypeOfEvent GetTypeOfEvent() const override { return GetStaticType(); }\
 								virtual const char* GetName() const override { return #type; }
 
+//Event class category macro defined - Get the category of event
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
 	/// <summary>
@@ -71,14 +72,15 @@ namespace Hzn {
 		/// </summary>
 		virtual ~Event() = default;
 
-		
+		//! Bool to handle events
 		bool Handled = false;
 
-
+		//! Getter method of type 'TypeOfEvent'
 		virtual TypeOfEvent GetTypeOfEvent() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
+
 
 		bool IsInCategory(EventCategory category)
 		{
@@ -89,12 +91,13 @@ namespace Hzn {
 	class EventDispatcher
 	{
 	public:
+		//! Constructor - initializing m_Event var
 		EventDispatcher(Event& event)
 			: m_Event(event)
 		{
 		}
 
-		// F deduced by the compiler
+		//! F deduced by the compiler
 		template<typename T, typename F>
 		bool Dispatch(const F& func)
 		{

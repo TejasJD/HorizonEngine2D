@@ -17,6 +17,9 @@ namespace Hzn
 		friend class Scene;
 
 	public:
+		/// <summary>
+		/// constructors
+		/// </summary>
 		Project() = default;
 		Project(const std::string& name, const std::filesystem::path& directoryPath);
 		Project(const std::filesystem::path& projectFilePath);
@@ -31,7 +34,9 @@ namespace Hzn
 		std::filesystem::path getPath() const { return m_Path; }
 
 	private:
+		//!path variable
 		std::filesystem::path m_Path;
+		//!scene variable
 		std::shared_ptr<Scene> m_Scene;
 	};
 }

@@ -35,7 +35,7 @@ namespace Hzn {
 		{
 
 			/*The following code is the win32 file dialog API (hickeys, 2021), it is used to implement a windows file dialog
-			box for the user to SAVE a file from their local machine. Part of this implementation was inspired by the implementation by The Cherno (2020) in the Hazel engine*/
+			box for the user to SAVE a file from their local machine.*/
 
 			OPENFILENAME ofn;				// common dialog box structure (ASCII version)
 			char szFile[260] = { 0 };       // buffer for file name
@@ -83,7 +83,7 @@ namespace Hzn {
 
 
 			/*The following codeis the win32 file dialog API (hickeys, 2021), it is used to implement a windows file dialog
-			box for the user to SAVE a file from their local machine. Part of this implementation was inspired by the implementation by The Cherno (2020) in the Hazel engine*/
+			box for the user to SAVE a file from their local machine.*/
 
 			OPENFILENAME ofn;       // common dialog box structure (ASCII version)
 			char szFile[260] = { 0 };       // buffer for file name
@@ -160,7 +160,4 @@ REFERENCES:
 
 hickeys. (2021, September 21). Using Common Dialog Boxes - Win32 apps. Microsoft.com.
 		https://learn.microsoft.com/en-us/windows/win32/dlgbox/using-common-dialog-boxes#opening-a-file
-
-The Cherno. (2020). Open/Save File Dialogs | Game Engine series [YouTube Video]. In YouTube.
-		https://www.youtube.com/watch?v=zn7N7zHgCcs&t=505s&ab_channel=TheCherno
 */

@@ -15,13 +15,19 @@ namespace Hzn
 {
 	class AudioSource;
 
-
+	/// <summary>
+	/// A struct for pointing to a sprite sheet of type 'Texture 2D'
+	/// and GLM's 2D vector class
+	/// </summary>
 	struct SpriteSheetIdentifier
 	{
 		std::shared_ptr<Texture2D> spriteSheet;
 		glm::vec2 cellSize;
 	};
 
+	/// <summary>
+	/// Asset manager class 
+	/// </summary>
 	class AssetManager
 	{
 	public:
@@ -31,7 +37,7 @@ namespace Hzn
 		static std::map<std::string, std::shared_ptr<AudioSource>> audioStorage;
 		//! SpriteStorage
 		static std::map<std::string, std::shared_ptr<Sprite2D>> spriteStorage;
-		//! 
+		//! Sprite formatting
 		static std::map<std::string, std::string> spriteFormat;
 
 
@@ -39,6 +45,11 @@ namespace Hzn
 		static void destroy();
 		static void loadAudio(std::string path);
 
+		/// <summary>
+		/// Loads spritesheet
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="cellSize"></param>
 		static void loadSpriteSheet(std::string path, const glm::vec2& cellSize)
 		{
 			auto texture = Texture2D::create(path);
