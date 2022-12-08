@@ -16,7 +16,7 @@ bool EditorData::s_ShowContentBrowserPanel = true;
 bool EditorData::s_ShowProjectScenesPanel = true;
 
 int EditorData::previous = 0;
-int EditorData::next = 1000;
+int EditorData::next = 50;
 
 std::string ContentBrowser::m_CurrentTexturePath;
 
@@ -487,43 +487,43 @@ void EditorLayer::onRenderImgui()
 				std::shared_ptr<Hzn::Texture> previousIcon = Modals::previousIcon;
 				std::shared_ptr<Hzn::Texture> nextIcon = Modals::nextIcon;
 
-				if (EditorData::next > 1000)
+				if (EditorData::next > 50)
 				{
 					if (ImGui::ImageButton((ImTextureID)previousIcon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 })) {
 
-						if (EditorData::previous - 1000 <= 0)
+						if (EditorData::previous - 50 <= 0)
 						{
 							EditorData::previous = 0;
-							EditorData::next = 1000;
+							EditorData::next = 50;
 						}
 						else if (EditorData::next == spritesSize)
 						{
-							EditorData::next -= spritesSize % 1000;
-							EditorData::previous -= 1000;
+							EditorData::next -= spritesSize % 50;
+							EditorData::previous -= 50;
 						}
 						else
 						{
-							EditorData::previous -= 1000;
-							EditorData::next -= 1000;
+							EditorData::previous -= 50;
+							EditorData::next -= 50;
 
 						}
 					}
 					ImGui::NextColumn();
 				}
 
-				if (EditorData::next != spritesSize && spritesSize > 1000)
+				if (EditorData::next != spritesSize && spritesSize > 50)
 				{
 					if (ImGui::ImageButton((ImTextureID)nextIcon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 })) {
 
-						if (EditorData::next + 1000 >= spritesSize)
+						if (EditorData::next + 50 >= spritesSize)
 						{
 							EditorData::next = spritesSize;
-							EditorData::previous += 1000;
+							EditorData::previous += 50;
 						}
 						else
 						{
-							EditorData::next += 1000;
-							EditorData::previous += 1000;
+							EditorData::next += 50;
+							EditorData::previous += 50;
 						}
 					}
 				}
