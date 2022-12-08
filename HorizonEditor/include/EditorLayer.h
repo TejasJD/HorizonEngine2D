@@ -13,6 +13,8 @@ struct EditorData {
 	static bool s_ShowSpritesPanel;
 	static bool s_ShowContentBrowserPanel;
 	static bool s_ShowProjectScenesPanel;
+	static int previous;
+	static int next;
 };
 
 

@@ -16,6 +16,8 @@ private:
 	static std::string projectRootFolder;
 	static std::shared_ptr<Hzn::Texture> folderIcon;
 	static std::shared_ptr<Hzn::Texture> fileIcon;
+	static std::shared_ptr<Hzn::Texture> previousIcon;
+	static std::shared_ptr<Hzn::Texture> nextIcon;
 	static std::filesystem::path m_CurrentDirectory;
 	static std::string currentScenePath;
 	static char projectNameBuffer[512];

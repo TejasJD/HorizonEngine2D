@@ -14,6 +14,8 @@ std::string Modals::projectRootFolder;
 
 std::shared_ptr<Hzn::Texture> Modals::folderIcon;
 std::shared_ptr<Hzn::Texture> Modals::fileIcon;
+std::shared_ptr<Hzn::Texture> Modals::previousIcon;
+std::shared_ptr<Hzn::Texture> Modals::nextIcon;
 
 std::filesystem::path Modals::m_CurrentDirectory;
 std::string Modals::currentScenePath;
@@ -148,6 +150,17 @@ void Modals::openProject()
 		if (!entry.is_directory() && entry.path().string().find("FileIcon.png") != std::string::npos) {
 
 			fileIcon = Hzn::Texture2D::create(entry.path().string());
+		}
+
+		//create texture of previous icon
+		if (!entry.is_directory() && entry.path().string().find("previous.png") != std::string::npos) {
+			previousIcon = Hzn::Texture2D::create(entry.path().string());
+		}
+
+		//create texture of next icon
+		if (!entry.is_directory() && entry.path().string().find("next.png") != std::string::npos) {
+
+			nextIcon = Hzn::Texture2D::create(entry.path().string());
 		}
 	}
 

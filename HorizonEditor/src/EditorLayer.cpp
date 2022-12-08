@@ -15,6 +15,9 @@ bool EditorData::s_ShowSpritesPanel = true;
 bool EditorData::s_ShowContentBrowserPanel = true;
 bool EditorData::s_ShowProjectScenesPanel = true;
 
+int EditorData::previous = 0;
+int EditorData::next = 1000;
+
 std::string ContentBrowser::m_CurrentTexturePath;
 
 EditorLayer::EditorLayer(const char* name) :
@@ -417,18 +420,32 @@ void EditorLayer::onRenderImgui()
 		if (columnCount < 1)
 			columnCount = 1;
 		ImGui::Columns(columnCount, 0, false);
-		int count = 0;
 		if (!ContentBrowser::m_CurrentTexturePath.empty())
 		{
-
 			if (!Hzn::AssetManager::spriteStorage.empty())
 			{
+				int spritesSize = 0;
+				for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
+				{
+					if (sprite->first.find(ContentBrowser::m_CurrentTexturePath) != std::string::npos)
+					{
+						spritesSize++;
+					}
+				}
+
+				int count = 1;
 
 				for (auto sprite = Hzn::AssetManager::spriteStorage.begin(); sprite != Hzn::AssetManager::spriteStorage.end(); sprite++)
 				{
-
 					if (sprite->first.find(ContentBrowser::m_CurrentTexturePath) == std::string::npos)
 					{
+						continue;
+					}
+
+
+					if (count <= EditorData::previous)
+					{
+						count++;
 						continue;
 					}
 
@@ -459,6 +476,56 @@ void EditorLayer::onRenderImgui()
 					ImGui::TextWrapped(spriteTexCoords.c_str());
 					ImGui::NextColumn();
 					ImGui::PopID();
+
+					if (count >= EditorData::next)
+					{
+						break;
+					}
+					count++;
+				}
+
+				std::shared_ptr<Hzn::Texture> previousIcon = Modals::previousIcon;
+				std::shared_ptr<Hzn::Texture> nextIcon = Modals::nextIcon;
+
+				if (EditorData::next > 1000)
+				{
+					if (ImGui::ImageButton((ImTextureID)previousIcon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 })) {
+
+						if (EditorData::previous - 1000 <= 0)
+						{
+							EditorData::previous = 0;
+							EditorData::next = 1000;
+						}
+						else if (EditorData::next == spritesSize)
+						{
+							EditorData::next -= spritesSize % 1000;
+							EditorData::previous -= 1000;
+						}
+						else
+						{
+							EditorData::previous -= 1000;
+							EditorData::next -= 1000;
+
+						}
+					}
+					ImGui::NextColumn();
+				}
+
+				if (EditorData::next != spritesSize && spritesSize > 1000)
+				{
+					if (ImGui::ImageButton((ImTextureID)nextIcon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 })) {
+
+						if (EditorData::next + 1000 >= spritesSize)
+						{
+							EditorData::next = spritesSize;
+							EditorData::previous += 1000;
+						}
+						else
+						{
+							EditorData::next += 1000;
+							EditorData::previous += 1000;
+						}
+					}
 				}
 			}
 		}
@@ -810,11 +877,11 @@ void EditorLayer::drawObjects(Hzn::GameObject& object)
 
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
 		ImGuiTreeNodeFlags_OpenOnDoubleClick |
-		ImGuiTreeNodeFlags_SpanAvailWidth | 
+		ImGuiTreeNodeFlags_SpanAvailWidth |
 		ImGuiTreeNodeFlags_SpanFullWidth;
 
 	if (list.size() == 0) {
-		flags |= ImGuiTreeNodeFlags_Leaf | 
+		flags |= ImGuiTreeNodeFlags_Leaf |
 			ImGuiTreeNodeFlags_NoTreePushOnOpen;
 	}
 
