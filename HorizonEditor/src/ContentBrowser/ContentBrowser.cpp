@@ -18,7 +18,7 @@ bool ContentBrowser::request_delete = false;
 
 void ContentBrowser::OnImGuiRender()
 {
-	bool itemWasSelected = false;
+	bool itemWasHovered = false;
 	bool emptySpaceClicked = false;
 
 	ImGui::Begin(ICON_FA_FOLDER_OPEN " Content Browser", &EditorData::s_ShowContentBrowserPanel);
@@ -148,9 +148,9 @@ void ContentBrowser::OnImGuiRender()
 				EditorData::next = 1000;
 				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				if (ImGui::IsItemHovered())
 				{
-					itemWasSelected = true;
+					itemWasHovered = true;
 					selected_file = path.string();
 				}
 			}
@@ -227,10 +227,10 @@ void ContentBrowser::OnImGuiRender()
 		}
 
 		// Right click on the item
-		if (itemWasSelected) {
+		if (itemWasHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
 			ImGui::OpenPopup("fileFolderPopup");
 		}
-		if (!itemWasSelected && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		if (!itemWasHovered && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 		{
 			ImGui::OpenPopup("ContentBrowserPopup");
 		}
