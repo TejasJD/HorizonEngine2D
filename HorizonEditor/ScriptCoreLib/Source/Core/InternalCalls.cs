@@ -24,6 +24,27 @@ namespace Hzn
         internal extern static void TransformComponent_SetTranslation(uint gameObjectID, ref Vector3 translation);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TransformComponent_GetRotation(uint gameObjectID, out Vector3 rotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TransformComponent_SetRotation(uint gameObjectID, ref Vector3 rotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TransformComponent_GetScale(uint gameObjectID, out Vector3 scale);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TransformComponent_SetScale(uint gameObjectID, ref Vector3 scale);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_GetLinearVelocity(uint gameObjectID, out Vector2 velocity);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetLinearVelocity(uint gameObjectID, ref Vector2 velocity);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_GetAngle(uint gameObjectID, out float angle);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_ApplyLinearImpulse(uint gameObjectID, ref Vector2 impulse, ref Vector2 point, bool wake);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
