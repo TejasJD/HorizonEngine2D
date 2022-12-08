@@ -52,6 +52,7 @@
     <Compile Include="Source\ECS\GameObject.cs" />
     <Compile Include="Source\Math\Vector2.cs" />
     <Compile Include="Source\Math\Vector3.cs" />
+    <Compile Include="Source\Math\Vector4.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
