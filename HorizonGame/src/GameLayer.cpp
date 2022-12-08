@@ -16,6 +16,8 @@ GameLayer::~GameLayer()
 void GameLayer::onAttach()
 {
 	HZN_TRACE("Game Layer Attached!");
+
+	Hzn::ScriptEngine::init();
 	/*Hzn::FrameBufferProps props;
 	props.width = Hzn::App::getApp().getAppWindow().getWidth();
 	props.height = Hzn::App::getApp().getAppWindow().getHeight();
@@ -52,6 +54,7 @@ void GameLayer::onAttach()
 void GameLayer::onDetach()
 {
 	Hzn::SceneManager::close();
+	Hzn::ScriptEngine::destroy();
 }
 
 void GameLayer::onUpdate(Hzn::TimeStep ts) 
@@ -106,6 +109,7 @@ void GameLayer::onUpdate(Hzn::TimeStep ts)
 			projectileTransform.m_Translation.y - 0.5f < playerTransform.m_Translation.y &&
 			projectileTransform.m_Translation.y + 0.5f > playerTransform.m_Translation.y) {
 			playerCollisionCallback(*i);
+			break;
 		}
 	}
 
@@ -143,12 +147,16 @@ void GameLayer::playerCollisionCallback(Hzn::GameObject obj) {
 	std::string objName = obj.getComponent<Hzn::NameComponent>().m_Name;
 	if (objName.find("Enemy") != std::string::npos) {
 		// Destroy enemy
-		//obj.destroy();
+		obj.destroy();
 		HZN_CORE_DEBUG("Enemy hit!");
 	}
 	else if (objName == "Projectile") {
 		// Maybe reduce player's health instead of killing them instantly
-		//m_ActiveScene = Hzn::SceneManager::open("assets/scenes/Level2.scene");
+		m_PlayerObjectId = std::numeric_limits<uint32_t>::max();
+		m_EnemyIds.clear();
+		m_PlatformIds.clear();
+
+		m_ActiveScene = Hzn::SceneManager::open("assets/scenes/Level2.scene");
 		HZN_CORE_CRITICAL("Player hit!");
 	}
 }

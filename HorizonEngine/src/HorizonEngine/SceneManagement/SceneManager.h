@@ -31,8 +31,6 @@ namespace Hzn
 		static bool close();
 		static bool save();
 
-		static std::shared_ptr<Scene> getActiveScene() { return s_Scene; }
-
 	private:
 		static void defaultScene();
 		static std::shared_ptr<Scene> s_Scene;

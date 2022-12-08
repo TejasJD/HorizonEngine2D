@@ -46,8 +46,9 @@ namespace Hzn
 			RigidBody2DComponent,
 			BoxCollider2DComponent,
 			RenderComponent,
-			CameraComponent,
-			ScriptComponent>(inputArchive);
+			CameraComponent
+			//ScriptComponent
+		>(inputArchive);
 
 		// since all valid objects have name components we create a view on name components
 		m_Valid = true;
@@ -73,8 +74,9 @@ namespace Hzn
 			RigidBody2DComponent,
 			BoxCollider2DComponent,
 			RenderComponent,
-			CameraComponent,
-			ScriptComponent>(outputArchive);
+			CameraComponent
+			//ScriptComponent
+			>(outputArchive);
 	}
 
 	void Scene::invalidate()
@@ -207,8 +209,9 @@ namespace Hzn
 				RigidBody2DComponent,
 				BoxCollider2DComponent,
 				RenderComponent,
-				CameraComponent,
-				ScriptComponent>(inputArchive);
+				CameraComponent
+				//ScriptComponent
+			>(inputArchive);
 
 			// update the maps.
 			m_Registry.each([&](auto entity)
@@ -306,53 +309,56 @@ namespace Hzn
 				const int32_t velocityIterations = 6;
 				const int32_t positionIterations = 3;
 
+				HZN_CORE_DEBUG(m_World->GetBodyCount());
+
 				m_World->Step(ts, velocityIterations, positionIterations);
 
 				auto view = m_Registry.view<RigidBody2DComponent>();
 
+				if (view) {
+					for (auto entity : view) {
+						GameObject obj = { entity, this };
 
-				for(auto entity : view) {
-					GameObject obj = { entity, this };
+						auto& transform = obj.getComponent<TransformComponent>();
+						auto& rb2d = obj.getComponent<RigidBody2DComponent>();
 
-					auto& transform = obj.getComponent<TransformComponent>();
-					auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+						b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 
-					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+						// Apply forces
+						body->ApplyForceToCenter(b2Vec2(rb2d.m_Force.x, rb2d.m_Force.y), true);
+						body->ApplyLinearImpulseToCenter(b2Vec2(rb2d.m_ImpulseForce.x, rb2d.m_ImpulseForce.y), true);
+						body->ApplyTorque(rb2d.m_Torque, true);
+						rb2d.resetForces();
 
-					// Apply forces
-					body->ApplyForceToCenter(b2Vec2(rb2d.m_Force.x, rb2d.m_Force.y), true);
-					body->ApplyLinearImpulseToCenter(b2Vec2(rb2d.m_ImpulseForce.x, rb2d.m_ImpulseForce.y), true);
-					body->ApplyTorque(rb2d.m_Torque, true);
-					rb2d.resetForces();
+						const auto& position = body->GetPosition();
+						if (obj.getParent())
+						{
+							auto objLocalMat = glm::mat4(1.0f);
+							objLocalMat = glm::translate(objLocalMat, glm::vec3(position.x, position.y, transform.m_Translation.z));
+							objLocalMat = glm::rotate(objLocalMat, glm::radians(body->GetAngle()), glm::vec3(0, 0, 1));
+							auto modelMat = obj.getParent().getTransform();
+							modelMat = glm::inverse(modelMat) * objLocalMat;
 
-					const auto& position = body->GetPosition();
-					if(obj.getParent())
-					{
-						auto objLocalMat = glm::mat4(1.0f);
-						objLocalMat = glm::translate(objLocalMat, glm::vec3(position.x, position.y, transform.m_Translation.z));
-						objLocalMat = glm::rotate(objLocalMat, glm::radians(body->GetAngle()), glm::vec3(0, 0, 1));
-						auto modelMat = obj.getParent().getTransform();
-						modelMat = glm::inverse(modelMat) * objLocalMat;
+							glm::vec3 translation = glm::vec3(0.0f);
+							glm::quat orientation = glm::quat();
+							glm::vec3 scale = glm::vec3(0.0f);
+							glm::vec3 skew = glm::vec3(0.0f);
+							glm::vec4 perspective = glm::vec4(0.0f);
+							glm::decompose(modelMat, scale, orientation, translation, skew, perspective);
 
-						glm::vec3 translation = glm::vec3(0.0f);
-						glm::quat orientation = glm::quat();
-						glm::vec3 scale = glm::vec3(0.0f);
-						glm::vec3 skew = glm::vec3(0.0f);
-						glm::vec4 perspective = glm::vec4(0.0f);
-						glm::decompose(modelMat, scale, orientation, translation, skew, perspective);
+							glm::vec3 rotation = glm::eulerAngles(orientation);
 
-						glm::vec3 rotation = glm::eulerAngles(orientation);
+							transform.m_Translation.x = translation.x;
+							transform.m_Translation.y = translation.y;
+							transform.m_Rotation.z = glm::degrees(rotation.z);
 
-						transform.m_Translation.x = translation.x;
-						transform.m_Translation.y = translation.y;
-						transform.m_Rotation.z = glm::degrees(rotation.z);
-
-					}
-					else
-					{
-						transform.m_Translation.x = position.x;
-						transform.m_Translation.y = position.y;
-						transform.m_Rotation.z = glm::degrees(body->GetAngle());
+						}
+						else
+						{
+							transform.m_Translation.x = position.x;
+							transform.m_Translation.y = position.y;
+							transform.m_Rotation.z = glm::degrees(body->GetAngle());
+						}
 					}
 				}
 			}
@@ -428,6 +434,12 @@ namespace Hzn
 		if (obj.getParent())
 		{
 			obj.getParent().removeChild(obj);
+		}
+
+		if (obj.hasComponent<RigidBody2DComponent>()) {
+			auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+			std::cout << (b2Body*)rb2d.m_RuntimeBody << std::endl;
+			m_World->DestroyBody((b2Body*)rb2d.m_RuntimeBody);
 		}
 		// remove the game object from all objects list.
 		// remove object from the unordered_map.
