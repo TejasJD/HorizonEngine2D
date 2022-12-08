@@ -28,7 +28,7 @@ void ContentBrowser::OnImGuiRender()
 
 		if (Modals::m_CurrentDirectory != std::filesystem::path(m_ProjectRootFolder))
 		{
-			if (ImGui::Button("<-"))
+			if (ImGui::Button(ICON_FA_ARROW_LEFT))
 			{
 				Modals::m_CurrentDirectory = Modals::m_CurrentDirectory.parent_path();
 			}
