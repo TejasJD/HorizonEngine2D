@@ -455,7 +455,7 @@ namespace Hzn
 
 		if (it == m_GameObjectIdMap.end())
 		{
-			throw std::runtime_error("Game object not found!");
+			return GameObject();
 		}
 
 		return GameObject{ it->second, this };
