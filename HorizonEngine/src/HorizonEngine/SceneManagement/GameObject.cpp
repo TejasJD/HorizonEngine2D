@@ -287,13 +287,13 @@ namespace Hzn
 		return clonedParent;
 	}
 
-	void GameObject::destroy() {
+	/*void GameObject::destroy() {
 		isValid();
 
 		uint32_t id = entt::to_integral(m_ObjectId);
 		if (std::find(m_Scene->m_ObjectsToDelete.begin(), m_Scene->m_ObjectsToDelete.end(), id) == m_Scene->m_ObjectsToDelete.end())
 			m_Scene->m_ObjectsToDelete.push_back(id);
-	}
+	}*/
 
 	std::vector<GameObject> GameObject::getChildrenAll() const
 	{

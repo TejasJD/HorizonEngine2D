@@ -80,7 +80,7 @@ namespace Hzn
 		glm::mat4 getTransform() const;
 		GameObject duplicateAsChild();
 		GameObject duplicate();
-		void destroy();
+		/*void destroy();*/
 
 		template<typename... Component>
 		GameObject cloneComponents(ComponentGroup<Component...>)
