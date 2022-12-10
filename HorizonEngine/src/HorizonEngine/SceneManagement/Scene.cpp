@@ -104,6 +104,17 @@ namespace Hzn
 	{
 		if (m_Valid)
 		{
+			std::ostringstream os;
+
+			cereal::JSONOutputArchive outputArchive(os);
+			// serialize data into temporary buffer.
+			serialize(outputArchive);
+
+			os << "\n}\n";
+			sceneStringStorage = os.str();
+			// set scene state to Playing.
+			m_State = SceneState::Play;
+
 			// create box 2D world.
 			m_World = new b2World({ 0.0f, -9.8f });
 
@@ -178,19 +189,6 @@ namespace Hzn
 					ScriptEngine::OnCreateGameObject(obj);
 				}
 			}
-
-			std::cout << m_GameObjectIdMap.size() << std::endl;
-
-			std::ostringstream os;
-
-			cereal::JSONOutputArchive outputArchive(os);
-			// serialize data into temporary buffer.
-			serialize(outputArchive);
-
-			os << "\n}\n";
-			sceneStringStorage = os.str();
-			// set scene state to Playing.
-			m_State = SceneState::Play;
 		}
 	}
 
