@@ -88,6 +88,8 @@ namespace Hzn
 		s_Scene->m_State = state;
 	}
 
+	std::shared_ptr<Scene> SceneManager::getActiveScene() { return s_Scene; }
+
 	void SceneManager::play()
 	{
 		if(s_Scene)

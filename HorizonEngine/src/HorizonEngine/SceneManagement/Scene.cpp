@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "box2d/b2_math.h"
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
@@ -14,6 +15,7 @@
 #include "HorizonEngine/Components/Component.h"
 #include "HorizonEngine/AssetManagement/AssetManager.h"
 #include "Scene.h"
+#include "HorizonEngine/Physics2D/ContactListener.h"
 
 namespace Hzn
 {
@@ -51,7 +53,8 @@ namespace Hzn
 			BoxCollider2DComponent,
 			RenderComponent,
 			CameraComponent,
-			ScriptComponent>(inputArchive);
+			ScriptComponent
+		>(inputArchive);
 
 		// since all valid objects have name components we create a view on name components
 		m_Valid = true;
@@ -112,7 +115,8 @@ namespace Hzn
 			BoxCollider2DComponent,
 			RenderComponent,
 			CameraComponent,
-			ScriptComponent>(outputArchive);
+			ScriptComponent
+			>(outputArchive);
 	}
 
 	void Scene::invalidate()
@@ -155,7 +159,9 @@ namespace Hzn
 			m_State = SceneState::Play;
 
 			// create box 2D world.
+			m_Listener = new ContactListener();
 			m_World = new b2World({ 0.0f, -9.8f });
+			m_World->SetContactListener(m_Listener);
 
 			auto view = m_Registry.view<RigidBody2DComponent>();
 
@@ -180,44 +186,31 @@ namespace Hzn
 				bodyDef.type = (b2BodyType)rb2d.m_Type;
 				bodyDef.position.Set(translation.x, translation.y);
 				bodyDef.angle = glm::radians(rotation.z);
+				auto v = &m_GameObjectIdMap[entt::to_integral(entity)];
+				bodyDef.userData.pointer = (uintptr_t)&m_GameObjectIdMap[entt::to_integral(entity)];
 
 				b2Body* body = m_World->CreateBody(&bodyDef);
 				body->SetFixedRotation(rb2d.m_FixedRotation);
 				rb2d.m_RuntimeBody = body;
 
-
-
-				if (obj.hasComponent<BoxCollider2DComponent>())
-				{
-					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
-					b2PolygonShape polygonShape;
-
-					polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
-
-					b2FixtureDef fixtureDef;
-					fixtureDef.shape = &polygonShape;
-					fixtureDef.density = bc2d.m_Density;
-					fixtureDef.friction = bc2d.m_Friction;
-					fixtureDef.restitution = bc2d.m_Restitution;
-					fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
-					body->CreateFixture(&fixtureDef);
-				}
-				else
+				if (!obj.hasComponent<BoxCollider2DComponent>())
 				{
 					obj.addComponent<BoxCollider2DComponent>();
-					auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
-					b2PolygonShape polygonShape;
-
-					polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
-
-					b2FixtureDef fixtureDef;
-					fixtureDef.shape = &polygonShape;
-					fixtureDef.density = bc2d.m_Density;
-					fixtureDef.friction = bc2d.m_Friction;
-					fixtureDef.restitution = bc2d.m_Restitution;
-					fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
-					body->CreateFixture(&fixtureDef);
 				}
+
+				auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+				b2PolygonShape polygonShape;
+
+				polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &polygonShape;
+				fixtureDef.density = bc2d.m_Density;
+				fixtureDef.friction = bc2d.m_Friction;
+				fixtureDef.restitution = bc2d.m_Restitution;
+				fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+				fixtureDef.isSensor = bc2d.m_IsSensor;
+				body->CreateFixture(&fixtureDef);
 			}
 
 			// scripts
@@ -270,6 +263,8 @@ namespace Hzn
 
 			// stop script engine.
 			ScriptEngine::OnStop();
+			delete m_Listener;
+			m_Listener = nullptr;
 
 			// set state back to edit.
 			m_State = SceneState::Edit;
@@ -352,55 +347,58 @@ namespace Hzn
 			// update physics
 			{
 				const int32_t velocityIterations = 6;
-				const int32_t positionIterations = 2;
+				const int32_t positionIterations = 3;
+
+				HZN_CORE_DEBUG(m_World->GetBodyCount());
 
 				m_World->Step(ts, velocityIterations, positionIterations);
 
 				auto view = m_Registry.view<RigidBody2DComponent>();
 
+				if (view) {
+					for (auto entity : view) {
+						GameObject obj = { entity, this };
 
-				for(auto entity : view) {
-					GameObject obj = { entity, this };
+						auto& transform = obj.getComponent<TransformComponent>();
+						auto& rb2d = obj.getComponent<RigidBody2DComponent>();
 
-					auto& transform = obj.getComponent<TransformComponent>();
-					auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+						b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 
+						// Apply forces
+						body->ApplyForceToCenter(b2Vec2(rb2d.m_Force.x, rb2d.m_Force.y), true);
+						body->ApplyLinearImpulseToCenter(b2Vec2(rb2d.m_ImpulseForce.x, rb2d.m_ImpulseForce.y), true);
+						body->ApplyTorque(rb2d.m_Torque, true);
+						rb2d.resetForces();
 
-					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+						const auto& position = body->GetPosition();
+						if (obj.getParent())
+						{
+							auto objLocalMat = glm::mat4(1.0f);
+							objLocalMat = glm::translate(objLocalMat, glm::vec3(position.x, position.y, transform.m_Translation.z));
+							objLocalMat = glm::rotate(objLocalMat, glm::radians(body->GetAngle()), glm::vec3(0, 0, 1));
+							auto modelMat = obj.getParent().getTransform();
+							modelMat = glm::inverse(modelMat) * objLocalMat;
 
-					// retrieve parameters from the rigidbody component.
-					// apply those parameters on the body.
+							glm::vec3 translation = glm::vec3(0.0f);
+							glm::quat orientation = glm::quat();
+							glm::vec3 scale = glm::vec3(0.0f);
+							glm::vec3 skew = glm::vec3(0.0f);
+							glm::vec4 perspective = glm::vec4(0.0f);
+							glm::decompose(modelMat, scale, orientation, translation, skew, perspective);
 
-					
-					// retrieve the new position.
-					const auto& position = body->GetPosition();
-					if(obj.getParent())
-					{
-						auto objLocalMat = glm::mat4(1.0f);
-						objLocalMat = glm::translate(objLocalMat, glm::vec3(position.x, position.y, transform.m_Translation.z));
-						objLocalMat = glm::rotate(objLocalMat, glm::radians(body->GetAngle()), glm::vec3(0, 0, 1));
-						auto modelMat = obj.getParent().getTransform();
-						modelMat = glm::inverse(modelMat) * objLocalMat;
+							glm::vec3 rotation = glm::eulerAngles(orientation);
 
-						glm::vec3 translation = glm::vec3(0.0f);
-						glm::quat orientation = glm::quat();
-						glm::vec3 scale = glm::vec3(0.0f);
-						glm::vec3 skew = glm::vec3(0.0f);
-						glm::vec4 perspective = glm::vec4(0.0f);
-						glm::decompose(modelMat, scale, orientation, translation, skew, perspective);
+							transform.m_Translation.x = translation.x;
+							transform.m_Translation.y = translation.y;
+							transform.m_Rotation.z = glm::degrees(rotation.z);
 
-						glm::vec3 rotation = glm::eulerAngles(orientation);
-
-						transform.m_Translation.x = translation.x;
-						transform.m_Translation.y = translation.y;
-						transform.m_Rotation.z = glm::degrees(rotation.z);
-
-					}
-					else
-					{
-						transform.m_Translation.x = position.x;
-						transform.m_Translation.y = position.y;
-						transform.m_Rotation.z = glm::degrees(body->GetAngle());
+						}
+						else
+						{
+							transform.m_Translation.x = position.x;
+							transform.m_Translation.y = position.y;
+							transform.m_Rotation.z = glm::degrees(body->GetAngle());
+						}
 					}
 				}
 			}
@@ -496,6 +494,41 @@ namespace Hzn
 		return GameObject{ it->second, this };
 	}
 
+	GameObject Scene::getGameObjectByName(const std::string& name) {
+		if (!m_Valid)
+		{
+			throw std::runtime_error("trying to get game objects from invalidated scene!");
+		}
+
+		std::vector<uint32_t> allIds = getAllObjectIds();
+		for (int i = 0; i < allIds.size(); i++) {
+			GameObject obj = getGameObjectById(allIds.at(i));
+
+			auto& nameComponent = obj.getComponent<NameComponent>();
+			if (nameComponent.m_Name == name) return GameObject{ m_GameObjectIdMap.find(allIds.at(i))->second, this };
+		}
+
+		// Object not found
+		throw std::runtime_error("Game object not found!");
+	}
+
+	std::vector<GameObject> Scene::getGameObjectsByName(const std::string& name) {
+		if (!m_Valid)
+		{
+			throw std::runtime_error("trying to get game objects from invalidated scene!");
+		}
+
+		std::vector<uint32_t> allIds = getAllObjectIds();
+		std::vector<GameObject> objects;
+		for (int i = 0; i < allIds.size(); i++) {
+			GameObject obj = getGameObjectById(allIds.at(i));
+
+			auto& nameComponent = obj.getComponent<NameComponent>();
+			if (nameComponent.m_Name == name) objects.push_back(GameObject{ m_GameObjectIdMap.find(allIds.at(i))->second, this });
+		}
+
+		return objects;
+	}
 
 	std::vector<uint32_t> Scene::getAllRootIds() const
 	{
@@ -519,5 +552,54 @@ namespace Hzn
 			ids.emplace_back(x.first);
 		}
 		return ids;
+	}
+
+
+
+
+
+	void Scene::addBody(GameObject& obj) {
+		auto transform = obj.getTransform();
+		auto& transformComponent = obj.getComponent<TransformComponent>();
+		auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+		glm::vec3 rotation = glm::eulerAngles(orientation);
+		rotation = glm::degrees(rotation);
+
+		b2BodyDef bodyDef;
+		bodyDef.type = (b2BodyType)rb2d.m_Type;
+		bodyDef.position.Set(translation.x, translation.y);
+		bodyDef.angle = glm::radians(rotation.z);
+		bodyDef.userData.pointer = (uintptr_t)&m_GameObjectIdMap[obj.getObjectId()];
+
+		b2Body* body = m_World->CreateBody(&bodyDef);
+		body->SetFixedRotation(rb2d.m_FixedRotation);
+		rb2d.m_RuntimeBody = body;
+
+		if (!obj.hasComponent<BoxCollider2DComponent>())
+		{
+			obj.addComponent<BoxCollider2DComponent>();
+		}
+
+		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+		b2PolygonShape polygonShape;
+
+		polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &polygonShape;
+		fixtureDef.density = bc2d.m_Density;
+		fixtureDef.friction = bc2d.m_Friction;
+		fixtureDef.restitution = bc2d.m_Restitution;
+		fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+		fixtureDef.isSensor = true; // TODO: Change/remove this
+		body->CreateFixture(&fixtureDef);
 	}
 }

@@ -136,7 +136,6 @@ namespace Hzn
 
 		glm::vec2 m_Pos = glm::vec2(0.0f);
 
-
 		std::string texturePath;
 		std::string spritePath;
 
@@ -188,10 +187,14 @@ namespace Hzn
 
 		bool m_FixedRotation = false;
 
-		// will store the force, impulse, torque and angular impulse on the body as primitive values.
+		glm::vec2 m_Velocity { 0.0f, 0.0f };
 
 		// runtime body opaque-pointer (will be stored at different location).
 		void* m_RuntimeBody = nullptr;
+
+		glm::vec2 m_Force { 0.0f, 0.0f };
+		glm::vec2 m_ImpulseForce { 0.0f, 0.0f };
+		float m_Torque = 0.0f;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -204,6 +207,24 @@ namespace Hzn
 		{
 			ar((int)m_Type, m_FixedRotation);
 		}
+
+		void addForce(glm::vec2 force) {
+			m_Force = force;
+		}
+
+		void addImpulseForce(glm::vec2 impulseForce) {
+			m_ImpulseForce = impulseForce;
+		}
+
+		void addTorqueForce(float torque) {
+			m_Torque = torque;
+		}
+
+		void resetForces() {
+			m_Force = glm::vec2(0.0f, 0.0f);
+			m_ImpulseForce = glm::vec2(0.0f, 0.0f);
+			m_Torque = 0.0f;
+		}
 	};
 
 	struct BoxCollider2DComponent
@@ -215,6 +236,7 @@ namespace Hzn
 		float m_Friction = 0.5f;
 		float m_Restitution = 0.0f;
 		float m_RestitutionThreshold = 0.5f;
+		bool m_IsSensor = false;
 
 		// runtime fixture opaque-pointer (will be stored at different location).
 		void* m_RuntimeFixture = nullptr;

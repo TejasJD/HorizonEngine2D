@@ -1,0 +1,1870 @@
+{
+    "value0": 58,
+    "value1": 4293918773,
+    "value2": 0,
+    "value3": 2097153,
+    "value4": 2097154,
+    "value5": 2097155,
+    "value6": 1048580,
+    "value7": 1048581,
+    "value8": 1048582,
+    "value9": 1048583,
+    "value10": 1048584,
+    "value11": 1048585,
+    "value12": 1048586,
+    "value13": 1048587,
+    "value14": 1048588,
+    "value15": 4194317,
+    "value16": 3145742,
+    "value17": 3145743,
+    "value18": 3145744,
+    "value19": 3145745,
+    "value20": 3145746,
+    "value21": 2097171,
+    "value22": 2097172,
+    "value23": 1048597,
+    "value24": 4194326,
+    "value25": 4194327,
+    "value26": 4194328,
+    "value27": 4194329,
+    "value28": 4194330,
+    "value29": 4194331,
+    "value30": 5242908,
+    "value31": 2097181,
+    "value32": 4194334,
+    "value33": 2097183,
+    "value34": 2097184,
+    "value35": 2097185,
+    "value36": 2097186,
+    "value37": 2097187,
+    "value38": 2097188,
+    "value39": 1048628,
+    "value40": 38,
+    "value41": 39,
+    "value42": 40,
+    "value43": 41,
+    "value44": 42,
+    "value45": 43,
+    "value46": 44,
+    "value47": 45,
+    "value48": 2097151,
+    "value49": 1048622,
+    "value50": 1048623,
+    "value51": 1048624,
+    "value52": 1048625,
+    "value53": 1048626,
+    "value54": 1048627,
+    "value55": 2097189,
+    "value56": 1048630,
+    "value57": 1048631,
+    "value58": 1048632,
+    "value59": 48,
+    "value60": 0,
+    "value61": {
+        "value0": "Camera"
+    },
+    "value62": 4194334,
+    "value63": {
+        "value0": "6"
+    },
+    "value64": 40,
+    "value65": {
+        "value0": "Enemy 2"
+    },
+    "value66": 41,
+    "value67": {
+        "value0": "Enemy 3"
+    },
+    "value68": 42,
+    "value69": {
+        "value0": "Enemy 4"
+    },
+    "value70": 4194317,
+    "value71": {
+        "value0": "Player"
+    },
+    "value72": 38,
+    "value73": {
+        "value0": "Enemies"
+    },
+    "value74": 43,
+    "value75": {
+        "value0": "Chests"
+    },
+    "value76": 44,
+    "value77": {
+        "value0": "Chest 1"
+    },
+    "value78": 45,
+    "value79": {
+        "value0": "Chest 2"
+    },
+    "value80": 1048632,
+    "value81": {
+        "value0": "Keys"
+    },
+    "value82": 1048631,
+    "value83": {
+        "value0": "Key 1"
+    },
+    "value84": 1048630,
+    "value85": {
+        "value0": "Key 1"
+    },
+    "value86": 39,
+    "value87": {
+        "value0": "Enemy 1"
+    },
+    "value88": 2097153,
+    "value89": {
+        "value0": "Ground"
+    },
+    "value90": 2097171,
+    "value91": {
+        "value0": "1"
+    },
+    "value92": 2097172,
+    "value93": {
+        "value0": "2"
+    },
+    "value94": 2097181,
+    "value95": {
+        "value0": "3"
+    },
+    "value96": 2097183,
+    "value97": {
+        "value0": "4"
+    },
+    "value98": 2097184,
+    "value99": {
+        "value0": "5"
+    },
+    "value100": 2097185,
+    "value101": {
+        "value0": "6"
+    },
+    "value102": 1048597,
+    "value103": {
+        "value0": "7"
+    },
+    "value104": 1048588,
+    "value105": {
+        "value0": "8"
+    },
+    "value106": 1048587,
+    "value107": {
+        "value0": "9"
+    },
+    "value108": 1048586,
+    "value109": {
+        "value0": "10"
+    },
+    "value110": 1048585,
+    "value111": {
+        "value0": "11"
+    },
+    "value112": 1048584,
+    "value113": {
+        "value0": "12"
+    },
+    "value114": 1048583,
+    "value115": {
+        "value0": "13"
+    },
+    "value116": 1048582,
+    "value117": {
+        "value0": "14"
+    },
+    "value118": 1048581,
+    "value119": {
+        "value0": "15"
+    },
+    "value120": 1048580,
+    "value121": {
+        "value0": "16"
+    },
+    "value122": 2097155,
+    "value123": {
+        "value0": "17"
+    },
+    "value124": 2097154,
+    "value125": {
+        "value0": "18"
+    },
+    "value126": 3145746,
+    "value127": {
+        "value0": "Platform 1"
+    },
+    "value128": 3145745,
+    "value129": {
+        "value0": "1"
+    },
+    "value130": 3145742,
+    "value131": {
+        "value0": "7"
+    },
+    "value132": 3145743,
+    "value133": {
+        "value0": "2"
+    },
+    "value134": 3145744,
+    "value135": {
+        "value0": "3"
+    },
+    "value136": 2097186,
+    "value137": {
+        "value0": "4"
+    },
+    "value138": 2097187,
+    "value139": {
+        "value0": "5"
+    },
+    "value140": 2097188,
+    "value141": {
+        "value0": "6"
+    },
+    "value142": 4194326,
+    "value143": {
+        "value0": "Platform 2"
+    },
+    "value144": 4194327,
+    "value145": {
+        "value0": "1"
+    },
+    "value146": 4194328,
+    "value147": {
+        "value0": "7"
+    },
+    "value148": 4194329,
+    "value149": {
+        "value0": "2"
+    },
+    "value150": 4194330,
+    "value151": {
+        "value0": "3"
+    },
+    "value152": 4194331,
+    "value153": {
+        "value0": "4"
+    },
+    "value154": 5242908,
+    "value155": {
+        "value0": "5"
+    },
+    "value156": 48,
+    "value157": 0,
+    "value158": {
+        "childCount": 0,
+        "parent": 4294967295,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value159": 4194334,
+    "value160": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 5242908
+    },
+    "value161": 40,
+    "value162": {
+        "childCount": 0,
+        "parent": 38,
+        "firstChild": 4294967295,
+        "nextSibling": 41,
+        "prevSibling": 39
+    },
+    "value163": 41,
+    "value164": {
+        "childCount": 0,
+        "parent": 38,
+        "firstChild": 4294967295,
+        "nextSibling": 42,
+        "prevSibling": 40
+    },
+    "value165": 42,
+    "value166": {
+        "childCount": 0,
+        "parent": 38,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 41
+    },
+    "value167": 4194317,
+    "value168": {
+        "childCount": 0,
+        "parent": 4294967295,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value169": 38,
+    "value170": {
+        "childCount": 4,
+        "parent": 4294967295,
+        "firstChild": 39,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value171": 43,
+    "value172": {
+        "childCount": 2,
+        "parent": 4294967295,
+        "firstChild": 44,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value173": 44,
+    "value174": {
+        "childCount": 0,
+        "parent": 43,
+        "firstChild": 4294967295,
+        "nextSibling": 45,
+        "prevSibling": 4294967295
+    },
+    "value175": 45,
+    "value176": {
+        "childCount": 0,
+        "parent": 43,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 44
+    },
+    "value177": 1048632,
+    "value178": {
+        "childCount": 2,
+        "parent": 4294967295,
+        "firstChild": 1048631,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value179": 1048631,
+    "value180": {
+        "childCount": 0,
+        "parent": 1048632,
+        "firstChild": 4294967295,
+        "nextSibling": 1048630,
+        "prevSibling": 4294967295
+    },
+    "value181": 1048630,
+    "value182": {
+        "childCount": 0,
+        "parent": 1048632,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 1048631
+    },
+    "value183": 39,
+    "value184": {
+        "childCount": 0,
+        "parent": 38,
+        "firstChild": 4294967295,
+        "nextSibling": 40,
+        "prevSibling": 4294967295
+    },
+    "value185": 2097153,
+    "value186": {
+        "childCount": 18,
+        "parent": 4294967295,
+        "firstChild": 2097171,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value187": 2097171,
+    "value188": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097172,
+        "prevSibling": 4294967295
+    },
+    "value189": 2097172,
+    "value190": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097181,
+        "prevSibling": 2097171
+    },
+    "value191": 2097181,
+    "value192": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097183,
+        "prevSibling": 2097172
+    },
+    "value193": 2097183,
+    "value194": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097184,
+        "prevSibling": 2097181
+    },
+    "value195": 2097184,
+    "value196": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097185,
+        "prevSibling": 2097183
+    },
+    "value197": 2097185,
+    "value198": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048597,
+        "prevSibling": 2097184
+    },
+    "value199": 1048597,
+    "value200": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048588,
+        "prevSibling": 2097185
+    },
+    "value201": 1048588,
+    "value202": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048587,
+        "prevSibling": 1048597
+    },
+    "value203": 1048587,
+    "value204": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048586,
+        "prevSibling": 1048588
+    },
+    "value205": 1048586,
+    "value206": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048585,
+        "prevSibling": 1048587
+    },
+    "value207": 1048585,
+    "value208": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048584,
+        "prevSibling": 1048586
+    },
+    "value209": 1048584,
+    "value210": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048583,
+        "prevSibling": 1048585
+    },
+    "value211": 1048583,
+    "value212": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048582,
+        "prevSibling": 1048584
+    },
+    "value213": 1048582,
+    "value214": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048581,
+        "prevSibling": 1048583
+    },
+    "value215": 1048581,
+    "value216": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 1048580,
+        "prevSibling": 1048582
+    },
+    "value217": 1048580,
+    "value218": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097155,
+        "prevSibling": 1048581
+    },
+    "value219": 2097155,
+    "value220": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 2097154,
+        "prevSibling": 1048580
+    },
+    "value221": 2097154,
+    "value222": {
+        "childCount": 0,
+        "parent": 2097153,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 2097155
+    },
+    "value223": 3145746,
+    "value224": {
+        "childCount": 7,
+        "parent": 4294967295,
+        "firstChild": 3145745,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value225": 3145745,
+    "value226": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 3145742,
+        "prevSibling": 4294967295
+    },
+    "value227": 3145742,
+    "value228": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 3145743,
+        "prevSibling": 3145745
+    },
+    "value229": 3145743,
+    "value230": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 3145744,
+        "prevSibling": 3145742
+    },
+    "value231": 3145744,
+    "value232": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 2097186,
+        "prevSibling": 3145743
+    },
+    "value233": 2097186,
+    "value234": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 2097187,
+        "prevSibling": 3145744
+    },
+    "value235": 2097187,
+    "value236": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 2097188,
+        "prevSibling": 2097186
+    },
+    "value237": 2097188,
+    "value238": {
+        "childCount": 0,
+        "parent": 3145746,
+        "firstChild": 4294967295,
+        "nextSibling": 4294967295,
+        "prevSibling": 2097187
+    },
+    "value239": 4194326,
+    "value240": {
+        "childCount": 7,
+        "parent": 4294967295,
+        "firstChild": 4194327,
+        "nextSibling": 4294967295,
+        "prevSibling": 4294967295
+    },
+    "value241": 4194327,
+    "value242": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 4194328,
+        "prevSibling": 4294967295
+    },
+    "value243": 4194328,
+    "value244": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 4194329,
+        "prevSibling": 4194327
+    },
+    "value245": 4194329,
+    "value246": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 4194330,
+        "prevSibling": 4194328
+    },
+    "value247": 4194330,
+    "value248": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 4194331,
+        "prevSibling": 4194329
+    },
+    "value249": 4194331,
+    "value250": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 5242908,
+        "prevSibling": 4194330
+    },
+    "value251": 5242908,
+    "value252": {
+        "childCount": 0,
+        "parent": 4194326,
+        "firstChild": 4294967295,
+        "nextSibling": 4194334,
+        "prevSibling": 4194331
+    },
+    "value253": 48,
+    "value254": 0,
+    "value255": {
+        "value0": -0.6000000238418579,
+        "value1": 4.849999904632568,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value256": 4194334,
+    "value257": {
+        "value0": 2.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value258": 40,
+    "value259": {
+        "value0": 0.0,
+        "value1": 4.000999927520752,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value260": 41,
+    "value261": {
+        "value0": 4.0,
+        "value1": 1.0010000467300416,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value262": 42,
+    "value263": {
+        "value0": 4.0,
+        "value1": 7.000999927520752,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value264": 4194317,
+    "value265": {
+        "value0": -9.0,
+        "value1": 1.0010000467300416,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value266": 38,
+    "value267": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value268": 43,
+    "value269": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value270": 44,
+    "value271": {
+        "value0": -3.0,
+        "value1": 4.000999927520752,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value272": 45,
+    "value273": {
+        "value0": 7.0,
+        "value1": 7.000999927520752,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value274": 1048632,
+    "value275": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value276": 1048631,
+    "value277": {
+        "value0": -1.0,
+        "value1": 3.750999927520752,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 0.5,
+        "value7": 0.5,
+        "value8": 1.0
+    },
+    "value278": 1048630,
+    "value279": {
+        "value0": 7.0,
+        "value1": 0.7509999871253967,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 0.5,
+        "value7": 0.5,
+        "value8": 1.0
+    },
+    "value280": 39,
+    "value281": {
+        "value0": -5.0,
+        "value1": 4.000999927520752,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value282": 2097153,
+    "value283": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value284": 2097171,
+    "value285": {
+        "value0": -9.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value286": 2097172,
+    "value287": {
+        "value0": -8.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value288": 2097181,
+    "value289": {
+        "value0": -7.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value290": 2097183,
+    "value291": {
+        "value0": -6.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value292": 2097184,
+    "value293": {
+        "value0": -5.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value294": 2097185,
+    "value295": {
+        "value0": -4.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value296": 1048597,
+    "value297": {
+        "value0": -3.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value298": 1048588,
+    "value299": {
+        "value0": -2.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value300": 1048587,
+    "value301": {
+        "value0": -1.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value302": 1048586,
+    "value303": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value304": 1048585,
+    "value305": {
+        "value0": 1.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value306": 1048584,
+    "value307": {
+        "value0": 2.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value308": 1048583,
+    "value309": {
+        "value0": 3.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value310": 1048582,
+    "value311": {
+        "value0": 4.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value312": 1048581,
+    "value313": {
+        "value0": 5.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value314": 1048580,
+    "value315": {
+        "value0": 6.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value316": 2097155,
+    "value317": {
+        "value0": 7.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value318": 2097154,
+    "value319": {
+        "value0": 8.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value320": 3145746,
+    "value321": {
+        "value0": -3.0,
+        "value1": 3.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value322": 3145745,
+    "value323": {
+        "value0": -3.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value324": 3145742,
+    "value325": {
+        "value0": 3.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value326": 3145743,
+    "value327": {
+        "value0": -2.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value328": 3145744,
+    "value329": {
+        "value0": -1.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value330": 2097186,
+    "value331": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value332": 2097187,
+    "value333": {
+        "value0": 1.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value334": 2097188,
+    "value335": {
+        "value0": 2.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value336": 4194326,
+    "value337": {
+        "value0": 5.0,
+        "value1": 6.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value338": 4194327,
+    "value339": {
+        "value0": -3.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value340": 4194328,
+    "value341": {
+        "value0": 3.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value342": 4194329,
+    "value343": {
+        "value0": -2.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value344": 4194330,
+    "value345": {
+        "value0": -1.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value346": 4194331,
+    "value347": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value348": 5242908,
+    "value349": {
+        "value0": 1.0,
+        "value1": 0.0,
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": -0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0,
+        "value8": 1.0
+    },
+    "value350": 11,
+    "value351": 44,
+    "value352": {
+        "value0": 0,
+        "value1": false
+    },
+    "value353": 45,
+    "value354": {
+        "value0": 0,
+        "value1": false
+    },
+    "value355": 1048631,
+    "value356": {
+        "value0": 0,
+        "value1": false
+    },
+    "value357": 1048630,
+    "value358": {
+        "value0": 0,
+        "value1": false
+    },
+    "value359": 2097153,
+    "value360": {
+        "value0": 0,
+        "value1": false
+    },
+    "value361": 39,
+    "value362": {
+        "value0": 2,
+        "value1": false
+    },
+    "value363": 40,
+    "value364": {
+        "value0": 2,
+        "value1": false
+    },
+    "value365": 41,
+    "value366": {
+        "value0": 2,
+        "value1": false
+    },
+    "value367": 42,
+    "value368": {
+        "value0": 2,
+        "value1": false
+    },
+    "value369": 3145746,
+    "value370": {
+        "value0": 0,
+        "value1": false
+    },
+    "value371": 4194326,
+    "value372": {
+        "value0": 0,
+        "value1": false
+    },
+    "value373": 11,
+    "value374": 44,
+    "value375": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value376": 45,
+    "value377": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value378": 1048631,
+    "value379": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value380": 1048630,
+    "value381": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value382": 2097153,
+    "value383": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 9.0,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value384": 39,
+    "value385": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value386": 40,
+    "value387": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value388": 41,
+    "value389": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value390": 42,
+    "value391": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 0.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value392": 3145746,
+    "value393": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 3.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value394": 4194326,
+    "value395": {
+        "value0": 0.0,
+        "value1": 0.0,
+        "value2": 3.5,
+        "value3": 0.5,
+        "value4": 1.0,
+        "value5": 0.5,
+        "value6": 0.0,
+        "value7": 0.5
+    },
+    "value396": 41,
+    "value397": 41,
+    "value398": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 1.0,
+        "value5": 0.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value399": 42,
+    "value400": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 1.0,
+        "value5": 0.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value401": 4194317,
+    "value402": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 0.0,
+        "value6": 1.0,
+        "value7": 1.0
+    },
+    "value403": 39,
+    "value404": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 1.0,
+        "value5": 0.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value405": 40,
+    "value406": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 1.0,
+        "value5": 0.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value407": 44,
+    "value408": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 1.0,
+        "value5": 0.46332043409347536,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value409": 45,
+    "value410": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 1.0,
+        "value5": 0.46332043409347536,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value411": 1048631,
+    "value412": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.9343630075454712,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value413": 1048630,
+    "value414": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.9343630075454712,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value415": 2097171,
+    "value416": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value417": 2097172,
+    "value418": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value419": 2097181,
+    "value420": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value421": 2097183,
+    "value422": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value423": 2097184,
+    "value424": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value425": 2097185,
+    "value426": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value427": 1048597,
+    "value428": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value429": 1048588,
+    "value430": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value431": 1048587,
+    "value432": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value433": 1048586,
+    "value434": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value435": 1048585,
+    "value436": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value437": 1048584,
+    "value438": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value439": 1048583,
+    "value440": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value441": 1048582,
+    "value442": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value443": 1048581,
+    "value444": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value445": 1048580,
+    "value446": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value447": 2097155,
+    "value448": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value449": 2097154,
+    "value450": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value451": 3145745,
+    "value452": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value453": 3145742,
+    "value454": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value455": 3145743,
+    "value456": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value457": 3145744,
+    "value458": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value459": 2097186,
+    "value460": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value461": 2097187,
+    "value462": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value463": 2097188,
+    "value464": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value465": 4194327,
+    "value466": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value467": 4194328,
+    "value468": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value469": 4194329,
+    "value470": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value471": 4194330,
+    "value472": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value473": 4194331,
+    "value474": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value475": 5242908,
+    "value476": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value477": 4194334,
+    "value478": {
+        "value0": "",
+        "value1": "",
+        "value2": 0.0,
+        "value3": 0.0,
+        "value4": 0.0,
+        "value5": 1.0,
+        "value6": 0.0,
+        "value7": 1.0
+    },
+    "value479": 1,
+    "value480": 0,
+    "value481": {
+        "value0": {
+            "value0": 5.882999897003174,
+            "value1": 0.1025632694363594,
+            "value2": 0.0,
+            "value3": 0.0,
+            "value4": 0.0,
+            "value5": 0.0,
+            "value6": 0.16998130083084107,
+            "value7": 0.0,
+            "value8": 0.0,
+            "value9": 0.0,
+            "value10": 0.0,
+            "value11": -1.0,
+            "value12": 0.0,
+            "value13": -0.0,
+            "value14": -0.0,
+            "value15": -0.0,
+            "value16": 1.0
+        },
+        "value1": true
+    }
+}
