@@ -46,7 +46,7 @@ namespace Hzn
 			RigidBody2DComponent,
 			BoxCollider2DComponent,
 			RenderComponent,
-			CameraComponent
+			CameraComponent,
 			ScriptComponent
 		>(inputArchive);
 
@@ -108,7 +108,7 @@ namespace Hzn
 			RigidBody2DComponent,
 			BoxCollider2DComponent,
 			RenderComponent,
-			CameraComponent
+			CameraComponent,
 			ScriptComponent
 			>(outputArchive);
 	}
