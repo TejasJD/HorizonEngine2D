@@ -4,6 +4,7 @@
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_contact.h"
 
 #include "cereal/cereal.hpp"
 #include "cereal/archives/json.hpp"
@@ -14,9 +15,13 @@
 #include "HorizonEngine/AssetManagement/AssetManager.h"
 #include "Scene.h"
 
-
 namespace Hzn
 {
+	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_CollisionEnterFunctionMap;
+	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_CollisionExitFunctionMap;
+	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_TriggerEnterFunctionMap;
+	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_TriggerExitFunctionMap;
+
 	std::string sceneStringStorage;
 
 	static b2BodyType toBox2DBodyType(RigidBody2DComponent::BodyType bodyType)
@@ -179,6 +184,8 @@ namespace Hzn
 				b2Body* body = m_World->CreateBody(&bodyDef);
 				body->SetFixedRotation(rb2d.m_FixedRotation);
 				rb2d.m_RuntimeBody = body;
+
+
 
 				if (obj.hasComponent<BoxCollider2DComponent>())
 				{
