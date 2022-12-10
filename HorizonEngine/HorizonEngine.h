@@ -52,6 +52,8 @@
 
 #include "HorizonEngine/Layer.h"
 
+#include "HorizonEngine/Physics2D/Physics2DData.h"
+
 #include "HorizonEngine/Renderer/RenderCall.h"
 #include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Renderer/Renderer2D.h"

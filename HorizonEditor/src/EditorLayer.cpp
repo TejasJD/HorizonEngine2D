@@ -14,6 +14,9 @@ bool EditorData::s_ShowComponentsPanel = true;
 bool EditorData::s_ShowSpritesPanel = true;
 bool EditorData::s_ShowContentBrowserPanel = true;
 bool EditorData::s_ShowProjectScenesPanel = true;
+bool EditorData::s_ShowSettingsPanel = true;
+Subsettings EditorData::s_Subsettings = Subsettings::Editor;
+std::vector<std::string> EditorData::s_SettingsCategories { "Editor", "Physics 2D" };
 
 std::string ContentBrowser::m_CurrentTexturePath;
 
@@ -36,6 +39,9 @@ void EditorLayer::onAttach()
 {
 
 	HZN_TRACE("Editor Layer Attached!");
+
+	ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 28.0f);
+
 	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
 	Hzn::FrameBufferProps props;
 	props.width = Hzn::App::getApp().getAppWindow().getWidth();
@@ -335,6 +341,10 @@ void EditorLayer::onRenderImgui()
 	// PROJECT SCENES VIEW BEGIN
 	drawProjectScenes();
 	// PROJECT SCENES VIEW END
+
+	// SETTINGS VIEW BEGIN
+	drawSettings();
+	// SETTINGS VIEW END
 
 	/*static bool show = true;*/
 	// COMPONENTS BEGIN.
@@ -1104,8 +1114,6 @@ void EditorLayer::drawProjectScenes() {
 			}
 			std::string showName = std::string(ICON_FA_FILE_VIDEO) + " " + name.c_str();
 			if (ImGui::Selectable(showName.c_str(), isSelected, flags)) {
-				HZN_CORE_DEBUG(names[i].string());
-
 				openScene(names[i]);
 			}
 			if (isSelected) {
@@ -1115,4 +1123,67 @@ void EditorLayer::drawProjectScenes() {
 
 		ImGui::End();
 	}
+}
+
+void EditorLayer::drawSettings() {
+	if (EditorData::s_ShowSettingsPanel) {
+		float left = 200;
+		float right = 500;
+		float height = 800;
+		ImGui::SetNextWindowSize({left + right, height});
+		if (ImGui::Begin("Settings", &EditorData::s_ShowSettingsPanel, ImGuiWindowFlags_NoResize)) {
+			ImGui::Columns(2, "SettingsColumns", true);
+			ImGui::SetColumnWidth(0, left);
+			ImGui::SetColumnWidth(1, right);
+			for (int i = 0; i < EditorData::s_SettingsCategories.size(); i++) {
+				ImGuiSelectableFlags flags = ImGuiSelectableFlags_SpanAvailWidth;
+				bool isSelected = (int)EditorData::s_Subsettings == i;
+				if (isSelected) {
+					ImGui::PushStyleColor(ImGuiCol_Header, { 0.3f, 0.305f, 0.31f, 1.0f });
+					//ImGui::PushStyleColor(ImGuiCol_Text, { 0.89f, 1.0f, 0.1f, 1.0f });
+				}
+				if (ImGui::Selectable(EditorData::s_SettingsCategories.at(i).c_str(), isSelected, flags)) {
+					EditorData::s_Subsettings = (Subsettings)i;
+				}
+				if (isSelected) {
+					ImGui::PopStyleColor(1);
+				}
+			}
+			ImGui::NextColumn();
+
+			switch (EditorData::s_Subsettings) {
+			case Subsettings::Editor:
+				drawEditorSettings();
+				break;
+			case Subsettings::Physics2D:
+				drawPhysics2DSettings();
+				break;
+			}
+			ImGui::NextColumn();
+
+			ImGui::End();
+		}
+	}
+}
+
+void EditorLayer::drawEditorSettings() {
+	ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+	ImGui::Text("Editor Settings");
+	ImGui::PopFont();
+
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+
+	ImGui::Text("To be added in the future...");
+}
+
+void EditorLayer::drawPhysics2DSettings() {
+	ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+	ImGui::Text("Physics 2D Settings");
+	ImGui::PopFont();
+
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+
+	ImGui::InputFloat2("World Origin", glm::value_ptr(Hzn::Physics2DData::worldOrigin));
+	ImGui::InputFloat2("Gravity", glm::value_ptr(Hzn::Physics2DData::gravity));
+	ImGui::Checkbox("Allow Sleep", &Hzn::Physics2DData::allowSleep);
 }

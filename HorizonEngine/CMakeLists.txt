@@ -55,6 +55,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Scripting/ScriptRegistry.cpp"
 	"src/HorizonEngine/Components/Component.cpp"
 	"src/HorizonEngine/SceneManagement/FunctionRegistry.cpp"
+	"src/HorizonEngine/Physics2D/Physics2DData.cpp"
  )
 
 set(HZN_HEADER_FILES
@@ -119,6 +120,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Scripting/ScriptRegistry.h"
 	"src/HorizonEngine/SceneManagement/FunctionRegistry.h"
 	"src/HorizonEngine/Scripting/ScriptReflection.h"
+	"src/HorizonEngine/Physics2D/Physics2DData.h"
 )
 
 set(IMGUIZMO_FILES

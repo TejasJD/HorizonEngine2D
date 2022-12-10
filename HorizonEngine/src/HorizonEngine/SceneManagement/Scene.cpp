@@ -106,6 +106,7 @@ namespace Hzn
 		{
 			// create box 2D world.
 			m_World = new b2World({ 0.0f, -9.8f });
+			std::cout << m_World->GetAllowSleeping() << std::endl;
 
 			auto view = m_Registry.view<RigidBody2DComponent>();
 

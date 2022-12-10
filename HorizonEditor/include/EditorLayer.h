@@ -3,6 +3,11 @@
 #include <HorizonEngine.h>
 
 
+enum Subsettings {
+	Editor = 0,
+	Physics2D
+};
+
 struct EditorData {
 	static std::shared_ptr<Hzn::Scene> s_Scene_Active;
 	static std::shared_ptr<Hzn::Project> m_Project_Active;
@@ -13,8 +18,12 @@ struct EditorData {
 	static bool s_ShowSpritesPanel;
 	static bool s_ShowContentBrowserPanel;
 	static bool s_ShowProjectScenesPanel;
+	
+	// Settings
+	static bool s_ShowSettingsPanel;
+	static Subsettings s_Subsettings;
+	static std::vector<std::string> s_SettingsCategories;
 };
-
 
 class EditorLayer : public Hzn::Layer
 {
@@ -38,6 +47,9 @@ private:
 	void drawHierarchy();
 	void drawObjects(Hzn::GameObject& object);
 	void drawProjectScenes();
+	void drawSettings();
+	void drawEditorSettings();
+	void drawPhysics2DSettings();
 
 	void copyObject();
 	void pasteObject();
