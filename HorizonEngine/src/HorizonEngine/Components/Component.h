@@ -19,9 +19,11 @@ namespace Hzn
 
 	struct RelationComponent
 	{
-		friend class GameObject;
-		friend class Scene;
-		friend class SceneManager;
+		size_t m_ChildCount = 0ULL;
+		entt::entity m_Parent{ entt::null };
+		entt::entity m_FirstChild{ entt::null };
+		entt::entity m_Next{ entt::null };
+		entt::entity m_Prev{ entt::null };
 
 		RelationComponent() = default;
 		RelationComponent(const RelationComponent& rhs) = default;
@@ -52,13 +54,6 @@ namespace Hzn
 		bool hasParent() const {
 			return m_Parent != entt::null;
 		}
-
-	private:
-		size_t m_ChildCount = 0ULL;
-		entt::entity m_Parent{ entt::null };
-		entt::entity m_FirstChild{ entt::null };
-		entt::entity m_Next{ entt::null };
-		entt::entity m_Prev{ entt::null };
 	};
 
 	struct NameComponent

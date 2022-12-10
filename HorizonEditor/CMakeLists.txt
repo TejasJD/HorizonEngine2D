@@ -75,7 +75,7 @@ add_custom_command(
 	TARGET HznEditor
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy_if_different
+	ARGS -E copy
 	${CMAKE_CURRENT_LIST_DIR}/Scripts/ScriptCoreLib.dll
 	$<TARGET_FILE_DIR:HznEditor>/Scripts/ScriptCoreLib.dll
 )

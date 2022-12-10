@@ -47,7 +47,7 @@ namespace Hzn
 			BoxCollider2DComponent,
 			RenderComponent,
 			CameraComponent
-			//ScriptComponent
+			ScriptComponent
 		>(inputArchive);
 
 		// since all valid objects have name components we create a view on name components
@@ -64,6 +64,40 @@ namespace Hzn
 		invalidate();
 	}
 
+	void Scene::ExecuteDeletionQueue()
+	{
+		for (auto& entity : m_DeletionQueue)
+		{
+			// convert entity to a game object.
+			GameObject obj = { entity, this };
+
+			// delete physics component.
+			if (obj.hasComponent<RigidBody2DComponent>())
+			{
+				auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+				b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+				body->GetWorld()->DestroyBody(body);
+			}
+
+			// break all relations that the game object has in the hierarchy.
+			if (obj.getParent())
+			{
+				obj.getParent().removeChild(obj);
+			}
+			// remove the game object from all objects list.
+			// remove object from the unordered_map.
+
+			/*m_Objects.erase(obj.getComponent<NameComponent>());*/
+			m_GameObjectIdMap.erase(entt::to_integral(obj.m_ObjectId));
+
+			m_Registry.destroy(obj.m_ObjectId);
+			obj.m_ObjectId = entt::null;
+			obj.m_Scene = nullptr;
+		}
+
+		m_DeletionQueue.clear();
+	}
+
 	void Scene::serialize(cereal::JSONOutputArchive& outputArchive)
 	{
 		entt::snapshot{ m_Registry }
@@ -75,7 +109,7 @@ namespace Hzn
 			BoxCollider2DComponent,
 			RenderComponent,
 			CameraComponent
-			//ScriptComponent
+			ScriptComponent
 			>(outputArchive);
 	}
 
@@ -107,7 +141,16 @@ namespace Hzn
 	{
 		if (m_Valid)
 		{
-			// TODO: Add callbacks for game object collision detection
+			std::ostringstream os;
+
+			cereal::JSONOutputArchive outputArchive(os);
+			// serialize data into temporary buffer.
+			serialize(outputArchive);
+
+			os << "\n}\n";
+			sceneStringStorage = os.str();
+			// set scene state to Playing.
+			m_State = SceneState::Play;
 
 			// create box 2D world.
 			m_Listener = new ContactListener();
@@ -174,26 +217,13 @@ namespace Hzn
 					ScriptEngine::OnCreateGameObject(obj);
 				}
 			}
-
-			std::cout << m_GameObjectIdMap.size() << std::endl;
-
-			std::ostringstream os;
-
-			cereal::JSONOutputArchive outputArchive(os);
-			// serialize data into temporary buffer.
-			serialize(outputArchive);
-
-			os << "\n}\n";
-			sceneStringStorage = os.str();
-			// set scene state to Playing.
-			m_State = SceneState::Play;
 		}
 	}
 
 	void Scene::onStop()
 	{
 		if (m_Valid) {
-			std::cout << m_GameObjectIdMap.size() << std::endl;
+			/*std::cout << m_GameObjectIdMap.size() << std::endl;*/
 			// clear registries.
 			m_GameObjectIdMap.clear();
 			m_Registry.clear();
@@ -209,9 +239,8 @@ namespace Hzn
 				RigidBody2DComponent,
 				BoxCollider2DComponent,
 				RenderComponent,
-				CameraComponent
-				//ScriptComponent
-			>(inputArchive);
+				CameraComponent,
+				ScriptComponent>(inputArchive);
 
 			// update the maps.
 			m_Registry.each([&](auto entity)
@@ -260,6 +289,9 @@ namespace Hzn
 
 	void Scene::onEditorUpdate(OrthographicCamera& camera, TimeStep ts) {
 		if (m_Valid) {
+			// delete objects queued for deletion.
+			ExecuteDeletionQueue();
+
 			Renderer2D::beginScene(camera);
 
 			auto sprites = m_Registry.view<RenderComponent, TransformComponent>();
@@ -283,14 +315,16 @@ namespace Hzn
 		// render objects in the scene through scene update.
 		if (m_Valid) {
 
-			// delete object
-			{
-				for (int i = 0; i < m_ObjectsToDelete.size(); i++) {
-					destroyGameObject(getGameObjectById(m_ObjectsToDelete.at(i)));
-				}
+			ExecuteDeletionQueue();
+			
+			//// delete object
+			//{
+			//	for (int i = 0; i < m_ObjectsToDelete.size(); i++) {
+			//		destroyGameObject(getGameObjectById(m_ObjectsToDelete.at(i)));
+			//	}
 
-				m_ObjectsToDelete.clear();
-			}
+			//	m_ObjectsToDelete.clear();
+			//}
 
 			// update scripts
 			{
@@ -415,12 +449,16 @@ namespace Hzn
 		return obj;
 	}
 
-	void Scene::destroyGameObject(GameObject& obj)
+	bool Scene::destroyGameObject(GameObject& obj)
 	{
 		if (!m_Valid)
 		{
-			throw std::runtime_error("trying to remove game objects from invalidated scene!");
+			HZN_CORE_ERROR("Failed to destroy GameObject that has ID: {0}", entt::to_integral(obj.m_ObjectId));
+			return false;
 		}
+
+		// add this object to the deletion queue.
+		m_DeletionQueue.insert(obj.m_ObjectId);
 
 		// delete all the child objects of that object, before we delete that object.
 		auto list = obj.getChildren();
@@ -430,26 +468,7 @@ namespace Hzn
 			destroyGameObject(x);
 		}
 
-		// break all relations that the game object has in the hierarchy.
-		if (obj.getParent())
-		{
-			obj.getParent().removeChild(obj);
-		}
-
-		if (obj.hasComponent<RigidBody2DComponent>()) {
-			auto& rb2d = obj.getComponent<RigidBody2DComponent>();
-			std::cout << (b2Body*)rb2d.m_RuntimeBody << std::endl;
-			m_World->DestroyBody((b2Body*)rb2d.m_RuntimeBody);
-		}
-		// remove the game object from all objects list.
-		// remove object from the unordered_map.
-
-		/*m_Objects.erase(obj.getComponent<NameComponent>());*/
-		m_GameObjectIdMap.erase(entt::to_integral(obj.m_ObjectId));
-
-		m_Registry.destroy(obj.m_ObjectId);
-		obj.m_ObjectId = entt::null;
-		obj.m_Scene = nullptr;
+		return true;
 	}
 
 	GameObject Scene::getGameObjectById(uint32_t id)
@@ -463,7 +482,7 @@ namespace Hzn
 
 		if (it == m_GameObjectIdMap.end())
 		{
-			throw std::runtime_error("Game object not found!");
+			return GameObject();
 		}
 
 		return GameObject{ it->second, this };

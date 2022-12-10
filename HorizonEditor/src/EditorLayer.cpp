@@ -337,16 +337,27 @@ void EditorLayer::onRenderImgui()
 	// PROJECT SCENES VIEW END
 
 	/*static bool show = true;*/
+	/*ImGui::ShowDemoWindow();*/
+
 	// COMPONENTS BEGIN.
 	if (EditorData::s_ShowComponentsPanel)
 	{
 		ImGui::Begin(VIEW_COMPONENTS.c_str(), &EditorData::s_ShowComponentsPanel);
 		if (EditorData::s_Scene_Active) {
 			if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max()) {
+
+				// component ID.
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
+				ImGui::Text(ICON_FA_DICE_D6 " ID: %d", m_SelectedObjectId);
+				ImGui::PopStyleColor();
+
 				ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
 				ImGui::BeginChild("ExistingComponents", ImVec2{ 0, 400 }, true, window_flags);
 				auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-				Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
+				if (selectedObj)
+				{
+					Hzn::ComponentDisplays::displayIfExists(selectedObj, Hzn::AllComponents{});
+				}
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
 			}
@@ -661,49 +672,52 @@ void EditorLayer::onRenderImgui()
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, sz.x, sz.y);
 
 			auto selectedObj = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
-			auto& transformComponent = selectedObj.getComponent<Hzn::TransformComponent>();
-			auto transform = selectedObj.getTransform();
+			if (selectedObj)
+			{
+				auto& transformComponent = selectedObj.getComponent<Hzn::TransformComponent>();
+				auto transform = selectedObj.getTransform();
 
-			if (Hzn::SceneManager::getSceneState() == Hzn::SceneState::Edit)
-			{
-				ImGuizmo::Manipulate(
-					glm::value_ptr(m_EditorCameraController.getCamera().getViewMatrix()),
-					glm::value_ptr(m_EditorCameraController.getCamera().getProjectionMatrix()),
-					m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
-			}
-			else
-			{
-				Hzn::GameObject obj;
-				if (obj = EditorData::s_Scene_Active->getActiveCamera())
+				if (Hzn::SceneManager::getSceneState() == Hzn::SceneState::Edit)
 				{
-					auto& cameraComponent = obj.getComponent<Hzn::CameraComponent>();
 					ImGuizmo::Manipulate(
-						glm::value_ptr(glm::inverse(obj.getTransform())),
-						glm::value_ptr(cameraComponent.m_Camera.getProjectionMatrix()),
+						glm::value_ptr(m_EditorCameraController.getCamera().getViewMatrix()),
+						glm::value_ptr(m_EditorCameraController.getCamera().getProjectionMatrix()),
 						m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
 				}
-			}
-
-			if (ImGuizmo::IsUsing())
-			{
-				if (selectedObj.getParent())
+				else
 				{
-					transform = glm::inverse(selectedObj.getParent().getTransform()) * transform;
+					Hzn::GameObject obj;
+					if (obj = EditorData::s_Scene_Active->getActiveCamera())
+					{
+						auto& cameraComponent = obj.getComponent<Hzn::CameraComponent>();
+						ImGuizmo::Manipulate(
+							glm::value_ptr(glm::inverse(obj.getTransform())),
+							glm::value_ptr(cameraComponent.m_Camera.getProjectionMatrix()),
+							m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform));
+					}
 				}
 
-				glm::vec3 translation = glm::vec3(0.0f);
-				glm::quat orientation = glm::quat();
-				glm::vec3 scale = glm::vec3(0.0f);
-				glm::vec3 skew = glm::vec3(0.0f);
-				glm::vec4 perspective = glm::vec4(0.0f);
-				glm::decompose(transform, scale, orientation, translation, skew, perspective);
+				if (ImGuizmo::IsUsing())
+				{
+					if (selectedObj.getParent())
+					{
+						transform = glm::inverse(selectedObj.getParent().getTransform()) * transform;
+					}
 
-				glm::vec3 rotation = glm::eulerAngles(orientation);
-				rotation = glm::degrees(rotation);
+					glm::vec3 translation = glm::vec3(0.0f);
+					glm::quat orientation = glm::quat();
+					glm::vec3 scale = glm::vec3(0.0f);
+					glm::vec3 skew = glm::vec3(0.0f);
+					glm::vec4 perspective = glm::vec4(0.0f);
+					glm::decompose(transform, scale, orientation, translation, skew, perspective);
 
-				transformComponent.m_Translation = translation;
-				transformComponent.m_Rotation = rotation;
-				transformComponent.m_Scale = scale;
+					glm::vec3 rotation = glm::eulerAngles(orientation);
+					rotation = glm::degrees(rotation);
+
+					transformComponent.m_Translation = translation;
+					transformComponent.m_Rotation = rotation;
+					transformComponent.m_Scale = scale;
+				}
 			}
 		}
 

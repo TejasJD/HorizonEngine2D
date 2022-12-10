@@ -50,7 +50,7 @@ namespace Hzn
 		void onUpdate(TimeStep ts);
 
 		GameObject createGameObject(const std::string& name);
-		void destroyGameObject(GameObject& obj);
+		bool destroyGameObject(GameObject& obj);
 		GameObject getGameObjectById(uint32_t id);
 		GameObject getGameObjectByName(const std::string& name);
 		std::vector<GameObject> getGameObjectsByName(const std::string& name);
@@ -66,7 +66,8 @@ namespace Hzn
 
 
 	private:
-		int gameObjectCounter = 0;
+		void ExecuteDeletionQueue();
+
 		void serialize(cereal::JSONOutputArchive& outputArchive);
 		void invalidate();
 		// variable that is used by the scene manager to invalidate all
@@ -75,6 +76,8 @@ namespace Hzn
 		bool m_Valid = false;
 		// entt registry for creating game objects.
 		entt::registry m_Registry;
+
+		std::set<entt::entity> m_DeletionQueue;
 
 		b2World* m_World = nullptr;
 		b2ContactListener* m_Listener = nullptr;
