@@ -11,10 +11,10 @@ namespace Hzn
 	extern std::unordered_map<std::string, std::function<void(GameObject&)>> AddComponentFnTable;
 	extern std::unordered_map<std::string, std::function<bool(const GameObject&)>> HasComponentFnTable;
 
-	extern std::map<uint32_t, std::function<void(uint32_t)>> g_CollisionEnterFunctionMap;
-	extern std::map<uint32_t, std::function<void(uint32_t)>> g_CollisionExitFunctionMap;
-	extern std::map<uint32_t, std::function<void(uint32_t)>> g_TriggerEnterFunctionMap;
-	extern std::map<uint32_t, std::function<void(uint32_t)>> g_TriggerExitFunctionMap;
+	extern std::unordered_map<uint32_t, std::function<void(uint32_t)>> g_CollisionEnterFunctionMap;
+	extern std::unordered_map<uint32_t, std::function<void(uint32_t)>> g_CollisionExitFunctionMap;
+	extern std::unordered_map<uint32_t, std::function<void(uint32_t)>> g_TriggerEnterFunctionMap;
+	extern std::unordered_map<uint32_t, std::function<void(uint32_t)>> g_TriggerExitFunctionMap;
 
 	template<typename... Component>
 	void RegisterComponentFunctions(ComponentGroup<Component...>)
