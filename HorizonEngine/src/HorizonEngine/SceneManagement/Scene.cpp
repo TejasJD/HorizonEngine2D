@@ -228,10 +228,6 @@ namespace Hzn
 		if (m_Valid) {
 			/*std::cout << m_GameObjectIdMap.size() << std::endl;*/
 			// clear registries.
-			g_CollisionEnterFunctionMap.clear();
-			g_CollisionExitFunctionMap.clear();
-			g_TriggerEnterFunctionMap.clear();
-			g_TriggerExitFunctionMap.clear();
 			m_GameObjectIdMap.clear();
 			m_Registry.clear();
 

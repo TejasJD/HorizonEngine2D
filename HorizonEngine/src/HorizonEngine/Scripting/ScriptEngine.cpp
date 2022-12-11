@@ -345,6 +345,10 @@ namespace Hzn
 
 	void ScriptEngine::ReloadAssembly()
 	{
+		g_CollisionEnterFunctionMap.clear();
+		g_CollisionExitFunctionMap.clear();
+		g_TriggerEnterFunctionMap.clear();
+		g_TriggerExitFunctionMap.clear();
 		s_Data->gameObjectScriptInstances.clear();
 		s_Data->gameObjectSubClasses.clear();
 
