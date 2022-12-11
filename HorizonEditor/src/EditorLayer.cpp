@@ -298,6 +298,26 @@ void EditorLayer::onRenderImgui()
 			ImGui::EndMenu();
 		}
 
+		if (EditorData::m_Project_Active)
+		{
+			std::string nameString = std::string(ICON_FA_FOLDER) + " " + EditorData::m_Project_Active->getName();
+			auto& style = ImGui::GetStyle();
+			float oldDisabledStyle = style.DisabledAlpha;
+			style.DisabledAlpha = 1.0f;
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.89f, 1.0f, 0.1f, 1.0f });
+
+			float windowWidth = ImGui::GetWindowWidth();
+			auto textWidthX = ImGui::CalcTextSize(nameString.c_str()).x;
+			ImGui::SetCursorPosX((windowWidth - textWidthX) * 0.5f);
+
+			if (ImGui::BeginMenu(nameString.c_str(), false))
+			{
+				ImGui::EndMenu();
+			}
+			ImGui::PopStyleColor();
+			style.DisabledAlpha = oldDisabledStyle;
+		}
+
 		ImGui::EndMenuBar();
 	}
 	// MENU BAR END
@@ -454,7 +474,7 @@ void EditorLayer::onRenderImgui()
 					ImGui::PushID(spriteTexCoords.c_str());
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
-					ImGui::ImageButton((ImTextureID)sprite->second->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->second->getTexCoords()[0].x, sprite->second->getTexCoords()[2].y }, { sprite->second->getTexCoords()[2].x, sprite->second->getTexCoords()[0].y });
+					ImGui::ImageButton((ImTextureID)(uint64_t)sprite->second->getSpriteSheet()->getId(), { thumbnailSize, thumbnailSize }, { sprite->second->getTexCoords()[0].x, sprite->second->getTexCoords()[2].y }, { sprite->second->getTexCoords()[2].x, sprite->second->getTexCoords()[0].y });
 					ImGui::PopStyleColor();
 
 					if (ImGui::BeginDragDropSource()) {

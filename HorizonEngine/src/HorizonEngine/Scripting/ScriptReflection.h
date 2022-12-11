@@ -46,6 +46,10 @@ namespace Hzn
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreate = nullptr;
 		MonoMethod* m_OnUpdate = nullptr;
+		MonoMethod* m_OnCollisionEnter = nullptr;
+		MonoMethod* m_OnCollisionExit = nullptr;
+		MonoMethod* m_OnTriggerEnter = nullptr;
+		MonoMethod* m_OnTriggerExit = nullptr;
 	};
 
 	class ScriptClass

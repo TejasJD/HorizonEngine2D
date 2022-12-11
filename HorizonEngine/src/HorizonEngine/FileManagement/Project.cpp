@@ -86,4 +86,11 @@ namespace Hzn
 			return false;
 		}
 	}
+
+	std::string Project::getName() const
+	{
+		std::string projectName = m_Path.filename().string();
+		projectName = projectName.substr(0, projectName.size() - 4);
+		return projectName;
+	}
 }

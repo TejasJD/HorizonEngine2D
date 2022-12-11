@@ -55,6 +55,10 @@ namespace Hzn
 
 		static void OnCreateGameObject(const GameObject& obj);
 		static void OnUpdateGameObject(const GameObject& obj, TimeStep ts);
+		static void OnCollisionEnter(const GameObject& obj);
+		static void OnCollisionExit(const GameObject& obj);
+		static void OnTriggerEnter(const GameObject& obj);
+		static void OnTriggerExit(const GameObject& obj);
 
 	private:
 		static void startReload();

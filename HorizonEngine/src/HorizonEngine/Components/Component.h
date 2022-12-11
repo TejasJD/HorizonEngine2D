@@ -156,12 +156,13 @@ namespace Hzn
 
 	struct CameraComponent
 	{
+		SceneCamera2D m_Camera;
+		bool m_Primary = true;
+
 		CameraComponent(const float aspectRatio = 1.0f, const float zoom = 1.0f)
 			: m_Camera(aspectRatio, zoom) {}
 
 		~CameraComponent() = default;
-		SceneCamera2D m_Camera;
-		bool m_Primary = true;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -178,23 +179,22 @@ namespace Hzn
 
 	struct RigidBody2DComponent
 	{
-		RigidBody2DComponent() = default;
-		RigidBody2DComponent(const RigidBody2DComponent& body) = default;
-		~RigidBody2DComponent() = default;
+		enum class BodyType
+		{
+			Static = 0,
+			Kinematic,
+			Dynamic
+		};
 
-		enum class BodyType { Static = 0, Kinematic, Dynamic };
 		BodyType m_Type = BodyType::Static;
 
 		bool m_FixedRotation = false;
-
-		glm::vec2 m_Velocity { 0.0f, 0.0f };
-
 		// runtime body opaque-pointer (will be stored at different location).
 		void* m_RuntimeBody = nullptr;
 
-		glm::vec2 m_Force { 0.0f, 0.0f };
-		glm::vec2 m_ImpulseForce { 0.0f, 0.0f };
-		float m_Torque = 0.0f;
+		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const RigidBody2DComponent& body) = default;
+		~RigidBody2DComponent() = default;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -206,24 +206,6 @@ namespace Hzn
 		void save(Archive& ar) const
 		{
 			ar((int)m_Type, m_FixedRotation);
-		}
-
-		void addForce(glm::vec2 force) {
-			m_Force = force;
-		}
-
-		void addImpulseForce(glm::vec2 impulseForce) {
-			m_ImpulseForce = impulseForce;
-		}
-
-		void addTorqueForce(float torque) {
-			m_Torque = torque;
-		}
-
-		void resetForces() {
-			m_Force = glm::vec2(0.0f, 0.0f);
-			m_ImpulseForce = glm::vec2(0.0f, 0.0f);
-			m_Torque = 0.0f;
 		}
 	};
 
@@ -244,13 +226,13 @@ namespace Hzn
 		template<typename Archive>
 		void load(Archive& ar)
 		{
-			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold);
+			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold, m_IsSensor);
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
-			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold);
+			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold, m_IsSensor);
 		}
 	};
 

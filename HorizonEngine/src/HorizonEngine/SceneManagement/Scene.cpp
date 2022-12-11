@@ -14,16 +14,13 @@
 #include "GameObject.h"
 #include "HorizonEngine/Components/Component.h"
 #include "HorizonEngine/AssetManagement/AssetManager.h"
-#include "Scene.h"
 #include "HorizonEngine/Physics2D/ContactListener.h"
+
+#include "FunctionRegistry.h"
+#include "Scene.h"
 
 namespace Hzn
 {
-	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_CollisionEnterFunctionMap;
-	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_CollisionExitFunctionMap;
-	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_TriggerEnterFunctionMap;
-	std::map<std::pair<entt::entity, entt::entity>, std::function<void(entt::entity)>> g_TriggerExitFunctionMap;
-
 	std::string sceneStringStorage;
 
 	static b2BodyType toBox2DBodyType(RigidBody2DComponent::BodyType bodyType)
@@ -231,6 +228,10 @@ namespace Hzn
 		if (m_Valid) {
 			/*std::cout << m_GameObjectIdMap.size() << std::endl;*/
 			// clear registries.
+			g_CollisionEnterFunctionMap.clear();
+			g_CollisionExitFunctionMap.clear();
+			g_TriggerEnterFunctionMap.clear();
+			g_TriggerExitFunctionMap.clear();
 			m_GameObjectIdMap.clear();
 			m_Registry.clear();
 
@@ -349,7 +350,7 @@ namespace Hzn
 				const int32_t velocityIterations = 6;
 				const int32_t positionIterations = 3;
 
-				HZN_CORE_DEBUG(m_World->GetBodyCount());
+				// HZN_CORE_DEBUG(m_World->GetBodyCount());
 
 				m_World->Step(ts, velocityIterations, positionIterations);
 
@@ -363,12 +364,6 @@ namespace Hzn
 						auto& rb2d = obj.getComponent<RigidBody2DComponent>();
 
 						b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
-
-						// Apply forces
-						body->ApplyForceToCenter(b2Vec2(rb2d.m_Force.x, rb2d.m_Force.y), true);
-						body->ApplyLinearImpulseToCenter(b2Vec2(rb2d.m_ImpulseForce.x, rb2d.m_ImpulseForce.y), true);
-						body->ApplyTorque(rb2d.m_Torque, true);
-						rb2d.resetForces();
 
 						const auto& position = body->GetPosition();
 						if (obj.getParent())

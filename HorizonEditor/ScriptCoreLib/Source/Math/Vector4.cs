@@ -51,5 +51,14 @@
             return new Vector4(vector.X * scalar, vector.Y * scalar, vector.Z * scalar, vector.W * scalar);
         }
 
+        public static bool operator ==(Vector4 a, Vector4 b)
+        {
+            return (a.X - b.X) < 1e-6f && (a.Y - b.Y) < 1e-6f && (a.Z - b.Z) < 1e-6f && (a.W - b.W) < 1e-6f;
+        }
+
+        public static bool operator !=(Vector4 a, Vector4 b)
+        {
+            return !(a == b);
+        }
     }
 }

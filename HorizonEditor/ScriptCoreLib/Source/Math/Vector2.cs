@@ -28,5 +28,15 @@
             return new Vector2(vector.X * scalar, vector.Y * scalar);
         }
 
+        public static bool operator ==(Vector2 a, Vector2 b)
+        {
+            return (a.X - b.X) < 1e-6f && (a.Y - b.Y) < 1e-6f;
+        }
+
+        public static bool operator !=(Vector2 a, Vector2 b)
+        {
+            return !(a == b);
+        }
+
     }
 }
