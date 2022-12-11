@@ -11,6 +11,8 @@
 #include "ScriptRegistry.h"
 
 #include "box2d/b2_body.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_fixture.h"
 #include "SceneManagement/SceneManager.h"
 
 
@@ -268,6 +270,55 @@ namespace Hzn
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
 
+	static bool BoxCollider2DComponent_GetSensor(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+		
+		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+		return bc2d.m_IsSensor;
+	}
+
+	static void BoxCollider2DComponent_SetSensor(uint32_t id, bool flag)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+		auto& transform = obj.getTransform();
+
+		b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+		b2Fixture* fixture = (b2Fixture*)bc2d.m_RuntimeFixture;
+
+		body->DestroyFixture(fixture);
+		fixture = nullptr;
+
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+		b2PolygonShape polygonShape;
+		polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+		b2FixtureDef fixtureDef;
+
+		fixtureDef.shape = &polygonShape;
+		fixtureDef.density = bc2d.m_Density;
+		fixtureDef.friction = bc2d.m_Friction;
+		fixtureDef.restitution = bc2d.m_Restitution;
+		fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+		fixtureDef.isSensor = bc2d.m_IsSensor = flag;
+		bc2d.m_RuntimeFixture = (void*)body->CreateFixture(&fixtureDef);
+	}
+
 	static bool Input_IsKeyDown(Hzn::KeyCode keyCode)
 	{
 		return Input::keyPressed(keyCode);
@@ -301,6 +352,8 @@ namespace Hzn
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_GetAngle);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
+		HZN_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetSensor);
+		HZN_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetSensor);
 	}
 
 	template<typename... Component>

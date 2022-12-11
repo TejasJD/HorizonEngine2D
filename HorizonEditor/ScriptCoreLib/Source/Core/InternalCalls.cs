@@ -83,6 +83,12 @@ namespace Hzn
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_ApplyLinearImpulseToCenter(uint gameObjectID, ref Vector2 impulse, bool wake);
 
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_GetSensor(uint gameObjectID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void BoxCollider2DComponent_SetSensor(uint gameObjectID, bool flag);
+
 
     }
 }

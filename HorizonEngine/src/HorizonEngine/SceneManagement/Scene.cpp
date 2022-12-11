@@ -207,7 +207,7 @@ namespace Hzn
 				fixtureDef.restitution = bc2d.m_Restitution;
 				fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
 				fixtureDef.isSensor = bc2d.m_IsSensor;
-				body->CreateFixture(&fixtureDef);
+				bc2d.m_RuntimeFixture = (void*)body->CreateFixture(&fixtureDef);
 			}
 
 			// scripts

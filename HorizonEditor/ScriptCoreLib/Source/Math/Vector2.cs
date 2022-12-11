@@ -18,6 +18,18 @@
             Y = y;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != GetType()) return false;
+            Vector2 b = (Vector2)obj;
+            return (X - b.X) < 1e-6f && (Y - b.Y) < 1e-6f;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public static Vector2 operator +(Vector2 a, Vector2 b)
         {
             return new Vector2(a.X + b.X, a.Y + b.Y);

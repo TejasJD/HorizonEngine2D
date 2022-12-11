@@ -127,4 +127,19 @@
         }
 
     }
+
+    public class BoxCollider2DComponent : Component
+    {
+        public bool Sensor
+        {
+            get
+            {
+                return InternalCalls.BoxCollider2DComponent_GetSensor(GameObject.ID);
+            }
+            set
+            {
+                InternalCalls.BoxCollider2DComponent_SetSensor(GameObject.ID, value);
+            }
+        }
+    }
 }
