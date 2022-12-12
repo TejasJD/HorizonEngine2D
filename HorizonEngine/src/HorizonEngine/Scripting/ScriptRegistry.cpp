@@ -293,6 +293,12 @@ namespace Hzn
 		auto& transform = obj.getTransform();
 
 		b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+
+		if (body == nullptr) {
+			SceneManager::getActiveScene()->addBody(obj);
+			body = (b2Body*)rb2d.m_RuntimeBody;
+		}
+
 		b2Fixture* fixture = (b2Fixture*)bc2d.m_RuntimeFixture;
 
 		body->DestroyFixture(fixture);
