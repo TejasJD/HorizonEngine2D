@@ -42,6 +42,5 @@ set(CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 # Include sub-projects.
 add_subdirectory ("HorizonEngine")
 add_subdirectory ("HorizonEditor")
-# add_subdirectory ("HznApplication")
-# add_subdirectory ("HorizonGame")
+
 include(CPack)

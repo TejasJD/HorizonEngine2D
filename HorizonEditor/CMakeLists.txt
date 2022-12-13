@@ -110,7 +110,6 @@ add_custom_command(
 message("Icon file path: " ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico)
 set(CPACK_WIX_PRODUCT_ICON ${WIN32_RESOURCES})
 
-include(InstallRequiredSystemLibraries)
 install(TARGETS HznEditor DESTINATION bin)
 install(DIRECTORY "mono/lib" DESTINATION .)
 install(DIRECTORY "assets" DESTINATION bin)

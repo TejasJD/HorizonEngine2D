@@ -74,12 +74,14 @@ namespace Hzn
 			// convert entity to a game object.
 			GameObject obj = { entity, this };
 
-			// delete physics component.
-			if (obj.hasComponent<RigidBody2DComponent>())
-			{
-				auto& rb2d = obj.getComponent<RigidBody2DComponent>();
-				b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
-				body->GetWorld()->DestroyBody(body);
+			if (m_State == SceneState::Play) {
+				// delete physics component.
+				if (obj.hasComponent<RigidBody2DComponent>())
+				{
+					auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+					b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+					body->GetWorld()->DestroyBody(body);
+				}
 			}
 
 			// break all relations that the game object has in the hierarchy.

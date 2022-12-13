@@ -186,7 +186,7 @@ namespace Hzn
 			Dynamic
 		};
 
-		BodyType m_Type = BodyType::Static;
+		BodyType m_Type = BodyType::Dynamic;
 
 		bool m_FixedRotation = false;
 		// runtime body opaque-pointer (will be stored at different location).
