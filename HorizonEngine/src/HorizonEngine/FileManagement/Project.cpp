@@ -14,6 +14,8 @@ namespace Hzn
 		
 		m_Path = fs::path(directoryPath.string() + "\\" + name);
 
+		fs::create_directory(m_Path);
+
 		// generate the project directory.
 		HZN_CORE_ASSERT(fs::create_directory(m_Path), "Directory couldn't be created!");
 
