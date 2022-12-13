@@ -11,6 +11,8 @@
 #include "ScriptRegistry.h"
 
 #include "box2d/b2_body.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_fixture.h"
 #include "SceneManagement/SceneManager.h"
 
 
@@ -20,6 +22,8 @@
 namespace Hzn
 {
 	static std::unordered_map<MonoType*, std::function<bool(GameObject)>> s_EntityHasComponentFuncs;
+	static std::unordered_map<MonoType*, std::function<void(GameObject)>> s_EntityAddComponentFuncs;
+	static std::unordered_map<MonoType*, std::function<void(GameObject)>> s_EntityRemoveComponentFuncs;
 
 	static void Greet()
 	{
@@ -29,6 +33,39 @@ namespace Hzn
 	static MonoObject* GetScriptInstance(uint32_t id)
 	{
 		return ScriptEngine::GetManagedInstance(id);
+	}
+	
+	static uint32_t Scene_CreateGameObject(MonoString* name)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		auto objName = mono_string_to_utf8(name);
+		GameObject obj = scene->createGameObject(objName);
+		return obj.getObjectId();
+	}
+
+	static uint32_t Scene_GetGameObjectByID(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		auto obj = scene->getGameObjectById(id);
+		if (obj) return id;
+		return std::numeric_limits<uint32_t>::max();
+	}
+
+	static void Scene_DestroyGameObject(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		auto obj = scene->getGameObjectById(id);
+		scene->destroyGameObject(obj);
+	}
+
+	// FIXME: Should actually get the scene that the game object belongs to but... based
+	// on the way the scene class is written for now, only a single scene is in question
+	// at any time (scene needs complete rework).
+	static MonoString* GameObject_GetScene(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		std::string sceneName = scene->getName().substr(0, scene->getName().size() - 6);
+		return mono_string_new(mono_domain_get(), sceneName.c_str());
 	}
 
 	static bool GameObject_HasComponent(uint32_t id, MonoReflectionType* componentType)
@@ -41,6 +78,65 @@ namespace Hzn
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
 		HZN_CORE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end(), "couldn't find componentType");
 		return s_EntityHasComponentFuncs.at(managedType)(obj);
+	}
+
+	static void GameObject_AddComponent(uint32_t id, MonoReflectionType* componentType)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		HZN_CORE_ASSERT(s_EntityAddComponentFuncs.find(managedType) != s_EntityAddComponentFuncs.end(), "couldn't find componentType");
+		
+		s_EntityAddComponentFuncs.at(managedType)(obj);
+	}
+
+	static void GameObject_RemoveComponent(uint32_t id, MonoReflectionType* componentType)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		HZN_CORE_ASSERT(s_EntityRemoveComponentFuncs.find(managedType) != s_EntityRemoveComponentFuncs.end(), "couldn't find componentType");
+
+		s_EntityRemoveComponentFuncs.at(managedType)(obj);
+	}
+
+	static MonoString* NameComponent_GetName(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		GameObject obj = scene->getGameObjectById(id);
+		return mono_string_new(mono_domain_get(), obj.getComponent<NameComponent>().m_Name.c_str());
+	}
+
+	static void NameComponent_SetName(uint32_t id, MonoString* name)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		GameObject obj = scene->getGameObjectById(id);
+
+		MonoError error;
+		auto len = mono_string_length(name);
+		auto convertedName = mono_string_to_utf8_checked(name, &error);
+		
+		auto& nameComponent = obj.getComponent<NameComponent>();
+		nameComponent.m_Name = convertedName;
+
+		mono_free(convertedName);
+	}
+
+	static uint32_t RelationComponent_GetParent(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		GameObject obj = scene->getGameObjectById(id);
+		if (obj.getParent())
+		{
+			return entt::to_integral(obj.getComponent<RelationComponent>().m_Parent);
+		}
+		return std::numeric_limits<uint32_t>::max();
 	}
 
 	static void TransformComponent_GetTranslation(uint32_t id, glm::vec3* outTranslation)
@@ -103,6 +199,26 @@ namespace Hzn
 		obj.getComponent<TransformComponent>().m_Scale = *scale;
 	}
 
+	static void RenderComponent_GetColor(uint32_t id, glm::vec4* outColor)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		*outColor = obj.getComponent<RenderComponent>().m_Color;
+	}
+
+	static void RenderComponent_SetColor(uint32_t id, glm::vec4* color)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		obj.getComponent<RenderComponent>().m_Color = *color;
+	}
+
 	static void RigidBody2DComponent_GetLinearVelocity(uint32_t id, glm::vec2* velocity)
 	{
 		auto scene = Hzn::SceneManager::getActiveScene();
@@ -154,6 +270,61 @@ namespace Hzn
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
 
+	static bool BoxCollider2DComponent_GetSensor(uint32_t id)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+		
+		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+		return bc2d.m_IsSensor;
+	}
+
+	static void BoxCollider2DComponent_SetSensor(uint32_t id, bool flag)
+	{
+		auto scene = Hzn::SceneManager::getActiveScene();
+		HZN_CORE_ASSERT(scene != nullptr, "no scene active!");
+		GameObject obj = scene->getGameObjectById(id);
+		HZN_CORE_ASSERT(obj, "No obj with this Id exists");
+
+		auto& rb2d = obj.getComponent<RigidBody2DComponent>();
+		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
+		auto& transform = obj.getTransform();
+
+		b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
+
+		if (body == nullptr) {
+			SceneManager::getActiveScene()->addBody(obj);
+			body = (b2Body*)rb2d.m_RuntimeBody;
+		}
+
+		b2Fixture* fixture = (b2Fixture*)bc2d.m_RuntimeFixture;
+
+		body->DestroyFixture(fixture);
+		fixture = nullptr;
+
+		glm::vec3 translation = glm::vec3(0.0f);
+		glm::quat orientation = glm::quat();
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::vec3 skew = glm::vec3(0.0f);
+		glm::vec4 perspective = glm::vec4(0.0f);
+		glm::decompose(transform, scale, orientation, translation, skew, perspective);
+
+		b2PolygonShape polygonShape;
+		polygonShape.SetAsBox(scale.x * bc2d.size.x, scale.y * bc2d.size.y);
+
+		b2FixtureDef fixtureDef;
+
+		fixtureDef.shape = &polygonShape;
+		fixtureDef.density = bc2d.m_Density;
+		fixtureDef.friction = bc2d.m_Friction;
+		fixtureDef.restitution = bc2d.m_Restitution;
+		fixtureDef.restitutionThreshold = bc2d.m_RestitutionThreshold;
+		fixtureDef.isSensor = bc2d.m_IsSensor = flag;
+		bc2d.m_RuntimeFixture = (void*)body->CreateFixture(&fixtureDef);
+	}
+
 	static bool Input_IsKeyDown(Hzn::KeyCode keyCode)
 	{
 		return Input::keyPressed(keyCode);
@@ -164,18 +335,31 @@ namespace Hzn
 		HZN_ADD_INTERNAL_CALL(Greet);
 		HZN_ADD_INTERNAL_CALL(Input_IsKeyDown);
 		HZN_ADD_INTERNAL_CALL(GetScriptInstance);
+		HZN_ADD_INTERNAL_CALL(Scene_CreateGameObject);
+		HZN_ADD_INTERNAL_CALL(Scene_GetGameObjectByID);
+		HZN_ADD_INTERNAL_CALL(Scene_DestroyGameObject);
+		HZN_ADD_INTERNAL_CALL(GameObject_GetScene);
 		HZN_ADD_INTERNAL_CALL(GameObject_HasComponent);
+		HZN_ADD_INTERNAL_CALL(GameObject_AddComponent);
+		HZN_ADD_INTERNAL_CALL(GameObject_RemoveComponent);
+		HZN_ADD_INTERNAL_CALL(NameComponent_GetName);
+		HZN_ADD_INTERNAL_CALL(NameComponent_SetName);
+		HZN_ADD_INTERNAL_CALL(RelationComponent_GetParent);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_GetRotation);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_GetScale);
 		HZN_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+		HZN_ADD_INTERNAL_CALL(RenderComponent_GetColor);
+		HZN_ADD_INTERNAL_CALL(RenderComponent_SetColor);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_SetLinearVelocity);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_GetAngle);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		HZN_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
+		HZN_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetSensor);
+		HZN_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetSensor);
 	}
 
 	template<typename... Component>
@@ -194,7 +378,23 @@ namespace Hzn
 					HZN_CORE_ERROR("Could not find component type {}", managedTypename);
 					return;
 				}
+
 				s_EntityHasComponentFuncs[managedType] = [](GameObject obj) { return obj.hasComponent<Component>(); };
+				s_EntityAddComponentFuncs[managedType] = [](GameObject obj) 
+				{
+					if (!obj.hasComponent<Component>())
+					{
+						obj.addComponent<Component>();
+					}
+				};
+				s_EntityRemoveComponentFuncs[managedType] = [](GameObject obj)
+				{
+					if (obj.hasComponent<Component>())
+					{
+						obj.removeComponent<Component>();
+					}
+				};
+
 			}(), ...);
 	}
 

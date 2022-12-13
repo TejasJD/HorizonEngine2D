@@ -5,8 +5,11 @@
 #include <mono/metadata/threads.h>
 
 #include "HorizonEngine/Components/Component.h"
+
 #include "HorizonEngine/SceneManagement/GameObject.h"
 #include "HorizonEngine/SceneManagement/Scene.h"
+#include "HorizonEngine/SceneManagement/FunctionRegistry.h"
+
 #include "HorizonEngine/FileManagement/ProjectManager.h"
 
 #include "ScriptEngine.h"
@@ -99,11 +102,56 @@ namespace Hzn
 		m_Constructor = ScriptEngine::s_Data->gameObjectClass->getMethod(".ctor", 1);
 		m_OnCreate= scriptClass->getMethod("OnCreate", 0);
 		m_OnUpdate = scriptClass->getMethod("OnUpdate", 1);
+		m_OnCollisionEnter = scriptClass->getMethod("OnCollisionEnter", 1);
+		m_OnCollisionExit = scriptClass->getMethod("OnCollisionExit", 1);
+		m_OnTriggerEnter = scriptClass->getMethod("OnTriggerEnter", 1);
+		m_OnTriggerExit = scriptClass->getMethod("OnTriggerExit", 1);
 
+		// invoke game object construtor.
 		{
 			uint32_t id = obj.getObjectId();
 			void* param = &id;
 			m_ScriptClass->invokeMethod(m_Object, m_Constructor, &param);
+		}
+
+		// here we should add the rigid body contact methods to the constructor.
+		if (obj.hasComponent<RigidBody2DComponent>())
+		{
+			if (m_OnCollisionEnter)
+			{
+				g_CollisionEnterFunctionMap[obj.getObjectId()] = [&](uint32_t id)
+				{
+					void* param = &id;
+					m_ScriptClass->invokeMethod(m_Object, m_OnCollisionEnter, &param);
+				};
+			}
+
+			if(m_OnCollisionExit)
+			{
+				g_CollisionExitFunctionMap[obj.getObjectId()] = [&](uint32_t id)
+				{
+					void* param = &id;
+					m_ScriptClass->invokeMethod(m_Object, m_OnCollisionExit, &param);
+				};
+			}
+
+			if (m_OnTriggerEnter)
+			{
+				g_TriggerEnterFunctionMap[obj.getObjectId()] = [&](uint32_t id)
+				{
+					void* param = &id;
+					m_ScriptClass->invokeMethod(m_Object, m_OnTriggerEnter, &param);
+				};
+			}
+
+			if (m_OnTriggerExit)
+			{
+				g_TriggerExitFunctionMap[obj.getObjectId()] = [&](uint32_t id)
+				{
+					void* param = &id;
+					m_ScriptClass->invokeMethod(m_Object, m_OnTriggerExit, &param);
+				};
+			}
 		}
 	}
 
@@ -249,6 +297,22 @@ namespace Hzn
 		else HZN_CORE_ERROR("Couldn't find script component attached to {}", id);
 	}
 
+	void ScriptEngine::OnCollisionEnter(const GameObject& obj)
+	{
+	}
+
+	void ScriptEngine::OnCollisionExit(const GameObject& obj)
+	{
+	}
+
+	void ScriptEngine::OnTriggerEnter(const GameObject& obj)
+	{
+	}
+
+	void ScriptEngine::OnTriggerExit(const GameObject& obj)
+	{
+	}
+
 	void ScriptEngine::LoadCoreAssembly(const std::filesystem::path& path)
 	{
 		s_Data->appDomain = mono_domain_create_appdomain("HorizonScriptCoreDomain", nullptr);
@@ -281,6 +345,10 @@ namespace Hzn
 
 	void ScriptEngine::ReloadAssembly()
 	{
+		g_CollisionEnterFunctionMap.clear();
+		g_CollisionExitFunctionMap.clear();
+		g_TriggerEnterFunctionMap.clear();
+		g_TriggerExitFunctionMap.clear();
 		s_Data->gameObjectScriptInstances.clear();
 		s_Data->gameObjectSubClasses.clear();
 

@@ -19,6 +19,7 @@ set(HZN_SOURCE_FILES
 	"src/HorizonEngine/Audio/SoundBuffer.cpp"
 	"src/HorizonEngine/Audio/AudioSource.cpp"
 	"src/HorizonEngine/SceneManagement/Scene.cpp"
+	"src/HorizonEngine/Physics2D/ContactListener.cpp"
 	"Platform/OpenGL/GLWindow.cpp"
 	"src/HorizonEngine/Logging/Logging.cpp"
 	"Platform/OpenGL/GLContext.cpp"
@@ -67,6 +68,7 @@ set(HZN_HEADER_FILES
 	"src/HorizonEngine/Utils/Time.h"
 	"src/HorizonEngine/Utils/TreeNode.h"
 	"src/HorizonEngine/SceneManagement/Scene.h"
+	"src/HorizonEngine/Physics2D/ContactListener.h"
 	"Platform/OpenGL/GLWindow.h"
 	"src/HorizonEngine/Logging/Logging.h"
 	"src/HorizonEngine/Events/Event.h"
@@ -233,32 +235,6 @@ target_link_libraries(HorizonEngine
 	# ${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/libmono-static-sgen.lib
 )
 
-#testing
-add_executable(SampleTest "tests/SampleTest.cpp")
-target_include_directories(SampleTest
-	PUBLIC
-	.
-	src
-	src/HorizonEngine
-	platform
-	${STB_INCLUDE_DIRS}
-)
-
-add_executable(SampleTest2 "tests/SampleTest2.cpp")
-target_include_directories(SampleTest2
-	PUBLIC
-	.
-	src
-	src/HorizonEngine
-	platform
-)
-
-target_link_libraries(SampleTest PUBLIC GTest::gtest_main)
-target_link_libraries(SampleTest2 PUBLIC GTest::gtest_main)
-
-gtest_discover_tests(SampleTest)
-gtest_discover_tests(SampleTest2)
-
 # post build commands to copy resources from source to build directories for the HorizonEngine target
 add_custom_command(
 	TARGET HorizonEngine
@@ -277,7 +253,13 @@ add_custom_command(
 	${CMAKE_CURRENT_LIST_DIR}/vendor/mono/dylib/dbg
 	$<TARGET_FILE_DIR:HorizonEngine>
 )
-
-message(STATUS ${CMAKE_BINARY_DIR})
-message(STATUS ${CMAKE_CURRENT_BINARY_DIR})
 # TODO: Add tests and install targets if needed.
+message("VCPKG BIN DIR: " ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin)
+install(DIRECTORY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin DESTINATION . CONFIGURATIONS Debug)
+install(DIRECTORY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin DESTINATION . CONFIGURATIONS Release)
+install(TARGETS HorizonEngine DESTINATION bin)
+install(DIRECTORY "api_assets" DESTINATION bin)
+install(FILES "vendor/mono/lib/dbg/mono-2.0-sgen.lib" DESTINATION bin CONFIGURATIONS Debug)
+install(FILES "vendor/mono/dylib/dbg/mono-2.0-sgen.dll" DESTINATION bin CONFIGURATIONS Debug)
+install(FILES "vendor/mono/lib/rel/mono-2.0-sgen.lib" DESTINATION bin CONFIGURATIONS Release)
+install(FILES "vendor/mono/dylib/rel/mono-2.0-sgen.dll" DESTINATION bin CONFIGURATIONS Release)

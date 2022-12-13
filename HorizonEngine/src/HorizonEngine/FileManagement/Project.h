@@ -24,6 +24,8 @@ namespace Hzn
 		std::shared_ptr<Scene> getActiveScene() const { return m_Scene; }
 		std::filesystem::path getPath() const { return m_Path; }
 
+		std::string getName() const;
+
 	private:
 		std::filesystem::path m_Path;
 		std::shared_ptr<Scene> m_Scene;

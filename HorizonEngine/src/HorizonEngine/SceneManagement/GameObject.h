@@ -80,7 +80,7 @@ namespace Hzn
 		glm::mat4 getTransform() const;
 		GameObject duplicateAsChild();
 		GameObject duplicate();
-		void destroy();
+		/*void destroy();*/
 
 		template<typename... Component>
 		GameObject cloneComponents(ComponentGroup<Component...>)
@@ -105,6 +105,18 @@ namespace Hzn
 			return obj;
 		}
 
+		void onCollisionEnter(GameObject &other);
+		void onCollisionExit(GameObject& other);
+		void onTriggerEnter(GameObject& other);
+		void onTriggerExit(GameObject& other);
+
+
+		// The 4 methods below are added for the sake of the game. Delete later!
+		void addCollisionEnetrCallback(void (*f)(GameObject));
+		void addCollisionExitCallback(std::function<void(GameObject)> &f);
+		void addTriggerEnetrCallback(std::function<void(GameObject)> &f);
+		void addTriggerExitCallback(std::function<void(GameObject)> &f);
+
 	private:
 		// this constructor is used by the Scene to give you a valid game object.
 		GameObject(const entt::entity& object, Scene* scene) : m_ObjectId(object), m_Scene(scene) {}
@@ -125,6 +137,8 @@ namespace Hzn
 		entt::entity m_ObjectId = entt::null;
 		// holds a weak reference to the scene.
 		Scene* m_Scene = nullptr;
+
+		std::vector<std::function<void(GameObject)>*> collisionEnterCallbacks;
 	};
 
 	inline bool operator==(const GameObject& lhs, const GameObject& rhs)

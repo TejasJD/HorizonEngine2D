@@ -306,6 +306,7 @@ namespace Hzn
 		}
 
 		if (treeOpen) {
+			ImGui::Checkbox("Sensor", &component.m_IsSensor);
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
 			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
 			ImGui::DragFloat("Density", &component.m_Density, 0.01f, 0.0f, 1.0f);

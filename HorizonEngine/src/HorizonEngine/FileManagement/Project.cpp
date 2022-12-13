@@ -14,6 +14,8 @@ namespace Hzn
 		
 		m_Path = fs::path(directoryPath.string() + "\\" + name);
 
+		fs::create_directory(m_Path);
+
 		// generate the project directory.
 		HZN_CORE_ASSERT(fs::create_directory(m_Path), "Directory couldn't be created!");
 
@@ -85,5 +87,12 @@ namespace Hzn
 		{
 			return false;
 		}
+	}
+
+	std::string Project::getName() const
+	{
+		std::string projectName = m_Path.filename().string();
+		projectName = projectName.substr(0, projectName.size() - 4);
+		return projectName;
 	}
 }

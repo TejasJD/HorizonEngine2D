@@ -4,6 +4,7 @@
 #define HZN_SCENE_MANAGER_H
 
 #include <glm/glm.hpp>
+#include <HorizonEngine/Core/TimeStep.h>
 
 namespace Hzn
 {
@@ -21,6 +22,7 @@ namespace Hzn
 		static bool isOpen() { return s_Scene != nullptr; }
 		static SceneState getSceneState();
 		static void setSceneState(const SceneState& state);
+		static std::shared_ptr<Scene> getActiveScene();
 
 		static void play();
 		static void update(OrthographicCamera& camera, TimeStep ts);
@@ -28,8 +30,6 @@ namespace Hzn
 
 		static bool close();
 		static bool save();
-
-		static std::shared_ptr<Scene> getActiveScene() { return s_Scene; }
 
 	private:
 		static void defaultScene();

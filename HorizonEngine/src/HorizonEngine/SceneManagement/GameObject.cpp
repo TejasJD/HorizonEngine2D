@@ -287,13 +287,13 @@ namespace Hzn
 		return clonedParent;
 	}
 
-	void GameObject::destroy() {
+	/*void GameObject::destroy() {
 		isValid();
 
 		uint32_t id = entt::to_integral(m_ObjectId);
 		if (std::find(m_Scene->m_ObjectsToDelete.begin(), m_Scene->m_ObjectsToDelete.end(), id) == m_Scene->m_ObjectsToDelete.end())
 			m_Scene->m_ObjectsToDelete.push_back(id);
-	}
+	}*/
 
 	std::vector<GameObject> GameObject::getChildrenAll() const
 	{
@@ -309,5 +309,45 @@ namespace Hzn
 		}
 
 		return result;
+	}
+
+	void GameObject::onCollisionEnter(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+
+		/*for (int i = 0; i < collisionEnterCallbacks.size(); i++) {
+			(*collisionEnterCallbacks.at(i))(other);
+		}*/
+	}
+
+	void GameObject::onCollisionExit(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+	}
+
+	void GameObject::onTriggerEnter(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+	}
+
+	void GameObject::onTriggerExit(GameObject& other) {
+		HZN_CORE_DEBUG(other.getComponent<NameComponent>().m_Name);
+	}
+
+	void GameObject::addCollisionEnetrCallback(void (*f)(GameObject))
+	{
+		collisionEnterCallbacks.push_back((std::function<void(GameObject)>*) f);
+	}
+
+	void GameObject::addCollisionExitCallback(std::function<void(GameObject)> &f)
+	{
+
+	}
+
+	void GameObject::addTriggerEnetrCallback(std::function<void(GameObject)> &f)
+	{
+
+	}
+
+	void GameObject::addTriggerExitCallback(std::function<void(GameObject)> &f)
+	{
+
 	}
 }

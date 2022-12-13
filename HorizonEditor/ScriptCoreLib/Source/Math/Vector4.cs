@@ -41,6 +41,18 @@
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != GetType()) return false;
+            Vector4 b = (Vector4)obj;
+            return (X - b.X) < 1e-6f && (Y - b.Y) < 1e-6f && (Z - b.Z) < 1e-6f && (W - b.W) < 1e-6f;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public static Vector4 operator +(Vector4 a, Vector4 b)
         {
             return new Vector4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
@@ -51,5 +63,14 @@
             return new Vector4(vector.X * scalar, vector.Y * scalar, vector.Z * scalar, vector.W * scalar);
         }
 
+        public static bool operator ==(Vector4 a, Vector4 b)
+        {
+            return (a.X - b.X) < 1e-6f && (a.Y - b.Y) < 1e-6f && (a.Z - b.Z) < 1e-6f && (a.W - b.W) < 1e-6f;
+        }
+
+        public static bool operator !=(Vector4 a, Vector4 b)
+        {
+            return !(a == b);
+        }
     }
 }
