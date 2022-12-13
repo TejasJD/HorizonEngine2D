@@ -9,9 +9,13 @@
 
 namespace Hzn
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	class AudioSource
 	{
 	public:
+		
 		AudioSource(ALuint p_Buffer);
 		~AudioSource();
 		static std::shared_ptr<AudioSource> init(const char* path);

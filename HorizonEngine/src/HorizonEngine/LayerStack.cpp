@@ -24,12 +24,13 @@ namespace Hzn
 		++m_TopLayer;
 	}
 
-	//! push overlay into the layer stack.
+	//! push overlay into the overlay stack.
 	void LayerStack::addOverlay(Layer* layer)
 	{
 		m_Layers.emplace_back(layer);
 	}
 
+	//! Remove layer from layer stack.
 	void LayerStack::removeLayer(Layer* layer)
 	{
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
@@ -47,6 +48,7 @@ namespace Hzn
 		}
 	}
 
+	//! Remove layer from overLaylayer stack.
 	void LayerStack::removeOverlay(Layer* layer)
 	{
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);

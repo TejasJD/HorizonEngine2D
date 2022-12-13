@@ -5,6 +5,13 @@
 #include "ContentBrowser.h"
 #include "ComponentDisplays.h"
 
+
+/// <summary>
+/// Declared some global shared pointers for the active scene, active project 
+/// & the current texture path.
+/// These shared pointer and string were declared here to allow content refactored 
+/// to be outside of the EditorLayer class the scope to access this information 
+/// </summary>
 std::shared_ptr<Hzn::Scene> EditorData::s_Scene_Active;
 std::shared_ptr<Hzn::Project> EditorData::m_Project_Active;
 bool EditorData::s_ShowViewportPanel = true;
@@ -17,6 +24,13 @@ bool EditorData::s_ShowProjectScenesPanel = true;
 
 std::string ContentBrowser::m_CurrentTexturePath;
 
+/// <summary>
+/// EditorLayer inherits from Hzn::layer.
+/// EditorLayer constructor
+/// Sets up the aspect ratio of the of the app window.
+/// and the editor camera controller 
+/// </summary>
+/// <param name="name"></param>
 EditorLayer::EditorLayer(const char* name) :
 	Hzn::Layer(name),
 	m_AspectRatio(static_cast<float>(Hzn::App::getApp().getAppWindow().getWidth()) /
@@ -25,13 +39,19 @@ EditorLayer::EditorLayer(const char* name) :
 {
 }
 
-
+/// <summary>
+/// EditorLayer destructor
+/// </summary>
 EditorLayer::~EditorLayer()
 {
 	// I think it's fine for detach function to be statically resolved at compile time in this case.
 	onDetach();
 }
 
+/// <summary>
+/// Editor Layer onAttach() method
+///  
+/// </summary>
 void EditorLayer::onAttach()
 {
 

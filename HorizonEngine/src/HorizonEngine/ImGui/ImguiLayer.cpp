@@ -20,16 +20,21 @@
 
 namespace Hzn
 {
+	//! Constructor - Log Imgui layer attached
 	ImguiLayer::ImguiLayer() : Layer("ImGui Layer")
 	{
 		HZN_CORE_INFO("Imgui Layer Attached!");
 	}
 
+	//!Destructor
 	ImguiLayer::~ImguiLayer()
 	{
 		onDetach();
 	}
 
+	/// <summary>
+	/// Method to call when you want to  attach ImGui layer to render on screen
+	/// </summary>
 	void ImguiLayer::onAttach()
 	{
 		IMGUI_CHECKVERSION();
@@ -126,8 +131,10 @@ namespace Hzn
 		ImGui_ImplOpenGL3_Init("#version 420");
 	}
 
+	//! onUpdate ImGui
 	void ImguiLayer::onUpdate(TimeStep ts) {}
 
+	//! Detach ImGui
 	void ImguiLayer::onDetach()
 	{
 		ImGui_ImplGlfw_Shutdown();
@@ -137,6 +144,10 @@ namespace Hzn
 		ImGui::DestroyContext();
 	}
 
+	/// <summary>
+	/// Handle roducing Imgui contents when imGui begins
+	/// ie. what imgui contents goes into the window.
+	/// </summary>
 	void ImguiLayer::imguiBegin()
 	{
 		ImGui_ImplGlfw_NewFrame();
@@ -145,6 +156,9 @@ namespace Hzn
 		ImGuizmo::BeginFrame();
 	}
 
+	/// <summary>
+	/// Handle ImGUI contents when ended.
+	/// </summary>
 	void ImguiLayer::imguiEnd()
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -165,6 +179,10 @@ namespace Hzn
 		}
 	}
 
+	/// <summary>
+	/// Handle ImGui Keybord and mouse events
+	/// </summary>
+	/// <param name="e"></param>
 	void ImguiLayer::onEvent(Event& e)
 	{
 		if(absorbEvents)

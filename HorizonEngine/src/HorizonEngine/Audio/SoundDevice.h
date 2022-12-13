@@ -11,6 +11,9 @@
 
 namespace Hzn
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	class HZN_API SoundDevice
 	{
 	public:

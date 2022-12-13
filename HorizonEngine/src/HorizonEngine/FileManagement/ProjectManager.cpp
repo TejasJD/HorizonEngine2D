@@ -12,6 +12,12 @@ namespace Hzn
 	static std::unique_ptr<filewatch::FileWatch<std::string>> watch;
 	std::shared_ptr<Project> ProjectManager::s_Project = nullptr;
 
+	/// <summary>
+	/// Creates new, or opens a project depending on the path provided.
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="directoryPath"></param>
+	/// <returns></returns>
 	std::shared_ptr<Project> ProjectManager::create(const std::string& name, const std::filesystem::path& directoryPath)
 	{
 		if (s_Project)
@@ -45,7 +51,7 @@ namespace Hzn
 				}
 			));
 		}
-		// here we will be starting the file watcher on this location if the path exists.
+		//! here we will be starting the file watcher on this location if the path exists.
 		if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\load_target\\ScriptAppLib.dll"))
 		{
 			ScriptEngine::ReloadAssembly();
@@ -54,6 +60,7 @@ namespace Hzn
 		return s_Project;
 	}
 
+	//! If there isn't one, try create a scene in an empty project
 	bool ProjectManager::newScene(const std::string& name)
 	{
 		if (!s_Project)
@@ -64,19 +71,20 @@ namespace Hzn
 		std::filesystem::path projectDir = s_Project->m_Path.parent_path();
 		std::filesystem::path sceneDir = projectDir.string() + "\\scenes";
 
-		// create a scenes directory if it doesn't exist.
+		//! create a scenes directory if it doesn't exist.
 		if (!std::filesystem::exists(sceneDir))
 		{
 			std::filesystem::create_directory(sceneDir);
 		}
 
-		// create a scene file.
+		//! create a scene file.
 		std::filesystem::path sceneFilePath = sceneDir.string() + "\\" + name + ".scene";
 		s_Project->m_Scene = SceneManager::create(sceneFilePath);
 
 		return s_Project->m_Scene != nullptr;
 	}
 
+	//! If there isn't a scene open one
 	bool ProjectManager::openScene(const std::filesystem::path& sceneFilePath)
 	{
 		if (!s_Project)
@@ -93,6 +101,7 @@ namespace Hzn
 		return s_Project->m_Scene != nullptr;
 	}
 
+	//! Close a scene
 	bool ProjectManager::closeScene()
 	{
 		if (s_Project && s_Project->m_Scene)
@@ -102,6 +111,7 @@ namespace Hzn
 		return false;
 	}
 
+	//! save a scene
 	bool ProjectManager::saveScene()
 	{
 		if (s_Project && s_Project->m_Scene)
@@ -111,6 +121,12 @@ namespace Hzn
 		return false;
 	}
 
+	/// <summary>
+	/// Open a project in the provided file path
+	/// This applies to scripting functionality as well
+	/// </summary>
+	/// <param name="projectFilePath"></param>
+	/// <returns></returns>
 	std::shared_ptr<Project> ProjectManager::open(const std::filesystem::path& projectFilePath)
 	{
 		if (!projectFilePath.empty()) {
@@ -156,6 +172,7 @@ namespace Hzn
 		return s_Project;
 	}
 
+	//! Save project
 	bool ProjectManager::save()
 	{
 		bool result = true;
@@ -170,6 +187,7 @@ namespace Hzn
 		return result;
 	}
 
+	//! close a project
 	bool ProjectManager::close()
 	{
 		bool result = save();

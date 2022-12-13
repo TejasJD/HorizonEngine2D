@@ -16,7 +16,7 @@ namespace Hzn
 		GLWindow(const unsigned int& width, const unsigned int& height, const char* const& title, bool maximized);
 		~GLWindow();
 
-		// Inherited via Window
+		//!Inherited via Window.h
 		virtual void onUpdate() override;
 		virtual unsigned int getHeight() override { return m_Data.height; };
 		virtual unsigned int getWidth() override { return m_Data.width; }

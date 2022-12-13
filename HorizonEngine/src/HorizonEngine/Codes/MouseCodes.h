@@ -8,6 +8,7 @@ namespace Hzn
 
 	namespace Mouse
 	{
+		//! enumeration to define mouse codes
 		enum : MouseCode
 		{
 			// From glfw3.h

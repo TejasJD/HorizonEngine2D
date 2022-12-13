@@ -29,13 +29,14 @@ namespace Hzn {
 		int cursorRow, cursorCol;
 
 
-		//These methods check if the buffer stream has been opened and throw an error if not
+		//!This method will check if the buffer stream has been opened and throw an error if not
 		void in_check() {
 			if (!in.is_open()) {
 				throw std::runtime_error("in buf Error");
 			}
 		}
 
+		//!This method will check if the buffer stream has been opened and throw an error if not
 		void out_check() {
 			if (!out.is_open()) {
 				throw std::runtime_error("out buf Error");
@@ -66,18 +67,18 @@ namespace Hzn {
 		/// </summary>
 
 		
-
+		//!ProjectFile constructors
 		ProjectFile() {
 
 		}
 
-		//Destructor
+		//!Destructor
 		~ProjectFile() {
 			in.close();
 			out.close();
 		}
 
-		//Custom constructor, use "constructor intitialiser list" to set path pass in a string vector var for the file content
+		//!Custom constructor, use "constructor intitialiser list" to set path pass in a string vector var for the file content
 		ProjectFile::ProjectFile(std::string path) : path(path) {
 			openFile(path);
 		}
@@ -86,14 +87,14 @@ namespace Hzn {
 
 		
 		//Getters and Setters
-		//getters for path, file name, full Path and content
+		//!getters for path, file name, full Path and content
 		std::string getPath() { return path; }
 		std::string getName() { return name; }
 		std::string getFullPath() { return fullPath; }
 		std::vector<std::string> getContent() { return content; }
 
 
-		//Setters path and name
+		//!Setters path and name
 		void setPath(std::string newPath) { path = newPath; }
 		void setName(std::string newName) { name = newName; }
 		void setFullPath() { fullPath = getPath() + "/" + getName(); }
@@ -101,31 +102,31 @@ namespace Hzn {
 
 
 		//file functions
-		//open file
+		//!open file
 		std::vector<std::string> openFile(std::string filePath);
 		void ProjectFile::mkNewfile(std::string newPath);
-		//Save, saveAs
+		//!Save, saveAs
 		void saveToFile();
-		//void saveAs(std::string newFullPath);
+		//!void saveAs(std::string newFullPath);
 		void ProjectFile::saveAs(std::string newPath, std::vector<std::string> contentIntoFile);
-		//delete a file
+		//!delete a file
 		void deleteFile(std::string filePathForDelete); // Deletes the file on the user's device
 
 
 		//Manipulating text from the content vector
-		//Get a specific line from a file 
+		//!Get a specific line from a file 
 		std::string getALine(int lineNumber);
-		//Get the next char
+		//!Get the next char
 		char nextChar(int row, int colNum);
-		//Get the next n number of chars
+		//!Get the next n number of chars
 		std::vector<std::string> ProjectFile::nextChars(int row, int colNum, int numberOfCharacters);
-		//Get the next line
+		//!Get the next line
 		std::string nextLine(int row);
-		// get the next n quantity of lines
+		//!get the next n quantity of lines
 		std::vector<std::string> nextLines(int row, int numberOfLines);
 		
 
-		//Create and delete a folder
+		//!Create and delete a folder
 		void makeDir(std::string path);
 		void deleteDir(std::string path);
 	};

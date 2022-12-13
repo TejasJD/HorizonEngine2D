@@ -5,6 +5,8 @@
 
 namespace Hzn {
 	class Math {
+
+	//! Importing and using the cmath library, can be found at https://cplusplus.com/reference/cmath/
 	public:
 		static constexpr float PI = 3.14159265358979f;
 		static constexpr float deg2rad = (PI * 2.0f) / 360.0f;

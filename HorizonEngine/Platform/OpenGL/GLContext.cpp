@@ -10,11 +10,14 @@
 namespace Hzn
 {
 
+
 	GLContext::GLContext(GLFWwindow *const& handle) : m_Handle(handle)
 	{
 		HZN_CORE_ASSERT(m_Handle, "Handle is NULL");
 	}
 
+	//! Initialise GL context - make GLFW the current context
+	//! A context stores the state associated with OpenGL.
 	void GLContext::init()
 	{
 		glfwMakeContextCurrent(m_Handle);
@@ -28,6 +31,7 @@ namespace Hzn
 	
 	}
 
+	//!Swap out the buffers
 	void GLContext::swapBuffers()
 	{
 		glfwSwapBuffers(m_Handle);

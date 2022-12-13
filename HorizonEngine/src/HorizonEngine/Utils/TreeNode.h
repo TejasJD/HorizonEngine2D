@@ -16,12 +16,13 @@ namespace Hzn {
 		void remove(std::shared_ptr<TreeNode<T>> treeNode);
 	};
 
+	//!TreNode constructor
 	template <typename T>
 	TreeNode<T>::TreeNode() {
 		level = 0;
 		nextNodes = std::vector<std::shared_ptr<TreeNode<T>>>();
 	}
-
+	//!TreNode constructor with parameters
 	template <typename T>
 	TreeNode<T>::TreeNode(int level, T item) {
 		this.level = level;
@@ -29,16 +30,19 @@ namespace Hzn {
 		nextNodes = std::vector<std::shared_ptr<TreeNode<T>>>();
 	}
 
+	//!TreeNode Destructor
 	template <typename T>
 	TreeNode<T>::~TreeNode() {
 
 	}
 
+	//! Function to add to the TreeNode 
 	template <typename T>
 	void TreeNode<T>::add(std::shared_ptr<TreeNode<T>> treeNode) {
 		nextNodes.push_back(treeNode);
 	}
 
+	//! Function to remove from the TreeNode
 	template <typename T>
 	void TreeNode<T>::remove(std::shared_ptr<TreeNode<T>> treeNode) {
 		for (int i = 0; i < nextNodes.size(); i++) {

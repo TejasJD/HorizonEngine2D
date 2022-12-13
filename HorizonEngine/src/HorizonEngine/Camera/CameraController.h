@@ -46,6 +46,12 @@ namespace Hzn
 	class OrthographicCameraController : public CameraController
 	{
 	public:
+		/// <summary>
+		/// OrthographicCameraController constructor
+		/// takes in the aspect ratio of the objects and zoom
+		/// </summary>
+		/// <param name="aspectRatio"></param>
+		/// <param name="zoom"></param>
 		OrthographicCameraController(float aspectRatio, float zoom)
 			: m_Camera(OrthographicCamera(aspectRatio, zoom))
 		{}

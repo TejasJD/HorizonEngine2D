@@ -3,6 +3,8 @@
 
 namespace Hzn {
 
+	//!Uses <cmath> library to calculate the basic math problems and principle needed for use in the game engine
+
 	float Math::abs(float f) {
 		return fabs(f);
 	}

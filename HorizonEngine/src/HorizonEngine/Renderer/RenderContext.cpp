@@ -7,6 +7,7 @@
 
 namespace Hzn
 {
+	//! Returns nullptr or the shared_ptr to the GLContext which owns the window handle
 	std::shared_ptr<RenderContext> RenderContext::create(void* const& windowHandle)
 	{
 		switch (RendererAPI::getAPI())

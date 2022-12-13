@@ -4,24 +4,30 @@
 
 namespace Hzn
 {
+	//! Access core logger
 	std::shared_ptr<spdlog::logger>Logging::s_CoreLogger;
+	//! Access App logger
 	std::shared_ptr<spdlog::logger>Logging::s_AppLogger;
 
+	//! Return core logger
 	std::shared_ptr<spdlog::logger>& Logging::GetCoreLogger()
 	{
 		// TODO: insert return statement here
 		return s_CoreLogger;
 	}
 
+	//! Return App Logger
 	std::shared_ptr<spdlog::logger>& Logging::GetAppLogger()
 	{
 		// TODO: insert return statement here
 		return s_AppLogger;
 	}
 
+	//! Function to initialise the logging class
 	void Logging::Init()
 	{
 
+		//! Vector to set colour & file sink to log to a file
 		std::vector<spdlog::sink_ptr> logSinks;
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("Horizon.log", true));

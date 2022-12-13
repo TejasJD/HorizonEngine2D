@@ -7,6 +7,12 @@ namespace fs = std::filesystem;
 
 namespace Hzn
 {
+	/// <summary>
+	/// Initialisation of the Project constructor, takes in name and path
+	/// Creates a project directory structure in the directory provided
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="directoryPath"></param>
 	Project::Project(const std::string& name, const fs::path& directoryPath)
 	{
 		// then this is the a new project.
@@ -53,6 +59,10 @@ namespace Hzn
 		os.close();
 	}
 
+	/// <summary>
+	/// Sets up scene file in the project that was just created
+	/// </summary>
+	/// <param name="projectFilePath"></param>
 	Project::Project(const std::filesystem::path& projectFilePath)
 		: m_Path(projectFilePath)
 	{
@@ -76,6 +86,7 @@ namespace Hzn
 		ScriptEngine::PrintAppAssemblyTypes();*/
 	}
 
+	//! sets active scene
 	bool Project::setActiveScene(const std::filesystem::path& filepath)
 	{
 		

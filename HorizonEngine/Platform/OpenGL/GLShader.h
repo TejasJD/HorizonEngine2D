@@ -30,10 +30,13 @@ namespace Hzn
 		virtual void setUniform(const std::string& s, int* a, uint32_t count) override;
 		virtual void setUniform(const std::string& s, float uf) override;
 
+		//! function which maps HorizonEngine Shader Type to GLShader Type.
 		static GLenum HznShaderTypeToGLShader(ShaderType type);
 
 	private:
+		//! utility function that reads file the Shaderfile.
 		std::string readShaderFile(const std::string& filepath);
+
 		void compileShaders(const std::string& vertexSource, const std::string& fragmentSource);
 		unsigned int m_ProgramId;
 	};

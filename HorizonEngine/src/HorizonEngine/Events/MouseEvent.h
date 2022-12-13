@@ -11,12 +11,19 @@ namespace Hzn {
 	class MouseMovedEvent : public Event
 	{
 	public:
+		/// <summary>
+		/// MouseMovedEvent - constructor 
+		/// takes in X Y coords
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
 		MouseMovedEvent(const float x, const float y)
 			: m_MouseX(x), m_MouseY(y) {}
-
+		//! Mouse coordinates
 		float GetX() const { return m_MouseX; }
 		float GetY() const { return m_MouseY; }
 
+		//Return Mouse coords string
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -24,6 +31,7 @@ namespace Hzn {
 			return ss.str();
 		}
 
+		//! Call event macros
 		EVENT_CLASS_TYPE(MouseMoved)
 			EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	private:
@@ -33,6 +41,13 @@ namespace Hzn {
 	class MouseScrolledEvent : public Event
 	{
 	public:
+		/// <summary>
+		/// MouseScrolledEvent - constructor
+		/// Takes in X Y offsets
+		/// calls the event macros and handles the events
+		/// </summary>
+		/// <param name="xOffset"></param>
+		/// <param name="yOffset"></param>
 		MouseScrolledEvent(const float xOffset, const float yOffset)
 			: m_XOffset(xOffset), m_YOffset(yOffset) {}
 

@@ -5,6 +5,7 @@
 
 namespace Hzn
 {
+
 	enum class FrameBufferTextureFormat
 	{
 		None = 0,

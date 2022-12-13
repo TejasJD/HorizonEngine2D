@@ -8,6 +8,7 @@ namespace Hzn
 
 	namespace Key
 	{
+		//!Enumeration to define key codes
 		enum : KeyCode
 		{
 			// From glfw3.h

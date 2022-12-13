@@ -78,6 +78,7 @@ namespace Hzn
 		return true;
 	}
 
+	//!function to handle resizing the app window
 	bool App::onWindowResize(WindowResizeEvent& e)
 	{
 		if (e.GetHeight() == 0 || e.GetWidth() == 0)
@@ -90,6 +91,7 @@ namespace Hzn
 		return false;
 	}
 
+	//! Iterates over the main thread queue
 	void App::executeMainThreadQueue()
 	{
 		for(auto& fn : m_MainThreadQueue)
@@ -99,9 +101,12 @@ namespace Hzn
 		m_MainThreadQueue.clear();
 	}
 
+	//! Submits main thread queue
 	void App::submitMainThreadQueue(const std::function<void()>& fn)
 	{
+		//! protects shared data from being accesssed by multiple threads
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueLock);
+		//!place the fn into the back of the container
 		m_MainThreadQueue.emplace_back(fn);
 	}
 
