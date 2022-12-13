@@ -265,6 +265,7 @@ namespace Hzn
 
 			// set state back to edit.
 			m_State = SceneState::Edit;
+			ScriptEngine::ReloadAssembly();
 		}
 	}
 

@@ -80,7 +80,7 @@ namespace Hzn {
         uint32_t A_uint = entt::to_integral(A);
         uint32_t B_uint = entt::to_integral(B);
 
-        if (contact->GetFixtureA()->IsSensor())
+        if (contact->GetFixtureB()->IsSensor())
         {
             if (g_TriggerExitFunctionMap.find(A_uint) != g_TriggerExitFunctionMap.end())
             {
@@ -95,7 +95,7 @@ namespace Hzn {
             }
         }
 
-        if (contact->GetFixtureB()->IsSensor())
+        if (contact->GetFixtureA()->IsSensor())
         {
             if (g_TriggerExitFunctionMap.find(B_uint) != g_TriggerExitFunctionMap.end())
             {
