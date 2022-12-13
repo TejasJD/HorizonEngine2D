@@ -19,9 +19,11 @@ namespace Hzn
 
 	struct RelationComponent
 	{
-		friend class GameObject;
-		friend class Scene;
-		friend class SceneManager;
+		size_t m_ChildCount = 0ULL;
+		entt::entity m_Parent{ entt::null };
+		entt::entity m_FirstChild{ entt::null };
+		entt::entity m_Next{ entt::null };
+		entt::entity m_Prev{ entt::null };
 
 		RelationComponent() = default;
 		RelationComponent(const RelationComponent& rhs) = default;
@@ -52,13 +54,6 @@ namespace Hzn
 		bool hasParent() const {
 			return m_Parent != entt::null;
 		}
-
-	private:
-		size_t m_ChildCount = 0ULL;
-		entt::entity m_Parent{ entt::null };
-		entt::entity m_FirstChild{ entt::null };
-		entt::entity m_Next{ entt::null };
-		entt::entity m_Prev{ entt::null };
 	};
 
 	struct NameComponent
@@ -141,7 +136,6 @@ namespace Hzn
 
 		glm::vec2 m_Pos = glm::vec2(0.0f);
 
-
 		std::string texturePath;
 		std::string spritePath;
 
@@ -162,12 +156,13 @@ namespace Hzn
 
 	struct CameraComponent
 	{
+		SceneCamera2D m_Camera;
+		bool m_Primary = true;
+
 		CameraComponent(const float aspectRatio = 1.0f, const float zoom = 1.0f)
 			: m_Camera(aspectRatio, zoom) {}
 
 		~CameraComponent() = default;
-		SceneCamera2D m_Camera;
-		bool m_Primary = true;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -184,19 +179,22 @@ namespace Hzn
 
 	struct RigidBody2DComponent
 	{
+		enum class BodyType
+		{
+			Static = 0,
+			Kinematic,
+			Dynamic
+		};
+
+		BodyType m_Type = BodyType::Dynamic;
+
+		bool m_FixedRotation = false;
+		// runtime body opaque-pointer (will be stored at different location).
+		void* m_RuntimeBody = nullptr;
+
 		RigidBody2DComponent() = default;
 		RigidBody2DComponent(const RigidBody2DComponent& body) = default;
 		~RigidBody2DComponent() = default;
-
-		enum class BodyType { Static = 0, Kinematic, Dynamic };
-		BodyType m_Type = BodyType::Static;
-
-		bool m_FixedRotation = false;
-
-		// will store the force, impulse, torque and angular impulse on the body as primitive values.
-
-		// runtime body opaque-pointer (will be stored at different location).
-		void* m_RuntimeBody = nullptr;
 
 		template<typename Archive>
 		void load(Archive& ar)
@@ -220,6 +218,7 @@ namespace Hzn
 		float m_Friction = 0.5f;
 		float m_Restitution = 0.0f;
 		float m_RestitutionThreshold = 0.5f;
+		bool m_IsSensor = false;
 
 		// runtime fixture opaque-pointer (will be stored at different location).
 		void* m_RuntimeFixture = nullptr;
@@ -227,22 +226,34 @@ namespace Hzn
 		template<typename Archive>
 		void load(Archive& ar)
 		{
-			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold);
+			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold, m_IsSensor);
 		}
 
 		template<typename Archive>
 		void save(Archive& ar) const
 		{
-			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold);
+			ar(offset.x, offset.y, size.x, size.y, m_Density, m_Friction, m_Restitution, m_RestitutionThreshold, m_IsSensor);
 		}
 	};
 
 	struct ScriptComponent
 	{
 		ScriptComponent() = default;
-		ScriptComponent(const char* name) : scriptName(name) {}
+		ScriptComponent(const std::string& scriptName) : m_ScriptName(scriptName) {}
 		~ScriptComponent() = default;
-		const char* scriptName = "";
+		std::string m_ScriptName;
+
+		template<typename Archive>
+		void load(Archive& ar)
+		{
+			ar(cereal::make_nvp("ScriptName", m_ScriptName));
+		}
+
+		template<typename Archive>
+		void save(Archive& ar) const
+		{
+			ar(cereal::make_nvp("ScriptName", m_ScriptName));
+		}
 	};
 
 
@@ -255,7 +266,8 @@ namespace Hzn
 	RigidBody2DComponent,
 	BoxCollider2DComponent,
 	RenderComponent,
-	CameraComponent>;
+	CameraComponent,
+	ScriptComponent>;
 	using SelectableComponents = ComponentGroup<RenderComponent, RigidBody2DComponent, BoxCollider2DComponent,
 	CameraComponent, ScriptComponent>;
 

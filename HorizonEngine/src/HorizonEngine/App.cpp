@@ -18,14 +18,14 @@ namespace Hzn
 		m_ExecutablePath = std::filesystem::current_path();
 		HZN_CORE_CRITICAL("ExecutablePath: {}", m_ExecutablePath.string());
 		m_Instance = this;
-		m_Window = Window::create(800, 600, "HorizonEngine");
+
+		m_Window = Window::create(1366, 768, "HorizonEngine", true);
 		// set the App on event function as callback for the widow class.
 		m_Window->setEventCallback(std::bind(&App::onEvent, this, std::placeholders::_1));
 
 		m_Window->setVsync(true);
 
 		Renderer::init();
-		ScriptEngine::init();
 
 		m_ImguiLayer = new ImguiLayer();
 		addOverlay(m_ImguiLayer);
@@ -33,10 +33,7 @@ namespace Hzn
 		RegisterComponentFunctions(AllComponents{});
 	}
 
-	App::~App()
-	{
-		ScriptEngine::destroy();
-	}
+	App::~App() {}
 
 	//! the main App run loop. This loop keeps the application running and updates and renders
 	//! different layers

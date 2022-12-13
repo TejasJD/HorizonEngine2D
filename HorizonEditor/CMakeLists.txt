@@ -16,8 +16,17 @@ set(HZNEDITOR_HEADER_FILES
 	"include/ContentBrowser.h"
 	"include/ComponentDisplays.h")
 
+set(HZNEDITOR_ICON ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico)
 # 'HznApplication' target which would generate an executable.
-add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES})
+
+# icon
+message("Cmake System Name: " ${CMAKE_SYSTEM_NAME})
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    enable_language("RC")
+    set (WIN32_RESOURCES ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.rc)
+endif()
+
+add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES} ${WIN32_RESOURCES})
 
 # libraries linked to HorizonEngine.
 target_link_libraries(HznEditor PUBLIC HorizonEngine)
@@ -75,9 +84,9 @@ add_custom_command(
 	TARGET HznEditor
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy_directory
-	${CMAKE_CURRENT_LIST_DIR}/Scripts
-	$<TARGET_FILE_DIR:HznEditor>/Scripts
+	ARGS -E copy
+	${CMAKE_CURRENT_LIST_DIR}/Scripts/ScriptCoreLib.dll
+	$<TARGET_FILE_DIR:HznEditor>/Scripts/ScriptCoreLib.dll
 )
 
 add_custom_command(
@@ -97,3 +106,13 @@ add_custom_command(
 	${CMAKE_CURRENT_LIST_DIR}/utils/premake5.lua
 	$<TARGET_FILE_DIR:HznEditor>/premake5.lua
 )
+
+message("Icon file path: " ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico)
+set(CPACK_WIX_PRODUCT_ICON ${WIN32_RESOURCES})
+
+install(TARGETS HznEditor DESTINATION bin)
+install(DIRECTORY "mono/lib" DESTINATION .)
+install(DIRECTORY "assets" DESTINATION bin)
+install(DIRECTORY "icons" DESTINATION bin)
+install(DIRECTORY "scripts" DESTINATION bin)
+install(FILES "premake5.exe" "premake5.lua" DESTINATION bin)

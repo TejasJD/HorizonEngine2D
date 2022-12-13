@@ -20,6 +20,8 @@ namespace Hzn
 		
 		m_Path = fs::path(directoryPath.string() + "\\" + name);
 
+		fs::create_directory(m_Path);
+
 		// generate the project directory.
 		HZN_CORE_ASSERT(fs::create_directory(m_Path), "Directory couldn't be created!");
 
@@ -71,10 +73,11 @@ namespace Hzn
 
 		HZN_CORE_ASSERT(is, "failed to open project file!");
 
-		std::string key, sep, value;
-		is >> key >> sep >> value;
-		if (!value.empty() && std::filesystem::exists(value) && std::filesystem::is_regular_file(value)) {
-			m_Scene = SceneManager::open(value);
+		std::string key, sep;
+		std::filesystem::path scenePath;
+		is >> key >> sep >> scenePath;
+		if (!scenePath.empty() && std::filesystem::exists(scenePath) && std::filesystem::is_regular_file(scenePath)) {
+			m_Scene = SceneManager::open(scenePath);
 		}
 
 		is.close();
@@ -95,5 +98,12 @@ namespace Hzn
 		{
 			return false;
 		}
+	}
+
+	std::string Project::getName() const
+	{
+		std::string projectName = m_Path.filename().string();
+		projectName = projectName.substr(0, projectName.size() - 4);
+		return projectName;
 	}
 }

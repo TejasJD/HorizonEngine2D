@@ -20,10 +20,10 @@ namespace Hzn
 	struct ComponentDisplays
 	{
 		template<typename T>
-		static void display(const GameObject& obj) {}
+		static void display(GameObject& obj) {}
 
 		template<typename ...Component>
-		static void displayIfExists(const GameObject& obj, ComponentGroup<Component...>)
+		static void displayIfExists(GameObject& obj, ComponentGroup<Component...>)
 		{
 			([&] {
 				if (obj.hasComponent<Component>())
@@ -35,7 +35,7 @@ namespace Hzn
 	};
 
 	template<>
-	inline void ComponentDisplays::display<NameComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<NameComponent>(GameObject& obj)
 	{
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
 			ImGuiTreeNodeFlags_OpenOnDoubleClick |
@@ -43,7 +43,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_SpanFullWidth |
 			ImGuiTreeNodeFlags_Selected |
 			ImGuiTreeNodeFlags_DefaultOpen;
-		if(ImGui::TreeNodeEx("Tag", flags))
+		if(ImGui::TreeNodeEx(ICON_FA_SHAPES " Tag", flags))
 		{
 			char nameString[512]{};
 			strcpy(nameString, obj.getComponent<NameComponent>().m_Name.c_str());
@@ -59,7 +59,7 @@ namespace Hzn
 	}
 
 	template<>
-	inline void ComponentDisplays::display<TransformComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<TransformComponent>(GameObject& obj)
 	{
 		auto& transform = obj.getComponent<TransformComponent>();
 
@@ -70,7 +70,7 @@ namespace Hzn
 			ImGuiTreeNodeFlags_Selected |
 			ImGuiTreeNodeFlags_DefaultOpen;
 
-		if (ImGui::TreeNodeEx("Transform", flags)) {
+		if (ImGui::TreeNodeEx(ICON_FA_SHAPES " Transform", flags)) {
 			ImGui::DragFloat3("Position", glm::value_ptr(transform.m_Translation), 0.25f, -50.0f, 50.0f);
 			ImGui::DragFloat3("Scale", glm::value_ptr(transform.m_Scale), 0.25f, 1.0f, 50.0f);
 			ImGui::DragFloat3("Rotation", glm::value_ptr(transform.m_Rotation), 1.0f,
@@ -80,12 +80,41 @@ namespace Hzn
 	}
 
 	template<>
-	inline void ComponentDisplays::display<RenderComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<RenderComponent>(GameObject& obj)
 	{
 		auto& renderComponent = obj.getComponent<RenderComponent>();
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | 
+			ImGuiTreeNodeFlags_OpenOnDoubleClick | 
+			ImGuiTreeNodeFlags_SpanAvailWidth | 
+			ImGuiTreeNodeFlags_SpanFullWidth | 
+			ImGuiTreeNodeFlags_Selected | 
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		if (ImGui::TreeNodeEx("Render", flags)) {
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Render", flags);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		if (ImGui::Button("...", ImVec2(30, 18))) ImGui::OpenPopup("RenderProperties");
+		ImGui::PopStyleColor(1);
+
+		bool componentRemoved = false;
+		if (ImGui::BeginPopup("RenderProperties")) {
+			if (ImGui::MenuItem("Remove")) {
+				obj.removeComponent<RenderComponent>();
+				componentRemoved = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (componentRemoved) {
+			if (treeOpen)
+				ImGui::TreePop();
+			return;
+		}
+
+		if (treeOpen) {
 			ImGui::ColorEdit3("Color", glm::value_ptr(renderComponent.m_Color));
 
 			auto windowX = ImGui::GetWindowWidth();
@@ -133,13 +162,42 @@ namespace Hzn
 
 
 	template<>
-	inline void ComponentDisplays::display<CameraComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<CameraComponent>(GameObject& obj)
 	{
 		auto& cameraComponent = obj.getComponent<CameraComponent>();
 		float m_CameraZoom = cameraComponent.m_Camera.getZoom();
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_DefaultOpen;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick | 
+			ImGuiTreeNodeFlags_SpanAvailWidth | 
+			ImGuiTreeNodeFlags_SpanFullWidth | 
+			ImGuiTreeNodeFlags_Selected | 
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap;
 
-		if (ImGui::TreeNodeEx("Camera", flags)) {
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Camera", flags);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		if (ImGui::Button("...", ImVec2(30, 18))) ImGui::OpenPopup("CameraProperties");
+		ImGui::PopStyleColor(1);
+
+		bool componentRemoved = false;
+		if (ImGui::BeginPopup("CameraProperties")) {
+			if (ImGui::MenuItem("Remove")) {
+				obj.removeComponent<CameraComponent>();
+				componentRemoved = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (componentRemoved) {
+			if (treeOpen)
+				ImGui::TreePop();
+			return;
+		}
+
+		if (treeOpen) {
 			if (ImGui::SliderFloat("Zoom", &m_CameraZoom, 0.25f, 10.0f))
 				cameraComponent.m_Camera.setZoom(m_CameraZoom);
 			ImGui::TreePop();
@@ -147,7 +205,7 @@ namespace Hzn
 	}
 
 	template<>
-	inline void ComponentDisplays::display<RigidBody2DComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<RigidBody2DComponent>(GameObject& obj)
 	{
 		auto& component = obj.getComponent<RigidBody2DComponent>();
 
@@ -158,10 +216,33 @@ namespace Hzn
 			ImGuiTreeNodeFlags_SpanAvailWidth |
 			ImGuiTreeNodeFlags_SpanFullWidth |
 			ImGuiTreeNodeFlags_Selected |
-			ImGuiTreeNodeFlags_DefaultOpen;
-		if (ImGui::TreeNodeEx("Rigid Body 2D", flags))
-		{
-			
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap;
+
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Rigidbody 2D", flags);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		if (ImGui::Button("...", ImVec2(30, 18))) ImGui::OpenPopup("Rigidbody2DProperties");
+		ImGui::PopStyleColor(1);
+
+		bool componentRemoved = false;
+		if (ImGui::BeginPopup("Rigidbody2DProperties")) {
+			if (ImGui::MenuItem("Remove")) {
+				obj.removeComponent<RigidBody2DComponent>();
+				componentRemoved = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (componentRemoved) {
+			if (treeOpen)
+				ImGui::TreePop();
+			return;
+		}
+
+		if (treeOpen) {
 			if(ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
 				for(int i = 0; i < 3; ++i)
@@ -190,7 +271,7 @@ namespace Hzn
 	}
 
 	template<>
-	inline void ComponentDisplays::display<BoxCollider2DComponent>(const GameObject& obj)
+	inline void ComponentDisplays::display<BoxCollider2DComponent>(GameObject& obj)
 	{
 		auto& component = obj.getComponent<BoxCollider2DComponent>();
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
@@ -198,15 +279,103 @@ namespace Hzn
 			ImGuiTreeNodeFlags_SpanAvailWidth |
 			ImGuiTreeNodeFlags_SpanFullWidth |
 			ImGuiTreeNodeFlags_Selected |
-			ImGuiTreeNodeFlags_DefaultOpen;
-		if (ImGui::TreeNodeEx("Box Collider 2D", flags))
-		{
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap;
+
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Box Collider 2D", flags);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		if (ImGui::Button("...", ImVec2(30, 18))) ImGui::OpenPopup("BoxCollider2DProperties");
+		ImGui::PopStyleColor(1);
+
+		bool componentRemoved = false;
+		if (ImGui::BeginPopup("BoxCollider2DProperties")) {
+			if (ImGui::MenuItem("Remove")) {
+				obj.removeComponent<BoxCollider2DComponent>();
+				componentRemoved = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (componentRemoved) {
+			if (treeOpen)
+				ImGui::TreePop();
+			return;
+		}
+
+		if (treeOpen) {
+			ImGui::Checkbox("Sensor", &component.m_IsSensor);
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
 			ImGui::DragFloat2("Size", glm::value_ptr(component.size));
 			ImGui::DragFloat("Density", &component.m_Density, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Friction", &component.m_Friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.m_Restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution Threshold", &component.m_RestitutionThreshold, 0.01f, 0.0f, 1.0f);
+			ImGui::TreePop();
+		}
+	}
+
+
+	template<>
+	inline void ComponentDisplays::display<ScriptComponent>(GameObject& obj)
+	{
+		auto& component = obj.getComponent<ScriptComponent>();
+		std::string selectedScriptName = component.m_ScriptName;
+
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+			ImGuiTreeNodeFlags_OpenOnDoubleClick |
+			ImGuiTreeNodeFlags_SpanAvailWidth |
+			ImGuiTreeNodeFlags_SpanFullWidth |
+			ImGuiTreeNodeFlags_Selected |
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_AllowItemOverlap;
+
+		bool treeOpen = ImGui::TreeNodeEx(ICON_FA_SHAPES " Scripts", flags);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		if (ImGui::Button("...", ImVec2(30, 18))) ImGui::OpenPopup("ScriptProperties");
+		ImGui::PopStyleColor(1);
+
+		bool componentRemoved = false;
+		if (ImGui::BeginPopup("ScriptProperties")) {
+			if (ImGui::MenuItem("Remove")) {
+				obj.removeComponent<ScriptComponent>();
+				componentRemoved = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (componentRemoved) {
+			if (treeOpen)
+				ImGui::TreePop();
+			return;
+		}
+
+		auto val = ScriptEngine::GetGameObjectSubClasses();
+
+		if (treeOpen) {
+			if(ImGui::BeginCombo("Script", selectedScriptName.c_str()))
+			{
+				for (const auto& script : val)
+				{
+					bool isSelected = selectedScriptName == script.first;
+					if(ImGui::Selectable(script.first.c_str(), isSelected))
+					{
+						component.m_ScriptName = selectedScriptName = script.first;
+					}
+
+					if (isSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+
+				ImGui::EndCombo();
+			}
 			ImGui::TreePop();
 		}
 	}

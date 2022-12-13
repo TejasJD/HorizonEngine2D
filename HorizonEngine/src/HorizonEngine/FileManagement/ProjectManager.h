@@ -38,6 +38,7 @@ namespace Hzn
 		static bool isOpen() { return s_Project != nullptr; }
 		//! returns active project
 		static std::shared_ptr<Project> getActiveProject() { return s_Project; }
+		static std::vector<std::filesystem::path> getAllScenes();
 
 		/// <summary>
 		/// File handling functionality

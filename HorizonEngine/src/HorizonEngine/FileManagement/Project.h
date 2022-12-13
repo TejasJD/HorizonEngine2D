@@ -33,6 +33,8 @@ namespace Hzn
 		//! Get path
 		std::filesystem::path getPath() const { return m_Path; }
 
+		std::string getName() const;
+
 	private:
 		//!path variable
 		std::filesystem::path m_Path;

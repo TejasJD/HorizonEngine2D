@@ -13,6 +13,8 @@
 #include "HorizonEngine/Camera/CameraController.h"
 
 class b2World;
+class b2ContactListener;
+class b2Body;
 
 namespace Hzn
 {
@@ -48,16 +50,24 @@ namespace Hzn
 		void onUpdate(TimeStep ts);
 
 		GameObject createGameObject(const std::string& name);
-		void destroyGameObject(GameObject& obj);
+		bool destroyGameObject(GameObject& obj);
 		GameObject getGameObjectById(uint32_t id);
+		GameObject getGameObjectByName(const std::string& name);
+		std::vector<GameObject> getGameObjectsByName(const std::string& name);
 		std::vector<uint32_t> getAllRootIds() const;
 		std::vector<uint32_t> getAllObjectIds() const;
 
 		std::filesystem::path getFilePath() const { return m_Path; }
+		std::string getName() const { return getFilePath().filename().string(); }
+
+
+
+		void addBody(GameObject& obj);
 
 
 	private:
-		int gameObjectCounter = 0;
+		void ExecuteDeletionQueue();
+
 		void serialize(cereal::JSONOutputArchive& outputArchive);
 		void invalidate();
 		// variable that is used by the scene manager to invalidate all
@@ -67,12 +77,17 @@ namespace Hzn
 		// entt registry for creating game objects.
 		entt::registry m_Registry;
 
+		std::set<entt::entity> m_DeletionQueue;
+
 		b2World* m_World = nullptr;
+		b2ContactListener* m_Listener = nullptr;
 
 		std::unordered_map<uint32_t, entt::entity> m_GameObjectIdMap;
 		// viewport size of the scene. Helps in maintaining the aspect ratio of the scene.
 		glm::vec2 m_lastViewportSize = { 0.0f, 0.0f };
 		std::filesystem::path m_Path = std::filesystem::path();
+
+		std::vector<uint32_t> m_ObjectsToDelete;
 
 		SceneState m_State = SceneState::Edit;
 	};

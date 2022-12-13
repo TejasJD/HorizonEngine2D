@@ -180,7 +180,7 @@ namespace Hzn
 		{
 			std::filesystem::path projectFile = s_Project->m_Path;
 			std::ofstream os(projectFile, std::ios::binary);
-			os << "ActiveScene" << " " << ":" << " " << s_Project->m_Scene->m_Path.string();
+			os << "ActiveScene" << " " << ":" << " " << s_Project->m_Scene->m_Path;
 			os.close();
 			result = SceneManager::save();
 		}
@@ -199,5 +199,17 @@ namespace Hzn
 			s_Project.reset();
 		}
 		return result;
+	}
+
+	std::vector<std::filesystem::path> ProjectManager::getAllScenes() {
+		std::vector<std::filesystem::path> sceneNames;
+
+		if (s_Project) {
+			for (auto& entry : std::filesystem::directory_iterator(s_Project->getPath().parent_path().string() + "\\scenes")) {
+				sceneNames.push_back(entry.path());
+			}
+		}
+
+		return sceneNames;
 	}
 }

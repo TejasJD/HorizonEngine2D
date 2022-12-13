@@ -33,6 +33,11 @@ namespace Hzn
 		virtual void* getPlatformRawWindow() = 0;
 		
 		//! Window creation implemented by the source files based on the active platform
-		static std::shared_ptr<Window> create(uint32_t width = 1366, uint32_t height = 768, const char* title = "Window");
+		static std::shared_ptr<Window> create(
+			uint32_t width = 1366,
+			uint32_t height = 768,
+			const char* title = "Window",
+			bool maximized = false
+		);
 	};
 }

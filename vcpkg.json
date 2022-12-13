@@ -2,18 +2,13 @@
   "name": "horizonengine2d",
   "version-string": "0.1.0",
   "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
     "glfw3",
     "glm",
     "glad",
-    {
-      "name": "imgui",
-      "default-features": false,
-      "features": [
-        "opengl3-binding",
-        "glfw-binding",
-        "docking-experimental"
-      ]
-    },
     "spdlog",
     "box2d",
     "gtest",
