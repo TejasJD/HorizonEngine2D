@@ -942,10 +942,10 @@
     "value360": 69,
     "value361": {
         "value0": 140.0,
-        "value1": 0.0,
+        "value1": 1.4901161193847657e-8,
         "value2": 0.0,
         "value3": 0.0,
-        "value4": 0.0,
+        "value4": -0.0,
         "value5": 0.0,
         "value6": 20.924999237060548,
         "value7": 15.5,
@@ -1015,7 +1015,7 @@
     "value373": {
         "value0": 0.0,
         "value1": 5.0,
-        "value2": 0.0,
+        "value2": 2.0,
         "value3": 0.0,
         "value4": -0.0,
         "value5": 0.0,
@@ -1133,7 +1133,7 @@
     },
     "value392": 18,
     "value393": {
-        "value0": 0.0,
+        "value0": -0.05458545684814453,
         "value1": -5.0,
         "value2": 0.0,
         "value3": 0.0,
@@ -2492,7 +2492,7 @@
     "value671": 1,
     "value672": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\bird.png",
+        "value1": "bird.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2503,7 +2503,7 @@
     "value673": 4,
     "value674": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2514,7 +2514,7 @@
     "value675": 5,
     "value676": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2525,7 +2525,7 @@
     "value677": 8,
     "value678": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2536,7 +2536,7 @@
     "value679": 9,
     "value680": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2547,7 +2547,7 @@
     "value681": 11,
     "value682": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2558,7 +2558,7 @@
     "value683": 12,
     "value684": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2569,7 +2569,7 @@
     "value685": 14,
     "value686": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2580,7 +2580,7 @@
     "value687": 15,
     "value688": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2591,7 +2591,7 @@
     "value689": 17,
     "value690": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2602,7 +2602,7 @@
     "value691": 18,
     "value692": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2613,7 +2613,7 @@
     "value693": 20,
     "value694": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2624,7 +2624,7 @@
     "value695": 21,
     "value696": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2635,7 +2635,7 @@
     "value697": 23,
     "value698": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2646,7 +2646,7 @@
     "value699": 24,
     "value700": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2657,7 +2657,7 @@
     "value701": 26,
     "value702": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2668,7 +2668,7 @@
     "value703": 27,
     "value704": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2679,7 +2679,7 @@
     "value705": 29,
     "value706": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2690,7 +2690,7 @@
     "value707": 30,
     "value708": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2701,7 +2701,7 @@
     "value709": 32,
     "value710": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2712,7 +2712,7 @@
     "value711": 33,
     "value712": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2723,7 +2723,7 @@
     "value713": 69,
     "value714": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\Level2Text.png",
+        "value1": "Level2Text.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2734,7 +2734,7 @@
     "value715": 36,
     "value716": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2745,7 +2745,7 @@
     "value717": 37,
     "value718": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2756,7 +2756,7 @@
     "value719": 39,
     "value720": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2767,7 +2767,7 @@
     "value721": 40,
     "value722": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2778,7 +2778,7 @@
     "value723": 42,
     "value724": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2789,7 +2789,7 @@
     "value725": 43,
     "value726": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2800,7 +2800,7 @@
     "value727": 45,
     "value728": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2811,7 +2811,7 @@
     "value729": 46,
     "value730": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2822,7 +2822,7 @@
     "value731": 48,
     "value732": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2833,7 +2833,7 @@
     "value733": 49,
     "value734": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2844,7 +2844,7 @@
     "value735": 51,
     "value736": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2855,7 +2855,7 @@
     "value737": 52,
     "value738": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2866,7 +2866,7 @@
     "value739": 54,
     "value740": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2877,7 +2877,7 @@
     "value741": 55,
     "value742": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2888,7 +2888,7 @@
     "value743": 57,
     "value744": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2899,7 +2899,7 @@
     "value745": 58,
     "value746": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2910,7 +2910,7 @@
     "value747": 60,
     "value748": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2921,7 +2921,7 @@
     "value749": 61,
     "value750": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2932,7 +2932,7 @@
     "value751": 63,
     "value752": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_up.png",
+        "value1": "pipe_up.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2943,7 +2943,7 @@
     "value753": 64,
     "value754": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\pipe_down.png",
+        "value1": "pipe_down.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2954,7 +2954,7 @@
     "value755": 65,
     "value756": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\bird.png",
+        "value1": "bird.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2965,7 +2965,7 @@
     "value757": 66,
     "value758": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\portal.png",
+        "value1": "portal.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2976,7 +2976,7 @@
     "value759": 67,
     "value760": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\flag.png",
+        "value1": "flag.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2987,7 +2987,7 @@
     "value761": 68,
     "value762": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\flag.png",
+        "value1": "flag.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
@@ -2998,7 +2998,7 @@
     "value763": 1048610,
     "value764": {
         "value0": "",
-        "value1": "D:\\HorizonProjects\\DarkTrails\\sprites\\background.png",
+        "value1": "background.png",
         "value2": 0.0,
         "value3": 0.0,
         "value4": 1.0,
