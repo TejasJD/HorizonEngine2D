@@ -15,16 +15,8 @@ namespace Hzn
 	/// <param name="directoryPath"></param>
 	Project::Project(const std::string& name, const fs::path& directoryPath)
 	{
-		// then this is the a new project.
-		HZN_CORE_ASSERT(fs::is_directory(directoryPath), "Provided path isn't a directory!");
-		
 		m_Path = fs::path(directoryPath.string() + "\\" + name);
-
 		fs::create_directory(m_Path);
-
-		// generate the project directory.
-		HZN_CORE_ASSERT(fs::create_directory(m_Path), "Directory couldn't be created!");
-
 		m_Path = m_Path.string() + "\\" + name + ".hzn";
 
 		// generate subdirectories
@@ -66,12 +58,12 @@ namespace Hzn
 	Project::Project(const std::filesystem::path& projectFilePath)
 		: m_Path(projectFilePath)
 	{
-		HZN_CORE_ASSERT(fs::is_regular_file(m_Path), "Provided path is not a file");
-		HZN_CORE_ASSERT(m_Path.extension() == ".hzn", "Provided file is not a project file!");
-
 		std::ifstream is(projectFilePath);
 
-		HZN_CORE_ASSERT(is, "failed to open project file!");
+		if (!is)
+		{
+			throw std::runtime_error("couldn't open project file!");
+		}
 
 		std::string key, sep;
 		std::filesystem::path scenePath;

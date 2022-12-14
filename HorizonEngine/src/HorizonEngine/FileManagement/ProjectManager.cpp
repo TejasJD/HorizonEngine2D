@@ -135,37 +135,44 @@ namespace Hzn
 				//AssetManager::destroy();
 				close();
 			}
-			s_Project = std::make_shared<Project>(projectFilePath);
+			try {
+				s_Project = std::make_shared<Project>(projectFilePath);
 
-			if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\bin"))
-			{
-				watch.reset(new filewatch::FileWatch<std::string>(
-					s_Project->m_Path.parent_path().string() + "\\bin", [&]
-					(const std::string& watchPath, const filewatch::Event eventType)
-					{
-						/*HZN_CORE_INFO("{}", std::filesystem::absolute(watchPath).string());
-						HZN_CORE_WARN("{}", s_Project->m_Path.parent_path().string() + "\\bin\\ScriptAppLib.dll");*/
-
-						if (watchPath == "ScriptAppLib.dll")
+				if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\bin"))
+				{
+					watch.reset(new filewatch::FileWatch<std::string>(
+						s_Project->m_Path.parent_path().string() + "\\bin", [&]
+						(const std::string& watchPath, const filewatch::Event eventType)
 						{
-							HZN_CORE_DEBUG("Changes detected in ScriptAppLib.dll");
-							if (!ScriptEngine::isReloadPending() &&
-								(eventType == filewatch::Event::modified || eventType == filewatch::Event::added))
+							/*HZN_CORE_INFO("{}", std::filesystem::absolute(watchPath).string());
+							HZN_CORE_WARN("{}", s_Project->m_Path.parent_path().string() + "\\bin\\ScriptAppLib.dll");*/
+
+							if (watchPath == "ScriptAppLib.dll")
 							{
-								ScriptEngine::startReload();
-								Hzn::App::getApp().submitMainThreadQueue([&]()
+								HZN_CORE_DEBUG("Changes detected in ScriptAppLib.dll");
+								if (!ScriptEngine::isReloadPending() &&
+									(eventType == filewatch::Event::modified || eventType == filewatch::Event::added))
 								{
-									ScriptEngine::ReloadAssembly();
-								});
+									ScriptEngine::startReload();
+									Hzn::App::getApp().submitMainThreadQueue([&]()
+										{
+											ScriptEngine::ReloadAssembly();
+										});
+								}
 							}
 						}
-					}
-				));
+					));
+				}
+				// here we will be starting the file watcher on this location if the path exists.
+				if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\load_target\\ScriptAppLib.dll"))
+				{
+					ScriptEngine::ReloadAssembly();
+				}
 			}
-			// here we will be starting the file watcher on this location if the path exists.
-			if (std::filesystem::exists(s_Project->m_Path.parent_path().string() + "\\load_target\\ScriptAppLib.dll"))
+			catch (std::exception& e)
 			{
-				ScriptEngine::ReloadAssembly();
+				HZN_CORE_ERROR(e.what());
+				return nullptr;
 			}
 		}
 
