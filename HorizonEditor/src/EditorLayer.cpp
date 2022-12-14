@@ -498,8 +498,8 @@ void EditorLayer::onRenderImgui()
 					ImGui::PopStyleColor();
 
 					if (ImGui::BeginDragDropSource()) {
-						std::filesystem::path currentSpritePath = ContentBrowser::m_CurrentTexturePath + "-;" + spriteX + ";" + spriteY;
-
+						std::filesystem::path currentSpritePath = std::filesystem::path(ContentBrowser::m_CurrentTexturePath).filename().string() + "-;" + spriteX + ";" + spriteY;
+						std::cout << currentSpritePath.string() << std::endl;
 						const wchar_t* filename = currentSpritePath.c_str();
 						ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM_SPRITE", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
 						ImGui::EndDragDropSource();

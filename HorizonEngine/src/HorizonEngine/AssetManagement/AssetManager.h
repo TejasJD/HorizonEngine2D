@@ -50,10 +50,10 @@ namespace Hzn
 		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="cellSize"></param>
-		static void loadSpriteSheet(std::string path, const glm::vec2& cellSize)
+		static void loadSpriteSheet(std::filesystem::path path, const glm::vec2& cellSize)
 		{
-			auto texture = Texture2D::create(path);
-			textureStorage[path] = { texture, cellSize };
+			auto texture = Texture2D::create(path.string());
+			textureStorage[path.filename().string()] = {texture, cellSize};
 			auto width = texture->getWidth();
 			auto height = texture->getHeight();
 			// (0, 0) to (width, height).
@@ -62,17 +62,17 @@ namespace Hzn
 			{
 				for(int j = 0; j < height / cellSize.y; ++j)
 				{
-					std::string sheetPathPos = path + "-;" + std::to_string(i) + ";" + std::to_string(j);
+					std::string sheetPathPos = path.filename().string() + "-;" + std::to_string(i) + ";" + std::to_string(j);
 					spriteStorage[sheetPathPos] = Sprite2D::create(texture, { i, j }, cellSize);
 				}
 			}
 
 		}
 
-		static void loadTexture(std::string path)
+		static void loadTexture(std::filesystem::path path)
 		{
-			auto texture = Texture2D::create(path);
-			textureStorage[path] = { texture, {texture->getWidth(), texture->getHeight()}};
+			auto texture = Texture2D::create(path.string());
+			textureStorage[path.filename().string()] = {texture, {texture->getWidth(), texture->getHeight()}};
 		}
 
 		/*static void loadSprite(std::string sheetPath, const glm::vec2& pos)
