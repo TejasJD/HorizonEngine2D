@@ -20,7 +20,7 @@ namespace Hzn {
 
             //Control direction according to keyboard input
             if (Input.IsKeyDown(KeyCode.Up) && canJump) {
-                velocity.Y = 30.0f;
+                velocity.Y = 40.0f;
                 canJump = false;
             }
 
