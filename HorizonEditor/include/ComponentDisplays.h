@@ -145,11 +145,9 @@ namespace Hzn
 				}
 				else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
-					const wchar_t* filepath = (const wchar_t*)payload->Data;
-					std::wstring ws(filepath);
-					std::string str(ws.begin(), ws.end());
+					const std::string* filepath = (const std::string*)payload->Data;
 
-					renderComponent.texturePath = str;
+					renderComponent.texturePath = filepath->c_str();
 					renderComponent.spritePath = "";
 
 				}

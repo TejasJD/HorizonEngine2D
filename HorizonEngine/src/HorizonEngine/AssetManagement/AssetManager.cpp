@@ -14,7 +14,7 @@ bool AssetManager::init(const std::filesystem::path& directoryPath)
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))
 	{
 		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos) {
-			loadTexture(entry.path().string());
+			loadTexture(entry.path());
 		}
 
 		if (!entry.is_directory() && entry.path().parent_path().string().find("sprites") != std::string::npos && entry.path().string().find(".png") != std::string::npos)
@@ -48,7 +48,7 @@ bool AssetManager::init(const std::filesystem::path& directoryPath)
 		if (!entry.is_directory() && entry.path().string().find(".png") != std::string::npos && entry.path().string().find("sprites") != std::string::npos) {
 			if (!spriteFormat.empty())
 			{
-				loadSpriteSheet(entry.path().string(), { std::stof(spriteFormat.find("width")->second), std::stof(spriteFormat.find("height")->second) });
+				loadSpriteSheet(entry.path(), { std::stof(spriteFormat.find("width")->second), std::stof(spriteFormat.find("height")->second) });
 			}
 		}
 

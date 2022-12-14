@@ -83,7 +83,7 @@ void ContentBrowser::OnImGuiRender()
 					}
 				}
 
-				std::string spriteSheetPath = entry.path().parent_path().string() + "\\" + entry.path().filename().replace_extension().string() + ".png";
+				std::string spriteSheetPath = entry.path().filename().replace_extension().string() + ".png";
 
 				if (Hzn::AssetManager::spriteStorage.find(spriteSheetPath) == Hzn::AssetManager::spriteStorage.end())
 				{
@@ -120,7 +120,7 @@ void ContentBrowser::OnImGuiRender()
 
 			else if (entry.path().string().find(".png") != std::string::npos)
 			{
-				icon = Hzn::AssetManager::getTexture(entry.path().string());
+				icon = Hzn::AssetManager::getTexture(entry.path().filename().string());
 			}
 
 			else
@@ -136,7 +136,7 @@ void ContentBrowser::OnImGuiRender()
 
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-					m_CurrentTexturePath = entry.path().string();
+					m_CurrentTexturePath = entry.path().filename().string();
 				}
 
 			}
@@ -155,8 +155,8 @@ void ContentBrowser::OnImGuiRender()
 
 			if (ImGui::BeginDragDropSource()) {
 
-				const wchar_t* filename = path.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", filename, (wcslen(filename) + 1) * sizeof(wchar_t));
+				const std::string filename = path.filename().string();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", &filename, sizeof(filename));
 				ImGui::EndDragDropSource();
 
 			}
@@ -345,7 +345,7 @@ void ContentBrowser::OnImGuiRender()
 		bool exist = false;
 		for (const auto& entry : std::filesystem::directory_iterator(Modals::m_CurrentDirectory))
 		{
-			if (std::filesystem::exists((Modals::m_CurrentDirectory.string() + "\\" + fileName)))
+			if (std::filesystem::exists(("\\" + fileName)))
 			{
 				exist = true;
 			}
