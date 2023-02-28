@@ -1,8 +1,8 @@
 #include "pch.h"
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
-#include "Sprite.h"
+#include "HorizonEngine/Renderer/Sprite.h"
 
 namespace Hzn
 {

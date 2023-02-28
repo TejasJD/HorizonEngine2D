@@ -1,20 +1,20 @@
 #include "pch.h"
+
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/threads.h>
 
-#include "HorizonEngine/Components/Component.h"
+#include "HorizonEngine/Scene/Component.h"
+#include "HorizonEngine/Scene/GameObject.h"
+#include "HorizonEngine/Scene/Scene.h"
+#include "HorizonEngine/Scene/FunctionRegistry.h"
+#include "HorizonEngine/Scene/SceneManager.h"
 
-#include "HorizonEngine/SceneManagement/GameObject.h"
-#include "HorizonEngine/SceneManagement/Scene.h"
-#include "HorizonEngine/SceneManagement/FunctionRegistry.h"
+#include "HorizonEngine/Project/ProjectManager.h"
 
-#include "HorizonEngine/FileManagement/ProjectManager.h"
-
-#include "ScriptEngine.h"
-#include "ScriptRegistry.h"
-#include "SceneManagement/SceneManager.h"
+#include "HorizonEngine/Scripting/ScriptEngine.h"
+#include "HorizonEngine/Scripting/ScriptRegistry.h"
 
 namespace Hzn
 {

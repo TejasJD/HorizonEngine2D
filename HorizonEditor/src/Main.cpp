@@ -1,6 +1,7 @@
-#include <pch.h>
-#include <HorizonEngine.h>
-#include <HznEntryPoint.h>
+#include "pch.h"
+
+#include <HorizonEngine/HorizonEngine.h>
+#include <HorizonEngine/HznEntryPoint.h>
 
 #include "EditorLayer.h"
 

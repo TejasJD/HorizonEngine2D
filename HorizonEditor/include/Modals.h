@@ -1,12 +1,13 @@
 #pragma once
 
-#include "HorizonEngine.h"
-
 #ifndef HZN_MODALS_H
 #define HZN_MODALS_H
 
+#include <string>
+#include <memory>
+#include <filesystem>
 
-
+#include <HorizonEngine/HorizonEngine.h>
 
 class Modals {
 	friend class EditorLayer;

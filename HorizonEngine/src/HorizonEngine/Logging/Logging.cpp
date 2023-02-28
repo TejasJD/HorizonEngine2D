@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "Logging.h"
 
+#include "HorizonEngine/Logging/Logging.h"
 
 namespace Hzn
 {

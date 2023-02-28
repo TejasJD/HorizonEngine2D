@@ -1,12 +1,7 @@
 #include "pch.h"
 
-#include "HorizonEngine/Events/MouseEvent.h"
-#include "HorizonEngine/Layer.h"
-#include "HorizonEngine/App.h"
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -14,9 +9,13 @@
 #include <imgui_impl_opengl3.h>
 #include <ImGuizmo.h>
 #include <imnodes.h>
-
 #include <IconsFontAwesome5.h>
-#include "ImguiLayer.h"
+
+#include "HorizonEngine/Events/MouseEvent.h"
+#include "HorizonEngine/Core/Layer.h"
+#include "HorizonEngine/Core/App.h"
+
+#include "HorizonEngine/ImGui/ImguiLayer.h"
 
 namespace Hzn
 {

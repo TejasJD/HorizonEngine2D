@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "RenderCall.h"
+#include "HorizonEngine/Renderer/RenderCall.h"
 
-#include "Platform/OpenGL/GLRendererAPI.h"
+#include "OpenGL/GLRendererAPI.h"
 
 namespace Hzn
 {

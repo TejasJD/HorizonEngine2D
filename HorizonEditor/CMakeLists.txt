@@ -4,26 +4,31 @@
 cmake_minimum_required (VERSION 3.15)
 
 set(HZNEDITOR_SOURCE_FILES
+	"src/pch.cpp"
 	"src/Main.cpp"
 	"src/EditorLayer.cpp"
 	"src/ContentBrowser/ContentBrowser.cpp"
 	"src/Modals/Modals.cpp")
 
 set(HZNEDITOR_HEADER_FILES
+	"src/pch.h"
 	"include/EditorLayer.h"
 	"include/NodeEditor.h"
 	"include/Modals.h"
 	"include/ContentBrowser.h"
 	"include/ComponentDisplays.h")
 
-set(HZNEDITOR_ICON ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico)
-# 'HznApplication' target which would generate an executable.
+if(WIN32 AND MSVC)
+	set(HZNEDITOR_ICON "${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico")
+	# 'HznApplication' target which would generate an executable.
 
-# icon
-message("Cmake System Name: " ${CMAKE_SYSTEM_NAME})
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    enable_language("RC")
-    set (WIN32_RESOURCES ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.rc)
+	# icon
+	message("Cmake System Name: " ${CMAKE_SYSTEM_NAME})
+	if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+		enable_language("RC")
+		set (WIN32_RESOURCES ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.rc)
+	endif()
+
 endif()
 
 add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES} ${WIN32_RESOURCES})
@@ -31,7 +36,15 @@ add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES} ${W
 # libraries linked to HorizonEngine.
 target_link_libraries(HznEditor PUBLIC HorizonEngine)
 
-target_include_directories(HznEditor PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_precompile_headers(HznEditor PRIVATE src/pch.h)
+
+target_include_directories(
+	HznEditor 
+	PUBLIC
+	"${CMAKE_CURRENT_LIST_DIR}/include"
+	PRIVATE
+	"${CMAKE_CURRENT_LIST_DIR}/src"
+)
 
 add_custom_command(
 	TARGET HznEditor

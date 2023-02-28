@@ -1,4 +1,7 @@
-#include <pch.h>
+#include "pch.h"
+
+#include <HorizonEngine/HorizonEngine.h>
+
 #include "ContentBrowser.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
@@ -132,7 +135,7 @@ void ContentBrowser::OnImGuiRender()
 			if (entry.path().parent_path().string().find("sprites") != std::string::npos)
 			{
 
-				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)(uint64_t)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
@@ -142,7 +145,7 @@ void ContentBrowser::OnImGuiRender()
 			}
 			else {
 				m_CurrentTexturePath = "";
-				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton(filenameString.c_str(), (ImTextureID)(uint64_t)icon->getId(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 				if (ImGui::IsItemHovered())
 				{

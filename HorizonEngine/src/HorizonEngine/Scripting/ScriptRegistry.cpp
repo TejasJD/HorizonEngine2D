@@ -2,22 +2,20 @@
 
 #include <glm/glm.hpp>
 
-#include "HorizonEngine/Components/Component.h"
+#include <box2d/b2_body.h>
+#include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_fixture.h>
+
 #include "HorizonEngine/Codes/KeyboardCodes.h"
-#include "HorizonEngine/Input.h"
-#include "HorizonEngine/SceneManagement/GameObject.h"
+#include "HorizonEngine/Core/Input.h"
+#include "HorizonEngine/Scene/Component.h"
+#include "HorizonEngine/Scene/GameObject.h"
+#include "HorizonEngine/Scene/SceneManager.h"
+#include "HorizonEngine/Scripting/ScriptEngine.h"
 
-#include "ScriptEngine.h"
-#include "ScriptRegistry.h"
-
-#include "box2d/b2_body.h"
-#include "box2d/b2_polygon_shape.h"
-#include "box2d/b2_fixture.h"
-#include "SceneManagement/SceneManager.h"
-
+#include "HorizonEngine/Scripting/ScriptRegistry.h"
 
 #define HZN_ADD_INTERNAL_CALL( name ) mono_add_internal_call("Hzn.InternalCalls::"#name, name)
-
 
 namespace Hzn
 {

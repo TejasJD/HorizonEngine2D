@@ -1,9 +1,9 @@
 #include "pch.h"
 
-#include "RendererAPI.h"
-#include "Shader.h"
+#include "HorizonEngine/Renderer/RendererAPI.h"
+#include "HorizonEngine/Renderer/Shader.h"
 
-#include "Platform/OpenGL/GLShader.h"
+#include "OpenGL/GLShader.h"
 
 namespace Hzn
 {

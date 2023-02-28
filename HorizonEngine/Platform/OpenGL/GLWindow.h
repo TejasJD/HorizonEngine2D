@@ -1,6 +1,8 @@
 #pragma once
 
-#include "HorizonEngine/Window.h"
+#include <cstdint>
+
+#include "HorizonEngine/Core/Window.h"
 #include "HorizonEngine/Renderer/RenderContext.h"
 // Implementation of the Window class with OpenGL as the rendering API
 

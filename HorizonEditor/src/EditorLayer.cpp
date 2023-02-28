@@ -1,4 +1,7 @@
-#include <pch.h>
+#include "pch.h"
+
+#include <HorizonEngine/HorizonEngine.h>
+
 #include "EditorLayer.h"
 #include "GraphEditor.h"
 #include "Modals.h"
@@ -57,23 +60,21 @@ void EditorLayer::onAttach()
 
 	HZN_TRACE("Editor Layer Attached!");
 	m_CheckerboardTexture = Hzn::Texture2D::create("assets/textures/bear.png");
-	Hzn::FrameBufferProps props;
+	Hzn::FramebufferProps props;
 	props.width = Hzn::App::getApp().getAppWindow().getWidth();
 	props.height = Hzn::App::getApp().getAppWindow().getHeight();
 	props.attachments = {
-		Hzn::FrameBufferTextureFormat::RGBA8,
-		Hzn::FrameBufferTextureFormat::RED_INTEGER,
-		Hzn::FrameBufferTextureFormat::DEPTH24_STENCIL8
+		Hzn::FramebufferTextureFormat::RGBA8,
+		Hzn::FramebufferTextureFormat::RED_INTEGER,
+		Hzn::FramebufferTextureFormat::DEPTH24_STENCIL8
 	};
 
-	m_FrameBuffer = Hzn::FrameBuffer::create(props);
-	Hzn::ScriptEngine::init();
+	m_Framebuffer = Hzn::Framebuffer::create(props);
 }
 
 void EditorLayer::onDetach()
 {
 	Hzn::ProjectManager::close();
-	Hzn::ScriptEngine::destroy();
 }
 
 void EditorLayer::onUpdate(Hzn::TimeStep ts)
@@ -85,11 +86,11 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 
 	if (Hzn::SceneManager::isOpen())
 	{
-		m_FrameBuffer->bind();
-		// here, in case if the framebuffer is re-created, and the last known
-		// viewport size does not match the viewport size of the new framebuffer, then
+		m_Framebuffer->bind();
+		// here, in case if the Framebuffer is re-created, and the last known
+		// viewport size does not match the viewport size of the new Framebuffer, then
 		// we update all the camera components to the proper aspect ratio, and update the last known viewport size.
-		auto& props = m_FrameBuffer->getProps();
+		auto& props = m_Framebuffer->getProps();
 		if (Hzn::SceneManager::isOpen()) {
 			lastViewportSize = EditorData::s_Scene_Active->onViewportResize(props.width, props.height);
 			m_EditorCameraController.getCamera().setAspectRatio(lastViewportSize.x / lastViewportSize.y);
@@ -99,7 +100,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 		Hzn::RenderCall::submitClear();
 
 		// clear frame buffer texture attachment that has entity to -1
-		m_FrameBuffer->clearColorAttachment(1, -1);
+		m_Framebuffer->clearColorAttachment(1, -1);
 
 		if (m_ViewportFocused && m_ViewportHovered &&
 			Hzn::SceneManager::isOpen() &&
@@ -118,10 +119,10 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 		mousePos.y = viewportSize.y - mousePos.y;
 		if (0 < mousePos.x && mousePos.x < viewportSize.x && 0 < mousePos.y && mousePos.y < viewportSize.y)
 		{
-			m_HoveredObjectId = m_FrameBuffer->readPixel(1, mousePos.x, mousePos.y);
+			m_HoveredObjectId = m_Framebuffer->readPixel(1, mousePos.x, mousePos.y);
 		}
-		// unbind the current framebuffer.
-		m_FrameBuffer->unbind();
+		// unbind the current Framebuffer.
+		m_Framebuffer->unbind();
 	}
 }
 
@@ -673,11 +674,11 @@ void EditorLayer::onRenderImgui()
 			if (lastViewportSize != viewportSize)
 			{
 				/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
-				m_FrameBuffer->recreate(viewportSize.x, viewportSize.y);
+				m_Framebuffer->recreate(viewportSize.x, viewportSize.y);
 			}
 			/*HZN_INFO("{0}, {1}", viewportSize.x, viewportSize.y);*/
 
-			ImGui::Image((ImTextureID)(uint64_t)m_FrameBuffer->getColorAttachmentId(),
+			ImGui::Image((ImTextureID)(uint64_t)m_Framebuffer->getColorAttachmentId(),
 				{ viewportSize.x, viewportSize.y }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 		}
 

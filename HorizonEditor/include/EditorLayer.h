@@ -1,6 +1,11 @@
 #pragma once
 
-#include <HorizonEngine.h>
+#include <memory>
+#include <string>
+#include <filesystem>
+#include <cstdint>
+
+#include <HorizonEngine/HorizonEngine.h>
 
 /// <summary>
 /// EditorData struct declared active scene & active project
@@ -53,7 +58,7 @@ private:
 	glm::vec2 lastViewportSize = { 0, 0 };
 	Hzn::OrthographicCameraController m_EditorCameraController;
 	std::shared_ptr<Hzn::Texture2D> m_CheckerboardTexture;
-	std::shared_ptr<Hzn::FrameBuffer> m_FrameBuffer;
+	std::shared_ptr<Hzn::Framebuffer> m_Framebuffer;
 	bool m_ViewportFocused = false;
 	bool m_ViewportHovered = false;
 

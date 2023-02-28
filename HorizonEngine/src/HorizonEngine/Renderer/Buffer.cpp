@@ -1,9 +1,9 @@
 #include "pch.h"
 
-#include "RendererAPI.h"
-#include "Buffer.h"
+#include "HorizonEngine/Renderer/RendererAPI.h"
+#include "HorizonEngine/Renderer/Buffer.h"
 
-#include "Platform/OpenGL/GLBuffer.h"
+#include "OpenGL/GLBuffer.h"
 
 namespace Hzn
 {

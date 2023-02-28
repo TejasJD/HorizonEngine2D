@@ -1,9 +1,9 @@
 #include "pch.h"
 
-#include "RendererAPI.h"
-#include "VertexArray.h"
+#include "HorizonEngine/Renderer/RendererAPI.h"
+#include "HorizonEngine/Renderer/VertexArray.h"
 
-#include "Platform/OpenGL/GLVertexArray.h"
+#include "OpenGL/GLVertexArray.h"
 
 namespace Hzn
 {

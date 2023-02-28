@@ -1,15 +1,12 @@
 #pragma once
+
 #ifndef HZN_SOUNDBUFFER_H
 #define HZN_SOUNDBUFFER_H
+
+#include <cstdint>
+#include <vector>
+
 #include "HorizonEngine/Core/Core.h"
-
-#include <AL/al.h>
-#include "pch.h"
-
-#include <sndfile.h>
-
-#include <AL/alext.h>
-#include <Logging/Logging.h>
 
 namespace Hzn
 {
@@ -18,13 +15,13 @@ namespace Hzn
 	public:
 		static SoundBuffer* Init();
 
-		ALuint LoadSound(const char* filename);
+		uint32_t LoadSound(const char* filename);
 
 	private:
 		SoundBuffer();
 		~SoundBuffer();
 
-		std::vector<ALuint> p_SoundBuffers;
+		std::vector<uint32_t> p_SoundBuffers;
 	};
 
 }
