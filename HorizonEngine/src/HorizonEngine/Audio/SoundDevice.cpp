@@ -1,5 +1,7 @@
-#include "SoundDevice.h"
+#include "pch.h"
 
+#include "HorizonEngine/Logging/Logging.h"
+#include "HorizonEngine/Audio/SoundDevice.h"
 
 namespace Hzn
 {

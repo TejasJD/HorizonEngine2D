@@ -1,7 +1,12 @@
 #pragma once
 #ifndef HZN_COMPONENT_DISPLAYS_H
 #define HZN_COMPONENT_DISPLAYS_H
-#include <HorizonEngine.h>
+
+#include <vector>
+#include <string>
+#include <memory>
+
+#include <HorizonEngine/HorizonEngine.h>
 
 namespace Hzn
 {

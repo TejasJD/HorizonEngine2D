@@ -3,7 +3,7 @@
 #ifndef HZN_CONTENTBROWSER_H
 #define HZN_CONTENTBROWSER_H
 
-#include "HorizonEngine.h"
+#include <string>
 
 
 class ContentBrowser

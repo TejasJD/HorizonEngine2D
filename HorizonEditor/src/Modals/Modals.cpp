@@ -2,12 +2,12 @@
 
 
 #define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "Modals.h"
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <HorizonEngine/AssetManagement/AssetManager.h>
 #include "EditorLayer.h"
-#include "AssetManagement/AssetManager.h"
 
+#include "Modals.h"
 
 
 std::string Modals::projectRootFolder;

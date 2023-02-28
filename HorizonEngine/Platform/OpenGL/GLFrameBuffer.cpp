@@ -1,9 +1,11 @@
 #include "pch.h"
-#include "GLFrameBuffer.h"
-#include "HorizonEngine/App.h"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "HorizonEngine/Core/App.h"
+
+#include "OpenGL/GLFramebuffer.h"
 
 namespace Hzn
 {
@@ -30,7 +32,7 @@ namespace Hzn
 			uint32_t id,
 			int32_t width,
 			int32_t height,
-			FrameBufferTextureFormat format
+			FramebufferTextureFormat format
 		)
 		{
 			bool multisampled = samples > 1;
@@ -42,11 +44,11 @@ namespace Hzn
 			{
 				// apply the rigth format.
 
-				if (format == FrameBufferTextureFormat::RGBA8)
+				if (format == FramebufferTextureFormat::RGBA8)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 				}
-				else if (format == FrameBufferTextureFormat::RED_INTEGER)
+				else if (format == FramebufferTextureFormat::RED_INTEGER)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, width, height, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
 				}
@@ -62,7 +64,7 @@ namespace Hzn
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentNumber, textureTarget(multisampled), id, 0);
 		}
 
-		static void AttachDepthTexture(uint32_t samples, uint32_t id, int32_t width, int32_t height, FrameBufferTextureFormat format)
+		static void AttachDepthTexture(uint32_t samples, uint32_t id, int32_t width, int32_t height, FramebufferTextureFormat format)
 		{
 			bool multisampled = samples > 1;
 
@@ -74,7 +76,7 @@ namespace Hzn
 			{
 				// apply the rigth format.
 
-				if (format == FrameBufferTextureFormat::DEPTH24_STENCIL8)
+				if (format == FramebufferTextureFormat::DEPTH24_STENCIL8)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 				}
@@ -87,28 +89,28 @@ namespace Hzn
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			}
 
-			if (format == FrameBufferTextureFormat::DEPTH24_STENCIL8)
+			if (format == FramebufferTextureFormat::DEPTH24_STENCIL8)
 			{
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, textureTarget(multisampled), id, 0);
 			}
 		}
 
 
-		static bool isDepthFormat(FrameBufferTextureFormat format)
+		static bool isDepthFormat(FramebufferTextureFormat format)
 		{
 			switch (format)
 			{
-			case FrameBufferTextureFormat::DEPTH24_STENCIL8: return true;
+			case FramebufferTextureFormat::DEPTH24_STENCIL8: return true;
 			default: return false;
 			}
 		}
 
-		static GLenum toGLTextureFormat(FrameBufferTextureFormat format)
+		static GLenum toGLTextureFormat(FramebufferTextureFormat format)
 		{
 			switch (format)
 			{
-			case FrameBufferTextureFormat::RGBA8: return GL_RGBA8;
-			case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+			case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
 			default:
 			{
 				HZN_CORE_ASSERT(false, "Invalid Texture Format");
@@ -118,7 +120,7 @@ namespace Hzn
 		}
 	}
 
-	GLFrameBuffer::GLFrameBuffer(const FrameBufferProps& props)
+	GLFramebuffer::GLFramebuffer(const FramebufferProps& props)
 		: m_Props(props)
 	{
 		for (auto attachments : m_Props.attachments.m_Attachments)
@@ -136,30 +138,30 @@ namespace Hzn
 		invalidate();
 	}
 
-	GLFrameBuffer::~GLFrameBuffer()
+	GLFramebuffer::~GLFramebuffer()
 	{
 		destroy();
 	}
 
-	void GLFrameBuffer::destroy()
+	void GLFramebuffer::destroy()
 	{
-		glDeleteFramebuffers(1, &m_FrameBufferId);
+		glDeleteFramebuffers(1, &m_FramebufferId);
 		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
 
-	void GLFrameBuffer::invalidate()
+	void GLFramebuffer::invalidate()
 	{
-		if (m_FrameBufferId != 0)
+		if (m_FramebufferId != 0)
 		{
 			destroy();
 			m_ColorAttachments.clear();
 			m_DepthAttachment = 0;
 		}
 
-		glGenFramebuffers(1, &m_FrameBufferId);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
+		glGenFramebuffers(1, &m_FramebufferId);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferId);
 
 		bool multisample = m_Props.samples > 1;
 
@@ -176,7 +178,7 @@ namespace Hzn
 			}
 		}
 
-		if (m_DepthAttachmentSpecs.m_Format != FrameBufferTextureFormat::None)
+		if (m_DepthAttachmentSpecs.m_Format != FramebufferTextureFormat::None)
 		{
 			Utils::createTextures(&m_DepthAttachment, 1);
 			Utils::bindTexture(multisample, m_DepthAttachment);
@@ -202,7 +204,7 @@ namespace Hzn
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void GLFrameBuffer::recreate(int32_t width, int32_t height)
+	void GLFramebuffer::recreate(int32_t width, int32_t height)
 	{
 		if (width > 0 && height > 0)
 		{
@@ -212,7 +214,7 @@ namespace Hzn
 		}
 	}
 
-	int32_t GLFrameBuffer::readPixel(uint32_t attachmentIndex, int x, int y) const
+	int32_t GLFramebuffer::readPixel(uint32_t attachmentIndex, int x, int y) const
 	{
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int32_t pixelData = 0;
@@ -220,7 +222,7 @@ namespace Hzn
 		return pixelData;
 	}
 
-	void GLFrameBuffer::clearColorAttachment(uint32_t attachmentIndex, int value) const
+	void GLFramebuffer::clearColorAttachment(uint32_t attachmentIndex, int value) const
 	{
 		HZN_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "attachment index out of bounds!");
 		auto& spec = m_ColorAttachmentSpecs[attachmentIndex];
@@ -228,16 +230,16 @@ namespace Hzn
 	}
 
 
-	void GLFrameBuffer::bind() const
+	void GLFramebuffer::bind() const
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferId);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FramebufferId);
 		glViewport(0, 0, m_Props.width, m_Props.height);
 
 		/*int32_t value = -1;
 		glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);*/
 	}
 
-	void GLFrameBuffer::unbind() const
+	void GLFramebuffer::unbind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

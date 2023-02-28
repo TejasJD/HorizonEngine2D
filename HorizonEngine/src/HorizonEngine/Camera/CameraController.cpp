@@ -1,5 +1,12 @@
 #include "pch.h"
-#include "CameraController.h"
+
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
+
+#include "HorizonEngine/Core/Input.h"
+#include "HorizonEngine/Core/TimeStep.h"
+#include "HorizonEngine/Events/Event.h"
+#include "HorizonEngine/Camera/CameraController.h"
 
 namespace Hzn
 {

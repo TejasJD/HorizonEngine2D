@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include <string>
 #include <commdlg.h>
 #include "string.h"
@@ -6,9 +8,8 @@
 #include <string>
 #include <shlobj.h>
 
-#include "FDWindows.h"
-#include "App.h"
-
+#include "HorizonEngine/Platform/FileDialogs.h"
+#include "HorizonEngine/Core/App.h"
 
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32

@@ -1,28 +1,28 @@
-#include "ContactListener.h"
+#include "pch.h"
 
 #include <entt/entt.hpp>
 #include <box2d/b2_world_callbacks.h>
 #include <box2d/b2_contact.h>
 
-#include "HorizonEngine/SceneManagement/FunctionRegistry.h"
-#include "HorizonEngine/SceneManagement/SceneManager.h"
-#include "HorizonEngine/SceneManagement/GameObject.h"
+#include "HorizonEngine/Scene/SceneManager.h"
+#include "HorizonEngine/Scene/GameObject.h"
+#include "HorizonEngine/Scene/FunctionRegistry.h"
+
+#include "HorizonEngine/Physics2D/ContactListener.h"
 
 namespace Hzn {
-    void ContactListener::BeginContact(b2Contact* contact) 
-    {
-
+    void ContactListener::BeginContact(b2Contact* contact) {
         b2BodyUserData& bodyUserDataA = contact->GetFixtureA()->GetBody()->GetUserData();
         b2BodyUserData& bodyUserDataB = contact->GetFixtureB()->GetBody()->GetUserData();
 
         entt::entity A = entt::null, B = entt::null;
 
-        if (bodyUserDataA.pointer) 
+        if (bodyUserDataA.pointer)
         {
             A = *(entt::entity*)(bodyUserDataA.pointer);
         }
 
-        if (bodyUserDataB.pointer) 
+        if (bodyUserDataB.pointer)
         {
             B = *(entt::entity*)(bodyUserDataB.pointer);
         }

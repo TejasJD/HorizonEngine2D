@@ -73,7 +73,7 @@ namespace Hzn
 					ShaderDataTypeToGLenum(element.m_Type),
 					element.m_Normalized ? GL_TRUE : GL_FALSE,
 					vertexBuffer->getBufferLayout().getStride(),
-					(const void*)(element.m_Offset)
+					(const void*)(size_t)(element.m_Offset)
 				);
 				break;
 			}
@@ -89,7 +89,7 @@ namespace Hzn
 					element.getCount(),
 					ShaderDataTypeToGLenum(element.m_Type),
 					vertexBuffer->getBufferLayout().getStride(),
-					(const void*)(element.m_Offset)
+					(const void*)(size_t)(element.m_Offset)
 				);
 				break;
 			}

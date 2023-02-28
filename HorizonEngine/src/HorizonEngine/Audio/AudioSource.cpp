@@ -1,4 +1,9 @@
-#include "AudioSource.h"
+#include "pch.h"
+
+#include <AL/al.h>
+#include <AL/alc.h>
+
+#include "HorizonEngine/Audio/AudioSource.h"
 
 namespace Hzn
 {

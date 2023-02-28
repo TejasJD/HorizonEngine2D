@@ -3,18 +3,17 @@
 #ifndef HZN_SOUNDDEVICE_H
 #define HZN_SOUNDDEVICE_H
 
-#include "HorizonEngine/Core/Core.h"
 #include <AL/alc.h>
 #include <AL/al.h>
 
-#include <Logging/Logging.h>
+#include "HorizonEngine/Core/Core.h"
 
 namespace Hzn
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	class HZN_API SoundDevice
+	class SoundDevice
 	{
 	public:
 		static SoundDevice* Init();

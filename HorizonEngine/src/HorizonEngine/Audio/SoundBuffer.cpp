@@ -1,4 +1,11 @@
-#include "SoundBuffer.h"
+#include "pch.h"
+
+#include <AL/al.h>
+#include <sndfile.h>
+#include <AL/alext.h>
+
+#include "HorizonEngine/Logging/Logging.h"
+#include "HorizonEngine/Audio/SoundBuffer.h"
 
 namespace Hzn {
 

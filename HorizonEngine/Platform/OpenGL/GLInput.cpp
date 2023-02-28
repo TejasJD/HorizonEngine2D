@@ -1,9 +1,12 @@
 #include "pch.h"
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "HorizonEngine/App.h"
-#include "GLWindow.h"
-#include "HorizonEngine/Input.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "HorizonEngine/Core/App.h"
+#include "HorizonEngine/Core/Input.h"
+
+#include "OpenGL/GLWindow.h"
 
 namespace Hzn
 {
