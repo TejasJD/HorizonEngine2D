@@ -190,7 +190,7 @@ namespace Hzn
 	void Renderer2D::submitBatch()
 	{
 		// bind the textures we have in our array to the texture units in GPU before we draw.
-		for (int i = 0; i < data.textureidx; ++i)
+		for (uint32_t i = 0; i < data.textureidx; ++i)
 		{
 			data.textureSlots[i]->bind(i);
 		}
@@ -246,7 +246,7 @@ namespace Hzn
 
 		// if this texture is already one of the bound textures, we just use that texture slot for
 		// this quad.
-		for (int i = 0; i < data.textureidx; ++i)
+		for (uint32_t i = 0; i < data.textureidx; ++i)
 		{
 			if (data.textureSlots[i] == texture)
 			{
@@ -264,7 +264,7 @@ namespace Hzn
 		}
 
 
-		for (int i = 0; i < data.quadPositions.size(); ++i)
+		for (size_t i = 0; i < data.quadPositions.size(); ++i)
 		{
 			data.ptr->position = transform * data.quadPositions[i];
 			data.ptr->color = color;

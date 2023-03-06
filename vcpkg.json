@@ -12,7 +12,6 @@
     "spdlog",
     "box2d",
     "gtest",
-    "sajson",
     "openal-soft",
     "sndfile",
     "stb",

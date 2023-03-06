@@ -1,3 +1,4 @@
+#pragma once
 // c headers
 #include <cstdio>
 #include <cstdint>

@@ -1,0 +1,58 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ${{matrix.os}}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        os:
+        - windows-2022
+        compiler:
+        - msvc
+        CMAKE_GENERATOR:
+        - "Visual Studio 17 2022"
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/vcpkg
+          ./build/vcpkg_installed
+          ${{ env.CONAN_USER_HOME }}
+          ~/.cache/pip
+          ${{ env.HOME }}/.cache/vcpkg/archives
+          ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
+          ${{ env.LOCALAPPDATA }}\vcpkg\archives
+          ${{ env.APPDATA }}\vcpkg\archives
+        key: |
+          ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./vcpkg.json')}}-${{ matrix.CMAKE_GENERATOR }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.compiler }}-${{ hashFiles('./vcpkg.json') }}-
+        
+
+    - name: Setup vcpkg
+      uses: aminya/setup-cpp@v1
+      with:
+        compiler: ${{matrix.compiler}}
+        vcvarsall: ${{ contains(matrix.os, 'windows' )}}
+        cmake: true
+        ninja: true
+        vcpkg: true
+        ccache: true
+
+    - name: Configure and Build Release Preset
+      run: |
+        cmake --preset x64-release
+        cmake --build bin/build/x64-release --config Release

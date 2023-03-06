@@ -73,14 +73,14 @@ namespace Hzn
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y)
 			{
 				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
-				MouseMovedEvent eventObj(x, y);
+				MouseMovedEvent eventObj(static_cast<float>(x), static_cast<float>(y));
 				data->callback(eventObj);
 			});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double x, double y)
 			{
 				WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
-				MouseScrolledEvent eventObj(x, y);
+				MouseScrolledEvent eventObj(static_cast<float>(x), static_cast<float>(y));
 				data->callback(eventObj);
 
 			});
@@ -116,7 +116,7 @@ namespace Hzn
 				}
 				else
 				{
-					KeyReleasedEvent k(key);
+					KeyReleasedEvent k(static_cast<KeyCode>(key));
 					data->callback(k);
 				}
 			});

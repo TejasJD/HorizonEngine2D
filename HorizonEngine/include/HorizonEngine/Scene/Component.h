@@ -10,6 +10,8 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <entt/entt.hpp>
+#include <cereal/cereal.hpp>
+#include <cereal/archives/json.hpp>
 
 #include "HorizonEngine/Camera/Camera.h"
 #include "HorizonEngine/Renderer/Sprite.h"
@@ -36,7 +38,6 @@ namespace Hzn
 		template<typename Archive>
 		void load(Archive& ar)
 		{
-			uint64_t allUnderSize = 0ULL;
 			ar(cereal::make_nvp("childCount", m_ChildCount),
 				cereal::make_nvp("parent", m_Parent),
 				cereal::make_nvp("firstChild", m_FirstChild),

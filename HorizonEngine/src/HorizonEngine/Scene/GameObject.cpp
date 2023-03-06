@@ -18,7 +18,6 @@ namespace Hzn
 		auto& relationComponent = m_Scene->m_Registry.get<RelationComponent>(m_ObjectId);
 
 		if (obj) {
-			auto& objrelationComponent = m_Scene->m_Registry.get<RelationComponent>(obj.m_ObjectId);
 			if (!isAncestorOf(obj)) {
 				if (getComponent<Hzn::RelationComponent>().hasParent()) {
 					getParent().removeChild(*this);
