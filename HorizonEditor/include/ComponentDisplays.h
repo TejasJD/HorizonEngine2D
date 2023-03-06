@@ -144,8 +144,8 @@ namespace Hzn
 
 					renderComponent.spritePath = str.substr(0, str.find_last_of("-"));
 					renderComponent.texturePath = "";
-					renderComponent.m_Pos.x = std::stoi(spriteX);
-					renderComponent.m_Pos.y = std::stoi(spriteY);
+					renderComponent.m_Pos.x = static_cast<float>(std::stoi(spriteX));
+					renderComponent.m_Pos.y = static_cast<float>(std::stoi(spriteY));
 
 				}
 				else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))

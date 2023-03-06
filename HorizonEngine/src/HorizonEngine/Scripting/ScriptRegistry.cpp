@@ -288,7 +288,7 @@ namespace Hzn
 
 		auto& rb2d = obj.getComponent<RigidBody2DComponent>();
 		auto& bc2d = obj.getComponent<BoxCollider2DComponent>();
-		auto& transform = obj.getTransform();
+		auto transform = obj.getTransform();
 
 		b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 

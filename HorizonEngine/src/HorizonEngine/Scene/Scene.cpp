@@ -419,8 +419,9 @@ namespace Hzn
 
 			if (activeCamera)
 			{
-				Renderer2D::beginScene(*activeCamera, cameraTransform);
 				const auto& sprites = m_Registry.view<RenderComponent, TransformComponent>();
+
+				Renderer2D::beginScene(*activeCamera, cameraTransform);
 				for (const auto& entity : sprites)
 				{
 					auto [renderComponent, transformComponent] = sprites.get<RenderComponent, TransformComponent>(entity);

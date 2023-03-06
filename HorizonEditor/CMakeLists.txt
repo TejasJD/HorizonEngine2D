@@ -4,11 +4,12 @@
 cmake_minimum_required (VERSION 3.15)
 
 set(HZNEDITOR_SOURCE_FILES
-	"src/pch.cpp"
+	
 	"src/Main.cpp"
 	"src/EditorLayer.cpp"
 	"src/ContentBrowser/ContentBrowser.cpp"
-	"src/Modals/Modals.cpp")
+	"src/Modals/Modals.cpp"
+)
 
 set(HZNEDITOR_HEADER_FILES
 	"src/pch.h"
@@ -16,33 +17,31 @@ set(HZNEDITOR_HEADER_FILES
 	"include/NodeEditor.h"
 	"include/Modals.h"
 	"include/ContentBrowser.h"
-	"include/ComponentDisplays.h")
-
-if(WIN32 AND MSVC)
-	set(HZNEDITOR_ICON "${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico")
-	# 'HznApplication' target which would generate an executable.
-
-	# icon
-	message("Cmake System Name: " ${CMAKE_SYSTEM_NAME})
-	if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-		enable_language("RC")
-		set (WIN32_RESOURCES ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.rc)
-	endif()
-
-endif()
+	"include/ComponentDisplays.h"
+)
 
 add_executable(HznEditor ${HZNEDITOR_SOURCE_FILES} ${HZNEDITOR_HEADER_FILES} ${WIN32_RESOURCES})
 
 # libraries linked to HorizonEngine.
-target_link_libraries(HznEditor PUBLIC HorizonEngine)
+target_link_libraries(
+	HznEditor
+	PRIVATE
+	project_options
+	project_warnings
+)
+
+target_link_system_libraries(
+	HznEditor
+	PRIVATE
+	HorizonEngine
+)
 
 target_precompile_headers(HznEditor PRIVATE src/pch.h)
 
 target_include_directories(
 	HznEditor 
-	PUBLIC
-	"${CMAKE_CURRENT_LIST_DIR}/include"
 	PRIVATE
+	"${CMAKE_CURRENT_LIST_DIR}/include"
 	"${CMAKE_CURRENT_LIST_DIR}/src"
 )
 
@@ -89,15 +88,6 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy
-	$<TARGET_FILE_DIR:HorizonEngine>/mono-2.0-sgen.dll
-	$<TARGET_FILE_DIR:HznEditor>/mono-2.0-sgen.dll
-)
-
-add_custom_command(
-	TARGET HznEditor
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
 	${CMAKE_CURRENT_LIST_DIR}/Scripts/ScriptCoreLib.dll
 	$<TARGET_FILE_DIR:HznEditor>/Scripts/ScriptCoreLib.dll
 )
@@ -120,12 +110,8 @@ add_custom_command(
 	$<TARGET_FILE_DIR:HznEditor>/premake5.lua
 )
 
-message("Icon file path: " ${CMAKE_CURRENT_LIST_DIR}/icons/HorizonGameEngine.ico)
-set(CPACK_WIX_PRODUCT_ICON ${WIN32_RESOURCES})
-
-install(TARGETS HznEditor DESTINATION bin)
-install(DIRECTORY "mono/lib" DESTINATION .)
-install(DIRECTORY "assets" DESTINATION bin)
-install(DIRECTORY "icons" DESTINATION bin)
-install(DIRECTORY "scripts" DESTINATION bin)
-install(FILES "premake5.exe" "premake5.lua" DESTINATION bin)
+target_compile_definitions(
+	HznEditor
+	PRIVATE
+	_CRT_SECURE_NO_WARNINGS
+)

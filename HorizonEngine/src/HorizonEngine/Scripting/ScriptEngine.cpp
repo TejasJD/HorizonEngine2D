@@ -5,6 +5,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/threads.h>
 
+#include "HorizonEngine/Core/Core.h"
 #include "HorizonEngine/Scene/Component.h"
 #include "HorizonEngine/Scene/GameObject.h"
 #include "HorizonEngine/Scene/Scene.h"
@@ -30,11 +31,11 @@ namespace Hzn
 		MonoAssembly* appAssembly = nullptr;
 		MonoImage* appAssemblyImage = nullptr;
 		std::filesystem::path appAssemblyPath;
-		bool reloadPending = false;
 
 		std::shared_ptr<ScriptClass> gameObjectClass;
 		std::unordered_map<std::string, std::shared_ptr<ScriptClass>> gameObjectSubClasses;
 		std::unordered_map<uint32_t, std::shared_ptr<ScriptObject>> gameObjectScriptInstances;
+		bool reloadPending = false;
 	};
 
 	ScriptData* ScriptEngine::s_Data = nullptr;
@@ -59,7 +60,7 @@ namespace Hzn
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.c_str(), &status, 0);
 			mono_image_close(image);
 
-
+			Ref<int> a = MakeRef<int>(5);
 			return assembly;
 		}
 
@@ -297,25 +298,26 @@ namespace Hzn
 		else HZN_CORE_ERROR("Couldn't find script component attached to {}", id);
 	}
 
-	void ScriptEngine::OnCollisionEnter(const GameObject& obj)
+	void ScriptEngine::OnCollisionEnter(const GameObject&)
 	{
 	}
 
-	void ScriptEngine::OnCollisionExit(const GameObject& obj)
+	void ScriptEngine::OnCollisionExit(const GameObject&)
 	{
 	}
 
-	void ScriptEngine::OnTriggerEnter(const GameObject& obj)
+	void ScriptEngine::OnTriggerEnter(const GameObject&)
 	{
 	}
 
-	void ScriptEngine::OnTriggerExit(const GameObject& obj)
+	void ScriptEngine::OnTriggerExit(const GameObject&)
 	{
 	}
 
 	void ScriptEngine::LoadCoreAssembly(const std::filesystem::path& path)
 	{
-		s_Data->appDomain = mono_domain_create_appdomain("HorizonScriptCoreDomain", nullptr);
+		std::string rootDomain = "HorizonScriptCoreDomain";
+		s_Data->appDomain = mono_domain_create_appdomain(rootDomain.data(), nullptr);
 		mono_domain_set(s_Data->appDomain, true);
 
 		// function to load the mono C# assembly.

@@ -4,7 +4,7 @@
 cmake_minimum_required (VERSION 3.15)
 
 set(HZN_SOURCE_FILES
-	"src/pch.cpp"
+	
 	"src/HorizonEngine/AssetManagement/AssetManager.cpp"
 	"src/HorizonEngine/Audio/AudioSource.cpp"
 	"src/HorizonEngine/Audio/SoundDevice.cpp"
@@ -155,12 +155,13 @@ set(FILEWATCH_FILES
 
 # Add source to this project's executable.
 add_library (HorizonEngine
-	${HZN_SOURCE_FILES}
-	${HZN_HEADER_FILES}
-	${IMGUI_FILES}
-	${IMGUIZMO_FILES}
-	${IMNODES_FILES}
-	${FILEWATCH_FILES}
+	STATIC
+		${HZN_SOURCE_FILES}
+		${HZN_HEADER_FILES}
+		${IMGUI_FILES}
+		${IMGUIZMO_FILES}
+		${IMNODES_FILES}
+		${FILEWATCH_FILES}
 )
 
 # compile definitions for 'HorizonEngine' target
@@ -170,55 +171,80 @@ target_compile_definitions(HorizonEngine
 	$<$<CONFIG:Debug>:HZN_ASSERTS_ON>
 )
 
+set(HorizonEngine_INCLUDE_DIR
+	"include"
+	"vendor/ImGuizmo"
+	"vendor/imnodes"
+	"vendor/mono/include"
+	"vendor/filewatch"
+	"vendor/imgui"
+	"vendor/IconsFontAwesome"
+)
 
 # directories on include search path for 'HorizonEngine' target
 target_include_directories(HorizonEngine
 	PUBLIC
-	"${CMAKE_CURRENT_LIST_DIR}/include"
-	vendor/ImGuizmo
-	vendor/imnodes
-	vendor/mono/include
-	vendor/filewatch
-	vendor/imgui
-	vendor/IconsFontAwesome
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/vendor/ImGuizmo>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/vendor/imnodes>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/vendor/mono/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/vendor/filewatch>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/vendor/imgui>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/vendor/IconsFontAwesome>
+		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 	PRIVATE
-	"${CMAKE_CURRENT_LIST_DIR}/src"
-	"${CMAKE_CURRENT_LIST_DIR}/platform"
+		"${CMAKE_CURRENT_LIST_DIR}/src"
+		"${CMAKE_CURRENT_LIST_DIR}/platform"
 )
 
 # precompiled headers to target 'HorizonEngine'
-target_precompile_headers(HorizonEngine PRIVATE src/pch.h)
+target_precompile_headers(
+	HorizonEngine
+	PRIVATE
+	src/pch.h
+)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(box2d CONFIG REQUIRED)
-find_package(unofficial-sajson CONFIG REQUIRED)
 find_package(openal CONFIG REQUIRED)
 find_package(Sndfile CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
 find_package(cereal CONFIG REQUIRED)
 
-target_link_libraries(HorizonEngine 
+target_link_libraries(
+	HorizonEngine
+	PRIVATE
+		project_options
+		project_warnings
+)
+
+target_link_system_libraries(
+	HorizonEngine
 	PUBLIC
-	# Ws2_32.lib
-	# Winmm.lib
-	# Version.lib
-	# Bcrypt.lib
-	glfw
-	glm::glm
-	glad::glad
-	spdlog::spdlog_header_only
-	box2d::box2d
-	unofficial::sajson::sajson
-	OpenAL::OpenAL
-	SndFile::sndfile
-	EnTT::EnTT
-	cereal::cereal
-	${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/mono-2.0-sgen.lib
-	# ${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/libmono-static-sgen.lib
+		glfw
+		glm::glm
+		glad::glad
+		spdlog::spdlog_header_only
+		box2d::box2d
+		OpenAL::OpenAL
+		SndFile::sndfile
+		EnTT::EnTT
+		cereal::cereal
+		bcrypt.lib
+		ws2_32.lib
+		version.lib
+		winmm.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/vendor/mono/lib/$<$<CONFIG:Debug>:dbg>$<$<CONFIG:Release>:rel>/libmono-static-sgen.lib
+)
+
+target_compile_definitions(
+	HorizonEngine
+	PRIVATE
+	_CRT_SECURE_NO_WARNINGS
 )
 
 # post build commands to copy resources from source to build directories for the HorizonEngine target
@@ -230,22 +256,3 @@ add_custom_command(
 	${CMAKE_CURRENT_LIST_DIR}/api_assets
 	$<TARGET_FILE_DIR:HorizonEngine>/api_assets
 )
-
-add_custom_command(
-	TARGET HorizonEngine
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy_directory
-	${CMAKE_CURRENT_LIST_DIR}/vendor/mono/dylib/dbg
-	$<TARGET_FILE_DIR:HorizonEngine>
-)
-# TODO: Add tests and install targets if needed.
-message("VCPKG BIN DIR: " ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin)
-install(DIRECTORY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin DESTINATION . CONFIGURATIONS Debug)
-install(DIRECTORY ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin DESTINATION . CONFIGURATIONS Release)
-install(TARGETS HorizonEngine DESTINATION bin)
-install(DIRECTORY "api_assets" DESTINATION bin)
-install(FILES "vendor/mono/lib/dbg/mono-2.0-sgen.lib" DESTINATION bin CONFIGURATIONS Debug)
-install(FILES "vendor/mono/dylib/dbg/mono-2.0-sgen.dll" DESTINATION bin CONFIGURATIONS Debug)
-install(FILES "vendor/mono/lib/rel/mono-2.0-sgen.lib" DESTINATION bin CONFIGURATIONS Release)
-install(FILES "vendor/mono/dylib/rel/mono-2.0-sgen.dll" DESTINATION bin CONFIGURATIONS Release)

@@ -236,10 +236,10 @@ void ContentBrowser::OnImGuiRender()
 
 		if (ImGui::BeginPopup("fileFolderPopup")) {
 
-			if (ImGui::MenuItem("Delete", false)) {
+			if (ImGui::MenuItem("Delete")) {
 				request_delete = true;
 			}
-			if (ImGui::MenuItem("Rename", false)) {
+			if (ImGui::MenuItem("Rename")) {
 				request_Rename = true;
 			}
 			ImGui::EndPopup();
@@ -323,11 +323,11 @@ void ContentBrowser::OnImGuiRender()
 	ImGui::Columns(1);
 
 	if (ImGui::BeginPopup("ContentBrowserPopup")) {
-		if (ImGui::MenuItem("create new file", false)) {
+		if (ImGui::MenuItem("create new file")) {
 			request_NewFile = true;
 
 		}
-		if (ImGui::MenuItem("create new folder", false)) {
+		if (ImGui::MenuItem("create new folder")) {
 			request_NewFolder = true;
 		}
 

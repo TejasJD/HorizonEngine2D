@@ -146,7 +146,7 @@ namespace Hzn
 	void GLFramebuffer::destroy()
 	{
 		glDeleteFramebuffers(1, &m_FramebufferId);
-		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+		glDeleteTextures(static_cast<int32_t>(m_ColorAttachments.size()), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
@@ -168,12 +168,12 @@ namespace Hzn
 		if (!m_ColorAttachmentSpecs.empty())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentSpecs.size());
-			Utils::createTextures(m_ColorAttachments.data(), m_ColorAttachments.size());
+			Utils::createTextures(m_ColorAttachments.data(), static_cast<int32_t>(m_ColorAttachments.size()));
 
 			for (size_t i = 0; i < m_ColorAttachments.size(); ++i)
 			{
 				Utils::bindTexture(multisample, m_ColorAttachments[i]);
-				Utils::AttachColorTexture(m_Props.samples, i, m_ColorAttachments[i], m_Props.width, m_Props.height,
+				Utils::AttachColorTexture(m_Props.samples, static_cast<uint32_t>(i), m_ColorAttachments[i], m_Props.width, m_Props.height,
 					m_ColorAttachmentSpecs[i].m_Format);
 			}
 		}
@@ -191,7 +191,7 @@ namespace Hzn
 		{
 			HZN_CORE_ASSERT(m_ColorAttachments.size() <= 4, "not more than 4 color attachments supported!");
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-			glDrawBuffers(m_ColorAttachments.size(), buffers);
+			glDrawBuffers(static_cast<int32_t>(m_ColorAttachments.size()), buffers);
 		}
 		else if (m_ColorAttachments.empty())
 		{
@@ -214,7 +214,7 @@ namespace Hzn
 		}
 	}
 
-	int32_t GLFramebuffer::readPixel(uint32_t attachmentIndex, int x, int y) const
+	int32_t GLFramebuffer::readPixel(uint32_t attachmentIndex, int32_t x, int32_t y) const
 	{
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int32_t pixelData = 0;
@@ -222,7 +222,7 @@ namespace Hzn
 		return pixelData;
 	}
 
-	void GLFramebuffer::clearColorAttachment(uint32_t attachmentIndex, int value) const
+	void GLFramebuffer::clearColorAttachment(uint32_t attachmentIndex, int32_t value) const
 	{
 		HZN_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "attachment index out of bounds!");
 		auto& spec = m_ColorAttachmentSpecs[attachmentIndex];

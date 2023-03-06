@@ -119,7 +119,7 @@ void EditorLayer::onUpdate(Hzn::TimeStep ts)
 		mousePos.y = viewportSize.y - mousePos.y;
 		if (0 < mousePos.x && mousePos.x < viewportSize.x && 0 < mousePos.y && mousePos.y < viewportSize.y)
 		{
-			m_HoveredObjectId = m_Framebuffer->readPixel(1, mousePos.x, mousePos.y);
+			m_HoveredObjectId = m_Framebuffer->readPixel(1, static_cast<int>(mousePos.x), static_cast<int>(mousePos.y));
 		}
 		// unbind the current Framebuffer.
 		m_Framebuffer->unbind();
@@ -402,7 +402,6 @@ void EditorLayer::onRenderImgui()
 				ImGui::EndChild();
 				ImGui::PopStyleVar();
 			}
-			auto cursorPos = ImGui::GetCursorPosX();
 			auto width = ImGui::GetWindowWidth();
 			static bool showComponentMenu = false;
 			if (m_SelectedObjectId != std::numeric_limits<uint32_t>::max())
@@ -422,7 +421,9 @@ void EditorLayer::onRenderImgui()
 						std::string componentName = std::string(val.substr(hzn + 5));
 						if (ImGui::Button(componentName.c_str(), ImVec2(-FLT_MIN, 0)))
 						{
-							Hzn::addComponent(EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId), std::string(it));
+							auto param1 = EditorData::s_Scene_Active->getGameObjectById(m_SelectedObjectId);
+							auto param2 = std::string(it);
+							Hzn::addComponent(param1, param2);
 						}
 					}
 
@@ -469,7 +470,6 @@ void EditorLayer::onRenderImgui()
 		if (columnCount < 1)
 			columnCount = 1;
 		ImGui::Columns(columnCount, 0, false);
-		int count = 0;
 		if (!ContentBrowser::m_CurrentTexturePath.empty())
 		{
 
@@ -670,7 +670,8 @@ void EditorLayer::onRenderImgui()
 		// if viewport size changes then we re-create the frame buffer.
 		if (Hzn::SceneManager::isOpen())
 		{
-			glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&(ImGui::GetContentRegionAvail()));
+			auto viewportSizeImVec2 = ImGui::GetContentRegionAvail();
+			glm::vec2 viewportSize = *reinterpret_cast<glm::vec2*>(&viewportSizeImVec2);
 			if (lastViewportSize != viewportSize)
 			{
 				/*HZN_DEBUG("{}, {}", viewportSize.x, viewportSize.y);*/
@@ -784,7 +785,8 @@ void EditorLayer::drawHierarchy()
 
 			for (const auto& x : list)
 			{
-				drawObjects(EditorData::s_Scene_Active->getGameObjectById(x));
+				auto value = EditorData::s_Scene_Active->getGameObjectById(x);
+				drawObjects(value);
 			}
 
 			if (openHierarchyPopup) {
@@ -828,7 +830,8 @@ void EditorLayer::drawHierarchy()
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_PAYLOAD")) {
 					Hzn::GameObject receivedObject = EditorData::s_Scene_Active->getGameObjectById((uint32_t) * (const int*)payload->Data);
 					HZN_INFO(receivedObject.getObjectId());
-					receivedObject.setParent(Hzn::GameObject());
+					auto nullObject = Hzn::GameObject();
+					receivedObject.setParent(nullObject);
 				}
 
 				ImGui::EndDragDropTarget();
