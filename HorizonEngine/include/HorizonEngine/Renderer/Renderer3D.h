@@ -5,19 +5,17 @@
 
 #include "HorizonEngine/Camera/Camera.h"
 
-namespace Hzn
-{
-	class Renderer3D
-	{
-	public:
-		static void init();
-		static void destroy();
+namespace Hzn {
+class Renderer3D {
+ public:
+  static void init();
+  static void destroy();
 
-		static void beginScene(const OrthographicCamera& camera);
-		static void endScene();
-	private:
+  static void beginScene(const OrthographicCamera& camera);
+  static void endScene();
 
-	};
-}
+ private:
+};
+}  // namespace Hzn
 
 #endif

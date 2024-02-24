@@ -7,40 +7,40 @@
 
 typedef unsigned int GLenum;
 
-namespace Hzn
-{
-	class GLShader : public Shader
-	{
-	public:
-		GLShader(const std::string& vertexSource, const std::string& fragmentSource);
-		GLShader(const std::initializer_list<std::pair<ShaderType, std::string>>& typeAndPath);
-		virtual ~GLShader();
+namespace Hzn {
+class GLShader : public Shader {
+ public:
+  GLShader(const std::string& vertexSource, const std::string& fragmentSource);
+  GLShader(const std::initializer_list<std::pair<ShaderType, std::string>>&
+               typeAndPath);
+  virtual ~GLShader();
 
-		// Inherited via Shader
-		virtual void bind() const override;
-		virtual void unbind() const override;
-		virtual unsigned int getId() const override { return m_ProgramId; }
-		
-		virtual void setUniform(const std::string& s, const glm::mat4& mat) override;
-		virtual void setUniform(const std::string& s, const glm::mat3& mat3) override;
-		virtual void setUniform(const std::string& s, const glm::vec4& vec4) override;
-		virtual void setUniform(const std::string& s, const glm::vec3& vec3) override;
-		virtual void setUniform(const std::string& s, const glm::vec2& vec2) override;
-		virtual void setUniform(const std::string& s, int ui) override;
-		virtual void setUniform(const std::string& s, int* a, uint32_t count) override;
-		virtual void setUniform(const std::string& s, float uf) override;
+  // Inherited via Shader
+  virtual void bind() const override;
+  virtual void unbind() const override;
+  virtual unsigned int getId() const override { return m_ProgramId; }
 
-		//! function which maps HorizonEngine Shader Type to GLShader Type.
-		static GLenum HznShaderTypeToGLShader(ShaderType type);
+  virtual void setUniform(const std::string& s, const glm::mat4& mat) override;
+  virtual void setUniform(const std::string& s, const glm::mat3& mat3) override;
+  virtual void setUniform(const std::string& s, const glm::vec4& vec4) override;
+  virtual void setUniform(const std::string& s, const glm::vec3& vec3) override;
+  virtual void setUniform(const std::string& s, const glm::vec2& vec2) override;
+  virtual void setUniform(const std::string& s, int ui) override;
+  virtual void setUniform(const std::string& s, int* a,
+                          uint32_t count) override;
+  virtual void setUniform(const std::string& s, float uf) override;
 
-	private:
-		//! utility function that reads file the Shaderfile.
-		std::string readShaderFile(const std::string& filepath);
+  //! function which maps HorizonEngine Shader Type to GLShader Type.
+  static GLenum HznShaderTypeToGLShader(ShaderType type);
 
-		void compileShaders(const std::string& vertexSource, const std::string& fragmentSource);
-		unsigned int m_ProgramId;
-	};
-}
+ private:
+  //! utility function that reads file the Shaderfile.
+  std::string readShaderFile(const std::string& filepath);
 
+  void compileShaders(const std::string& vertexSource,
+                      const std::string& fragmentSource);
+  unsigned int m_ProgramId;
+};
+}  // namespace Hzn
 
-#endif //! HZN_GL_SHADER_H
+#endif  //! HZN_GL_SHADER_H

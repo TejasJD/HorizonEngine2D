@@ -7,21 +7,19 @@
 
 struct GLFWwindow;
 
-namespace Hzn
-{
-	class GLContext : public RenderContext
-	{
-	public:
-		//! Give GL the window handle to take control
-		GLContext(GLFWwindow *const& handle);
+namespace Hzn {
+class GLContext : public RenderContext {
+ public:
+  //! Give GL the window handle to take control
+  GLContext(GLFWwindow* const& handle);
 
-		// Inherited via RenderContext
-		virtual void init() override;
-		virtual void swapBuffers() override;
+  // Inherited via RenderContext
+  virtual void init() override;
+  virtual void swapBuffers() override;
 
-	private:
-		GLFWwindow* m_Handle = nullptr;
-	};
-}
+ private:
+  GLFWwindow* m_Handle = nullptr;
+};
+}  // namespace Hzn
 
-#endif // !HZN_GL_CONTEXT_H
+#endif  // !HZN_GL_CONTEXT_H

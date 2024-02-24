@@ -6,12 +6,11 @@
 #include <box2d/b2_world_callbacks.h>
 
 namespace Hzn {
-    class ContactListener : public b2ContactListener
-    {
-        virtual void BeginContact(b2Contact* contact) override;
+class ContactListener : public b2ContactListener {
+  virtual void BeginContact(b2Contact* contact) override;
 
-        virtual void EndContact(b2Contact* contact) override;
-    };
-}
+  virtual void EndContact(b2Contact* contact) override;
+};
+}  // namespace Hzn
 
-#endif // !CONTACT_LISTENR_H
+#endif  // !CONTACT_LISTENR_H

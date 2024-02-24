@@ -8,21 +8,19 @@
 
 #include "HorizonEngine/Core/Core.h"
 
-namespace Hzn
-{
-	class HZN_API SoundBuffer
-	{
-	public:
-		static SoundBuffer* Init();
+namespace Hzn {
+class HZN_API SoundBuffer {
+ public:
+  static SoundBuffer* Init();
 
-		uint32_t LoadSound(const char* filename);
+  uint32_t LoadSound(const char* filename);
 
-	private:
-		SoundBuffer();
-		~SoundBuffer();
+ private:
+  SoundBuffer();
+  ~SoundBuffer();
 
-		std::vector<uint32_t> p_SoundBuffers;
-	};
+  std::vector<uint32_t> p_SoundBuffers;
+};
 
-}
+}  // namespace Hzn
 #endif

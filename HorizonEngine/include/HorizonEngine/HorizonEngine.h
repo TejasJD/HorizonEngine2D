@@ -41,7 +41,6 @@
 #include "HorizonEngine/Codes/MouseCodes.h"
 #include "HorizonEngine/Codes/KeyboardCodes.h"
 
-
 #include "HorizonEngine/Renderer/RenderCall.h"
 #include "HorizonEngine/Renderer/Renderer.h"
 #include "HorizonEngine/Renderer/Renderer2D.h"
@@ -60,4 +59,4 @@
 #include "HorizonEngine/Core/App.h"
 
 #include "HorizonEngine/Scripting/ScriptEngine.h"
-#endif // !HZN_HORIZONENGINE_H
+#endif  // !HZN_HORIZONENGINE_H
