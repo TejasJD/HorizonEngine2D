@@ -8,13 +8,12 @@
 /// <summary>
 /// Declare methods here.
 /// </summary>
-namespace Hzn
-{
-	class FileDialogs {
-	public:
-		static std::string openFile();
-		static std::string saveFile();
-		static std::string openFolder();
-	};
-}
-#endif // !HZN_IMGUI_LAYER_H
+namespace Hzn {
+class FileDialogs {
+ public:
+  static std::string openFile();
+  static std::string saveFile();
+  static std::string openFolder();
+};
+}  // namespace Hzn
+#endif  // !HZN_IMGUI_LAYER_H

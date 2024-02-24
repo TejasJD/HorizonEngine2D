@@ -5,15 +5,13 @@
 
 #include <mono/jit/jit.h>
 
-namespace Hzn
-{
-	class ScriptRegistry
-	{
-	public:
-		//! calls greet a function to test if c# registers functions
-		static void registerFunctions();
-		static void registerComponents();
-	};
-}
+namespace Hzn {
+class ScriptRegistry {
+ public:
+  //! calls greet a function to test if c# registers functions
+  static void registerFunctions();
+  static void registerComponents();
+};
+}  // namespace Hzn
 
 #endif

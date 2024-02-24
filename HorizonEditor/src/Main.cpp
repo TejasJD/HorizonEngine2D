@@ -11,22 +11,12 @@
 /// There is also a deconstructor to tocall the destroy method in Renderer.h.
 /// This class inherits Hzn::App.
 /// </summary>
-class EditorApp : public Hzn::App
-{
-public:
-	EditorApp()
-	{
-		Hzn::Renderer2D::init();
-	}
+class EditorApp : public Hzn::App {
+ public:
+  EditorApp() { Hzn::Renderer2D::init(); }
 
-	virtual ~EditorApp()
-	{
-		Hzn::Renderer2D::destroy();
-	}
-
-	
+  virtual ~EditorApp() { Hzn::Renderer2D::destroy(); }
 };
-
 
 /// <summary>
 /// This is a method to call to make new layers and render them on screen.
@@ -36,9 +26,8 @@ public:
 /// To make a new layer call "app->addLayer(new NEWLAYER());
 /// </summary>
 /// <returns></returns>
-std::shared_ptr<Hzn::App> Hzn::createApp()
-{
-	auto app = std::make_shared<EditorApp>();
-	app->addLayer(new EditorLayer());
-	return app;
+std::shared_ptr<Hzn::App> Hzn::createApp() {
+  auto app = std::make_shared<EditorApp>();
+  app->addLayer(new EditorLayer());
+  return app;
 }

@@ -9,7 +9,6 @@
 #include <cstdarg>
 #include <cassert>
 
-
 // standard library utility headers
 #include <iostream>
 #include <fstream>
@@ -37,5 +36,5 @@
 #include "HorizonEngine/Core/Core.h"
 
 #ifdef HZN_PLATFORM_WINDOWS
-	#include <Windows.h>
+#include <Windows.h>
 #endif

@@ -8,26 +8,21 @@
 
 #include "HorizonEngine/Core/Core.h"
 
-namespace Hzn
-{
-	/// <summary>
-	/// 
-	/// </summary>
-	class SoundDevice
-	{
-	public:
-		static SoundDevice* Init();
+namespace Hzn {
+/// <summary>
+///
+/// </summary>
+class SoundDevice {
+ public:
+  static SoundDevice* Init();
 
-	private:
-		SoundDevice();
-		~SoundDevice();
+ private:
+  SoundDevice();
+  ~SoundDevice();
 
-		ALCdevice* p_ALCDevice;
-		ALCcontext* p_ALCContext;
+  ALCdevice* p_ALCDevice;
+  ALCcontext* p_ALCContext;
+};
+}  // namespace Hzn
 
-	};
-}
-
-#endif // !HZN_SOUNDDEVICE_H
-
-
+#endif  // !HZN_SOUNDDEVICE_H
